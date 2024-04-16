@@ -5,7 +5,7 @@ interface Dimensions {
   height: number;
 }
 
-const useDimensions = () => {
+export const useDimensions = () => {
   const ref = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 1, height: 1 });
 
@@ -44,5 +44,3 @@ const useDimensions = () => {
 
   return [ref, dimensions] as [React.RefObject<HTMLDivElement>, Dimensions];
 };
-
-export default useDimensions;

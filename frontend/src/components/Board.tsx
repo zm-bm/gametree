@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import useDimensions from "./hooks";
+import { useDimensions } from "../hooks";
 import BaseBoard from "./BaseBoard";
 
 const Board = () => {
@@ -11,8 +11,11 @@ const Board = () => {
 
   return (
     <div className="h-full w-full flex" ref={ref}>
-      <div style={{ height: size, width: size, position: 'relative' }}>
-        <BaseBoard config={{ }} />
+      <div
+        data-testid='board-wrapper'
+        style={{ height: size, width: size, position: 'relative' }}
+      >
+        <BaseBoard config={{}} />
       </div>
     </div>
   )

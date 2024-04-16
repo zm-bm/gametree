@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
-import { Chessground as ChessgroundApi } from 'chessground';
+import { Chessground } from 'chessground';
 import { Api } from 'chessground/api';
 import { Config } from 'chessground/config';
 
-import "./styles/chessground.base.css";
-import "./styles/chessground.brown.css";
-import "./styles/chessground.cburnett.css";
+import "../styles/chessground.base.css";
+import "../styles/chessground.brown.css";
+import "../styles/chessground.cburnett.css";
 
 interface Props {
   config: Config
@@ -20,7 +20,7 @@ const BaseBoard = ({ config }: Props) => {
 
   useEffect(() => {
     if (ref && ref.current && !api) {
-      const chessgroundApi = ChessgroundApi(ref.current, {
+      const chessgroundApi = Chessground(ref.current, {
         animation: { enabled: true, duration: 200 },
         ...config,
       });
