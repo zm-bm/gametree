@@ -1,25 +1,19 @@
 import { useEffect, useState } from 'react';
 import Board from './Board'
-import Worker from 'stockfish/src/stockfish-nnue-16.js?worker'
+import Engine from '../engine';
+
+let engine = new Engine();
 
 function App() {
-  const [worker, setWorker] = useState<Worker | null>(null);
   const [chessOutput, setChessOutput] = useState('');
 
   useEffect(() => {
-    const newWorker = new Worker();
-
-    newWorker.onmessage = (e) => {
-      console.log('Received:', e.data);
-      setChessOutput(e.data);
-    };
-    setWorker(newWorker);
-    return () => newWorker.terminate();
-  }, []);
+    engine.addDispatch(setChessOutput)
+  }, [])
 
   const sendCommandToStockfish = (command: string) => {
-    console.log('sending %s', command)
-    worker?.postMessage(command);
+    console.log('< %s', command)
+    engine?.postMessage(command);
   };
 
   return (
@@ -30,8 +24,6 @@ function App() {
         </div>
         <div className='flex-auto h-1/2 flex flex-col'>
           <p>{chessOutput}</p>
-          <button onClick={() => sendCommandToStockfish('uci')}>UCI</button>
-          <button onClick={() => sendCommandToStockfish('setoption name Threads value 8')}>8 threads</button>
           <button onClick={() => sendCommandToStockfish('go movetime 10000')}>Calculate Move</button>
           <button onClick={() => sendCommandToStockfish('setoption name Use NNUE value true')}>use nnue</button>
         </div>
