@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Board from './Board'
-import Worker from '../worker?worker'
+import Worker from 'stockfish/src/stockfish-nnue-16.js?worker'
 
 function App() {
   const [worker, setWorker] = useState<Worker | null>(null);
@@ -18,8 +18,8 @@ function App() {
   }, []);
 
   const sendCommandToStockfish = (command: string) => {
-    worker?.postMessage(10);
-    // worker?.postMessage(command);
+    console.log('sending %s', command)
+    worker?.postMessage(command);
   };
 
   return (
@@ -30,7 +30,10 @@ function App() {
         </div>
         <div className='flex-auto h-1/2 flex flex-col'>
           <p>{chessOutput}</p>
-          <button onClick={() => sendCommandToStockfish('go depth 15')}>Calculate Move</button>
+          <button onClick={() => sendCommandToStockfish('uci')}>UCI</button>
+          <button onClick={() => sendCommandToStockfish('setoption name Threads value 8')}>8 threads</button>
+          <button onClick={() => sendCommandToStockfish('go movetime 10000')}>Calculate Move</button>
+          <button onClick={() => sendCommandToStockfish('setoption name Use NNUE value true')}>use nnue</button>
         </div>
       </div>
 
