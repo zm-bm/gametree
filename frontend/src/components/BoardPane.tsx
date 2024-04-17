@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useDimensions } from "../hooks";
 import BaseBoard from "./BaseBoard";
 
-const Board = () => {
+const BoardPane = () => {
   const [ref, dimensions] = useDimensions()
 
   const size = useMemo(() => {
@@ -10,7 +10,7 @@ const Board = () => {
   }, [dimensions])
 
   return (
-    <div className="h-full w-full flex" ref={ref}>
+    <div className="h-full w-full" ref={ref}>
       <div
         data-testid='board-wrapper'
         style={{ height: size, width: size, position: 'relative' }}
@@ -21,4 +21,4 @@ const Board = () => {
   )
 }
 
-export default Board;
+export default BoardPane;

@@ -7,7 +7,7 @@ interface Dimensions {
 
 export const useDimensions = () => {
   const ref = useRef<HTMLDivElement>(null);
-  const [dimensions, setDimensions] = useState({ width: 1, height: 1 });
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
   // Update dimensions function
   const updateDimensions = useCallback(() => {

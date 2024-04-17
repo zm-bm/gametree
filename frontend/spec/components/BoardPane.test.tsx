@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react'
-import Board from '../../src/components/Board'
+import BoardPane from '../../src/components/BoardPane'
 
 vi.mock('../../src/hooks', () => ({
   useDimensions: vi.fn(() => [useRef(), { width: 404, height: 404 }])
@@ -9,7 +9,7 @@ vi.mock('../../src/hooks', () => ({
 
 describe('Board', () => {
   it('renders board wrapper', () => {
-    render(<Board />)
+    render(<BoardPane />)
     
     expect(screen.getByTestId('board-wrapper').style.height).toEqual('400px')
     expect(screen.getByTestId('board-wrapper').style.width).toEqual('400px')

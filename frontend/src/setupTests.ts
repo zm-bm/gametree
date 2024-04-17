@@ -8,6 +8,11 @@ beforeAll(() => {
     unobserve: vi.fn(),
     disconnect: vi.fn(),
   }))
+  vi.mock('stockfish/src/stockfish-nnue-16.js?worker', () => ({
+    default: vi.fn().mockImplementation(() => ({
+      postMessage: vi.fn(),
+    }))
+  }))
 })
 
 afterEach(() => {

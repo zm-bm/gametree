@@ -1,35 +1,30 @@
-import { useEffect, useState } from 'react';
-import Board from './Board'
-import Engine from '../engine';
-
-let engine = new Engine();
+import { useDispatch } from 'react-redux';
+import AnalysisPane from './AnalysisPane'
+import BoardPane from './BoardPane'
+import { AppDispatch } from '../store';
+import { useEffect } from 'react';
+import { onOutput } from '../features/engineSlice';
 
 function App() {
-  const [chessOutput, setChessOutput] = useState('');
+
+  const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-    engine.addDispatch(setChessOutput)
+    dispatch(onOutput('hahahasdfa'))
   }, [])
 
-  const sendCommandToStockfish = (command: string) => {
-    console.log('< %s', command)
-    engine?.postMessage(command);
-  };
-
   return (
-    <main className='h-screen w-screen flex flex-col sm:flex-row'>
-      <div className='flex-auto flex flex-col sm:w-1/2 md:w-2/5 lg:w-1/3'>
-        <div className='flex flex-col p-1'>
-          <Board />
+    <main className='sm:h-screen sm:w-screen flex flex-col sm:flex-row min-h-0'>
+      <div className='flex-auto flex flex-col sm:w-1/2 md:w-2/5 lg:w-1/3 2xl:w-1/4'>
+        <div className='flex-none aspect-w-1 aspect-h-1 w-full p-1'>
+          <BoardPane />
         </div>
-        <div className='flex-auto h-1/2 flex flex-col'>
-          <p>{chessOutput}</p>
-          <button onClick={() => sendCommandToStockfish('go movetime 10000')}>Calculate Move</button>
-          <button onClick={() => sendCommandToStockfish('setoption name Use NNUE value true')}>use nnue</button>
+        <div className='flex-1 flex flex-col min-h-0'>
+          <AnalysisPane />
         </div>
       </div>
 
-      <div className='flex-auto sm:h-screen sm:w-1/2 md:w-3/5 lg:w-2/3'>
+      <div className='flex-auto sm:h-screen sm:w-1/2 md:w-3/5 lg:w-2/3 2xl:w-3/4'>
         <p>tree</p>
       </div>
     </main> 
