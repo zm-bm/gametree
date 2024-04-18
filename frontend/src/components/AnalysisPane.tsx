@@ -1,7 +1,7 @@
 import { useState } from "react";
 import EngineTab from "./EngineTab";
 import { CiPause1, CiPlay1 } from "react-icons/ci";
-import { TOGGLE_ENGINE } from "../features/engineSlice";
+import { TOGGLE_ENGINE } from "../redux/engineSlice";
 
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from '../store';

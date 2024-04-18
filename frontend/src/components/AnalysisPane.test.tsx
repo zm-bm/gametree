@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { screen, fireEvent } from '@testing-library/react'
-import { renderWithProviders } from '../testUtils'
+import { renderWithProviders } from '../test/testUtils'
 import AnalysisPane from './AnalysisPane';
 
 describe('AnalysisPane', () => {

@@ -1,13 +1,15 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
-import engineReducer from './features/engineSlice';
 import { initializeWorker } from './worker';
-import { createWorkerMiddleware } from './storeMiddleware';
+import { createWorkerMiddleware } from './redux/storeMiddleware';
+import engineReducer from './redux/engineSlice';
+import boardReducer from './redux/boardSlice';
 
 const worker = initializeWorker();
 const workerMiddleware = createWorkerMiddleware(worker);
 
 const rootReducer = combineReducers({
   engine: engineReducer,
+  board: boardReducer,
 })
 
 export function setupStore(preloadedState?: Partial<RootState>) {

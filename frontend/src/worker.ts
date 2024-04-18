@@ -1,6 +1,6 @@
 import Stockfish from 'stockfish/src/stockfish-nnue-16.js?worker'
 import { store } from './store';
-import { UCI_ENGINE_OUTPUT } from './features/engineSlice';
+import { UCI_ENGINE_OUTPUT } from './redux/engineSlice';
 
 export const initializeWorker = () => {
   const worker = new Stockfish();
