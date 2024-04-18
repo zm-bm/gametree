@@ -8,7 +8,10 @@ export type MoveNode = {
   children: number[],
 }
 
-export type BasicMove = Pick<Move, 'from'|'to'|'promotion'>;
+export type MoveTarget = {
+  key: number,
+  fen: string
+}
 
 export function getDests(chess: Chess) {
   const dests = new Map();

@@ -3,6 +3,7 @@ import { initializeWorker } from './worker';
 import { createWorkerMiddleware } from './redux/storeMiddleware';
 import engineReducer from './redux/engineSlice';
 import boardReducer from './redux/boardSlice';
+import gameReducer from './redux/gameSlice';
 
 const worker = initializeWorker();
 const workerMiddleware = createWorkerMiddleware(worker);
@@ -10,6 +11,7 @@ const workerMiddleware = createWorkerMiddleware(worker);
 const rootReducer = combineReducers({
   engine: engineReducer,
   board: boardReducer,
+  game: gameReducer,
 })
 
 export function setupStore(preloadedState?: Partial<RootState>) {

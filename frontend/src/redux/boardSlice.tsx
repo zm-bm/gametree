@@ -1,7 +1,7 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { DEFAULT_POSITION, Square } from 'chess.js';
 import * as cg from 'chessground/types';
-import { MAKE_MOVE } from './actions';
+import { GOTO_MOVE, MAKE_MOVE } from './actions';
 
 interface BoardSlice {
   fen: string,
@@ -16,7 +16,7 @@ const initialState: BoardSlice = {
 };
 
 const boardSlice = createSlice({
-  name: 'engine',
+  name: 'board',
   initialState,
   reducers: {
     SET_PROMOTION_TARGET(state, action: PayloadAction<Square[] | null>) {
@@ -26,6 +26,9 @@ const boardSlice = createSlice({
   extraReducers(builder) {
     builder.addCase(MAKE_MOVE, (state, action) => {
       state.fen = action.payload.after
+    })
+    builder.addCase(GOTO_MOVE, (state, action) => {
+      state.fen = action.payload.fen
     })
   },
 });

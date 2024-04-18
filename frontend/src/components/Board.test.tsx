@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { screen } from '@testing-library/react'
-import BoardPane from './BoardPane'
+import BoardPane from './Board'
 import { renderWithProviders } from '../test/testUtils';
 
 vi.mock('../hooks/useDimensions', () => ({

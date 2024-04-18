@@ -1,12 +1,14 @@
 import AnalysisPane from './AnalysisPane'
-import BoardPane from './BoardPane'
+import Board from './Board'
+import BoardControls from './BoardControls'
 
 function App() {
   return (
     <main className='sm:h-screen sm:w-screen flex flex-col sm:flex-row min-h-0'>
       <div className='flex-auto flex flex-col sm:w-1/2 md:w-2/5 lg:w-1/3 2xl:w-1/4'>
         <div className='flex-none aspect-w-1 aspect-h-1 w-full p-1'>
-          <BoardPane />
+          <Board />
+          <BoardControls />
         </div>
         <div className='flex-1 flex flex-col min-h-0'>
           <AnalysisPane />

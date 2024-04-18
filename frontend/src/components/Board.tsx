@@ -11,7 +11,7 @@ import { getDests, isPromotion } from "../chess";
 import { SET_PROMOTION_TARGET } from "../redux/boardSlice";
 import { MAKE_MOVE } from "../redux/actions";
 
-const BoardPane = () => {
+const Board = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [ref, dimensions] = useDimensions()
   const fen = useSelector((state: RootState) => state.board.fen);
@@ -47,7 +47,7 @@ const BoardPane = () => {
   }, [fen, orientation])
 
   return (
-    <div className="h-full w-full" ref={ref}>
+    <div className="w-full" ref={ref}>
       <div
         data-testid='board-wrapper'
         style={{ height: size, width: size, position: 'relative' }}
@@ -58,4 +58,4 @@ const BoardPane = () => {
   )
 }
 
-export default BoardPane;
+export default Board;

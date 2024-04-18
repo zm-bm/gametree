@@ -12,7 +12,7 @@ const tabs: Tab[] = ['game', 'engine'];
 const GameTab = () => <div className="flex-1 h-full">Content of Game tab</div>;
 
 const AnalysisPane = () => {
-  const [activeTab, setActiveTab] = useState<Tab>('engine');
+  const [activeTab, setActiveTab] = useState<Tab>('game');
   const engineRunning = useSelector((state: RootState) => state.engine.running);
   const dispatch = useDispatch<AppDispatch>();
 
@@ -29,6 +29,7 @@ const AnalysisPane = () => {
 
   return (
     <div className="flex flex-col h-full shadow-xl border border-neutral-400 m-1 min-h-0">
+      {/* tabs */}
       <div className="bg-gradient-to-b from-neutral-100 to-neutral-200">
         {tabs.map((tab, index) => (
           <button
@@ -42,14 +43,18 @@ const AnalysisPane = () => {
           </button>
         ))}
       </div>
+
+      {/* controls */}
       <div className="flex items-center border-t border-gray-400 bg-gray-200 p-1 gap-1">
         <button
-          className="border border-gray-400 bg-gradient-to-b from-gray-100 to-gray-200 rounded p-1 shadow-xl"
+          className="btn-primary"
           onClick={() => dispatch(TOGGLE_ENGINE())}
         >
           { engineRunning ? <CiPause1 /> : <CiPlay1 />  }
         </button>
       </div>
+
+      {/* content */}
       <div className="flex-1 min-h-0 border-t border-gray-400 bg-gray-100 overflow-auto">
         { renderTabContent() }
       </div>
