@@ -1,18 +1,7 @@
-import { useDispatch } from 'react-redux';
 import AnalysisPane from './AnalysisPane'
 import BoardPane from './BoardPane'
-import { AppDispatch } from '../store';
-import { useEffect } from 'react';
-import { onOutput } from '../features/engineSlice';
 
 function App() {
-
-  const dispatch = useDispatch<AppDispatch>();
-
-  useEffect(() => {
-    dispatch(onOutput('hahahasdfa'))
-  }, [])
-
   return (
     <main className='sm:h-screen sm:w-screen flex flex-col sm:flex-row min-h-0'>
       <div className='flex-auto flex flex-col sm:w-1/2 md:w-2/5 lg:w-1/3 2xl:w-1/4'>

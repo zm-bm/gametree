@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useDimensions } from "../hooks";
+import { useDimensions } from "../hooks/useDimensions";
 import BaseBoard from "./BaseBoard";
 
 const BoardPane = () => {

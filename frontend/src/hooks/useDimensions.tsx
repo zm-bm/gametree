@@ -9,7 +9,6 @@ export const useDimensions = () => {
   const ref = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
-  // Update dimensions function
   const updateDimensions = useCallback(() => {
     if (ref.current) {
       setDimensions({
@@ -25,18 +24,12 @@ export const useDimensions = () => {
       return;
     }
 
-    // Initialize the dimensions
     updateDimensions();
 
-    // Create a resize observer to listen for changes in size
     const resizeObserver = new ResizeObserver(() => {
       updateDimensions();
     });
-
-    // Start observing the element
     resizeObserver.observe(element);
-
-    // Cleanup function
     return () => {
       resizeObserver.unobserve(element);
     };

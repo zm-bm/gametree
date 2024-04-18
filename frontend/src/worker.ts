@@ -7,13 +7,11 @@ export const initializeWorker = () => {
 
   worker.onmessage = (event) => {
     console.log('> ', event.data);
-    // Dispatch an action to store the result in Redux
     store.dispatch(onOutput(event.data));
   };
 
   worker.onerror = (error) => {
     console.error('Worker error:', error);
-    // Handle errors, possibly dispatch an error action
     store.dispatch(onOutput(error.message));
   };
 

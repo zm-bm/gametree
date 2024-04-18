@@ -1,19 +1,18 @@
-import React from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render } from '@testing-library/react';
-import BaseBoard from '../../src/components/BaseBoard'
+import BaseBoard from './BaseBoard'
 import { Chessground } from 'chessground';
 
 const setMock = vi.fn()
 vi.mock('chessground', () => ({
-  Chessground: vi.fn().mockImplementation((element, config) => ({
+  Chessground: vi.fn().mockImplementation(() => ({
     set: setMock,
   }))
 }));
 
 describe('BaseBoard', () => {
   beforeEach(() => {
-    setMock.mockClear();  // Clear mock history before each test
+    setMock.mockClear();
   });
 
   it('calls chessground', () => {
