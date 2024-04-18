@@ -8,12 +8,11 @@ const EngineTab = () => {
     <div className="p-1 font-mono text-xs leading-tight">
       {engineOutput.slice(0).reverse().map((line, index) => (
         <p key={index}>
-          {line} 
+          {line}
         </p>
       ))}
     </div>
   )
-
 };
 
 export default EngineTab;
