@@ -1,15 +1,14 @@
 import { useState } from "react";
-import EngineTab from "./EngineTab";
 import { CiPause1, CiPlay1 } from "react-icons/ci";
+import { useDispatch, useSelector } from "react-redux";
 import { TOGGLE_ENGINE } from "../redux/engineSlice";
 
-import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from '../store';
+import EngineTab from "./EngineTab";
+import GameTab from "./GameTab";
 
 type Tab = 'game' | 'engine';
 const tabs: Tab[] = ['game', 'engine'];
-
-const GameTab = () => <div className="flex-1 h-full">Content of Game tab</div>;
 
 const AnalysisPane = () => {
   const [activeTab, setActiveTab] = useState<Tab>('game');

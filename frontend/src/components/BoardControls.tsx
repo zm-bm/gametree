@@ -13,40 +13,38 @@ const BoardControls = () => {
   const { undo, redo, rewind, forward } = useMoveActions();
 
   const flip = () => {};
-
-  const handleKeyDown = (event: KeyboardEvent) => {
-    switch (event.key) {
-      case 'ArrowUp':
-        forward();
-        break;
-      case 'ArrowDown':
-        rewind();
-        break;
-      case 'ArrowLeft':
-        undo();
-        break;
-      case 'ArrowRight':
-        redo();
-        break;
-      default:
-        break;
-    }
-  };
-  const debouncedKeyDown = throttle(handleKeyDown, 200);
-
+  
   useEffect(() => {
-    window.addEventListener('keydown', debouncedKeyDown);
+    const handleKeyDown = (event: KeyboardEvent) => {
+      switch (event.key) {
+        case 'ArrowUp':
+          forward();
+          break;
+        case 'ArrowDown':
+          rewind();
+          break;
+        case 'ArrowLeft':
+          undo();
+          break;
+        case 'ArrowRight':
+          redo();
+          break;
+        default:
+          break;
+      }
+    };
 
+    const debouncedKeyDown = throttle(handleKeyDown, 200);
+    window.addEventListener('keydown', debouncedKeyDown);
     return () => {
       window.removeEventListener('keydown', debouncedKeyDown);
     };
-  }, []);
-
+  }, [undo, forward, redo, forward]);
 
   const buttonClass = "btn-primary p-2";
   return (
     <div 
-      className="flex items-center gap-1 p-1"
+      className="flex items-center gap-1 pt-1"
     >
       <button onClick={rewind} className={buttonClass} title='Rewind to first move'>
         <IoIosRewind className='m-auto' />
