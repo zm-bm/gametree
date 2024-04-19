@@ -27,7 +27,7 @@ const AnalysisPane = () => {
   };
 
   return (
-    <div className="flex flex-col h-full shadow-xl border border-neutral-400 m-1 min-h-0">
+    <div className="flex flex-col h-full shadow-md border border-neutral-400 m-1 min-h-0">
       {/* tabs */}
       <div className="bg-gradient-to-b from-neutral-100 to-neutral-200">
         {tabs.map((tab, index) => (
@@ -43,15 +43,6 @@ const AnalysisPane = () => {
         ))}
       </div>
 
-      {/* controls */}
-      <div className="flex items-center border-t border-gray-400 bg-gray-200 p-1 gap-1">
-        <button
-          className="btn-primary"
-          onClick={() => dispatch(TOGGLE_ENGINE())}
-        >
-          { engineRunning ? <CiPause1 /> : <CiPlay1 />  }
-        </button>
-      </div>
 
       {/* content */}
       <div className="flex-1 min-h-0 border-t border-gray-400 bg-gray-100 overflow-auto">

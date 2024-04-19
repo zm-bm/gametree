@@ -7,15 +7,15 @@ interface GameState {
   key: number
 }
 
+export const rootNode = {
+  key: 0,
+  move: null,
+  parent: null,
+  children: [],
+}
+
 const initialState: GameState = {
-  moveTree: [
-    { // root node
-      key: 0,
-      move: null,
-      parent: null,
-      children: [],
-    }
-  ],
+  moveTree: [rootNode],
   key: 0,
 };
 
