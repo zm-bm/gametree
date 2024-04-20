@@ -1,19 +1,13 @@
 import { useState } from "react";
-import { CiPause1, CiPlay1 } from "react-icons/ci";
-import { useDispatch, useSelector } from "react-redux";
-import { TOGGLE_ENGINE } from "../redux/engineSlice";
 
-import { AppDispatch, RootState } from '../store';
 import EngineTab from "./EngineTab";
 import GameTab from "./GameTab";
 
-type Tab = 'game' | 'engine';
-const tabs: Tab[] = ['game', 'engine'];
+type Tab = 'engine' | 'game';
+const tabs: Tab[] = ['engine', 'game'];
 
 const AnalysisPane = () => {
-  const [activeTab, setActiveTab] = useState<Tab>('game');
-  const engineRunning = useSelector((state: RootState) => state.engine.running);
-  const dispatch = useDispatch<AppDispatch>();
+  const [activeTab, setActiveTab] = useState<Tab>('engine');
 
   const renderTabContent = () => {
     switch(activeTab) {
@@ -27,9 +21,9 @@ const AnalysisPane = () => {
   };
 
   return (
-    <div className="flex flex-col h-full shadow-md border border-neutral-400 m-1 min-h-0">
+    <div className="flex flex-col h-full shadow-md border border-gray-400 m-1 min-h-64 max-h-64 sm:min-h-0 sm:max-h-none">
       {/* tabs */}
-      <div className="bg-gradient-to-b from-neutral-100 to-neutral-200">
+      <div className="bg-gradient-to-b from-gray-100 to-gray-200">
         {tabs.map((tab, index) => (
           <button
             key={index}
@@ -43,9 +37,8 @@ const AnalysisPane = () => {
         ))}
       </div>
 
-
       {/* content */}
-      <div className="flex-1 min-h-0 border-t border-gray-400 bg-gray-100 overflow-auto">
+      <div className="flex-1 flex flex-col min-h-0 border-t border-gray-400 bg-gray-100">
         { renderTabContent() }
       </div>
     </div>

@@ -22,6 +22,9 @@ const boardSlice = createSlice({
     SET_PROMOTION_TARGET(state, action: PayloadAction<Square[] | null>) {
       state.promotionTarget = action.payload
     },
+    FLIP_ORIENTATION(state) {
+      state.orientation = state.orientation === 'white' ? 'black' : 'white'
+    },
   },
   extraReducers(builder) {
     builder.addCase(MAKE_MOVE, (state, action) => {
@@ -33,5 +36,5 @@ const boardSlice = createSlice({
   },
 });
 
-export const { SET_PROMOTION_TARGET } = boardSlice.actions;
+export const { SET_PROMOTION_TARGET, FLIP_ORIENTATION } = boardSlice.actions;
 export default boardSlice.reducer;

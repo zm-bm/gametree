@@ -2,13 +2,13 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface EngineState {
   running: boolean,
-  fen: string,
+  locked: boolean,
   output: string[];
 }
 
 const initialState: EngineState = {
   running: false,
-  fen: 'startpos',
+  locked: false,
   output: [],
 };
 
@@ -18,6 +18,9 @@ const engineSlice = createSlice({
   reducers: {
     TOGGLE_ENGINE(state) {
       state.running = !state.running;
+    },
+    TOGGLE_ENGINE_LOCK(state) {
+      state.locked = !state.locked;
     },
     UCI_ENGINE_OUTPUT(state, action: PayloadAction<string>) {
       state.output = state.output.concat([action.payload]);

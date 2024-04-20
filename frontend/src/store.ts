@@ -6,6 +6,7 @@ import boardReducer from './redux/boardSlice';
 import gameReducer from './redux/gameSlice';
 
 const worker = initializeWorker();
+(window as any).worker = worker
 const workerMiddleware = createWorkerMiddleware(worker);
 
 const rootReducer = combineReducers({
