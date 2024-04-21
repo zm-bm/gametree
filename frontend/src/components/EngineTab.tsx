@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { RootState } from '../store';
-import AnalysisControls from "./AnalysisControls";
+import EngineControls from "./EngineControls";
 
 const EngineTab = () => {
   const engineOutput = useSelector((state: RootState) => state.engine.output);
@@ -14,7 +14,7 @@ const EngineTab = () => {
           </p>
         ))}
       </div>
-      <AnalysisControls />
+      <EngineControls />
     </>
   )
 };

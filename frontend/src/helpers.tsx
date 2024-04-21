@@ -11,3 +11,19 @@ export function throttle<T extends (...args: any[]) => any>(func: T, limit: numb
     }
   };
 }
+
+export const recommendedThreads = () => {
+  var rec = navigator.hardwareConcurrency - (navigator.hardwareConcurrency % 2 ? 0 : 1)
+  rec = Math.max(rec, 1)
+  return Math.min(rec, 32)
+}
+
+export const parseSpeed = (line: string) => {
+  const speed = line.match(/nps (\w+)/);
+  return speed ? +speed[1] : undefined;
+}
+
+export const setOption = (name: string, value: string | number) =>
+  `setoption name ${name} value ${value}`
+
+export const setPos = (fen: string) => `position fen ${fen}`

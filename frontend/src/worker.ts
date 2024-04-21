@@ -1,6 +1,6 @@
 import Stockfish from 'stockfish/src/stockfish-nnue-16.js?worker'
 import { store } from './store';
-import { UCI_ENGINE_OUTPUT } from './redux/engineSlice';
+import { UCI_ENGINE_ERROR, UCI_ENGINE_OUTPUT } from './redux/engineSlice';
 
 export const initializeWorker = () => {
   const worker = new Stockfish();
@@ -12,7 +12,7 @@ export const initializeWorker = () => {
 
   worker.onerror = (error) => {
     console.error('Worker error:', error);
-    store.dispatch(UCI_ENGINE_OUTPUT(error.message));
+    store.dispatch(UCI_ENGINE_ERROR());
   };
 
   worker.postMessage('uci')

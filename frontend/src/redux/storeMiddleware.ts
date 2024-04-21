@@ -1,32 +1,39 @@
 import { Middleware } from 'redux';
+import { setOption, setPos } from '../helpers';
+import { worker } from '../store'
 
-export const createWorkerMiddleware = (worker: Worker): Middleware => {
+export const createWorkerMiddleware = (): Middleware => {
   const write = (cmd: string) => {
     console.log('< ', cmd);
     worker.postMessage(cmd);
   }
 
-  const setPos = (fen: string) => {
-    write(`position fen ${fen}`)
-  }
-  
   return (store) => (next) => (action: any) => {
+    const state = store.getState()
 
     if (action.type === 'engine/TOGGLE_ENGINE') {
-      const state = store.getState()
-
       let cmd = state.engine.running
         ? 'stop'
         : 'go inifinite';
       write(cmd)
     }
 
-    if (action.type === 'common/MAKE_MOVE') {
-      const state = store.getState()
+    if (action.type === 'engine/SET_HASH') {
+      write(setOption('Hash', action.payload))
+    }
 
+    if (action.type === 'engine/SET_THREADS') {
+      write(setOption('Threads', action.payload))
+    }
+
+    if (action.type === 'engine/SET_LINES') {
+      write(setOption('MultiPV', action.payload))
+    }
+
+    if (action.type === 'common/MAKE_MOVE') {
       if (!state.engine.locked) {
         write('stop')
-        setPos(action.payload.after)
+        write(setPos(action.payload.after))
         if (state.engine.running) {
           write('go infinite')
         }
@@ -34,11 +41,9 @@ export const createWorkerMiddleware = (worker: Worker): Middleware => {
     }
 
     if (action.type === 'common/GOTO_MOVE') {
-      const state = store.getState()
-
       if (!state.engine.locked) {
         write('stop')
-        setPos(action.payload.fen)
+        write(setPos(action.payload.fen))
         if (state.engine.running) {
           write('go infinite')
         }

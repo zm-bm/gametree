@@ -106,7 +106,6 @@ const BoardControls = () => {
           </div>
         </div>
       </div>
-      
     </div>
   );
 }
