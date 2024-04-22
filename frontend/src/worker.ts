@@ -12,9 +12,8 @@ export const initializeWorker = () => {
 
   worker.onerror = (error) => {
     console.error('Worker error:', error);
-    store.dispatch(UCI_ENGINE_ERROR());
+    store.dispatch(UCI_ENGINE_ERROR(error.message));
   };
 
-  worker.postMessage('uci')
   return worker;
 };
