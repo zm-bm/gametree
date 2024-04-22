@@ -4,6 +4,7 @@ import MoveButton from "./MoveButton";
 import { AppDispatch, RootState } from "../store";
 import { GOTO_MOVE } from "../redux/actions";
 import { DEFAULT_POSITION } from "chess.js";
+import Fen from "./Fen";
 
 
 const GameTab = () => {
@@ -65,9 +66,12 @@ const GameTab = () => {
 
 
   return (
-    <div className="py-1 font-mono text-xs leading-tight">
-      { buildHistory(moveTree[0].children) }
-    </div>
+    <>
+      <div className="flex-1 p-1 font-mono text-xs leading-tight overflow-auto">
+        { buildHistory(moveTree[0].children) }
+      </div>
+      <Fen />
+    </>
   );
 }
 
