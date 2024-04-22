@@ -1,53 +1,52 @@
 import { Middleware } from 'redux';
 import { setOption, setPos } from '../helpers';
-import { worker } from '../store'
+import { restartWorker, worker, write } from '../worker';
+import { RootState } from '../store';
 
 export const createWorkerMiddleware = (): Middleware => {
-  const write = (cmd: string) => {
-    console.log('< ', cmd);
-    worker.postMessage(cmd);
+
+  const updateEngine = (cmd: string, state: RootState) => {
+    if (state.engine.running) {
+      write('stop')
+    }
+    write(cmd)
+    if (state.engine.running) {
+      write('go infinite')
+    }
   }
 
   return (store) => (next) => (action: any) => {
     const state = store.getState()
 
+    if (action.type === 'engine/UCI_ENGINE_ERROR') {
+      if (action.payload.includes('OOM')) {
+        worker.terminate()
+        restartWorker({ ...state.engine, threads: state.engine.threads / 2 })
+      }
+    }
+
     if (action.type === 'engine/TOGGLE_ENGINE') {
-      let cmd = state.engine.running
-        ? 'stop'
-        : 'go inifinite';
-      write(cmd)
+      write(state.engine.running ? 'stop' : 'go inifinite')
     }
 
     if (action.type === 'engine/SET_HASH') {
-      write(setOption('Hash', action.payload))
+      updateEngine(setOption('Hash', action.payload), state)
     }
 
     if (action.type === 'engine/SET_THREADS') {
-      write(setOption('Threads', action.payload))
+      updateEngine(setOption('Threads', action.payload), state)
     }
 
     if (action.type === 'engine/SET_LINES') {
-      write(setOption('MultiPV', action.payload))
+      updateEngine(setOption('MultiPV', action.payload), state)
     }
 
     if (action.type === 'common/MAKE_MOVE') {
-      if (!state.engine.locked) {
-        write('stop')
-        write(setPos(action.payload.after))
-        if (state.engine.running) {
-          write('go infinite')
-        }
-      }
+      updateEngine(setPos(action.payload.after), state)
     }
 
     if (action.type === 'common/GOTO_MOVE') {
-      if (!state.engine.locked) {
-        write('stop')
-        write(setPos(action.payload.fen))
-        if (state.engine.running) {
-          write('go infinite')
-        }
-      }
+      updateEngine(setPos(action.payload.fen), state)
     }
 
     return next(action);

@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { parseSpeed } from '../helpers';
-import { restartWorker, worker } from '../store';
 
 export interface EngineState {
   running: boolean,
@@ -35,11 +34,10 @@ const engineSlice = createSlice({
       state.locked = !state.locked;
     },
     UCI_ENGINE_ERROR(state, action: PayloadAction<string>) {
-      worker.terminate()
+      console.error(action.payload)
       if (action.payload.includes('OOM')) {
-        window.alert('Engine failure' + action.payload)
+        window.alert(`Engine failure: ${action.payload}`)
         state.threads /= 2
-        restartWorker(state)
       }
     },
     UCI_ENGINE_OUTPUT(state, action: PayloadAction<string>) {
@@ -72,6 +70,7 @@ const engineSlice = createSlice({
     },
     SET_LINES(state, action: PayloadAction<number>) {
       state.lines = action.payload
+      state.output = []
     },
   },
 });

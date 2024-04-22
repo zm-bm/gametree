@@ -44,7 +44,7 @@ const EngineControls = () => {
         <option value="2">2 CPU</option>
         <option value="4">4 CPU</option>
         <option value="8">8 CPU</option>
-        <option value="16">16 CPU</option>
+        {/* <option value="16">16 CPU</option> */}
       </select>
       <div className="btn-primary py-0" title="# of engine variations">
         <label className="overflow-hidden whitespace-nowrap" htmlFor="lines">Lines: </label>

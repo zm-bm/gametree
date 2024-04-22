@@ -1,17 +1,10 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { createWorkerMiddleware } from './redux/storeMiddleware';
-import { initializeWorker } from './worker';
-import engineReducer, { EngineState } from './redux/engineSlice';
+import engineReducer from './redux/engineSlice';
 import boardReducer from './redux/boardSlice';
 import gameReducer from './redux/gameSlice';
-import { setOption } from './helpers';
+import { initEngineOptions } from './worker';
 
-export var worker = initializeWorker();
-(window as any).worker = worker
-export function restartWorker(state: EngineState) {
-  worker = initializeWorker()
-  initEngineOptions(worker, state)
-}
 const workerMiddleware = createWorkerMiddleware();
 
 const rootReducer = combineReducers({
@@ -29,15 +22,7 @@ export function setupStore(preloadedState?: Partial<RootState>) {
   })
 }
 export const store = setupStore()
-
-const initEngineOptions = (worker: Worker, state: EngineState) => {
-  worker.postMessage('uci')
-  worker.postMessage(setOption('Use NNUE', 'true'))
-  worker.postMessage(setOption('Hash', 1))
-  worker.postMessage(setOption('Threads', state.threads))
-  worker.postMessage(setOption('MultiPV', state.lines))
-}
-initEngineOptions(worker, store.getState().engine)
+initEngineOptions(store.getState().engine)
 
 export type RootState = ReturnType<typeof rootReducer>;
 export type AppStore = ReturnType<typeof setupStore>
