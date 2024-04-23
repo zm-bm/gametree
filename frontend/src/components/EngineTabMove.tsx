@@ -4,7 +4,9 @@ import { moveNumFromFen } from "../chess";
 
 interface Props {
   onHover: React.MouseEventHandler<HTMLButtonElement>,
+  onClick: React.MouseEventHandler<HTMLButtonElement>,
   move: Move,
+  moves: string[],
   showMoveNum: boolean,
 }
 
@@ -12,9 +14,9 @@ const EngineTabMove = (props: Props) => {
   return (
     <button
       data-fen={props.move.after}
-      data-move={props.move.lan}
+      data-moves={props.moves}
       onMouseEnter={props.onHover}
-      onClick={() => {}}
+      onClick={props.onClick}
       className="hover:text-sky-600"
     >
       <MoveText

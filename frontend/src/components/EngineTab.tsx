@@ -1,36 +1,56 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import EngineControls from "./EngineControls";
-import { RootState } from '../store';
+import { AppDispatch, RootState } from '../store';
 import { formatScore } from "../lib/helpers";
 import { useCallback, useState } from "react";
 import EngineTabBoard from "./EngineTabBoard";
 import EngineTabHeader from "./EngineTabHeader";
-import { Square } from "chess.js";
+import { Chess, Square } from "chess.js";
 import EngineTabMove from "./EngineTabMove";
+import { MAKE_MOVE } from "../redux/actions";
 
 const EngineTab = () => {
+  const dispatch = useDispatch<AppDispatch>()
   const infos = useSelector((state: RootState) => state.engine.infos);
+  const fen = useSelector((state: RootState) => state.engine.fen)
+  const boardFen = useSelector((state: RootState) => state.board.fen)
   const orientation = useSelector((state: RootState) => state.board.orientation);
   const [isHovered, setIsHovered] = useState(false);
   const [hoverFen, setHoverFen] = useState<string>();
   const [lastMove, setLastMove] = useState<Square[]>([]);
   const [coords, setCoords] = useState({ top: 0, left: 0 });
 
-  const fen = useSelector((state: RootState) => state.engine.fen)
 
-  const onHover: React.MouseEventHandler<HTMLButtonElement> = useCallback(
-    (e) => {
-      setIsHovered(true)
-      const dataFen = e.currentTarget.getAttribute('data-fen');
-      if (dataFen) {
-        setHoverFen(dataFen);
+  const onHover: React.MouseEventHandler<HTMLButtonElement> = useCallback((e) => {
+    setIsHovered(true)
+    const dataFen = e.currentTarget.getAttribute('data-fen');
+    if (dataFen)
+      setHoverFen(dataFen);
+    const dataMoves = e.currentTarget.getAttribute('data-moves');
+    if (dataMoves) {
+      const lastMove = dataMoves.at(-1)
+      if (lastMove)
+        setLastMove([lastMove.substring(0, 2) as Square,
+                     lastMove.substring(2, 4) as Square])
+    }
+  }, [fen]);
+
+  const onClick: React.MouseEventHandler<HTMLButtonElement> = useCallback((e) => {
+    const moves = e.currentTarget.getAttribute('data-moves');
+    if (moves) {
+      const chess = new Chess(boardFen);
+      try {
+        moves.split(',').forEach(mv => {
+          if (mv) {
+            const move = chess.move(mv);
+            dispatch(MAKE_MOVE(move))
+          }
+        })
+      } catch (error) {
+        console.warn(error);
       }
-      const dataMove = e.currentTarget.getAttribute('data-move');
-      if (dataMove) {
-        setLastMove([dataMove.substring(0, 2) as Square,
-                     dataMove.substring(2, 4) as Square])
-      }
-    }, [fen]);
+    }
+  }, [boardFen])
 
   const onMouseEnter = useCallback(() => setIsHovered(true), []);
   const onMouseMove = useCallback((e: any) => setCoords({ top: e.pageY-245, left: e.pageX+5 }), []);
@@ -62,7 +82,9 @@ const EngineTab = () => {
                         <EngineTabMove
                           key={i}
                           onHover={onHover}
+                          onClick={onClick}
                           move={move}
+                          moves={info.pv.slice(0, i+1).map(m => m.lan)}
                           showMoveNum={i === 0 || move.color === 'w'}
                         />
                         &#32;
