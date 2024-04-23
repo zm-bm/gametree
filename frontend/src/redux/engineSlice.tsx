@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { parseCp, parseDepth, parseHashfull, parseMate, parseMoves, parseMultiPV, parseSelDepth, parseSpeed, parseTBHits, parseTime } from "../lib/parsers";
 import { GOTO_MOVE, MAKE_MOVE } from './actions';
-import { DEFAULT_POSITION } from 'chess.js';
+import { Chess, DEFAULT_POSITION, Move } from 'chess.js';
 
 export type Info = {
   depth: number,
@@ -9,7 +9,7 @@ export type Info = {
   cp?: number
   mate?: number,
   multipv: number,
-  pv: string[],
+  pv: Move[],
 }
 
 export interface EngineState {
@@ -71,17 +71,20 @@ const engineSlice = createSlice({
           const tbhits = parseTBHits(action.payload)
           tbhits && (state.tbhits = tbhits)
 
-          if (action.payload.includes(' pv ')) {
+          if (action.payload.includes(' pv ') && !action.payload.includes('upperbound') && !action.payload.includes('lowerbound')) {
+            const moves = parseMoves(action.payload)
+            const chess = new Chess(state.fen)
+            const pv = moves.map(mv => chess.move(mv))
+
             const info = {
               depth: parseDepth(action.payload),
               seldepth: parseSelDepth(action.payload),
               cp: parseCp(action.payload, 'w'),
               mate: parseMate(action.payload, 'w'),
               multipv: parseMultiPV(action.payload),
-              pv: parseMoves(action.payload),
+              pv,
             }
 
-            console.log(info)
             if (state.lines === 1) {
               state.infos = state.infos.concat([info]);
             } else {
@@ -112,12 +115,17 @@ const engineSlice = createSlice({
   },
   extraReducers(builder) {
     builder.addCase(MAKE_MOVE, (state, action) => {
-      if (state.running)
+      if (state.running) {
+        state.infos = []
         state.fen = action.payload.after
+      }
     })
     builder.addCase(GOTO_MOVE, (state, action) => {
-      if (state.running)
+      if (state.running) {
+        state.infos = []
         state.fen = action.payload.fen
+      }
+
     })
   },
 });

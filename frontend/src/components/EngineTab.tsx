@@ -2,11 +2,10 @@ import { useSelector } from "react-redux";
 import EngineControls from "./EngineControls";
 import { RootState } from '../store';
 import { formatScore } from "../lib/helpers";
-import { colorFromFen, moveNumFromFen } from "../chess";
 import { useCallback, useState } from "react";
 import EngineTabBoard from "./EngineTabBoard";
 import EngineTabHeader from "./EngineTabHeader";
-import { Chess, Square } from "chess.js";
+import { Square } from "chess.js";
 import EngineTabMove from "./EngineTabMove";
 
 const EngineTab = () => {
@@ -22,18 +21,14 @@ const EngineTab = () => {
   const onHover: React.MouseEventHandler<HTMLButtonElement> = useCallback(
     (e) => {
       setIsHovered(true)
-      const dataMoves = e.currentTarget.getAttribute('data-moves');
-      if (dataMoves) {
-        const chess = new Chess(fen);
-        const moves = dataMoves.split(',');
-        try {
-          moves.forEach(mv => mv && chess.move(mv));
-          setHoverFen(chess.fen());
-          const last = moves.at(-1)
-          setLastMove(last ? [last.substring(0, 2) as Square, last.substring(2, 4) as Square] : [])
-        } catch (error) {
-          console.log(error);
-        }
+      const dataFen = e.currentTarget.getAttribute('data-fen');
+      if (dataFen) {
+        setHoverFen(dataFen);
+      }
+      const dataMove = e.currentTarget.getAttribute('data-move');
+      if (dataMove) {
+        setLastMove([dataMove.substring(0, 2) as Square,
+                     dataMove.substring(2, 4) as Square])
       }
     }, [fen]);
 
@@ -52,8 +47,6 @@ const EngineTab = () => {
         </div>
         {
           infos.slice(0).reverse().map((info, index) => {
-            let isWhitesTurn = colorFromFen(fen) === 'w';
-            let moveNum = +(moveNumFromFen(fen) || '1');
             return (
               <div className="flex" key={index}>
                 <span className="w-12">{info.depth}/{info.seldepth}</span>
@@ -64,22 +57,17 @@ const EngineTab = () => {
                   onMouseLeave={onMouseLeave}
                 >
                   {
-                    info.pv.map((mv, i) => {
-                      const move = (
+                    info.pv.map((move, i) => (
+                      <>
                         <EngineTabMove
                           key={i}
                           onHover={onHover}
-                          moves={info.pv.slice(0, i+1)}
-                          move={mv}
-                          moveNum={moveNum}
-                          isWhitesTurn={isWhitesTurn}
-                          showMoveNum={i === 0 || isWhitesTurn}
+                          move={move}
+                          showMoveNum={i === 0 || move.color === 'w'}
                         />
-                      );
-                      if (!isWhitesTurn) moveNum += 1;
-                      isWhitesTurn = !isWhitesTurn;
-                      return move
-                    })
+                        &#32;
+                      </>
+                    ))
                   }
                 </div>
               </div>

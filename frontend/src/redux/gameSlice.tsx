@@ -1,8 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { MoveNode } from '../chess';
 import { GOTO_MOVE, MAKE_MOVE } from './actions';
+import { Move } from 'chess.js';
 
 interface GameState {
+  moveList: Move[],
   moveTree: MoveNode[],
   key: number
 }
@@ -15,6 +17,7 @@ export const rootNode = {
 }
 
 const initialState: GameState = {
+  moveList: [],
   moveTree: [rootNode],
   key: 0,
 };
@@ -27,6 +30,14 @@ const gameSlice = createSlice({
   extraReducers(builder) {
     builder.addCase(GOTO_MOVE, (state, action) => {
       state.key = action.payload.key
+
+      // update move list
+      var cur = state.moveTree[state.key];
+      state.moveList = []
+      while (cur.parent !== null && cur.move) {
+        state.moveList.unshift(cur.move)
+        cur = state.moveTree[cur.parent]
+      }
     })
     builder.addCase(MAKE_MOVE, (state, action) => {
       const prev = state.moveTree[state.key];
@@ -34,6 +45,7 @@ const gameSlice = createSlice({
         (ch: number) => state.moveTree[ch].move?.lan === action.payload.lan
       )
 
+      // update move tree
       if (existingKey === undefined) {
         // if new move, add to move tree + update key
         const key = state.moveTree.length
@@ -49,6 +61,9 @@ const gameSlice = createSlice({
         // if previously made move, update key
         state.key = existingKey
       }
+
+      // update move list
+      state.moveList.push(action.payload)
     })
   },
 });
