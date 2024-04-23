@@ -17,7 +17,7 @@ const EngineTab = () => {
   const [lastMove, setLastMove] = useState<Square[]>([]);
   const [coords, setCoords] = useState({ top: 0, left: 0 });
 
-  const fen = useSelector((state: RootState) => state.board.fen)
+  const fen = useSelector((state: RootState) => state.engine.fen)
 
   const onHover: React.MouseEventHandler<HTMLButtonElement> = useCallback(
     (e) => {

@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { parseCp, parseDepth, parseHashfull, parseMate, parseMoves, parseMultiPV, parseSelDepth, parseSpeed, parseTBHits, parseTime } from "../lib/parsers";
 import { GOTO_MOVE, MAKE_MOVE } from './actions';
+import { DEFAULT_POSITION } from 'chess.js';
 
 export type Info = {
   depth: number,
@@ -12,6 +13,7 @@ export type Info = {
 }
 
 export interface EngineState {
+  fen: string,
   running: boolean,
   nnue: boolean,
   hash: number,
@@ -25,6 +27,7 @@ export interface EngineState {
 }
 
 const initialState: EngineState = {
+  fen: DEFAULT_POSITION,
   running: false,
   nnue: false,
   hash: 16,
@@ -41,9 +44,11 @@ const engineSlice = createSlice({
   name: 'engine',
   initialState,
   reducers: {
-    TOGGLE_ENGINE(state) {
-      if (!state.running)
+    TOGGLE_ENGINE(state, action: PayloadAction<string>) {
+      if (!state.running) {
         state.infos = []
+        state.fen = action.payload
+      } 
       state.running = !state.running;
     },
     UCI_ENGINE_ERROR(state, action: PayloadAction<string>) {
@@ -97,23 +102,22 @@ const engineSlice = createSlice({
     },
     SET_HASH(state, action: PayloadAction<number>) {
       state.hash = action.payload
-      state.infos = []
     },
     SET_THREADS(state, action: PayloadAction<number>) {
       state.threads = action.payload
-      state.infos = []
     },
     SET_LINES(state, action: PayloadAction<number>) {
       state.lines = action.payload
-      state.infos = []
     },
   },
   extraReducers(builder) {
-    builder.addCase(GOTO_MOVE, (state) => {
-      state.infos = []
+    builder.addCase(MAKE_MOVE, (state, action) => {
+      if (state.running)
+        state.fen = action.payload.after
     })
-    builder.addCase(MAKE_MOVE, (state) => {
-      state.infos = []
+    builder.addCase(GOTO_MOVE, (state, action) => {
+      if (state.running)
+        state.fen = action.payload.fen
     })
   },
 });
