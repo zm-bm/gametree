@@ -10,7 +10,7 @@ const MoveText = (props: Props) => {
     <>
       {
         props.showMoveNum &&
-        <span className=''>
+        <span>
           {props.moveNum}{props.isWhitesTurn ?  '.' : <>&#8230;</>}
         </span>
       }
