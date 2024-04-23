@@ -28,7 +28,7 @@ const EngineTab = () => {
       setHoverFen(dataFen);
     const dataMoves = e.currentTarget.getAttribute('data-moves');
     if (dataMoves) {
-      const lastMove = dataMoves.at(-1)
+      const lastMove = dataMoves.split(',').at(-1)
       if (lastMove)
         setLastMove([lastMove.substring(0, 2) as Square,
                      lastMove.substring(2, 4) as Square])
@@ -53,7 +53,7 @@ const EngineTab = () => {
   }, [boardFen])
 
   const onMouseEnter = useCallback(() => setIsHovered(true), []);
-  const onMouseMove = useCallback((e: any) => setCoords({ top: e.pageY-245, left: e.pageX+5 }), []);
+  const onMouseMove = useCallback((e: any) => setCoords({ top: e.pageY-250, left: e.pageX+5 }), []);
   const onMouseLeave = useCallback(() => setIsHovered(false), []);
 
   return (

@@ -14,10 +14,10 @@ const EngineTabMove = (props: Props) => {
   return (
     <button
       data-fen={props.move.after}
-      data-moves={props.moves}
+      data-moves={props.moves.join(',')}
       onMouseEnter={props.onHover}
       onClick={props.onClick}
-      className="hover:text-sky-600"
+      className="hover:text-sky-600 hover:underline"
     >
       <MoveText
         moveNum={moveNumFromFen(props.move.before)}
