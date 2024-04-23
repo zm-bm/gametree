@@ -7,7 +7,7 @@ import {
 } from "react-icons/io";
 import { FaChess } from "react-icons/fa";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { throttle } from "../helpers";
+import { throttle } from "../lib/helpers";
 import { useMoveActions } from "../hooks/moveHooks";
 import { IoSettingsSharp } from "react-icons/io5";
 import { useDispatch } from "react-redux";

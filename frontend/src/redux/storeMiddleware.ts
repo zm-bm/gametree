@@ -1,5 +1,5 @@
 import { Middleware } from 'redux';
-import { setOption, setPos } from '../helpers';
+import { setOption, setPos } from '../lib/helpers';
 import { restartWorker, worker, write } from '../worker';
 import { RootState } from '../store';
 

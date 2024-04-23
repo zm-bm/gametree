@@ -1,12 +1,8 @@
 import Board from './Board'
 import BoardControls from './BoardControls'
 import AnalysisPane from './AnalysisPane'
-import { useSelector } from 'react-redux'
-import { RootState } from '../store'
 
 function App() {
-  const nps = useSelector((state: RootState) => state.engine.nps)
-
   return (
     <main className='sm:h-screen sm:w-screen flex flex-col sm:flex-row min-h-0'>
       <div className='flex-auto flex flex-col sm:w-1/2 md:w-2/5 lg:w-1/3 2xl:w-1/4'>
@@ -20,7 +16,6 @@ function App() {
       </div>
       <div className='flex-auto sm:h-screen sm:w-1/2 md:w-3/5 lg:w-2/3 2xl:w-3/4'>
         <p>tree</p>
-        <p>nps:{nps}</p>
       </div>
     </main> 
   )
