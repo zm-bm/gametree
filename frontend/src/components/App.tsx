@@ -1,6 +1,7 @@
 import Board from './Board'
 import BoardControls from './BoardControls'
 import AnalysisPane from './AnalysisPane'
+import { Tree } from './Tree'
 
 function App() {
   return (
@@ -15,7 +16,7 @@ function App() {
         </div>
       </div>
       <div className='flex-auto sm:h-screen sm:w-1/2 md:w-3/5 lg:w-2/3 2xl:w-3/4'>
-        <p>tree</p>
+        <Tree />
       </div>
     </main> 
   )

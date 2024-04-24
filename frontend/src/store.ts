@@ -26,7 +26,7 @@ export function setupStore(preloadedState?: Partial<RootState>) {
 export const store = setupStore()
 initEngineOptions(store.getState().engine)
 
-store.dispatch(fetchOpenings('./eco.json'))
+store.dispatch(fetchOpenings('./eco_nested.json'))
 
 export type RootState = ReturnType<typeof rootReducer>;
 export type AppStore = ReturnType<typeof setupStore>

@@ -1,10 +1,7 @@
 import { createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 
 export interface ECO {
-  [moveSeq: string]: {
-    name: string,
-    code: string,
-  }
+  [key: string]: string | ECO,
 }
 
 export interface OpeningsState {

@@ -24,9 +24,9 @@ const AnalysisPane = () => {
     <div className="flex flex-col h-full shadow-md border border-gray-400 m-1 min-h-64 max-h-64 sm:min-h-0 sm:max-h-none">
       {/* tabs */}
       <div className="bg-gradient-to-b from-gray-100 to-gray-200">
-        {tabs.map((tab, index) => (
+        {tabs.map((tab) => (
           <button
-            key={index}
+            key={tab}
             onClick={() => setActiveTab(tab)}
             className={`pt-1 px-4 text-gray-700 hover:text-gray-950 focus:outline-none font-mono border-b-2 ${
               activeTab === tab ? 'border-gray-900' : 'border-transparent'
