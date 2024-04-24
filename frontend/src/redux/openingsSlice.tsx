@@ -8,7 +8,8 @@ export interface ECO {
 }
 
 export interface OpeningsState {
-  openings: ECO,
+  eco: ECO,
+  keys: string[],
   status: 'idle' | 'loading' | 'succeeded' | 'failed',
 }
 
@@ -32,7 +33,8 @@ export const fetchOpenings = createAsyncThunk<ECO, string, { rejectValue: string
 );
 
 const initialState: OpeningsState = {
-  openings: {},
+  eco: {},
+  keys: [],
   status: 'idle',
 }
 
@@ -46,7 +48,8 @@ const openingsSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(fetchOpenings.fulfilled, (state, action) => {
-        state.openings = action.payload;
+        state.eco = action.payload;
+        state.keys = Object.keys(action.payload)
         state.status = 'succeeded';
       })
       .addCase(fetchOpenings.rejected, (state, action) => {
