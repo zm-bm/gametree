@@ -20,22 +20,24 @@ function MoveButton(props: MoveProps) {
   const moveNum = moveNumFromFen(fen);
 
   return (
-    <button
-      data-key={props.moveKey}
-      className={`-m-1 hover:text-sky-600 rounded cursor-pointer focus:outline-none ${
-        key === props.moveKey ? 'font-bold' : ''}
-      `}
-      onClick={props.onClick}
-    >
-      &nbsp;
-      <MoveText
-        moveTxt={props.move.san}
-        moveNum={moveNum}
-        isWhitesTurn={isWhitesTurn}
-        showMoveNum={isWhitesTurn || props.isStartOfVariation}
-      />
-      &nbsp;
-    </button>
+    <>
+      <button
+        data-key={props.moveKey}
+        className={`hover:text-sky-600 hover:underline cursor-pointer focus:outline-none ${
+          key === props.moveKey ? 'font-bold' : ''}
+        `}
+        onClick={props.onClick}
+      >
+        &#32;
+        <MoveText
+          moveTxt={props.move.san}
+          moveNum={moveNum}
+          isWhitesTurn={isWhitesTurn}
+          showMoveNum={isWhitesTurn || props.isStartOfVariation}
+        />
+      </button>
+      &#32;
+    </>
   );
 };
 

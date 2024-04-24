@@ -31,7 +31,7 @@ const initialState: EngineState = {
   running: false,
   nnue: false,
   hash: 16,
-  threads: 8,
+  threads: 4,
   lines: 1,
   infos: [],
   time: undefined,

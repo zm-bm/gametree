@@ -13,6 +13,7 @@ import { IoSettingsSharp } from "react-icons/io5";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../store";
 import { FLIP_ORIENTATION } from "../redux/boardSlice";
+import ECODisplay from "./ECODisplay";
 
 const BoardControls = () => {
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -106,6 +107,8 @@ const BoardControls = () => {
           </div>
         </div>
       </div>
+
+      <ECODisplay />
     </div>
   );
 }
