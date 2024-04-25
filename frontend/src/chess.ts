@@ -14,7 +14,7 @@ export type MoveTarget = {
 }
 
 export type ECO = {
-  ECO?: string,
+  code?: string,
   name?: string,
   [key: string]: string | ECO | undefined,
 }
@@ -22,7 +22,8 @@ export type ECO = {
 export type TreeNode = {
   name: string,
   attributes?: {
-    ECO?: string,
+    code?: string,
+    move?: string,
   },
   children?: TreeNode[],
 }
@@ -57,18 +58,19 @@ export const piecesFromFen = (fen: string) => {
   return fen.split(' ').at(0) || '';
 }
 
-export const buildOpeningTree = (input: ECO, altName: string = 'start') => {
+export const buildOpeningTree = (input: ECO, move: string = '', prev: string = '') => {
   const result: TreeNode = {
-    name: input.name || altName,
+    name: input.name || `${prev} ${move}`,
     attributes: {
-      ECO: input.ECO,
+      code: input.code,
+      move,
     },
     children: [],
   };
 
   Object.keys(input).forEach(key => {
-    if (key !== "ECO" && key !== "name") {
-      const childNode = buildOpeningTree(input[key] as ECO, result.name+' '+key);
+    if (key !== "code" && key !== "name") {
+      const childNode = buildOpeningTree(input[key] as ECO, key, result.name);
       result.children!.push(childNode);
     }
   });

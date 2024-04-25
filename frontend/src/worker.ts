@@ -5,7 +5,6 @@ import { setOption } from './lib/helpers';
 
 export const initializeWorker = () => {
   const worker = new Stockfish();
-  worker.addEventListener('error', (e) => { console.log(e) })
 
   worker.onmessage = (event) => {
     console.log('> ', event.data);

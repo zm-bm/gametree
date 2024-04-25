@@ -3,33 +3,28 @@ import { Group } from '@visx/group';
 import { Tree, hierarchy } from '@visx/hierarchy';
 import { HierarchyPointNode } from '@visx/hierarchy/lib/types';
 import { LinkHorizontal } from '@visx/shape';
-import { LinearGradient } from '@visx/gradient';
+import { useParentSize } from '@visx/responsive';
 import { TreeNode } from "../../chess";
 import { useContext } from "react";
-import { OpeningsContext } from '../../main'
+import { OpeningsContext } from '../App';
 
-const peach = '#fd9b93';
-const pink = '#fe6e9e';
-const blue = '#03c0dc';
-const green = '#26deb0';
-const plum = '#71248e';
-const lightpurple = '#374469';
+const fontFamily = 'monospace'
 const white = '#ffffff';
-export const background = '#272b4d';
+const black = '#000000';
 
 type HierarchyNode = HierarchyPointNode<TreeNode>;
 
 function RootNode({ node }: { node: HierarchyNode }) {
   return (
     <Group top={node.x} left={node.y}>
-      <circle r={12} fill="url('#lg')" />
+      <circle r={12} fill={white} stroke='black' />
       <text
         dy=".33em"
         fontSize={9}
-        fontFamily="Arial"
+        fontFamily={fontFamily}
         textAnchor="middle"
         style={{ pointerEvents: 'none' }}
-        fill={plum}
+        fill={white}
       >
         {node.data.name}
       </text>
@@ -50,22 +45,22 @@ function ParentNode({ node }: { node: HierarchyNode }) {
         width={width}
         y={centerY}
         x={centerX}
-        fill={background}
-        stroke={blue}
+        fill={white}
+        stroke={black}
         strokeWidth={1}
         onClick={() => {
-          alert(`clicked: ${JSON.stringify(node.data.name)}`);
+          console.log(`clicked: ${JSON.stringify(node.data.name)}`);
         }}
       />
       <text
         dy=".33em"
-        fontSize={9}
-        fontFamily="Arial"
+        fontSize={12}
+        fontFamily={fontFamily}
         textAnchor="middle"
         style={{ pointerEvents: 'none' }}
         fill={white}
       >
-        {node.data.name}
+        { node.data.attributes?.move }
       </text>
     </Group>
   );
@@ -74,7 +69,7 @@ function ParentNode({ node }: { node: HierarchyNode }) {
 /** Handles rendering Root, Parent, and other Nodes. */
 function Node({ node }: { node: HierarchyNode }) {
   const width = 40;
-  const height = 20;
+  const height = 40;
   const centerX = -width / 2;
   const centerY = -height / 2;
   const isRoot = node.depth === 0;
@@ -90,25 +85,24 @@ function Node({ node }: { node: HierarchyNode }) {
         width={width}
         y={centerY}
         x={centerX}
-        fill={background}
-        stroke={green}
+        fill={white}
+        stroke={black}
         strokeWidth={1}
-        strokeDasharray="2,2"
         strokeOpacity={0.6}
-        rx={10}
+        rx={5}
         onClick={() => {
-          alert(`clicked: ${JSON.stringify(node.data.name)}`);
+          console.log(node);
         }}
       />
       <text
         dy=".33em"
-        fontSize={9}
-        fontFamily="Arial"
+        fontSize={12}
+        fontFamily={fontFamily}
         textAnchor="middle"
-        fill={green}
+        fill={black}
         style={{ pointerEvents: 'none' }}
       >
-        {node.data.name}
+        { node.data.attributes?.move }
       </text>
     </Group>
   );
@@ -132,42 +126,40 @@ function selectData(tree: TreeNode, n: number): TreeNode {
 const defaultMargin = { top: 10, left: 80, right: 80, bottom: 10 };
 
 export type TreeProps = {
-  width: number;
-  height: number;
   margin?: { top: number; right: number; bottom: number; left: number };
 };
 
-export default function Example({ width, height, margin = defaultMargin }: TreeProps) {
+export default function MoveTree({ margin = defaultMargin }: TreeProps) {
+  const { parentRef, width, height } = useParentSize()
   const openings = useContext(OpeningsContext)
   const rawTree = selectData(openings, 2)
   const data = useMemo(() => hierarchy(rawTree), []);
 
-
   const yMax = height - margin.top - margin.bottom;
   const xMax = width - margin.left - margin.right;
 
-  return width < 10 ? null : (
-    <svg width={width} height={height}>
-      <LinearGradient id="lg" from={peach} to={pink} />
-      <rect width={width} height={height} rx={14} fill={background} />
-      <Tree<TreeNode> root={data} size={[yMax, xMax]}>
-        {(tree) => (
-          <Group top={margin.top} left={margin.left}>
-            {tree.links().map((link, i) => (
-              <LinkHorizontal
-                key={`link-${i}`}
-                data={link}
-                stroke={lightpurple}
-                strokeWidth="1"
-                fill="none"
-              />
-            ))}
-            {tree.descendants().map((node, i) => (
-              <Node key={`node-${i}`} node={node} />
-            ))}
-          </Group>
-        )}
-      </Tree>
-    </svg>
+  return (
+    <div ref={parentRef} className='w-full h-full border-l border-gray-400 overflow-hidden'>
+      <svg width={width} height={height}>
+        <Tree<TreeNode> root={data} size={[yMax, xMax]}>
+          {(tree) => (
+            <Group top={margin.top} left={margin.left}>
+              {tree.links().map((link, i) => (
+                <LinkHorizontal
+                  key={`link-${i}`}
+                  data={link}
+                  stroke={black}
+                  strokeWidth="1"
+                  fill="none"
+                />
+              ))}
+              {tree.descendants().map((node, i) => (
+                <Node key={`node-${i}`} node={node} />
+              ))}
+            </Group>
+          )}
+        </Tree>
+      </svg>
+    </div>
   );
 }

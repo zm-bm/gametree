@@ -4,7 +4,7 @@ import { Move } from 'chess.js'
 import { moveNumFromFen } from '../chess'
 import { useContext, useMemo } from 'react'
 import { ECO } from '../chess'
-import { OpeningsContext } from '../main'
+import { OpeningsContext } from './App'
 
 const ECODisplay = () => {
   const moveList = useSelector((state: RootState) => state.game.moveList)
