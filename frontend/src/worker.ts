@@ -27,7 +27,7 @@ export const write = (cmd: string) => {
 
 export const initEngineOptions = (state: EngineState) => {
   write('uci')
-  write(setOption('Use NNUE', 'true'))
+  // write(setOption('Use NNUE', 'true'))
   configEngineOptions(state)
 }
 

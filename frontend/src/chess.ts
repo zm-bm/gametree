@@ -13,6 +13,20 @@ export type MoveTarget = {
   fen: string
 }
 
+export type ECO = {
+  ECO?: string,
+  name?: string,
+  [key: string]: string | ECO | undefined,
+}
+
+export type TreeNode = {
+  name: string,
+  attributes?: {
+    ECO?: string,
+  },
+  children?: TreeNode[],
+}
+
 export function getDests(chess: Chess) {
   const dests = new Map();
   SQUARES.forEach(s => {
@@ -41,4 +55,27 @@ export const moveNumFromFen = (fen: string) =>
 
 export const piecesFromFen = (fen: string) => {
   return fen.split(' ').at(0) || '';
+}
+
+export const buildOpeningTree = (input: ECO, altName: string = 'start') => {
+  const result: TreeNode = {
+    name: input.name || altName,
+    attributes: {
+      ECO: input.ECO,
+    },
+    children: [],
+  };
+
+  Object.keys(input).forEach(key => {
+    if (key !== "ECO" && key !== "name") {
+      const childNode = buildOpeningTree(input[key] as ECO, result.name+' '+key);
+      result.children!.push(childNode);
+    }
+  });
+
+  if (result.children?.length === 0) {
+    delete result.children;
+  }
+
+  return result;
 }
