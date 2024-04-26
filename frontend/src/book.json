@@ -1,37 +1,15 @@
 {
-  "f3": {
-    "code": "A00b",
-    "name": "Barnes Opening",
-    "e5": {
-      "Kf2": {
-        "code": "A00b",
-        "name": "Fried fox"
-      }
-    }
+  "Na3": {
+    "code": "A00h",
+    "name": "Durkin"
   },
-  "h4": {
-    "code": "A00c",
-    "name": "Kadas Opening"
+  "c3": {
+    "code": "A00i",
+    "name": "Saragossa"
   },
-  "h3": {
-    "code": "A00d",
-    "name": "Clemenz Opening"
-  },
-  "a4": {
-    "code": "A00e",
-    "name": "Ware Opening"
-  },
-  "a3": {
-    "code": "A00f",
-    "name": "Anderssen Opening",
-    "e5": {
-      "h3": {
-        "d5": {
-          "code": "A00f",
-          "name": "Creepy Crawly Opening (Basman)"
-        }
-      }
-    }
+  "e3": {
+    "code": "A00k",
+    "name": "Van Kruijs"
   },
   "Nh3": {
     "code": "A00g",
@@ -46,14 +24,6 @@
         }
       }
     }
-  },
-  "Na3": {
-    "code": "A00h",
-    "name": "Durkin"
-  },
-  "c3": {
-    "code": "A00i",
-    "name": "Saragossa"
   },
   "d3": {
     "code": "A00j",
@@ -72,10 +42,6 @@
         "name": "Spike Deferred"
       }
     }
-  },
-  "e3": {
-    "code": "A00k",
-    "name": "Van Kruijs"
   },
   "Nc3": {
     "code": "A00l",
@@ -46326,5 +46292,40 @@
         }
       }
     }
+  },
+  "f3": {
+    "code": "A00b",
+    "name": "Barnes Opening",
+    "e5": {
+      "Kf2": {
+        "code": "A00b",
+        "name": "Fried fox"
+      }
+    }
+  },
+  "a3": {
+    "code": "A00f",
+    "name": "Anderssen Opening",
+    "e5": {
+      "h3": {
+        "d5": {
+          "code": "A00f",
+          "name": "Creepy Crawly Opening (Basman)"
+        }
+      }
+    }
+  },
+  
+  "h4": {
+    "code": "A00c",
+    "name": "Kadas Opening"
+  },
+  "h3": {
+    "code": "A00d",
+    "name": "Clemenz Opening"
+  },
+  "a4": {
+    "code": "A00e",
+    "name": "Ware Opening"
   }
 }

@@ -20,9 +20,10 @@ export type ECO = {
 }
 
 export type TreeNode = {
-  name: string,
+  name: number,
   attributes?: {
     code?: string,
+    name?: string
     move?: string,
   },
   children?: TreeNode[],
@@ -58,19 +59,22 @@ export const piecesFromFen = (fen: string) => {
   return fen.split(' ').at(0) || '';
 }
 
-export const buildOpeningTree = (input: ECO, move: string = '', prev: string = '') => {
+var name = 1;
+export const buildOpeningTree = (input: ECO, move: string = '') => {
   const result: TreeNode = {
-    name: input.name || `${prev} ${move}`,
+    name,
     attributes: {
       code: input.code,
+      name: input.name,
       move,
     },
     children: [],
   };
+  name += 1;
 
   Object.keys(input).forEach(key => {
     if (key !== "code" && key !== "name") {
-      const childNode = buildOpeningTree(input[key] as ECO, key, result.name);
+      const childNode = buildOpeningTree(input[key] as ECO, key);
       result.children!.push(childNode);
     }
   });

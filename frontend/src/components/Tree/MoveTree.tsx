@@ -17,6 +17,7 @@ type HierarchyNode = HierarchyPointNode<TreeNode>;
 const fontFamily = 'monospace'
 const white = '#ffffff';
 const black = '#000000';
+const fontSize = 14
 
 const nodeHeight = 20;
 const nodeWidth = 40;
@@ -26,13 +27,13 @@ const centerY = -nodeHeight / 2;
 function RootNode({ node }: { node: HierarchyNode }) {
   return (
     <Group top={node.x} left={node.y}>
-      <circle r={12} fill={white} stroke='black' />
+      <circle r={20} />
     </Group>
   );
 }
 
 /** Handles rendering Root, Parent, and other Nodes. */
-function Node({ node }: { node: HierarchyNode }) {
+function Node({ node, isHighlighted }: { node: HierarchyNode, isHighlighted: boolean }) {
   const isRoot = node.depth === 0;
   if (isRoot) return <RootNode node={node} />;
   // const isParent = !!node.children;
@@ -55,8 +56,9 @@ function Node({ node }: { node: HierarchyNode }) {
       />
       <text
         dy=".33em"
-        fontSize={12}
+        fontSize={fontSize}
         fontFamily={fontFamily}
+        fontWeight={isHighlighted ? 700 : 400}
         textAnchor="middle"
         fill={black}
         style={{ pointerEvents: 'none' }}
@@ -67,14 +69,7 @@ function Node({ node }: { node: HierarchyNode }) {
   );
 }
 
-const initialTransform = {
-  scaleX: 1,
-  scaleY: 1,
-  translateX: 0,
-  translateY: 0,
-  skewX: 0,
-  skewY: 0,
-};
+
 const defaultMargin = { top: 10, left: 80, right: 80, bottom: 10 };
 export type TreeProps = {
   margin?: { top: number; right: number; bottom: number; left: number };
@@ -82,18 +77,27 @@ export type TreeProps = {
 
 export default function MoveTree({ margin = defaultMargin }: TreeProps) {
   const { parentRef, width, height } = useParentSize()
-  const yMax = height - margin.top - margin.bottom;
-  const xMax = width - margin.left - margin.right;
   const openings = useContext(OpeningsContext)
   const moveList = useSelector((state: RootState) => state.game.moveList)
 
+  const yMax = height - margin.top - margin.bottom;
+  const xMax = width - margin.left - margin.right;
+  const initialTransform = {
+    scaleX: 1,
+    scaleY: 1,
+    translateX: (xMax / 3),
+    translateY: (yMax / 2),
+    skewX: 0,
+    skewY: 0,
+  };
+
   const [root, currentNode] = useMemo(() => {
     let node;
+
     function buildTree(tree: TreeNode, n: number, moves: Move[]): TreeNode {
       const current = moves.at(0)
       if (current && current.san === tree.attributes?.move) {
-        if (moves.length === 1)
-          node = tree
+        node = tree
         return {
           name: tree.name,
           attributes: tree.attributes,
@@ -112,23 +116,21 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
         };
       }
     }
+
     const tree = buildTree(openings, 2, moveList);
     return [hierarchy(tree), node || tree]
   }, [openings, moveList]);
 
-
-  const centerOnNode = () => {
-    console.log(currentNode)
-    const focusNode = root.descendants().find(node => node.data.name === currentNode?.name);
-    if (!focusNode || focusNode.depth === 0) return initialTransform;
-    // console.log(focusNode)
-    const x = -focusNode.x + (yMax / 2);
-    const y = -focusNode.y + (xMax / 2);
+  const toCurrentNodeTransform = () => {
+    const node = root.descendants().find(node => node.data.name === currentNode?.name);
+    if (!node) return initialTransform;
     return {
       scaleX: 1,
       scaleY: 1,
-      translateX: y,
-      translateY: x,
+      // @ts-ignore
+      translateX: -node.y + (xMax / 2),
+      // @ts-ignore
+      translateY: -node.x + (yMax / 2),
       skewX: 0,
       skewY: 0,
     };
@@ -139,16 +141,21 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
       <Zoom<SVGSVGElement>
         width={width}
         height={height}
-        scaleXMin={1 / 2}
-        scaleXMax={4}
-        scaleYMin={1 / 2}
-        scaleYMax={4}
+        scaleXMin={1 / 4}
+        scaleYMin={1 / 4}
+        scaleXMax={2}
+        scaleYMax={2}
         initialTransformMatrix={initialTransform}
       >
         {(zoom) => {
           useEffect(() => {
-            zoom.setTransformMatrix(centerOnNode()) 
+            zoom.setTransformMatrix(initialTransform) 
+          }, [initialTransform])
+          useEffect(() => {
+            console.log(currentNode)
+            zoom.setTransformMatrix(toCurrentNodeTransform()) 
           }, [currentNode])
+
           return (
             <div className='relative'>
               <svg
@@ -158,7 +165,7 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
                 ref={zoom.containerRef}
               >
                 <g transform={zoom.toString()}>
-                  <Tree<TreeNode> root={root} size={[yMax, xMax]}>
+                  <Tree<TreeNode> root={root} nodeSize={[nodeHeight+4, width/5]} >
                     {(tree) => (
                       <Group top={margin.top} left={margin.left}>
                         {tree.links().map((link, i) => (
@@ -170,7 +177,11 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
                           />
                         ))}
                         {tree.descendants().map((node, i) => (
-                          <Node key={`node-${i}`} node={node} />
+                          <Node
+                            key={`node-${i}`}
+                            node={node}
+                            isHighlighted={currentNode.name === node.data.name}
+                          />
                         ))}
                       </Group>
                     )}
@@ -180,14 +191,14 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
               <div className="absolute top-1 right-1 flex flex-col gap-1">
                 <button
                   type="button"
-                  className="border border-black bg-gray-100 rounded m-0 p-1 shadow-xl"
+                  className="btn-primary"
                   onClick={zoom.reset}
-                >reset</button>
+                >to root</button>
                 <button
                   type="button"
-                  className="border border-black bg-gray-100 rounded m-0 p-1 shadow-xl"
-                  onClick={() => { zoom.setTransformMatrix(centerOnNode()) }}
-                >focus</button>
+                  className="btn-primary"
+                  onClick={() => { zoom.setTransformMatrix(toCurrentNodeTransform()) }}
+                >to current</button>
               </div>
             </div>
           )
