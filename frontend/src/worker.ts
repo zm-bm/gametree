@@ -20,12 +20,12 @@ export const initializeWorker = () => {
 };
 
 export const write = (cmd: string) => {
-  console.log('< ', cmd);
+  // console.log('< ', cmd);
   worker.postMessage(cmd);
 };
 
 export const initEngineOptions = (state: EngineState) => {
-  write('uci')
+  // write('uci')
   // write(setOption('Use NNUE', 'true'))
   configEngineOptions(state)
 }

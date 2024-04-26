@@ -1,8 +1,8 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, } from 'react';
 import { Group } from '@visx/group';
 import { Tree, hierarchy } from '@visx/hierarchy';
 import { HierarchyPointNode } from '@visx/hierarchy/lib/types';
-import { LinkHorizontalStep } from '@visx/shape';
+import { LinkHorizontal } from '@visx/shape';
 import { useParentSize } from '@visx/responsive';
 import { TreeNode } from "../../chess";
 import { useContext } from "react";
@@ -10,6 +10,7 @@ import { OpeningsContext } from '../App';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import { Move } from 'chess.js';
+import { Zoom } from '@visx/zoom';
 
 type HierarchyNode = HierarchyPointNode<TreeNode>;
 
@@ -38,12 +39,13 @@ function Node({ node }: { node: HierarchyNode }) {
   // if (isParent) return <ParentNode node={node} />;
 
   return (
-    <Group top={node.x} left={node.y}>
+    <Group top={node.x} left={node.y} style={{ cursor: 'pointer' }}>
       <rect
         height={nodeHeight}
         width={nodeWidth}
         y={centerY}
         x={centerX}
+        rx={5}
         fill={white}
         stroke={black}
         strokeWidth={1}
@@ -65,6 +67,14 @@ function Node({ node }: { node: HierarchyNode }) {
   );
 }
 
+const initialTransform = {
+  scaleX: 1,
+  scaleY: 1,
+  translateX: 0,
+  translateY: 0,
+  skewX: 0,
+  skewY: 0,
+};
 const defaultMargin = { top: 10, left: 80, right: 80, bottom: 10 };
 export type TreeProps = {
   margin?: { top: number; right: number; bottom: number; left: number };
@@ -77,14 +87,17 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
   const openings = useContext(OpeningsContext)
   const moveList = useSelector((state: RootState) => state.game.moveList)
 
-  const data = useMemo(() => {
-    function selectData(tree: TreeNode, n: number, moves: Move[]): TreeNode {
+  const [root, currentNode] = useMemo(() => {
+    let node;
+    function buildTree(tree: TreeNode, n: number, moves: Move[]): TreeNode {
       const current = moves.at(0)
       if (current && current.san === tree.attributes?.move) {
+        if (moves.length === 1)
+          node = tree
         return {
           name: tree.name,
           attributes: tree.attributes,
-          children: tree.children?.map(child => selectData(child, n, moves.slice(1)))
+          children: tree.children?.map(child => buildTree(child, n, moves.slice(1)))
         }
       } else if (n === 1) {
         return {
@@ -95,48 +108,91 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
         return {
           name: tree.name,
           attributes: tree.attributes,
-          children: tree.children?.map(child => selectData(child, n - 1, moves))
+          children: tree.children?.map(child => buildTree(child, n - 1, moves))
         };
       }
     }
-
-    const tree = selectData(openings, 2, moveList);
-    return hierarchy(tree)
+    const tree = buildTree(openings, 2, moveList);
+    return [hierarchy(tree), node || tree]
   }, [openings, moveList]);
+
+
+  const centerOnNode = () => {
+    console.log(currentNode)
+    const focusNode = root.descendants().find(node => node.data.name === currentNode?.name);
+    if (!focusNode || focusNode.depth === 0) return initialTransform;
+    // console.log(focusNode)
+    const x = -focusNode.x + (yMax / 2);
+    const y = -focusNode.y + (xMax / 2);
+    return {
+      scaleX: 1,
+      scaleY: 1,
+      translateX: y,
+      translateY: x,
+      skewX: 0,
+      skewY: 0,
+    };
+  };
 
   return (
     <div ref={parentRef} className='w-full h-full border-l border-gray-400 overflow-hidden'>
-      <svg width={width} height={height}>
-        <Tree<TreeNode> root={data} size={[yMax, xMax]}>
-          {(tree) => (
-            <Group top={margin.top} left={margin.left}>
-              {tree.links().map((link, i) => {
-                console.log(link)
-                return (
-                  <>
-                    <LinkHorizontalStep
-                      key={`link-${i}`}
-                      data={link}
-                      stroke={black}
-                      strokeWidth="1"
-                      fill="none"
-                    />
-                    <text
-                      x={(link.source.y + link.target.y + 10) / 2}
-                      y={link.target.x - 5}
-                    >
-                      {link.target.data.name}
-                    </text>
-                  </>
-                )
-              })}
-              {tree.descendants().map((node, i) => (
-                <Node key={`node-${i}`} node={node} />
-              ))}
-            </Group>
-          )}
-        </Tree>
-      </svg>
+      <Zoom<SVGSVGElement>
+        width={width}
+        height={height}
+        scaleXMin={1 / 2}
+        scaleXMax={4}
+        scaleYMin={1 / 2}
+        scaleYMax={4}
+        initialTransformMatrix={initialTransform}
+      >
+        {(zoom) => {
+          useEffect(() => {
+            zoom.setTransformMatrix(centerOnNode()) 
+          }, [currentNode])
+          return (
+            <div className='relative'>
+              <svg
+                width={width}
+                height={height}
+                style={{ cursor: zoom.isDragging ? 'grabbing' : 'grab', touchAction: 'none' }}
+                ref={zoom.containerRef}
+              >
+                <g transform={zoom.toString()}>
+                  <Tree<TreeNode> root={root} size={[yMax, xMax]}>
+                    {(tree) => (
+                      <Group top={margin.top} left={margin.left}>
+                        {tree.links().map((link, i) => (
+                          <LinkHorizontal
+                            key={`link-${i}`}
+                            data={link}
+                            stroke={black}
+                            fill="none"
+                          />
+                        ))}
+                        {tree.descendants().map((node, i) => (
+                          <Node key={`node-${i}`} node={node} />
+                        ))}
+                      </Group>
+                    )}
+                  </Tree>
+                </g>
+              </svg>
+              <div className="absolute top-1 right-1 flex flex-col gap-1">
+                <button
+                  type="button"
+                  className="border border-black bg-gray-100 rounded m-0 p-1 shadow-xl"
+                  onClick={zoom.reset}
+                >reset</button>
+                <button
+                  type="button"
+                  className="border border-black bg-gray-100 rounded m-0 p-1 shadow-xl"
+                  onClick={() => { zoom.setTransformMatrix(centerOnNode()) }}
+                >focus</button>
+              </div>
+            </div>
+          )
+        }} 
+      </Zoom>
     </div>
   );
 }

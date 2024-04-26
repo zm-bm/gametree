@@ -17,6 +17,7 @@
     "@visx/hierarchy": "^3.3.0",
     "@visx/responsive": "^3.10.2",
     "@visx/shape": "^3.5.0",
+    "@visx/zoom": "^3.3.0",
     "chess.js": "^1.0.0-beta.8",
     "chessground": "^9.0.4",
     "react": "^18.2.0",
