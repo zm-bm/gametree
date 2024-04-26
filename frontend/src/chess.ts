@@ -24,7 +24,7 @@ export type TreeNode = {
   attributes?: {
     code?: string,
     name?: string
-    move?: string,
+    move?: Move,
   },
   children?: TreeNode[],
 }
@@ -59,29 +59,40 @@ export const piecesFromFen = (fen: string) => {
   return fen.split(' ').at(0) || '';
 }
 
-var name = 1;
-export const buildOpeningTree = (input: ECO, move: string = '') => {
-  const result: TreeNode = {
-    name,
-    attributes: {
-      code: input.code,
-      name: input.name,
-      move,
-    },
-    children: [],
-  };
-  name += 1;
 
-  Object.keys(input).forEach(key => {
-    if (key !== "code" && key !== "name") {
-      const childNode = buildOpeningTree(input[key] as ECO, key);
-      result.children!.push(childNode);
+export function buildOpeningTree(input: ECO): TreeNode {
+  var name = 1;
+
+  function build(eco: ECO, chess: Chess, move?: string) {
+
+    const result: TreeNode = {
+      name,
+      attributes: {
+        code: eco.code,
+        name: eco.name,
+        move: move ? chess.move(move) : undefined,
+      },
+      children: [],
+    };
+
+    Object.keys(eco).forEach(key => {
+      if (key !== "code" && key !== "name") {
+        const childNode = build(eco[key] as ECO, chess, key);
+        result.children!.push(childNode);
+      }
+    });
+
+    if (move) {
+      chess.undo()
     }
-  });
 
-  if (result.children?.length === 0) {
-    delete result.children;
+    if (result.children?.length === 0) {
+      delete result.children;
+    }
+
+    return result;
   }
 
-  return result;
+  const chess = new Chess()
+  return build(input, chess)
 }

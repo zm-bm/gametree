@@ -4,12 +4,12 @@ import { Tree, hierarchy } from '@visx/hierarchy';
 import { HierarchyPointNode } from '@visx/hierarchy/lib/types';
 import { LinkHorizontal } from '@visx/shape';
 import { useParentSize } from '@visx/responsive';
-import { TreeNode } from "../../chess";
+import { ECO, MoveNode, TreeNode } from "../../chess";
 import { useContext } from "react";
 import { OpeningsContext } from '../App';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
-import { Move } from 'chess.js';
+import { Chess, DEFAULT_POSITION, Move } from 'chess.js';
 import { Zoom } from '@visx/zoom';
 
 type HierarchyNode = HierarchyPointNode<TreeNode>;
@@ -63,7 +63,7 @@ function Node({ node, isHighlighted }: { node: HierarchyNode, isHighlighted: boo
         fill={black}
         style={{ pointerEvents: 'none' }}
       >
-        { node.data.attributes?.move }
+        { node.data.attributes?.move?.san }
       </text>
     </Group>
   );
@@ -79,6 +79,8 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
   const { parentRef, width, height } = useParentSize()
   const openings = useContext(OpeningsContext)
   const moveList = useSelector((state: RootState) => state.game.moveList)
+  const moveTree = useSelector((state: RootState) => state.game.moveTree)
+  const moveKey = useSelector((state: RootState) => state.game.key)
 
   const yMax = height - margin.top - margin.bottom;
   const xMax = width - margin.left - margin.right;
@@ -91,13 +93,10 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
     skewY: 0,
   };
 
-  const [root, currentNode] = useMemo(() => {
-    let node;
-
+  const root = useMemo(() => {
     function buildTree(tree: TreeNode, n: number, moves: Move[]): TreeNode {
       const current = moves.at(0)
-      if (current && current.san === tree.attributes?.move) {
-        node = tree
+      if (current && current.san === tree.attributes?.move?.san) {
         return {
           name: tree.name,
           attributes: tree.attributes,
@@ -118,23 +117,67 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
     }
 
     const tree = buildTree(openings, 2, moveList);
-    return [hierarchy(tree), node || tree]
+    return hierarchy(tree)
   }, [openings, moveList]);
 
-  const toCurrentNodeTransform = () => {
-    const node = root.descendants().find(node => node.data.name === currentNode?.name);
-    if (!node) return initialTransform;
-    return {
-      scaleX: 1,
-      scaleY: 1,
-      // @ts-ignore
-      translateX: -node.y + (xMax / 2),
-      // @ts-ignore
-      translateY: -node.x + (yMax / 2),
-      skewX: 0,
-      skewY: 0,
-    };
-  };
+  // const root = useMemo(() => {
+  //   var name = 0
+
+  //   const generateGameTree = (node: MoveNode, eco?: ECO): TreeNode => {
+  //     // const chess = new Chess(node.move?.after || DEFAULT_POSITION)
+  //     const children = node.children.map(n => moveTree[n])
+
+  //     name += 1
+  //     return {
+  //       name,
+  //       attributes: {
+  //         code: eco?.code,
+  //         name: eco?.name,
+  //         move: node.move || undefined,
+  //       },
+  //       children: [
+  //         ...children.map(c => {
+  //           const nextEco = (eco && c.move?.san) ? eco[c.move?.san] : undefined
+  //           // @ts-ignore
+  //           return generateGameTree(c, nextEco)
+  //         }),
+  //         ...Object.keys(eco).filter(k => (k !== 'code' && k !== 'name') ? k : 0)
+  //       ]
+  //       // children: chess.moves().map(mv => {
+  //       //   const match = children.find(c => c.move?.san === mv)
+  //       //   if (match) {
+  //       //     return generateGameTree(moveTree[match.key])
+  //       //   } else {
+  //       //     name += 1
+  //       //     const node = { name, attributes: { move: chess.move(mv) }}
+  //       //     chess.undo()
+  //       //     return node
+  //       //   }
+  //       // })
+  //       // children: node.children.length > 0
+  //       //   ? node.children.map(n => generateGameTree(moveTree[n]))
+  //       //   : addLeaves(node.move?.after)
+  //     }
+  //   };
+    
+  //   const tree = generateGameTree(moveTree[0], openings)
+  //   return hierarchy(tree)
+  // }, [moveTree, openings])
+
+  // const toCurrentNodeTransform = () => {
+  //   const node = newRoot.descendants().find(node => node.data.name === currentNode?.name);
+  //   if (!node) return initialTransform;
+  //   return {
+  //     scaleX: 1,
+  //     scaleY: 1,
+  //     // @ts-ignore
+  //     translateX: -node.y + (xMax / 2),
+  //     // @ts-ignore
+  //     translateY: -node.x + (yMax / 2),
+  //     skewX: 0,
+  //     skewY: 0,
+  //   };
+  // };
 
   return (
     <div ref={parentRef} className='w-full h-full border-l border-gray-400 overflow-hidden'>
@@ -151,10 +194,10 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
           useEffect(() => {
             zoom.setTransformMatrix(initialTransform) 
           }, [initialTransform])
-          useEffect(() => {
-            console.log(currentNode)
-            zoom.setTransformMatrix(toCurrentNodeTransform()) 
-          }, [currentNode])
+          // useEffect(() => {
+          //   console.log(currentNode)
+          //   zoom.setTransformMatrix(toCurrentNodeTransform()) 
+          // }, [currentNode])
 
           return (
             <div className='relative'>
@@ -165,7 +208,7 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
                 ref={zoom.containerRef}
               >
                 <g transform={zoom.toString()}>
-                  <Tree<TreeNode> root={root} nodeSize={[nodeHeight+4, width/5]} >
+                  <Tree<TreeNode> root={root} nodeSize={[nodeHeight+4, width/10]} >
                     {(tree) => (
                       <Group top={margin.top} left={margin.left}>
                         {tree.links().map((link, i) => (
@@ -180,7 +223,8 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
                           <Node
                             key={`node-${i}`}
                             node={node}
-                            isHighlighted={currentNode.name === node.data.name}
+                            isHighlighted={false}
+                            // isHighlighted={currentNode.name === node.data.name}
                           />
                         ))}
                       </Group>
@@ -194,11 +238,11 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
                   className="btn-primary"
                   onClick={zoom.reset}
                 >to root</button>
-                <button
+                {/* <button
                   type="button"
                   className="btn-primary"
                   onClick={() => { zoom.setTransformMatrix(toCurrentNodeTransform()) }}
-                >to current</button>
+                >to current</button> */}
               </div>
             </div>
           )
