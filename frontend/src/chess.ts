@@ -61,12 +61,9 @@ export const piecesFromFen = (fen: string) => {
 
 
 export function buildOpeningTree(input: ECO): TreeNode {
-  var name = 1;
-
   function build(eco: ECO, chess: Chess, move?: string) {
-
     const result: TreeNode = {
-      name,
+      name: 0,
       attributes: {
         code: eco.code,
         name: eco.name,

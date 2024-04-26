@@ -20,7 +20,7 @@ const black = '#000000';
 const fontSize = 14
 
 const nodeHeight = 20;
-const nodeWidth = 40;
+const nodeWidth = 80;
 const centerX = -nodeWidth / 2;
 const centerY = -nodeHeight / 2;
 
@@ -63,7 +63,7 @@ function Node({ node, isHighlighted }: { node: HierarchyNode, isHighlighted: boo
         fill={black}
         style={{ pointerEvents: 'none' }}
       >
-        { node.data.attributes?.move?.san }
+        { node.data.attributes?.move?.san }-{ node.data.attributes?.code }
       </text>
     </Group>
   );
@@ -93,76 +93,78 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
     skewY: 0,
   };
 
-  const root = useMemo(() => {
-    function buildTree(tree: TreeNode, n: number, moves: Move[]): TreeNode {
-      const current = moves.at(0)
-      if (current && current.san === tree.attributes?.move?.san) {
-        return {
-          name: tree.name,
-          attributes: tree.attributes,
-          children: tree.children?.map(child => buildTree(child, n, moves.slice(1)))
-        }
-      } else if (n === 1) {
-        return {
-          name: tree.name,
-          attributes: tree.attributes,
-        };
-      } else {
-        return {
-          name: tree.name,
-          attributes: tree.attributes,
-          children: tree.children?.map(child => buildTree(child, n - 1, moves))
-        };
-      }
-    }
-
-    const tree = buildTree(openings, 2, moveList);
-    return hierarchy(tree)
-  }, [openings, moveList]);
-
   // const root = useMemo(() => {
-  //   var name = 0
-
-  //   const generateGameTree = (node: MoveNode, eco?: ECO): TreeNode => {
-  //     // const chess = new Chess(node.move?.after || DEFAULT_POSITION)
-  //     const children = node.children.map(n => moveTree[n])
-
-  //     name += 1
-  //     return {
-  //       name,
-  //       attributes: {
-  //         code: eco?.code,
-  //         name: eco?.name,
-  //         move: node.move || undefined,
-  //       },
-  //       children: [
-  //         ...children.map(c => {
-  //           const nextEco = (eco && c.move?.san) ? eco[c.move?.san] : undefined
-  //           // @ts-ignore
-  //           return generateGameTree(c, nextEco)
-  //         }),
-  //         ...Object.keys(eco).filter(k => (k !== 'code' && k !== 'name') ? k : 0)
-  //       ]
-  //       // children: chess.moves().map(mv => {
-  //       //   const match = children.find(c => c.move?.san === mv)
-  //       //   if (match) {
-  //       //     return generateGameTree(moveTree[match.key])
-  //       //   } else {
-  //       //     name += 1
-  //       //     const node = { name, attributes: { move: chess.move(mv) }}
-  //       //     chess.undo()
-  //       //     return node
-  //       //   }
-  //       // })
-  //       // children: node.children.length > 0
-  //       //   ? node.children.map(n => generateGameTree(moveTree[n]))
-  //       //   : addLeaves(node.move?.after)
+  //   function buildTree(tree: TreeNode, n: number, moves: Move[]): TreeNode {
+  //     const current = moves.at(0)
+  //     if (current && current.san === tree.attributes?.move?.san) {
+  //       return {
+  //         name: tree.name,
+  //         attributes: tree.attributes,
+  //         children: tree.children?.map(child => buildTree(child, n, moves.slice(1)))
+  //       }
+  //     } else if (n === 1) {
+  //       return {
+  //         name: tree.name,
+  //         attributes: tree.attributes,
+  //       };
+  //     } else {
+  //       return {
+  //         name: tree.name,
+  //         attributes: tree.attributes,
+  //         children: tree.children?.map(child => buildTree(child, n - 1, moves))
+  //       };
   //     }
-  //   };
-    
-  //   const tree = generateGameTree(moveTree[0], openings)
+  //   }
+
+  //   const tree = buildTree(openings, 2, moveList);
   //   return hierarchy(tree)
-  // }, [moveTree, openings])
+  // }, [openings, moveList]);
+
+  const root = useMemo(() => {
+    var name = 1
+
+    const generateGameTree = (
+      moveNode: MoveNode,
+      openTree?: TreeNode,
+    ): TreeNode => {
+      const children = moveNode.children.map(c => moveTree[c])
+      const bookChildren: TreeNode[] = openTree?.children
+        ? openTree?.children
+                   .map(c => ({ name: name++, attributes: c.attributes }))
+        : []
+
+      return {
+        name: name++,
+        attributes: openTree ? openTree.attributes
+          : { move: moveNode.move || undefined },
+        children: [
+          ...children.map(c => {
+            const t = openTree?.children?.find(n => n.attributes?.move?.san === c.move?.san)
+            return generateGameTree(c, t)
+          }),
+          ...bookChildren,
+          // ...Object.keys(eco).filter(k => (k !== 'code' && k !== 'name') ? k : 0)
+        ]
+        // children: chess.moves().map(mv => {
+        //   const match = children.find(c => c.move?.san === mv)
+        //   if (match) {
+        //     return generateGameTree(moveTree[match.key])
+        //   } else {
+        //     name += 1
+        //     const node = { name, attributes: { move: chess.move(mv) }}
+        //     chess.undo()
+        //     return node
+        //   }
+        // })
+        // children: node.children.length > 0
+        //   ? node.children.map(n => generateGameTree(moveTree[n]))
+        //   : addLeaves(node.move?.after)
+      }
+    };
+    
+    const tree = generateGameTree(moveTree[0], openings)
+    return hierarchy(tree)
+  }, [moveTree, openings])
 
   // const toCurrentNodeTransform = () => {
   //   const node = newRoot.descendants().find(node => node.data.name === currentNode?.name);
@@ -208,7 +210,7 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
                 ref={zoom.containerRef}
               >
                 <g transform={zoom.toString()}>
-                  <Tree<TreeNode> root={root} nodeSize={[nodeHeight+4, width/10]} >
+                  <Tree<TreeNode> root={root} nodeSize={[nodeHeight+4, width/5]} >
                     {(tree) => (
                       <Group top={margin.top} left={margin.left}>
                         {tree.links().map((link, i) => (
