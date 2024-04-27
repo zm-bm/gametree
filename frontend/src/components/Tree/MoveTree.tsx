@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState, } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { Group } from '@visx/group';
 import { Tree, hierarchy } from '@visx/hierarchy';
 import { HierarchyPointNode } from '@visx/hierarchy/lib/types';
-import { LinkHorizontal, LinkHorizontalStep } from '@visx/shape';
+import { LinkHorizontal } from '@visx/shape';
 import { useParentSize } from '@visx/responsive';
 import { MoveNode, TreeNode } from "../../chess";
 import { useContext } from "react";
@@ -75,9 +75,9 @@ function Node({ node, isHighlighted, height, width }: NodeProps) {
 }
 
 const nodeHeightScale= scaleLinear({ domain: [300, 1200], range: [12, 50] })
-const nodeWidthScale= scaleLinear({ domain: [300, 1200], range: [120, 140] })
+const nodeWidthScale= scaleLinear({ domain: [300, 1200], range: [110, 140] })
 const fontSizeScale = scaleLinear({ domain: [12, 50], range: [6, 12] })
-const treeWidthScale = scaleLinear({ domain: [12, 50], range: [6, 12] })
+const treeWidthScale = scaleLinear({ domain: [300, 1200], range: [150, 300] })
 
 const defaultMargin = { top: 10, left: 40, right: 40, bottom: 10 };
 export type TreeProps = {
@@ -85,27 +85,20 @@ export type TreeProps = {
 };
 
 export default function MoveTree({ margin = defaultMargin }: TreeProps) {
-  const { parentRef, width, height } = useParentSize()
+  const { parentRef, width, height } = useParentSize({ initialSize: { width: 800, height: 600 }})
   const openings = useContext(OpeningsContext)
   const moveTree = useSelector((state: RootState) => state.game.moveTree)
   const moveKey = useSelector((state: RootState) => state.game.key)
-  const [current, setCurrent] = useState(0);
 
   const nodeHeight = nodeHeightScale(height);
   const nodeWidth = nodeWidthScale(width);
+  const treeWidth = treeWidthScale(width)
   const yMax = height - margin.top - margin.bottom;
   const xMax = width - margin.left - margin.right;
-  const initialTransform = {
-    scaleX: 1,
-    scaleY: 1,
-    translateX: (xMax / 3),
-    translateY: (yMax / 2),
-    skewX: 0,
-    skewY: 0,
-  };
 
-  const root = useMemo(() => {
-    var name = 1
+  const [root, current] = useMemo(() => {
+    var name = 1;
+    var current;
 
     const generateGameTree = (
       moveNode: MoveNode,
@@ -138,8 +131,9 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
         }
       })
 
-      if (moveKey === moveNode.key)
-        setCurrent(name)
+      if (moveKey === moveNode.key) {
+        current = name
+      }
       return {
         name: name++,
         attributes: openingsTree ? openingsTree.attributes
@@ -150,25 +144,22 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
     
     const chess = new Chess()
     const tree = generateGameTree(moveTree[0], chess, openings)
-    return hierarchy(tree)
+    return [hierarchy(tree), current]
   }, [moveTree, openings, moveKey])
 
   const toCurrentNodeTransform = () => {
     const node = root.descendants().find(node => node.data.name === current);
-    console.log(node)
-    if (!node) return initialTransform;
     return {
       scaleX: 1,
       scaleY: 1,
       // @ts-ignore
-      translateX: -node.y + (xMax / 3),
+      translateX: -node?.y + (xMax / 3),
       // @ts-ignore
-      translateY: -node.x + (yMax / 2),
+      translateY: -node?.x + (yMax / 2),
       skewX: 0,
       skewY: 0,
     };
   };
-
 
   return (
     <div ref={parentRef} className='w-full h-full border-l border-gray-400 overflow-hidden bg-white'>
@@ -179,15 +170,12 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
         scaleYMin={1 / 4}
         scaleXMax={2}
         scaleYMax={2}
-        initialTransformMatrix={initialTransform}
       >
         {(zoom) => {
           useEffect(() => {
+            console.log(toCurrentNodeTransform())
             zoom.setTransformMatrix(toCurrentNodeTransform()) 
-          }, [height, width])
-          useEffect(() => {
-            zoom.setTransformMatrix(toCurrentNodeTransform()) 
-          }, [current])
+          }, [current, height, width])
 
           return (
             <div className='relative'>
@@ -198,7 +186,7 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
                 ref={zoom.containerRef}
               >
                 <g transform={zoom.toString()}>
-                  <Tree<TreeNode> root={root} nodeSize={[nodeHeight+4, width/4]} >
+                  <Tree<TreeNode> root={root} nodeSize={[nodeHeight+5, treeWidth]} >
                     {(tree) => (
                       <Group top={margin.top} left={margin.left}>
                         {
