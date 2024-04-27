@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState, } from 'react';
 import { Group } from '@visx/group';
 import { Tree, hierarchy } from '@visx/hierarchy';
 import { HierarchyPointNode } from '@visx/hierarchy/lib/types';
-import { LinkHorizontalStep } from '@visx/shape';
+import { LinkHorizontal, LinkHorizontalStep } from '@visx/shape';
 import { useParentSize } from '@visx/responsive';
 import { MoveNode, TreeNode } from "../../chess";
 import { useContext } from "react";
@@ -12,6 +12,7 @@ import { RootState } from '../../store';
 import { Chess } from 'chess.js';
 import { Zoom } from '@visx/zoom';
 import { Text } from '@visx/text';
+import { scaleLinear } from '@visx/scale';
 
 type HierarchyNode = HierarchyPointNode<TreeNode>;
 
@@ -27,7 +28,6 @@ function RootNode({ node }: { node: HierarchyNode }) {
   );
 }
 
-/** Handles rendering Root, Parent, and other Nodes. */
 interface NodeProps {
   node: HierarchyNode,
   isHighlighted: boolean,
@@ -60,7 +60,7 @@ function Node({ node, isHighlighted, height, width }: NodeProps) {
         width={width}
         verticalAnchor='middle'
         textAnchor="middle"
-        fontSize={12}
+        fontSize={fontSizeScale(height)}
         fontFamily={fontFamily}
         fontWeight={isHighlighted ? 700 : 400}
         fill={black}
@@ -74,6 +74,10 @@ function Node({ node, isHighlighted, height, width }: NodeProps) {
   );
 }
 
+const nodeHeightScale= scaleLinear({ domain: [300, 1200], range: [12, 50] })
+const nodeWidthScale= scaleLinear({ domain: [300, 1200], range: [120, 140] })
+const fontSizeScale = scaleLinear({ domain: [12, 50], range: [6, 12] })
+const treeWidthScale = scaleLinear({ domain: [12, 50], range: [6, 12] })
 
 const defaultMargin = { top: 10, left: 40, right: 40, bottom: 10 };
 export type TreeProps = {
@@ -87,8 +91,8 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
   const moveKey = useSelector((state: RootState) => state.game.key)
   const [current, setCurrent] = useState(0);
 
-  const nodeHeight = height/24;
-  const nodeWidth = 140;
+  const nodeHeight = nodeHeightScale(height);
+  const nodeWidth = nodeWidthScale(width);
   const yMax = height - margin.top - margin.bottom;
   const xMax = width - margin.left - margin.right;
   const initialTransform = {
@@ -103,61 +107,61 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
   const root = useMemo(() => {
     var name = 1
 
-    function makeLegalTreeNodes(node: MoveNode): TreeNode[] {
-      const chess = new Chess(node.move?.after)
-      return chess.moves().map(m => {
-        const move = chess.move(m)
-        const treeNode = {
-          name: name++,
-          attributes: { move }
-        }
-        chess.undo()
-        return treeNode
-      })
-    }
-
     const generateGameTree = (
       moveNode: MoveNode,
-      openTree?: TreeNode,
+      chess: Chess,
+      openingsTree?: TreeNode,
     ): TreeNode => {
-      const children = moveNode.children.map(c => moveTree[c])
-      const bookChildren: TreeNode[] = openTree?.children
-        ? openTree?.children
-                   .map(c => ({ name: name++, attributes: c.attributes }))
-        : []
-      const legalMoves = (moveNode.key === moveKey)
-        ? makeLegalTreeNodes(moveNode)
-        : []
+      // get list of legal moves from current position
+      const moves = chess.moves()
+      const children: TreeNode[] = []
+
+      // create tree nodes for children
+      moves.forEach(san => {
+        // get entry from openingsTree if any
+        const childOpenings = openingsTree?.children?.find(n => n.attributes?.move?.san === san)
+
+        const madeMove = moveNode.children.find(n => moveTree[n].move?.san === san)
+        if (madeMove !== undefined) {
+          // if move exists in moveTree, recurse
+          chess.move(san)
+          children.push(generateGameTree(moveTree[madeMove], chess, childOpenings))
+          chess.undo()
+        } else if (childOpenings) {
+          // if move exists in openingsTree, add it
+          children.push({ name: name++, attributes: childOpenings.attributes })
+        } else if (false && moveKey === moveNode.key) {
+          // otherwise add all legal moves for current position
+          const move = chess.move(san)
+          children.push({ name: name++, attributes: { move } })
+          chess.undo()
+        }
+      })
 
       if (moveKey === moveNode.key)
         setCurrent(name)
       return {
         name: name++,
-        attributes: openTree ? openTree.attributes
+        attributes: openingsTree ? openingsTree.attributes
           : { move: moveNode.move || undefined },
-        children: [
-          ...children.map(c => {
-            const t = openTree?.children?.find(n => n.attributes?.move?.san === c.move?.san)
-            return generateGameTree(c, t)
-          }),
-          ...bookChildren,
-          // ...legalMoves,
-        ]
+        children,
       }
     };
     
-    const tree = generateGameTree(moveTree[0], openings)
+    const chess = new Chess()
+    const tree = generateGameTree(moveTree[0], chess, openings)
     return hierarchy(tree)
   }, [moveTree, openings, moveKey])
 
   const toCurrentNodeTransform = () => {
     const node = root.descendants().find(node => node.data.name === current);
+    console.log(node)
     if (!node) return initialTransform;
     return {
       scaleX: 1,
       scaleY: 1,
       // @ts-ignore
-      translateX: -node.y + (xMax / 2),
+      translateX: -node.y + (xMax / 3),
       // @ts-ignore
       translateY: -node.x + (yMax / 2),
       skewX: 0,
@@ -165,8 +169,9 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
     };
   };
 
+
   return (
-    <div ref={parentRef} className='w-full h-full border-l border-gray-400 overflow-hidden'>
+    <div ref={parentRef} className='w-full h-full border-l border-gray-400 overflow-hidden bg-white'>
       <Zoom<SVGSVGElement>
         width={width}
         height={height}
@@ -178,10 +183,9 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
       >
         {(zoom) => {
           useEffect(() => {
-            zoom.setTransformMatrix(initialTransform) 
-          }, [initialTransform])
+            zoom.setTransformMatrix(toCurrentNodeTransform()) 
+          }, [height, width])
           useEffect(() => {
-            console.log(current)
             zoom.setTransformMatrix(toCurrentNodeTransform()) 
           }, [current])
 
@@ -197,9 +201,16 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
                   <Tree<TreeNode> root={root} nodeSize={[nodeHeight+4, width/4]} >
                     {(tree) => (
                       <Group top={margin.top} left={margin.left}>
+                        {
+                          // (() => { console.log(tree); return <></> })()
+                        }
                         {tree.links().map((link, i) => (
-                          <LinkHorizontalStep
+                          <LinkHorizontal
                             key={`link-${i}`}
+                            path={({ source, target }) => {
+                              const midY = source.y + (target.y - source.y) * 0.5;
+                              return `M${source.y},${source.x}L${midY},${source.x}C${midY},${target.x},${midY},${target.x},${target.y},${target.x}`
+                            }}
                             data={link}
                             stroke={black}
                             strokeWidth={link.target.children?.length}
