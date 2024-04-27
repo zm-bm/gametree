@@ -3,7 +3,7 @@ import BoardControls from './BoardControls'
 import AnalysisPane from './AnalysisPane'
 import MoveTree from './Tree/MoveTree'
 import { createContext } from 'react'
-import { ECO, TreeNode, buildOpeningTree } from '../chess'
+import { TreeNode, buildOpeningTree } from '../chess'
 
 import book from '../book.json'
 export const tree = buildOpeningTree(book)

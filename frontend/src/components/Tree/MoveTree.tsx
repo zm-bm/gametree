@@ -85,8 +85,8 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
   const yMax = height - margin.top - margin.bottom;
   const xMax = width - margin.left - margin.right;
   const initialTransform = {
-    scaleX: 1,
-    scaleY: 1,
+    scaleX: 1/3,
+    scaleY: 1/3,
     translateX: (xMax / 3),
     translateY: (yMax / 2),
     skewX: 0,
@@ -120,8 +120,23 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
   //   return hierarchy(tree)
   // }, [openings, moveList]);
 
+  
+
   const root = useMemo(() => {
     var name = 1
+
+    function makeLegalTreeNodes(node: MoveNode): TreeNode[] {
+      const chess = new Chess(node.move?.after)
+      return chess.moves().map(m => {
+        const move = chess.move(m)
+        const treeNode = {
+          name: name++,
+          attributes: { move }
+        }
+        chess.undo()
+        return treeNode
+      })
+    }
 
     const generateGameTree = (
       moveNode: MoveNode,
@@ -131,6 +146,9 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
       const bookChildren: TreeNode[] = openTree?.children
         ? openTree?.children
                    .map(c => ({ name: name++, attributes: c.attributes }))
+        : []
+      const legalMoves = (moveNode.key === moveKey)
+        ? makeLegalTreeNodes(moveNode)
         : []
 
       return {
@@ -143,6 +161,7 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
             return generateGameTree(c, t)
           }),
           ...bookChildren,
+          ...legalMoves,
           // ...Object.keys(eco).filter(k => (k !== 'code' && k !== 'name') ? k : 0)
         ]
         // children: chess.moves().map(mv => {
@@ -164,7 +183,7 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
     
     const tree = generateGameTree(moveTree[0], openings)
     return hierarchy(tree)
-  }, [moveTree, openings])
+  }, [moveTree, openings, moveKey])
 
   // const toCurrentNodeTransform = () => {
   //   const node = newRoot.descendants().find(node => node.data.name === currentNode?.name);
@@ -186,8 +205,8 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
       <Zoom<SVGSVGElement>
         width={width}
         height={height}
-        scaleXMin={1 / 4}
-        scaleYMin={1 / 4}
+        scaleXMin={1 / 10}
+        scaleYMin={1 / 10}
         scaleXMax={2}
         scaleYMax={2}
         initialTransformMatrix={initialTransform}
