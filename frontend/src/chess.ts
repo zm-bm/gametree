@@ -20,13 +20,20 @@ export type ECO = {
 }
 
 export type TreeNode = {
-  name: number,
+  name: string,
   attributes?: {
     code?: string,
     name?: string
     move?: Move,
   },
   children?: TreeNode[],
+}
+
+export type BookNode = {
+  code?: string,
+  name?: string
+  move?: string,
+  children?: BookNode[],
 }
 
 export function getDests(chess: Chess) {
@@ -59,16 +66,12 @@ export const piecesFromFen = (fen: string) => {
   return fen.split(' ').at(0) || '';
 }
 
-
-export function buildOpeningTree(input: ECO): TreeNode {
+export function buildOpeningTree(input: ECO): BookNode {
   function build(eco: ECO, chess: Chess, move?: string) {
-    const result: TreeNode = {
-      name: 0,
-      attributes: {
-        code: eco.code,
-        name: eco.name,
-        move: move ? chess.move(move) : undefined,
-      },
+    const result: BookNode = {
+      code: eco.code,
+      name: eco.name,
+      move,
       children: [],
     };
 
