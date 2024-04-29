@@ -16,7 +16,12 @@ interface NodeProps {
 export function RootNode({ node }: Pick<NodeProps, 'node'>) {
   return (
     <Group top={node.x} left={node.y}>
-      <circle r={20} />
+      <circle
+        r={20}
+        onClick={() => {
+          console.log(node);
+        }}
+       />
     </Group>
   );
 }
@@ -39,7 +44,8 @@ export function Node({ node, isHighlighted, height, width }: NodeProps) {
         strokeWidth={1}
         onClick={() => {
           console.log(node);
-        } } />
+        }}
+      />
       <Text
         height={height}
         width={width}

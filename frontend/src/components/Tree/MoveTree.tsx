@@ -65,9 +65,12 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
           children.push({
             name: `${name},${san}`,
             attributes: {
+              move,
               code: childOpening.code,
               name: childOpening.name,
-              move
+              wins: childOpening.wins,
+              draws: childOpening.draws,
+              losses: childOpening.losses,
             }
           })
           chess.undo()
@@ -87,6 +90,9 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
           move: moveNode.move || undefined,
           name: opening?.name,
           code: opening?.code,
+          wins: opening?.wins,
+          draws: opening?.draws,
+          losses: opening?.losses,
         },
       }
     };

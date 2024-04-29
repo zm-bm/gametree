@@ -25,6 +25,9 @@ export type TreeNode = {
     code?: string,
     name?: string
     move?: Move,
+    wins?: number,
+    draws?: number,
+    losses?: number,
   },
   children?: TreeNode[],
 }
@@ -33,6 +36,9 @@ export type BookNode = {
   code?: string,
   name?: string
   move?: string,
+  wins: number,
+  draws: number,
+  losses: number,
   children?: BookNode[],
 }
 
@@ -73,6 +79,9 @@ export function buildOpeningTree(input: ECO): BookNode {
       name: eco.name,
       move,
       children: [],
+      wins: 0,
+      draws: 0,
+      losses: 0,
     };
 
     Object.keys(eco).forEach(key => {
