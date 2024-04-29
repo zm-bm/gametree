@@ -1,22 +1,23 @@
 import { useEffect, useMemo  } from 'react';
 import { Group } from '@visx/group';
 import { Tree, hierarchy } from '@visx/hierarchy';
-import { LinkHorizontal } from '@visx/shape';
 import { useParentSize } from '@visx/responsive';
-import { BookNode, MoveNode, TreeNode } from "../../chess";
 import { useContext } from "react";
-import { OpeningsContext } from '../App';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../store';
-import { Chess } from 'chess.js';
 import { Zoom } from '@visx/zoom';
 import { scaleLinear } from '@visx/scale';
-import { Node } from './Node';
 import { TransformMatrix } from '@visx/zoom/lib/types';
 
-const nodeHeightScale= scaleLinear({ domain: [300, 1200], range: [12, 50] })
-const nodeWidthScale= scaleLinear({ domain: [300, 1200], range: [110, 140] })
-const treeWidthScale = scaleLinear({ domain: [300, 1200], range: [150, 300] })
+import { Node } from './Node';
+import { Link } from './Link';
+import { generateGameTree } from './helpers';
+import { TreeNode } from "../../chess";
+import { RootState } from '../../store';
+import { OpeningsContext } from '../App';
+
+const nodeRadiusScale = scaleLinear({ domain: [300, 1200], range: [10, 20] })
+const nodeWidthScale = scaleLinear({ domain: [300, 1200], range: [80, 320] })
+const fontSizeScale = scaleLinear({ domain: [300, 1200], range: [8, 14] })
 
 const defaultMargin = { top: 10, left: 40, right: 40, bottom: 10 };
 export type TreeProps = {
@@ -24,83 +25,23 @@ export type TreeProps = {
 };
 
 export default function MoveTree({ margin = defaultMargin }: TreeProps) {
-  const { parentRef, width, height } = useParentSize({ initialSize: { width: 800, height: 600 }})
-  const openings = useContext(OpeningsContext)
-  const moveTree = useSelector((state: RootState) => state.game.moveTree)
-  const moveKey = useSelector((state: RootState) => state.game.key)
-  const moveList = useSelector((state: RootState) => state.game.moveList)
-  const currentNode = moveList.map(mv => mv.san).join(',')
+  const { parentRef, width, height } = useParentSize({ initialSize: { width: 800, height: 600 }});
+  const openings = useContext(OpeningsContext);
+  const moveTree = useSelector((state: RootState) => state.game.moveTree);
+  const moveList = useSelector((state: RootState) => state.game.moveList);
+  const currentNode = moveList.map(mv => mv.san).join(',');
 
-  const nodeHeight = nodeHeightScale(height);
+  const nodeRadius = nodeRadiusScale(height);
   const nodeWidth = nodeWidthScale(width);
-  const treeWidth = treeWidthScale(width)
+  const nodeHeight = nodeRadius * 2.5;
+  const fontSize = fontSizeScale(height);
   const yMax = height - margin.top - margin.bottom;
   const xMax = width - margin.left - margin.right;
 
   const root = useMemo(() => {
-    const generateGameTree = (
-      moveNode: MoveNode,
-      chess: Chess,
-      opening?: BookNode,
-    ): TreeNode => {
-      // make node name from move history
-      const name = chess.history().join(',')
-      // get list of legal moves from current position
-      const moves = chess.moves()
-      // create tree nodes for children
-      const children: TreeNode[] = []
-      moves.forEach(san => {
-        // get opening for child if any
-        const childOpening = opening?.children?.find(n => n.move === san)
-
-        // if move exists in moveTree, recurse
-        const madeMove = moveNode.children.find(n => moveTree[n].move?.san === san)
-        if (madeMove !== undefined) {
-          chess.move(san)
-          children.push(generateGameTree(moveTree[madeMove], chess, childOpening))
-          chess.undo()
-        } else if (childOpening) {
-          // if move exists in opening, add it
-          const move = chess.move(san)
-          children.push({
-            name: `${name},${san}`,
-            attributes: {
-              move,
-              code: childOpening.code,
-              name: childOpening.name,
-              wins: childOpening.wins,
-              draws: childOpening.draws,
-              losses: childOpening.losses,
-            }
-          })
-          chess.undo()
-        }
-        // add legal moves?
-        // else if (moveKey === moveNode.key) {
-        //   const move = chess.move(san)
-        //   children.push({ name, attributes: { move } })
-        //   chess.undo()
-        // }
-      })
-
-      return {
-        name,
-        children,
-        attributes: {
-          move: moveNode.move || undefined,
-          name: opening?.name,
-          code: opening?.code,
-          wins: opening?.wins,
-          draws: opening?.draws,
-          losses: opening?.losses,
-        },
-      }
-    };
-    
-    const chess = new Chess()
-    const tree = generateGameTree(moveTree[0], chess, openings)
-    return hierarchy(tree)
-  }, [moveTree, openings, moveKey])
+    const tree = generateGameTree(moveTree, openings);
+    return hierarchy(tree);
+  }, [moveTree, openings])
 
   function currentNodeTranslation(matrix: TransformMatrix) {
     const node = root.descendants().find(node => node.data.name === currentNode);
@@ -117,10 +58,10 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
       <Zoom<SVGSVGElement>
         width={width}
         height={height}
-        scaleXMin={1 / 4}
-        scaleYMin={1 / 4}
-        scaleXMax={2}
-        scaleYMax={2}
+        scaleXMin={1 / 8}
+        scaleYMin={1 / 8}
+        scaleXMax={8}
+        scaleYMax={8}
       >
         {(zoom) => {
           useEffect(() => {
@@ -136,29 +77,24 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
                 ref={zoom.containerRef}
               >
                 <g transform={zoom.toString()}>
-                  <Tree<TreeNode> root={root} nodeSize={[nodeHeight+5, treeWidth]} >
+                  <Tree<TreeNode> root={root} nodeSize={[nodeHeight, nodeWidth]} >
                     {(tree) => (
                       <Group top={margin.top} left={margin.left}>
                         {tree.links().map((link, i) => (
-                          <LinkHorizontal
+                          <Link
                             key={`link-${i}`}
-                            path={({ source, target }) => {
-                              const midY = source.y + (target.y - source.y) * 0.5;
-                              return `M${source.y},${source.x}L${midY},${source.x}C${midY},${target.x},${midY},${target.x},${target.y},${target.x}`
-                            }}
-                            data={link}
-                            stroke='black'
-                            strokeWidth={link.target.children?.length}
-                            strokeLinejoin='round'
-                            fill="none"
+                            link={link}
+                            r={nodeRadius}
+                            fontSize={fontSize}
+                            nodeWidth={nodeWidth}
                           />
                         ))}
                         {tree.descendants().map((node, i) => (
                           <Node
                             key={`node-${i}`}
                             node={node}
-                            width={nodeWidth}
-                            height={nodeHeight}
+                            r={nodeRadius}
+                            fontSize={fontSize}
                             isHighlighted={currentNode === node.data.name}
                           />
                         ))}

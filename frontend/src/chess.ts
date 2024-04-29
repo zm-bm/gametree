@@ -1,4 +1,4 @@
-import { Chess, Move, SQUARES, Square } from "chess.js";
+import { Chess, Color, Move, SQUARES, Square } from "chess.js";
 import * as cg from 'chessground/types';
 
 export type MoveNode = {
@@ -13,18 +13,13 @@ export type MoveTarget = {
   fen: string
 }
 
-export type ECO = {
-  code?: string,
-  name?: string,
-  [key: string]: string | ECO | undefined,
-}
-
 export type TreeNode = {
   name: string,
-  attributes?: {
-    code?: string,
-    name?: string
+  attributes: {
     move?: Move,
+    turn?: Color,
+    code?: string,
+    title?: string
     wins?: number,
     draws?: number,
     losses?: number,
@@ -34,7 +29,7 @@ export type TreeNode = {
 
 export type BookNode = {
   code?: string,
-  name?: string
+  title?: string
   move?: string,
   wins: number,
   draws: number,
@@ -72,11 +67,18 @@ export const piecesFromFen = (fen: string) => {
   return fen.split(' ').at(0) || '';
 }
 
+
+export type ECO = {
+  code?: string,
+  name?: string,
+  [key: string]: string | ECO | undefined,
+}
+
 export function buildOpeningTree(input: ECO): BookNode {
   function build(eco: ECO, chess: Chess, move?: string) {
     const result: BookNode = {
       code: eco.code,
-      name: eco.name,
+      title: eco.name,
       move,
       children: [],
       wins: 0,
