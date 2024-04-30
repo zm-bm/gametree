@@ -3,8 +3,8 @@ import { useState } from "react";
 import EngineTab from "./EngineTab";
 import GameTab from "./GameTab";
 
-type Tab = 'engine' | 'game';
-const tabs: Tab[] = ['engine', 'game'];
+type Tab = 'engine' | 'game' | 'moves';
+const tabs: Tab[] = ['engine', 'game', 'moves'];
 
 const layout = "flex flex-col h-full m-1 min-h-64 max-h-64 sm:min-h-0 sm:max-h-none"
 const color = "shadow-md border border-neutral-400 dark:border-neutral-600"
@@ -22,6 +22,8 @@ const AnalysisPane = () => {
         return <GameTab />;
       case 'engine':
         return <EngineTab />;
+      case 'moves':
+        return null;
       default:
         return <div></div>;
     }

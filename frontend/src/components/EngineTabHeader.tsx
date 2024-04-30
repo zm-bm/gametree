@@ -9,7 +9,7 @@ const EngineTabHeader = () => {
   const tbhits = useSelector((state: RootState) => state.engine.tbhits)
 
   return (
-    <div className="flex text-xs gap-2 p-1 border-b border-neutral-400 dark:border-neutral-600">
+    <div className="flex text-sm gap-2 p-1 border-b border-neutral-400 dark:border-neutral-600">
       <div className="flex-auto overflow-hidden">
         <span className="font-bold">Time: </span>
         <span>{time ? (time / 1000).toFixed(1) : 0} s</span>

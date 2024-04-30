@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { parseCp, parseDepth, parseHashfull, parseMate, parseMoves, parseMultiPV, parseSelDepth, parseSpeed, parseTBHits, parseTime } from "../lib/parsers";
 import { GOTO_MOVE, MAKE_MOVE } from './actions';
 import { Chess, DEFAULT_POSITION, Move } from 'chess.js';
+import { colorFromFen } from '../chess';
 
 export type Info = {
   depth: number,
@@ -79,8 +80,8 @@ const engineSlice = createSlice({
             const info = {
               depth: parseDepth(action.payload),
               seldepth: parseSelDepth(action.payload),
-              cp: parseCp(action.payload, 'w'),
-              mate: parseMate(action.payload, 'w'),
+              cp: parseCp(action.payload),
+              mate: parseMate(action.payload),
               multipv: parseMultiPV(action.payload),
               pv,
             }

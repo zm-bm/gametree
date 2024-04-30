@@ -67,7 +67,7 @@ const GameTab = () => {
 
   return (
     <>
-      <div className="flex-1 p-1 font-mono text-xs leading-tight overflow-auto">
+      <div className="flex-1 p-1 font-mono text-sm leading-tight overflow-auto">
         { buildHistory(moveTree[0].children) }
       </div>
       <Fen />

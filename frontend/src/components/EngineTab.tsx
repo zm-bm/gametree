@@ -8,6 +8,7 @@ import EngineTabHeader from "./EngineTabHeader";
 import { Chess, Square } from "chess.js";
 import EngineTabMove from "./EngineTabMove";
 import { MAKE_MOVE } from "../redux/actions";
+import { colorFromFen } from "../chess";
 
 const EngineTab = () => {
   const dispatch = useDispatch<AppDispatch>()
@@ -19,7 +20,7 @@ const EngineTab = () => {
   const [hoverFen, setHoverFen] = useState<string>();
   const [lastMove, setLastMove] = useState<Square[]>([]);
   const [coords, setCoords] = useState({ top: 0, left: 0 });
-
+  const turnColor = colorFromFen(fen);
 
   const onHover: React.MouseEventHandler<HTMLButtonElement> = useCallback((e) => {
     setIsHovered(true)
@@ -59,7 +60,7 @@ const EngineTab = () => {
   return (
     <>
       <EngineTabHeader />
-      <div className="flex-1 p-1 font-mono text-xs leading-tight overflow-auto">
+      <div className="flex-1 p-1 font-mono text-sm leading-tight overflow-auto">
         <div className="flex">
           <span className="w-12 font-bold underline cursor-default">Depth</span>
           <span className="w-12 font-bold underline cursor-default">Score</span>
@@ -70,7 +71,7 @@ const EngineTab = () => {
             return (
               <div className="flex" key={index}>
                 <span className="w-12">{info.depth}/{info.seldepth}</span>
-                <span className="w-12">{formatScore(info)}</span>
+                <span className="w-12">{formatScore(info, turnColor, orientation)}</span>
                 <div className="flex-1"
                   onMouseEnter={onMouseEnter}
                   onMouseMove={onMouseMove}

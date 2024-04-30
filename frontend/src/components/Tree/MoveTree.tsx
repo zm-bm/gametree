@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 import { Zoom } from '@visx/zoom';
 import { scaleLinear } from '@visx/scale';
 import { useTooltip, useTooltipInPortal } from '@visx/tooltip';
-import { HierarchyPointLink, HierarchyPointNode } from '@visx/hierarchy/lib/types';
+import { HierarchyPointNode } from '@visx/hierarchy/lib/types';
 
 import { Node } from './Node';
 import { Link } from './Link';
