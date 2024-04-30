@@ -1,22 +1,27 @@
+import { useCallback, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { 
   IoIosRewind,
   IoIosFastforward,
   IoIosSkipForward,
   IoIosSkipBackward,
   IoMdSync,
+  IoIosPause,
+  IoIosPlay
 } from "react-icons/io";
-import { useCallback, useEffect } from "react";
 import { throttle } from "../lib/helpers";
 import { useMoveActions } from "../hooks/moveHooks";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../store";
 import { FLIP_ORIENTATION } from "../redux/boardSlice";
 import ECODisplay from "./ECODisplay";
+import { TOGGLE_ENGINE } from "../redux/engineSlice";
+import { AppDispatch, RootState } from '../store';
 
 const BoardControls = () => {
   const { undo, redo, rewind, forward } = useMoveActions();
   const dispatch = useDispatch<AppDispatch>()
   const flip = useCallback(() => dispatch(FLIP_ORIENTATION()), [])
+  const fen = useSelector((state: RootState) => state.board.fen);
+  const running = useSelector((state: RootState) => state.engine.running);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -42,7 +47,7 @@ const BoardControls = () => {
     return () => window.removeEventListener('keydown', debouncedKeyDown);
   }, [undo, forward, redo, forward]);
 
-  const buttonClass = "btn-primary p-2";
+  const buttonClass = "btn-primary p-2 hover:scale-105";
   return (
     <div className="flex items-center gap-1 pt-1">
       {/* game controls */}
@@ -51,6 +56,13 @@ const BoardControls = () => {
       </button>
       <button onClick={undo} className={buttonClass} title='Undo last move'>
         <IoIosSkipBackward className='m-auto' />
+      </button>
+      <button
+        onClick={() => dispatch(TOGGLE_ENGINE(fen))}
+        className={`${buttonClass} `}
+        title="Start/stop engine"
+      >
+        { running ? <IoIosPause /> : <IoIosPlay /> }
       </button>
       <button onClick={redo} className={buttonClass} title='Redo next move'>
         <IoIosSkipForward className='m-auto' />

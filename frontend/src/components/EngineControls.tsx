@@ -5,8 +5,6 @@ import { SET_HASH, SET_LINES, SET_THREADS, TOGGLE_ENGINE } from "../redux/engine
 import { AppDispatch, RootState } from '../store';
 
 const EngineControls = () => {
-  const fen = useSelector((state: RootState) => state.board.fen);
-  const running = useSelector((state: RootState) => state.engine.running);
   const nnue = useSelector((state: RootState) => state.engine.nnue);
   const hash = useSelector((state: RootState) => state.engine.hash);
   const threads = useSelector((state: RootState) => state.engine.threads);
@@ -14,14 +12,8 @@ const EngineControls = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   return (
-    <div className="flex items-center text-xs p-1 gap-1 border-t border-gray-400 bg-gradient-to-b from-gray-100 to-gray-200">
-      <button
-        title="Start/stop engine"
-        className="btn-primary p-1.5"
-        onClick={() => dispatch(TOGGLE_ENGINE(fen))}
-      >
-        { running ? <IoIosPause /> : <IoIosPlay /> }
-      </button>
+    <div className="flex items-center text-xs p-1 gap-1 border-t border-gray-400 dark:border-gray-600 gray-gradient-to-b">
+      
       <select
         title="Hash size"
         className="btn-primary"

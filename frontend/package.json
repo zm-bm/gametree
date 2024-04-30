@@ -19,6 +19,7 @@
     "@visx/scale": "^3.5.0",
     "@visx/shape": "^3.5.0",
     "@visx/text": "^3.3.0",
+    "@visx/tooltip": "^3.3.0",
     "@visx/zoom": "^3.3.0",
     "chess.js": "^1.0.0-beta.8",
     "chessground": "^9.0.4",

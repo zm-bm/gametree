@@ -7,6 +7,9 @@ import { useSelector } from 'react-redux';
 import { Zoom } from '@visx/zoom';
 import { scaleLinear } from '@visx/scale';
 import { TransformMatrix } from '@visx/zoom/lib/types';
+import { localPoint } from '@visx/event';
+import { useTooltip, useTooltipInPortal } from '@visx/tooltip';
+
 
 import { Node } from './Node';
 import { Link } from './Link';
@@ -25,6 +28,31 @@ export type TreeProps = {
 };
 
 export default function MoveTree({ margin = defaultMargin }: TreeProps) {
+  const {
+    tooltipData,
+    tooltipLeft,
+    tooltipTop,
+    tooltipOpen,
+    showTooltip,
+    hideTooltip,
+  } = useTooltip();
+  const { containerRef, TooltipInPortal } = useTooltipInPortal({
+    // use TooltipWithBounds
+    detectBounds: true,
+    // when tooltip containers are scrolled, this will correctly update the Tooltip position
+    scroll: true,
+  })
+
+  const handleMouseOver = (event, datum) => {
+    const coords = localPoint(event.target.ownerSVGElement, event);
+    if (coords) {
+      showTooltip({
+        tooltipLeft: coords.x,
+        tooltipTop: coords.y,
+        tooltipData: datum
+      });
+    }
+  };
   const { parentRef, width, height } = useParentSize({ initialSize: { width: 800, height: 600 }});
   const openings = useContext(OpeningsContext);
   const moveTree = useSelector((state: RootState) => state.game.moveTree);
@@ -54,7 +82,7 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
   }
 
   return (
-    <div ref={parentRef} className='w-full h-full border-l border-gray-400 overflow-hidden bg-white'>
+    <div ref={parentRef} className='w-full h-full border-l border-neutral-400 dark:border-neutral-500 overflow-hidden'>
       <Zoom<SVGSVGElement>
         width={width}
         height={height}
@@ -69,7 +97,7 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
           }, [currentNode, xMax, yMax])
 
           return (
-            <div className='relative'>
+            <div className='relative' ref={containerRef}>
               <svg
                 width={width}
                 height={height}
@@ -87,6 +115,7 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
                             r={nodeRadius}
                             fontSize={fontSize}
                             nodeWidth={nodeWidth}
+                            handleMouseOver={handleMouseOver}
                           />
                         ))}
                         {tree.descendants().map((node, i) => (
@@ -114,6 +143,15 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
           )
         }} 
       </Zoom>
+      {tooltipOpen && (
+        <TooltipInPortal
+          key={Math.random()}
+          top={tooltipTop}
+          left={tooltipLeft}
+        >
+          Data value <strong>{tooltipData}</strong>
+        </TooltipInPortal>
+      )}
     </div>
   );
 }

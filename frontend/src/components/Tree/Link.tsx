@@ -81,8 +81,9 @@ interface Props {
   r: number,
   fontSize: number,
   nodeWidth: number,
+  handleMouseOver: React.MouseEventHandler<SVGGElement>,
 }
-const Link = ({ link, r, fontSize, nodeWidth }: Props) => {
+const Link = ({ link, r, fontSize, nodeWidth, handleMouseOver }: Props) => {
   const fill = calcStroke(link.target)
 
   return (
@@ -100,6 +101,7 @@ const Link = ({ link, r, fontSize, nodeWidth }: Props) => {
           <Group
             top={link.target.x-r}
             left={link.source.y + (link.target.y - link.source.y) * 0.5}
+            onMouseMove={handleMouseOver}
           >
             <rect
               rx={5}

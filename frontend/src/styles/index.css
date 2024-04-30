@@ -4,7 +4,17 @@
 
 @layer components {
   .btn-primary {
-    @apply border border-gray-400 bg-gradient-to-b from-gray-100 to-gray-200 hover:from-gray-200 hover:to-gray-300 rounded p-1 shadow
+    @apply border border-neutral-400 dark:border-neutral-500;
+    @apply bg-gradient-to-b from-neutral-200 to-neutral-300;
+    @apply hover:from-neutral-300 hover:to-neutral-400;
+    @apply dark:from-neutral-800 dark:to-neutral-900;
+    @apply dark:hover:from-neutral-700 dark:hover:to-neutral-800;
+    @apply rounded p-1 shadow;
+  }
+
+  .neutral-gradient-to-b {
+    @apply bg-gradient-to-b from-neutral-200 to-neutral-300;
+    @apply dark:from-neutral-800 dark:to-neutral-900;
   }
 }
 
@@ -12,9 +22,9 @@
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  background: linear-gradient(to bottom,#d4d6cf,#f7f7f7);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  color-scheme: light dark;
 }

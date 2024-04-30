@@ -8,10 +8,15 @@ import { BookNode } from '../chess'
 import book from '../book.json'
 export const OpeningsContext = createContext<BookNode>(book as BookNode);
 
+const size = 'sm:h-screen sm:w-screen sm:flex-row min-h-0'
+const bg = 'bg-gradient-to-b from-neutral-200 via-neutral-100 to-neutral-200'
+const dark = 'dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900'
+const classes = `flex flex-col ${size} ${dark} ${bg}`
+
 function App() {
   return (
     <OpeningsContext.Provider value={book as BookNode}>
-      <main className='sm:h-screen sm:w-screen flex flex-col sm:flex-row min-h-0'>
+      <main className={classes}>
         <div className='flex-auto flex flex-col sm:w-1/2 md:w-2/5 lg:w-1/3 2xl:w-1/4'>
           <div className='flex-none aspect-w-1 aspect-h-1 w-full pt-1 pl-1'>
             <Board />
