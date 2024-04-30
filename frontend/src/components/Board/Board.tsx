@@ -17,6 +17,22 @@ const Board = () => {
   const [ref, dimensions] = useDimensions()
   const fen = useSelector((state: RootState) => state.board.fen);
   const orientation = useSelector((state: RootState) => state.board.orientation);
+  const infos = useSelector((state: RootState) => state.engine.infos);
+
+  const autoShapes = useMemo(() => {
+    const info = infos.at(0);
+    if (info) {
+      const bestMove = info.pv.at(0);
+      if (bestMove) {
+        return [{
+          orig: bestMove.from,
+          dest: bestMove.to,
+          brush: 'paleGreen',
+        }]
+      }
+    }
+    return [];
+  }, [infos])
 
   // ensure chessground board height/width is multiple of 8 (bc chess board)
   const size = useMemo(() => {
@@ -44,8 +60,9 @@ const Board = () => {
       check: chess.inCheck(),
       movable: { dests: getDests(chess), free: false },
       events: { move },
+      drawable: { autoShapes }
     }
-  }, [fen, orientation])
+  }, [fen, orientation, autoShapes])
 
   return (
     <div className="w-full" ref={ref}>
