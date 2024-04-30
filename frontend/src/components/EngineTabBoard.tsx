@@ -1,4 +1,4 @@
-import BaseBoard from "./BaseBoard";
+import BaseBoard from "./Board/BaseBoard";
 import { Config } from "chessground/config";
 
 interface Props {

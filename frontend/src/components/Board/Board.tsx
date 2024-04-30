@@ -4,12 +4,13 @@ import * as cg from 'chessground/types';
 import { Config } from "chessground/config";
 import { Chess, Square } from "chess.js";
 
-import { useDimensions } from "../hooks/useDimensions";
+import { useDimensions } from "../../hooks/useDimensions";
 import BaseBoard from "./BaseBoard";
-import { AppDispatch, RootState } from "../store";
-import { getDests, isPromotion } from "../chess";
-import { SET_PROMOTION_TARGET } from "../redux/boardSlice";
-import { MAKE_MOVE } from "../redux/actions";
+import { AppDispatch, RootState } from "../../store";
+import { getDests, isPromotion } from "../../chess";
+import { SET_PROMOTION_TARGET } from "../../redux/boardSlice";
+import { MAKE_MOVE } from "../../redux/actions";
+import PromotionOverlay from "./PromotionOverlay";
 
 const Board = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -53,6 +54,7 @@ const Board = () => {
         style={{ height: size, width: size, position: 'relative' }}
       >
         <BaseBoard config={config} />
+        <PromotionOverlay size={size} />
       </div>
     </div>
   )

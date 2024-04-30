@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { screen } from '@testing-library/react'
 import BoardPane from './Board'
-import { renderWithProviders } from '../test/testUtils';
+import { renderWithProviders } from '../../test/testUtils';
 
 vi.mock('../hooks/useDimensions', () => ({
   useDimensions: vi.fn(() => [useRef(), { width: 404, height: 404 }])

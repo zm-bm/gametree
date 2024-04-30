@@ -1,4 +1,4 @@
-import Board from './Board'
+import Board from './Board/Board'
 import BoardControls from './BoardControls'
 import AnalysisPane from './AnalysisPane'
 import MoveTree from './Tree/MoveTree'

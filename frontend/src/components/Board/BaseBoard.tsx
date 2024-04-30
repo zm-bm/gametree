@@ -3,9 +3,9 @@ import { Chessground } from 'chessground';
 import { Api } from 'chessground/api';
 import { Config } from 'chessground/config';
 
-import "../styles/chessground.base.css";
-import "../styles/chessground.brown.css";
-import "../styles/chessground.cburnett.css";
+import "../../styles/chessground.base.css";
+import "../../styles/chessground.brown.css";
+import "../../styles/chessground.cburnett.css";
 
 interface Props {
   config: Config
