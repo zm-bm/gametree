@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { screen, fireEvent } from '@testing-library/react'
 import { renderWithProviders } from '../test/testUtils'
 import AnalysisPane from './AnalysisPane';
-import { rootNode } from '../redux/gameSlice';
+import { GameState, rootNode } from '../redux/gameSlice';
 import { Chess } from 'chess.js';
 
 describe('AnalysisPane', () => {
@@ -14,16 +14,18 @@ describe('AnalysisPane', () => {
   })
 
   it('buttons work', () => {
-    const game = {
+    const move = new Chess().move('e2e4')
+    const game: GameState = {
       moveTree: [{
         ...rootNode,
         children: [1],
       }, {
         key: 1,
-        move: (new Chess().move('e2e4')),
+        move,
         parent: 0,
         children: [],
       }],
+      moveList: [move],
       key: 0,
     }
     renderWithProviders(<AnalysisPane />, { preloadedState: { game } })

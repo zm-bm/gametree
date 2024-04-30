@@ -3,7 +3,7 @@ import { MoveNode } from '../chess';
 import { GOTO_MOVE, MAKE_MOVE } from './actions';
 import { Move } from 'chess.js';
 
-interface GameState {
+export interface GameState {
   moveList: Move[],
   moveTree: MoveNode[],
   key: number
