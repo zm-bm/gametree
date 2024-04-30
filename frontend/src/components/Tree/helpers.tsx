@@ -1,9 +1,8 @@
-import { HierarchyPointNode } from "@visx/hierarchy/lib/types";
 import { BookNode, MoveNode, TreeNode } from "../../chess";
 import { Chess } from "chess.js";
 
-export function countGames(node: HierarchyPointNode<TreeNode>) {
-  const { wins, draws, losses } = node.data.attributes;
+export function countGames(node: TreeNode) {
+  const { wins, draws, losses } = node.attributes;
   if (wins && draws && losses) {
     return wins + draws + losses;
   } else {

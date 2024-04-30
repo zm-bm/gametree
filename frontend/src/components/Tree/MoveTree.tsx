@@ -6,14 +6,12 @@ import { useContext } from "react";
 import { useSelector } from 'react-redux';
 import { Zoom } from '@visx/zoom';
 import { scaleLinear } from '@visx/scale';
-import { TransformMatrix } from '@visx/zoom/lib/types';
-import { localPoint } from '@visx/event';
 import { useTooltip, useTooltipInPortal } from '@visx/tooltip';
-
+import { HierarchyPointLink, HierarchyPointNode } from '@visx/hierarchy/lib/types';
 
 import { Node } from './Node';
 import { Link } from './Link';
-import { generateGameTree } from './helpers';
+import { countGames, generateGameTree } from './helpers';
 import { TreeNode } from "../../chess";
 import { RootState } from '../../store';
 import { OpeningsContext } from '../App';
@@ -28,31 +26,6 @@ export type TreeProps = {
 };
 
 export default function MoveTree({ margin = defaultMargin }: TreeProps) {
-  const {
-    tooltipData,
-    tooltipLeft,
-    tooltipTop,
-    tooltipOpen,
-    showTooltip,
-    hideTooltip,
-  } = useTooltip();
-  const { containerRef, TooltipInPortal } = useTooltipInPortal({
-    // use TooltipWithBounds
-    detectBounds: true,
-    // when tooltip containers are scrolled, this will correctly update the Tooltip position
-    scroll: true,
-  })
-
-  const handleMouseOver = (event, datum) => {
-    const coords = localPoint(event.target.ownerSVGElement, event);
-    if (coords) {
-      showTooltip({
-        tooltipLeft: coords.x,
-        tooltipTop: coords.y,
-        tooltipData: datum
-      });
-    }
-  };
   const { parentRef, width, height } = useParentSize({ initialSize: { width: 800, height: 600 }});
   const openings = useContext(OpeningsContext);
   const moveTree = useSelector((state: RootState) => state.game.moveTree);
@@ -66,23 +39,40 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
   const yMax = height - margin.top - margin.bottom;
   const xMax = width - margin.left - margin.right;
 
+  const {
+    tooltipData,
+    tooltipLeft,
+    tooltipTop,
+    tooltipOpen,
+    showTooltip,
+    hideTooltip,
+  } = useTooltip<TreeNode>();
+  const { containerRef, TooltipInPortal } = useTooltipInPortal({
+    detectBounds: true,
+    scroll: true,
+  })
+
+  const handleMouseEnter = (node: HierarchyPointNode<TreeNode>) => 
+    () => {
+      showTooltip({
+        tooltipLeft: node.y + margin.left,
+        tooltipTop: node.x + margin.top,
+        tooltipData: node.data,
+      });
+    };
+  const onMouseLeave = () => hideTooltip()
+
+
   const root = useMemo(() => {
     const tree = generateGameTree(moveTree, openings);
     return hierarchy(tree);
   }, [moveTree, openings])
 
-  function currentNodeTranslation(matrix: TransformMatrix) {
-    const node = root.descendants().find(node => node.data.name === currentNode);
-    return {
-      // @ts-ignore
-      translateX: (-node?.y * matrix.scaleX) + (xMax / 3),
-      // @ts-ignore
-      translateY: (-node?.x * matrix.scaleY) + (yMax / 2),
-    }
-  }
-
   return (
-    <div ref={parentRef} className='w-full h-full border-l border-neutral-400 dark:border-neutral-500 overflow-hidden'>
+    <div
+      ref={parentRef}
+      className='w-full h-full border-l border-neutral-400 dark:border-neutral-500 overflow-hidden'
+    >
       <Zoom<SVGSVGElement>
         width={width}
         height={height}
@@ -91,22 +81,28 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
         scaleXMax={8}
         scaleYMax={8}
       >
-        {(zoom) => {
-          useEffect(() => {
-            zoom.setTranslate(currentNodeTranslation(zoom.transformMatrix))
-          }, [currentNode, xMax, yMax])
+        {(zoom) => (
+          <div className='relative' ref={containerRef}>
+            <svg
+              width={width}
+              height={height}
+              style={{ cursor: zoom.isDragging ? 'grabbing' : 'grab', touchAction: 'none' }}
+              ref={zoom.containerRef}
+            >
+              <g transform={zoom.toString()}>
+                <Tree<TreeNode> root={root} nodeSize={[nodeHeight, nodeWidth]} >
+                  {(tree) => {
+                    useEffect(() => {
+                      const node = tree.descendants().find(node => node.data.name === currentNode);
+                      if (node) {
+                        zoom.setTranslate({
+                          translateX: (-node.y * zoom.transformMatrix.scaleX) + (xMax / 3),
+                          translateY: (-node.x * zoom.transformMatrix.scaleY) + (yMax / 2),
+                        })
+                      }
+                    }, [currentNode, xMax, yMax])
 
-          return (
-            <div className='relative' ref={containerRef}>
-              <svg
-                width={width}
-                height={height}
-                style={{ cursor: zoom.isDragging ? 'grabbing' : 'grab', touchAction: 'none' }}
-                ref={zoom.containerRef}
-              >
-                <g transform={zoom.toString()}>
-                  <Tree<TreeNode> root={root} nodeSize={[nodeHeight, nodeWidth]} >
-                    {(tree) => (
+                    return (
                       <Group top={margin.top} left={margin.left}>
                         {tree.links().map((link, i) => (
                           <Link
@@ -115,7 +111,8 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
                             r={nodeRadius}
                             fontSize={fontSize}
                             nodeWidth={nodeWidth}
-                            handleMouseOver={handleMouseOver}
+                            onMouseEnter={handleMouseEnter(link.target)}
+                            onMouseLeave={onMouseLeave}
                           />
                         ))}
                         {tree.descendants().map((node, i) => (
@@ -125,33 +122,28 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
                             r={nodeRadius}
                             fontSize={fontSize}
                             isHighlighted={currentNode === node.data.name}
+                            onMouseEnter={handleMouseEnter(node)}
+                            onMouseLeave={onMouseLeave}
                           />
                         ))}
                       </Group>
-                    )}
-                  </Tree>
-                </g>
-              </svg>
-              <div className="absolute top-1 right-1 flex flex-col gap-1">
-                <button
-                  type="button"
-                  className="btn-primary"
-                  onClick={() => zoom.setTranslate(currentNodeTranslation(zoom.transformMatrix))}
-                >to current</button>
-              </div>
-            </div>
-          )
-        }} 
+                    )
+                  }}
+                </Tree>
+              </g>
+            </svg>
+            {(tooltipOpen && tooltipData && tooltipTop && tooltipLeft) &&  (
+              <TooltipInPortal
+                key={Math.random()}
+                top={(tooltipTop * zoom.transformMatrix.scaleY) + zoom.transformMatrix.translateY}
+                left={(tooltipLeft * zoom.transformMatrix.scaleX) + zoom.transformMatrix.translateX}
+              >
+                Total games: <strong>{countGames(tooltipData)}</strong>
+              </TooltipInPortal>
+            )}
+          </div>
+        )}
       </Zoom>
-      {tooltipOpen && (
-        <TooltipInPortal
-          key={Math.random()}
-          top={tooltipTop}
-          left={tooltipLeft}
-        >
-          Data value <strong>{tooltipData}</strong>
-        </TooltipInPortal>
-      )}
     </div>
   );
 }

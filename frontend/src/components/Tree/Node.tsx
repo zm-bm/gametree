@@ -5,14 +5,16 @@ import { TreeNode } from "../../chess";
 import { countGames } from "./helpers";
 
 
-interface NodeProps {
+interface Props {
   node: HierarchyPointNode<TreeNode>,
   r: number,
   fontSize: number,
   isHighlighted: boolean,
+  onMouseEnter: () => void,
+  onMouseLeave: () => void,
 }
 
-export function RootNode({ node }: Pick<NodeProps, 'node'>) {
+export function RootNode({ node }: Pick<Props, 'node'>) {
   return (
     <Group top={node.x} left={node.y}>
       <circle
@@ -25,26 +27,39 @@ export function RootNode({ node }: Pick<NodeProps, 'node'>) {
   );
 }
 
-export function Node(props: NodeProps) {
-  const isRoot = props.node.depth === 0;
-  if (isRoot) return <RootNode node={props.node} />;
+export function Node({
+ node,
+ r,
+ fontSize,
+ isHighlighted,
+ onMouseEnter,
+ onMouseLeave,
+}: Props) {
+  const isRoot = node.depth === 0;
+  if (isRoot) return <RootNode node={node} />;
   // const isParent = !!node.children;
   // if (isParent) return <ParentNode node={node} />;
   return (
-    <Group top={props.node.x} left={props.node.y} style={{ cursor: 'pointer' }}>
+    <Group
+      top={node.x}
+      left={node.y}
+      style={{ cursor: 'pointer' }}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    >
       <circle
-        r={props.r}
-        y={-props.r / 2}
-        x={-props.r / 2}
+        r={r}
+        y={-r / 2}
+        x={-r / 2}
         rx={5}
         fill='white'
-        stroke={props.isHighlighted ? 'green' : 'black'}
+        stroke={isHighlighted ? 'green' : 'black'}
         strokeWidth={1}
         onClick={() => {
-          console.log(props.node);
-          const games = countGames(props.node)
+          console.log(node);
+          const games = countGames(node.data)
           if (games) {
-            const { wins, losses, draws } = props.node.data.attributes;
+            const { wins, losses, draws } = node.data.attributes;
             const winProbability = wins! / games;
             const lossProbability = losses! / games;
             const drawProbability = draws! / games;
@@ -53,17 +68,17 @@ export function Node(props: NodeProps) {
         }}
       />
       <Text
-        height={props.r}
-        width={props.r}
+        height={r}
+        width={r}
         verticalAnchor='middle'
         textAnchor="middle"
-        fontSize={props.fontSize}
+        fontSize={fontSize}
         fontFamily={'monospace'}
-        fontWeight={props.isHighlighted ? 700 : 600}
+        fontWeight={isHighlighted ? 700 : 600}
         fill='black'
         style={{ pointerEvents: 'none', userSelect: 'none' }}
       >
-        {props.node.data.attributes.move?.san}
+        {node.data.attributes.move?.san}
       </Text>
     </Group>
   );
