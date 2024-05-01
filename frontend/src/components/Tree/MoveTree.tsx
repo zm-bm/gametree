@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState  } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { Group } from '@visx/group';
 import { Tree, hierarchy } from '@visx/hierarchy';
 import { useParentSize } from '@visx/responsive';
@@ -8,7 +8,8 @@ import { Zoom } from '@visx/zoom';
 import { scaleLinear } from '@visx/scale';
 import { useTooltip, useTooltipInPortal } from '@visx/tooltip';
 import { HierarchyPointNode } from '@visx/hierarchy/lib/types';
-import { Lookup, animated, useSpring } from 'react-spring';
+import { animated, useSpring } from 'react-spring';
+import { localPoint } from '@visx/event';
 
 import { Node } from './Node';
 import { Link } from './Link';
@@ -16,8 +17,8 @@ import { countGames, generateGameTree } from './helpers';
 import { TreeNode } from "../../chess";
 import { RootState } from '../../store';
 import { OpeningsContext } from '../App';
-import { Point, Translate } from '@visx/zoom/lib/types';
-import useAnimateTranslate from '../../hooks/useAnimateTranslate';
+import { Translate } from '@visx/zoom/lib/types';
+import { SvgDefs } from './SvgDefs';
 
 const nodeRadiusScale = scaleLinear({ domain: [300, 1200], range: [10, 20] })
 const nodeWidthScale = scaleLinear({ domain: [300, 1200], range: [80, 320] })
@@ -42,42 +43,10 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
   const yMax = height - margin.top - margin.bottom;
   const xMax = width - margin.left - margin.right;
 
-  const {
-    tooltipData,
-    tooltipLeft,
-    tooltipTop,
-    tooltipOpen,
-    showTooltip,
-    hideTooltip,
-  } = useTooltip<TreeNode>();
-  const { containerRef, TooltipInPortal } = useTooltipInPortal({
-    detectBounds: true,
-    scroll: true,
-  })
-
-  const handleMouseEnter = (node: HierarchyPointNode<TreeNode>) => 
-    () => {
-      showTooltip({
-        tooltipLeft: node.y + margin.left,
-        tooltipTop: node.x + margin.top,
-        tooltipData: node.data,
-      });
-    };
-  const onMouseLeave = () => hideTooltip()
-
-
   const root = useMemo(() => {
     const tree = generateGameTree(moveTree, openings);
     return hierarchy(tree);
   }, [moveTree, openings])
-
-  const [styles, api] = useSpring(() => ({
-    translateX: 0,
-    translateY: 0,
-    scaleX: 1,
-    scaleY: 1,
-    config: { tension: 170, friction: 26 }
-  }));
 
   return (
     <div
@@ -99,6 +68,33 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
             onChange: ({ value }) => zoom.setTranslate(value as Translate),
           }));
 
+          const {
+            tooltipData,
+            tooltipLeft,
+            tooltipTop,
+            tooltipOpen,
+            showTooltip,
+            hideTooltip,
+          } = useTooltip<TreeNode>();
+          const { containerRef, TooltipInPortal } = useTooltipInPortal({
+            detectBounds: true,
+            scroll: false,
+          })
+
+          const handleMouseMove = useCallback(
+            (node: HierarchyPointNode<TreeNode>): React.MouseEventHandler =>
+              (event) => {
+                const coords = localPoint(event);
+                if (coords) {
+                  showTooltip({
+                    tooltipLeft: coords.x,
+                    tooltipTop: coords.y,
+                    tooltipData: node.data,
+                  });
+                }
+              }, []);
+          const onMouseLeave = useCallback(() => hideTooltip(), []);
+
           return (
             <div className='relative' ref={containerRef}>
               <svg
@@ -107,6 +103,7 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
                 style={{ cursor: zoom.isDragging ? 'grabbing' : 'grab', touchAction: 'none' }}
                 ref={zoom.containerRef}
               >
+                <SvgDefs />
                 <animated.g transform={zoom.toString()}>
                   <Tree<TreeNode>
                     root={root}
@@ -132,7 +129,7 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
                               r={nodeRadius}
                               fontSize={fontSize}
                               nodeWidth={nodeWidth}
-                              onMouseEnter={handleMouseEnter(link.target)}
+                              onMouseMove={handleMouseMove(link.target)}
                               onMouseLeave={onMouseLeave}
                             />
                           ))}
@@ -142,8 +139,8 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
                               node={node}
                               r={nodeRadius}
                               fontSize={fontSize}
-                              isHighlighted={currentNode === node.data.name}
-                              onMouseEnter={handleMouseEnter(node)}
+                              isCurrentNode={currentNode === node.data.name}
+                              onMouseMove={handleMouseMove(node)}
                               onMouseLeave={onMouseLeave}
                             />
                           ))}
@@ -156,8 +153,8 @@ export default function MoveTree({ margin = defaultMargin }: TreeProps) {
               {(tooltipOpen && tooltipData && tooltipTop && tooltipLeft) &&  (
                 <TooltipInPortal
                   key={Math.random()}
-                  top={(tooltipTop * zoom.transformMatrix.scaleY) + zoom.transformMatrix.translateY}
-                  left={(tooltipLeft * zoom.transformMatrix.scaleX) + zoom.transformMatrix.translateX}
+                  top={(tooltipTop)}
+                  left={(tooltipLeft)}
                 >
                   Total games: <strong>{countGames(tooltipData)}</strong>
                 </TooltipInPortal>

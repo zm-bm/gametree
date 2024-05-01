@@ -73,7 +73,7 @@ interface Props {
   r: number,
   fontSize: number,
   nodeWidth: number,
-  onMouseEnter: () => void,
+  onMouseMove: React.MouseEventHandler,
   onMouseLeave: () => void,
 }
 const Link = ({
@@ -81,7 +81,7 @@ const Link = ({
   r,
   fontSize,
   nodeWidth,
-  onMouseEnter,
+  onMouseMove,
   onMouseLeave,
 }: Props) => {
   const fill = calcStroke(link.target)
@@ -89,7 +89,7 @@ const Link = ({
 
   return (
     <Group
-      onMouseEnter={onMouseEnter}
+      onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
       style={{ cursor: 'pointer' }}
     >

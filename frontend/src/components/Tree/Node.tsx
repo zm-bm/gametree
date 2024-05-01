@@ -9,42 +9,41 @@ interface Props {
   node: HierarchyPointNode<TreeNode>,
   r: number,
   fontSize: number,
-  isHighlighted: boolean,
-  onMouseEnter: () => void,
+  isCurrentNode: boolean,
+  onMouseMove: React.MouseEventHandler,
   onMouseLeave: () => void,
-}
-
-export function RootNode({ node }: Pick<Props, 'node'>) {
-  return (
-    <Group top={node.x} left={node.y}>
-      <circle
-        r={20}
-        onClick={() => {
-          console.log(node);
-        }}
-       />
-    </Group>
-  );
 }
 
 export function Node({
  node,
  r,
  fontSize,
- isHighlighted,
- onMouseEnter,
+ isCurrentNode,
+ onMouseMove,
  onMouseLeave,
 }: Props) {
   const isRoot = node.depth === 0;
-  if (isRoot) return <RootNode node={node} />;
+  if (isRoot) {
+    return (
+      <Group top={node.x} left={node.y}>
+        <circle
+          r={20}
+          fill={isCurrentNode ? 'url(#currentNodeGradient)' : 'url(#blackMoveGradient)'}
+          stroke='black'
+          strokeWidth={2}
+        />
+      </Group>
+    );
+  }
   // const isParent = !!node.children;
   // if (isParent) return <ParentNode node={node} />;
+
   return (
     <Group
       top={node.x}
       left={node.y}
       style={{ cursor: 'pointer' }}
-      onMouseEnter={onMouseEnter}
+      onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
     >
       <circle
@@ -52,9 +51,11 @@ export function Node({
         y={-r / 2}
         x={-r / 2}
         rx={5}
-        fill='white'
-        stroke={isHighlighted ? 'green' : 'black'}
-        strokeWidth={1}
+        fill={
+          isCurrentNode ? 'url(#currentNodeGradient)'
+            : (node.data.attributes.move?.color === 'w') ? 'url(#whiteMoveGradient)' : 'url(#blackMoveGradient)' }
+        stroke='black'
+        strokeWidth={2}
         onClick={() => {
           console.log(node);
           const games = countGames(node.data)
@@ -74,8 +75,8 @@ export function Node({
         textAnchor="middle"
         fontSize={fontSize}
         fontFamily={'monospace'}
-        fontWeight={isHighlighted ? 700 : 600}
-        fill='black'
+        fontWeight={600}
+        fill={node.data.attributes.move?.color === 'w' ? 'black' : 'white'}
         style={{ pointerEvents: 'none', userSelect: 'none' }}
       >
         {node.data.attributes.move?.san}
