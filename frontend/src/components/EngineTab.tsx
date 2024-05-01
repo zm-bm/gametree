@@ -3,7 +3,7 @@ import EngineControls from "./EngineControls";
 import { AppDispatch, RootState } from '../store';
 import { formatScore } from "../lib/helpers";
 import { useCallback, useState } from "react";
-import EngineTabBoard from "./EngineTabBoard";
+import EngineTabBoard from "./Board/EngineTabBoard";
 import EngineTabHeader from "./EngineTabHeader";
 import { Chess, Square } from "chess.js";
 import EngineTabMove from "./EngineTabMove";

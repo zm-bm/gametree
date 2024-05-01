@@ -2,11 +2,10 @@ import { HierarchyPointLink, HierarchyPointNode } from "@visx/hierarchy/lib/type
 import { Group } from '@visx/group';
 import { TreeNode } from "../../chess";
 import { LinkHorizontal } from "@visx/shape";
-import { scalePower, scaleSqrt } from "@visx/scale";
+import { scalePower } from "@visx/scale";
 import { Text } from "@visx/text";
 import { countGames } from "./helpers";
 
-const strokeWidthScale = scaleSqrt({ domain: [0, 1], range: [8, 30] })
 const winColor =  '#66bb6a'
 const lossColor = '#f44336'
 const drawColor =  '#555'
@@ -17,14 +16,6 @@ const colorScale = scalePower({
   exponent: 0.5
 });
 
-function calcPathWidth({ source, target }: HierarchyPointLink<TreeNode>) {
-  const sGames = countGames(source.data)
-  const tGames = countGames(target.data)
-  return (sGames && tGames)
-    ? strokeWidthScale(tGames / sGames)
-    : strokeWidthScale(0);
-}
-
 const mid = (a: number, b: number) => a + (b - a) * 0.5;
 
 function calcPath(
@@ -32,7 +23,11 @@ function calcPath(
   r: number,
 ) {
   const { source, target } = link;
-  const width = calcPathWidth(link)
+  const sGames = countGames(source.data)
+  const tGames = countGames(target.data)
+  const width = (sGames && tGames)
+    ? Math.pow(tGames / sGames, 0.5) * 2 * r + 2
+    : r * 0.1 + 2;
   const midX = mid(source.y, target.y);
   const quarterX = mid(source.y, midX)
   const topY = target.x - width/2;
@@ -104,20 +99,22 @@ const Link = ({
             <rect
               x={midX}
               y={link.target.x - r}
-              rx={5}
+              rx={2}
               width={nodeWidth / 2}
               height={r * 2}
               fill={fill}
-              opacity={0.66}
+              // stroke="gray"
+              // strokeWidth={1}
             ></rect>
             <Text
               x={midX}
-              dx={10}
+              dx={8}
               y={link.target.x}
-              fontSize={fontSize}
+              width={nodeWidth / 2 - r}
+              fill="white"
+              scaleToFit='shrink-only'
+              fontSize={fontSize+1}
               verticalAnchor='middle'
-              fill="black"
-              width={nodeWidth / 2 + r}
               style={{ pointerEvents: 'none', userSelect: 'none' }}
             >
               {link.target.data.attributes.title}

@@ -29,7 +29,7 @@ export function Node({
         <circle
           r={20}
           fill={isCurrentNode ? 'url(#currentNodeGradient)' : 'url(#blackMoveGradient)'}
-          stroke='black'
+          stroke={'gray'}
           strokeWidth={2}
         />
       </Group>
@@ -51,11 +51,9 @@ export function Node({
         y={-r / 2}
         x={-r / 2}
         rx={5}
-        fill={
-          isCurrentNode ? 'url(#currentNodeGradient)'
-            : (node.data.attributes.move?.color === 'w') ? 'url(#whiteMoveGradient)' : 'url(#blackMoveGradient)' }
-        stroke='black'
-        strokeWidth={2}
+        fill={isCurrentNode ? 'url(#currentNodeGradient)' : node.data.attributes.move?.color === 'w' ? 'url(#whiteMoveGradient)' : 'url(#blackMoveGradient)' }
+        stroke={'gray'}
+        strokeWidth={isCurrentNode ? 3 : 2}
         onClick={() => {
           console.log(node);
           const games = countGames(node.data)

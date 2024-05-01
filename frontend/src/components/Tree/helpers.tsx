@@ -10,6 +10,23 @@ export function countGames(node: TreeNode) {
   }
 }
 
+function sortTreeNodes(nodes: TreeNode[]) {
+  // return tree nodes with most frequent moves in the middle
+  let result = [];
+  let start = 0;
+  let end = nodes.length - 1;
+
+  nodes.sort((a, b) => countGames(a) - countGames(b))
+  for (let i = 0; i < nodes.length; i++) {
+    if (i % 2 === 0) {
+      result[end--] = nodes[i];
+    } else {
+      result[start++] = nodes[i];
+    }
+  }
+  return result;
+}
+
 export const generateGameTree = (
   moveTree: MoveNode[],
   opening?: BookNode,
@@ -24,7 +41,7 @@ export const generateGameTree = (
     // get list of legal moves from current position
     const moves = chess.moves();
     // create tree nodes for children
-    const children: TreeNode[] = [];
+    var children: TreeNode[] = [];
     moves.forEach(san => {
       // get opening for child if any
       const childOpening = opening?.children?.find(n => n.move === san);
@@ -47,13 +64,9 @@ export const generateGameTree = (
         });
         chess.undo();
       }
-      // add legal moves?
-      // else if (moveKey === moveNode.key) {
-      //   const move = chess.move(san);
-      //   children.push({ name, attributes: { move } });
-      //   chess.undo();
-      // }
     })
+
+    children = sortTreeNodes(children)
 
     const { code, title, wins, draws, losses } = opening || {};
     return {
