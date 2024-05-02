@@ -1,4 +1,4 @@
-import { Tooltip } from "@visx/tooltip";
+import { TooltipWithBounds } from "@visx/tooltip";
 import { UseTooltipParams } from "@visx/tooltip/lib/hooks/useTooltip";
 import { HierarchyPointNode } from "@visx/hierarchy/lib/types";
 
@@ -19,7 +19,7 @@ export const MoveTreeTooltip = ({ tooltip }: Props) => {
 
   return (
     (tooltipOpen && tooltipData) && (
-      <Tooltip
+      <TooltipWithBounds
         key={Math.random()}
         top={tooltipTop}
         left={tooltipLeft}
@@ -32,7 +32,7 @@ export const MoveTreeTooltip = ({ tooltip }: Props) => {
             }}
           />
         </div>
-      </Tooltip>
+      </TooltipWithBounds>
     )
   );
 }

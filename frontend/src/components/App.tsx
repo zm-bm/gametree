@@ -9,8 +9,8 @@ import book from '../book.json'
 export const OpeningsContext = createContext<BookNode>(book as BookNode);
 
 const size = 'sm:h-screen sm:w-screen sm:flex-row min-h-0'
-const bg = 'bg-gradient-to-b from-neutral-200 via-neutral-100 to-neutral-200'
-const dark = 'dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900'
+const bg = 'bg-gradient-to-b from-[#ECECEC] via-neutral-100 to-[#ECECEC]'
+const dark = 'dark:from-[#222] dark:via-neutral-800 dark:to-[#222]'
 const classes = `flex flex-col ${size} ${dark} ${bg}`
 
 function App() {
@@ -35,4 +35,3 @@ function App() {
 }
 
 export default App
- 

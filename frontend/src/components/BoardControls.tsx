@@ -47,7 +47,7 @@ const BoardControls = () => {
     return () => window.removeEventListener('keydown', debouncedKeyDown);
   }, [undo, forward, redo, forward]);
 
-  const buttonClass = "btn-primary p-2 hover:scale-105";
+  const buttonClass = "btn-primary p-2 hover:scale-110";
   return (
     <div className="flex items-center gap-1 pt-1">
       {/* game controls */}

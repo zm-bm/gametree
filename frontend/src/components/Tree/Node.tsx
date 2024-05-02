@@ -51,7 +51,7 @@ export function Node({
         fill={isCurrentNode ? 'url(#currentNodeGradient)' : node.data.attributes.move?.color === 'w' ? 'url(#whiteMoveGradient)' : 'url(#blackMoveGradient)' }
         stroke={'gray'}
         strokeWidth={isCurrentNode ? 3 : 2}
-        className="transition hover:scale-110 hover:stroke-black"
+        className="transition hover:scale-110 hover:stroke-yellow-400 dark:hover:stroke-yellow-400"
         // onClick={() => {
         //   console.log(node);
         //   const games = countGames(node.data)
