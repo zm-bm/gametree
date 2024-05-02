@@ -9,12 +9,12 @@ import {
   IoIosPause,
   IoIosPlay
 } from "react-icons/io";
-import { throttle } from "../lib/helpers";
-import { useMoveActions } from "../hooks/moveHooks";
-import { FLIP_ORIENTATION } from "../redux/boardSlice";
-import ECODisplay from "./ECODisplay";
-import { TOGGLE_ENGINE } from "../redux/engineSlice";
-import { AppDispatch, RootState } from '../store';
+import { throttle } from "../../lib/helpers";
+import { useMoveActions } from "../../hooks/moveHooks";
+import { FLIP_ORIENTATION } from "../../redux/boardSlice";
+import ECODisplay from "../ECODisplay";
+import { TOGGLE_ENGINE } from "../../redux/engineSlice";
+import { AppDispatch, RootState } from '../../store';
 
 const BoardControls = () => {
   const { undo, redo, rewind, forward } = useMoveActions();
@@ -48,8 +48,9 @@ const BoardControls = () => {
   }, [undo, forward, redo, forward]);
 
   const buttonClass = "btn-primary p-2 hover:scale-110";
+
   return (
-    <div className="flex items-center gap-1 pt-1">
+    <div className="flex items-center gap-1 py-1 neutral-gradient-to-b">
       {/* game controls */}
       <button onClick={rewind} className={buttonClass} title='Rewind to first move'>
         <IoIosRewind className='m-auto' />

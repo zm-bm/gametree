@@ -1,16 +1,14 @@
 import { useDispatch, useSelector } from "react-redux";
-import EngineControls from "./EngineControls";
-import { AppDispatch, RootState } from '../store';
-import { formatScore } from "../lib/helpers";
+import { AppDispatch, RootState } from '../../store';
+import { formatScore } from "../../lib/helpers";
 import { useCallback, useState } from "react";
-import EngineTabBoard from "./Board/EngineTabBoard";
-import EngineTabHeader from "./EngineTabHeader";
+import EngineBoard from "./EngineBoard";
 import { Chess, Square } from "chess.js";
-import EngineTabMove from "./EngineTabMove";
-import { MAKE_MOVE } from "../redux/actions";
-import { colorFromFen } from "../chess";
+import EngineMove from "./EngineMove";
+import { MAKE_MOVE } from "../../redux/actions";
+import { colorFromFen } from "../../chess";
 
-const EngineTab = () => {
+const EngineInfo = () => {
   const dispatch = useDispatch<AppDispatch>()
   const infos = useSelector((state: RootState) => state.engine.infos);
   const fen = useSelector((state: RootState) => state.engine.fen)
@@ -58,48 +56,44 @@ const EngineTab = () => {
   const onMouseLeave = useCallback(() => setIsHovered(false), []);
 
   return (
-    <>
-      <EngineTabHeader />
-      <div className="flex-1 p-1 font-mono text-sm leading-tight overflow-auto">
-        <div className="flex">
-          <span className="w-12 font-bold underline cursor-default">Depth</span>
-          <span className="w-12 font-bold underline cursor-default">Score</span>
-          <span className="flex-1 font-bold underline cursor-default">Moves</span>
-        </div>
-        {
-          infos.slice(0).reverse().map((info, index) => {
-            return (
-              <div className="flex" key={index}>
-                <span className="w-12">{info.depth}/{info.seldepth}</span>
-                <span className="w-12">{formatScore(info, turnColor, orientation)}</span>
-                <div className="flex-1"
-                  onMouseEnter={onMouseEnter}
-                  onMouseMove={onMouseMove}
-                  onMouseLeave={onMouseLeave}
-                >
-                  {
-                    info.pv.map((move, i) => (
-                      <>
-                        <EngineTabMove
-                          key={i}
-                          onHover={onHover}
-                          onClick={onClick}
-                          move={move}
-                          moves={info.pv.slice(0, i+1).map(m => m.lan)}
-                          showMoveNum={i === 0 || move.color === 'w'}
-                        />
-                        &#32;
-                      </>
-                    ))
-                  }
-                </div>
-              </div>
-            );
-          }
-        )}
+    <div className="flex-1 p-2 font-mono text-sm leading-tight overflow-auto neutral-gradient-to-b">
+      <div className="flex">
+        <span className="w-12 font-bold underline cursor-default">Depth</span>
+        <span className="w-12 font-bold underline cursor-default">Score</span>
+        <span className="flex-1 font-bold underline cursor-default">Moves</span>
       </div>
-      <EngineControls />
-      <EngineTabBoard
+      {
+        infos.slice(0).reverse().map((info, index) => {
+          return (
+            <div className="flex" key={index}>
+              <span className="w-12">{info.depth}/{info.seldepth}</span>
+              <span className="w-12">{formatScore(info, turnColor, orientation)}</span>
+              <div className="flex-1"
+                onMouseEnter={onMouseEnter}
+                onMouseMove={onMouseMove}
+                onMouseLeave={onMouseLeave}
+              >
+                {
+                  info.pv.map((move, i) => (
+                    <>
+                      <EngineMove
+                        key={i}
+                        onHover={onHover}
+                        onClick={onClick}
+                        move={move}
+                        moves={info.pv.slice(0, i+1).map(m => m.lan)}
+                        showMoveNum={i === 0 || move.color === 'w'}
+                      />
+                      &#32;
+                    </>
+                  ))
+                }
+              </div>
+            </div>
+          );
+        }
+      )}
+      <EngineBoard
         isHovered={isHovered}
         config={{
           fen: hoverFen,
@@ -110,8 +104,8 @@ const EngineTab = () => {
         }}
         coords={coords}
       />
-    </>
+    </div>
   )
 };
 
-export default EngineTab;
+export default EngineInfo;

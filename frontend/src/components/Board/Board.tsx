@@ -22,20 +22,20 @@ const Board = () => {
   const lastMove = moveList.at(-1)
 
   const autoShapes = useMemo(() => {
-    const info = infos.at(0);
-    if (info) {
-      const bestMove = info.pv.at(0);
-      if (bestMove) {
+    const bestMove = infos.at(-1)?.pv.at(0);
+    const chess = new Chess(fen);
+    if (bestMove) {
+      try {
+        chess.move(bestMove)
         return [{
           orig: bestMove.from,
           dest: bestMove.to,
           brush: 'paleGreen',
-        }]
-      }
+        }];
+      } catch {}
     }
     return [];
   }, [infos])
-  
 
   // ensure chessground board height/width is multiple of 8 (bc chess board)
   const size = useMemo(() => {

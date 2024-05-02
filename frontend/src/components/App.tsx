@@ -1,11 +1,13 @@
 import Board from './Board/Board'
-import BoardControls from './BoardControls'
-import AnalysisPane from './AnalysisPane'
+import BoardControls from './Board/BoardControls'
 import MoveTree from './Tree/MoveTree'
 import { createContext } from 'react'
 import { BookNode } from '../chess'
 
 import book from '../book.json'
+import EngineInfo from './Engine/EngineInfo'
+import EngineHeader from './Engine/EngineHeader'
+import EngineControls from './Engine/EngineControls'
 export const OpeningsContext = createContext<BookNode>(book as BookNode);
 
 const size = 'sm:h-screen sm:w-screen sm:flex-row min-h-0'
@@ -23,7 +25,9 @@ function App() {
             <BoardControls />
           </div>
           <div className='flex-1 flex flex-col min-h-0'>
-            <AnalysisPane />
+            <EngineHeader />
+            <EngineInfo />
+            <EngineControls />
           </div>
         </div>
         <div className='flex-auto sm:h-screen sm:w-1/2 md:w-3/5 lg:w-2/3 2xl:w-3/4'>

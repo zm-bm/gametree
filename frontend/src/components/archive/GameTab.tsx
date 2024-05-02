@@ -1,10 +1,10 @@
 import React, { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import MoveButton from "./MoveButton";
-import { AppDispatch, RootState } from "../store";
-import { GOTO_MOVE } from "../redux/actions";
+import MoveButton from "../MoveButton";
+import { AppDispatch, RootState } from "../../store";
+import { GOTO_MOVE } from "../../redux/actions";
 import { DEFAULT_POSITION } from "chess.js";
-import Fen from "./Fen";
+import Fen from "../Fen";
 
 
 const GameTab = () => {
@@ -62,8 +62,6 @@ const GameTab = () => {
       </React.Fragment>
     );
   }
-
-
 
   return (
     <>

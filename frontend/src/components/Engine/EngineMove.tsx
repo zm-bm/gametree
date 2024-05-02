@@ -1,6 +1,6 @@
 import { Move } from "chess.js";
-import MoveText from "./MoveText";
-import { moveNumFromFen } from "../chess";
+import MoveText from "../MoveText";
+import { moveNumFromFen } from "../../chess";
 
 interface Props {
   onHover: React.MouseEventHandler<HTMLButtonElement>,
@@ -10,7 +10,7 @@ interface Props {
   showMoveNum: boolean,
 }
 
-const EngineTabMove = (props: Props) => {
+const EngineMove = (props: Props) => {
   return (
     <button
       data-fen={props.move.after}
@@ -29,4 +29,4 @@ const EngineTabMove = (props: Props) => {
   );
 }
 
-export default EngineTabMove;
+export default EngineMove;

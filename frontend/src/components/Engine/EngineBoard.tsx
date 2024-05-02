@@ -1,4 +1,4 @@
-import BaseBoard from "./BaseBoard";
+import BaseBoard from "../Board/BaseBoard";
 import { Config } from "chessground/config";
 
 interface Props {
@@ -6,7 +6,7 @@ interface Props {
   isHovered: boolean,
   coords: { top: number, left: number },
 }
-const EngineTabBoard = ({ config, coords, isHovered }: Props) => {
+const EngineBoard = ({ config, coords, isHovered }: Props) => {
   return (
     <div
       className={`absolute z-20 border border-neutral-400 ${isHovered ? 'visible' : 'hidden'}`}
@@ -19,4 +19,4 @@ const EngineTabBoard = ({ config, coords, isHovered }: Props) => {
   );
 }
 
-export default EngineTabBoard;
+export default EngineBoard;

@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 
-import { SET_HASH, SET_LINES, SET_THREADS } from "../redux/engineSlice";
-import { AppDispatch, RootState } from '../store';
+import { SET_HASH, SET_LINES, SET_THREADS } from "../../redux/engineSlice";
+import { AppDispatch, RootState } from '../../store';
 
 const EngineControls = () => {
   const nnue = useSelector((state: RootState) => state.engine.nnue);
@@ -11,7 +11,7 @@ const EngineControls = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   return (
-    <div className="flex items-center text-xs p-1 gap-1 border-t border-gray-400 dark:border-gray-600 gray-gradient-to-b">
+    <div className="flex items-center text-xs p-2 gap-1 border-t border-gray-400 dark:border-gray-600 neutral-gradient-to-b">
       <select
         title="Hash size"
         className="btn-primary"
