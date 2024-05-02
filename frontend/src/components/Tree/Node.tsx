@@ -30,6 +30,8 @@ export function Node({
           fill={isCurrentNode ? 'url(#currentNodeGradient)' : 'url(#blackMoveGradient)'}
           stroke={'gray'}
           strokeWidth={2}
+          onMouseEnter={onMouseEnter}
+          onMouseLeave={onMouseLeave}
         />
       </Group>
     );

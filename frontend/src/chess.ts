@@ -107,3 +107,7 @@ export function buildOpeningTree(input: ECO): BookNode {
   const chess = new Chess()
   return build(input, chess)
 }
+
+export const winColor = '#66bb6a';
+export const lossColor = '#f44336';
+export const drawColor = '#535353';

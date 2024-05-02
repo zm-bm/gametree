@@ -6,10 +6,7 @@ import { Text } from "@visx/text";
 
 import { countGames } from "./helpers";
 import { TreeNode } from "../../chess";
-
-const winColor =  '#66bb6a'
-const lossColor = '#f44336'
-const drawColor =  '#535353'
+import { lossColor, drawColor, winColor } from "../../chess";
 
 const colorScale = scalePower({
   domain: [-1, 0, 1],
@@ -80,9 +77,7 @@ const Link = ({
   const midX = mid(link.source.y, link.target.y);
 
   return (
-    <Group
-      style={{ cursor: 'pointer' }}
-    >
+    <Group style={{ cursor: 'pointer' }}>
       <LinkHorizontal
         path={link => calcPath(link, r)}
         data={link}
