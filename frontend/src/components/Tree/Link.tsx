@@ -1,14 +1,15 @@
 import { HierarchyPointLink, HierarchyPointNode } from "@visx/hierarchy/lib/types";
 import { Group } from '@visx/group';
-import { TreeNode } from "../../chess";
 import { LinkHorizontal } from "@visx/shape";
 import { scalePower } from "@visx/scale";
 import { Text } from "@visx/text";
+
 import { countGames } from "./helpers";
+import { TreeNode } from "../../chess";
 
 const winColor =  '#66bb6a'
 const lossColor = '#f44336'
-const drawColor =  '#555'
+const drawColor =  '#535353'
 
 const colorScale = scalePower({
   domain: [-1, 0, 1],
@@ -26,7 +27,7 @@ function calcPath(
   const sGames = countGames(source.data)
   const tGames = countGames(target.data)
   const width = (sGames && tGames)
-    ? Math.pow(tGames / sGames, 0.5) * 2 * r + 2
+    ? Math.sqrt(tGames / sGames) * 1.5 * r + 2
     : r * 0.1 + 2;
   const midX = mid(source.y, target.y);
   const quarterX = mid(source.y, midX)
@@ -68,24 +69,18 @@ interface Props {
   r: number,
   fontSize: number,
   nodeWidth: number,
-  onMouseMove: React.MouseEventHandler,
-  onMouseLeave: () => void,
 }
 const Link = ({
   link,
   r,
   fontSize,
   nodeWidth,
-  onMouseMove,
-  onMouseLeave,
 }: Props) => {
-  const fill = calcStroke(link.target)
-  const midX = mid(link.source.y, link.target.y)
+  const fill = calcStroke(link.target);
+  const midX = mid(link.source.y, link.target.y);
 
   return (
     <Group
-      onMouseMove={onMouseMove}
-      onMouseLeave={onMouseLeave}
       style={{ cursor: 'pointer' }}
     >
       <LinkHorizontal
@@ -103,8 +98,6 @@ const Link = ({
               width={nodeWidth / 2}
               height={r * 2}
               fill={fill}
-              // stroke="gray"
-              // strokeWidth={1}
             ></rect>
             <Text
               x={midX}
@@ -123,7 +116,7 @@ const Link = ({
         )
       }
     </Group>
-  )
+ )
 };
 
 export { Link };

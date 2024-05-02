@@ -1,29 +1,28 @@
+import { MouseEventHandler } from "react";
 import { Group } from "@visx/group";
 import { HierarchyPointNode } from "@visx/hierarchy/lib/types";
 import { Text } from "@visx/text";
 import { TreeNode } from "../../chess";
-import { countGames } from "./helpers";
-
 
 interface Props {
   node: HierarchyPointNode<TreeNode>,
   r: number,
   fontSize: number,
   isCurrentNode: boolean,
-  onMouseMove: React.MouseEventHandler,
+  onMouseEnter: MouseEventHandler,
   onMouseLeave: () => void,
 }
 
 export function Node({
- node,
- r,
- fontSize,
- isCurrentNode,
- onMouseMove,
- onMouseLeave,
+  node,
+  r,
+  fontSize,
+  isCurrentNode,
+  onMouseEnter,
+  onMouseLeave,
 }: Props) {
-  const isRoot = node.depth === 0;
-  if (isRoot) {
+  if (node.depth === 0) {
+    // root node
     return (
       <Group top={node.x} left={node.y}>
         <circle
@@ -35,15 +34,13 @@ export function Node({
       </Group>
     );
   }
-  // const isParent = !!node.children;
-  // if (isParent) return <ParentNode node={node} />;
 
   return (
     <Group
       top={node.x}
       left={node.y}
       style={{ cursor: 'pointer' }}
-      onMouseMove={onMouseMove}
+      onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
       <circle
@@ -54,17 +51,18 @@ export function Node({
         fill={isCurrentNode ? 'url(#currentNodeGradient)' : node.data.attributes.move?.color === 'w' ? 'url(#whiteMoveGradient)' : 'url(#blackMoveGradient)' }
         stroke={'gray'}
         strokeWidth={isCurrentNode ? 3 : 2}
-        onClick={() => {
-          console.log(node);
-          const games = countGames(node.data)
-          if (games) {
-            const { wins, losses, draws } = node.data.attributes;
-            const winProbability = wins! / games;
-            const lossProbability = losses! / games;
-            const drawProbability = draws! / games;
-            console.log(winProbability, drawProbability, lossProbability)
-          }
-        }}
+        className="transition hover:scale-110 hover:stroke-black"
+        // onClick={() => {
+        //   console.log(node);
+        //   const games = countGames(node.data)
+        //   if (games) {
+        //     const { wins, losses, draws } = node.data.attributes;
+        //     const winProbability = wins! / games;
+        //     const lossProbability = losses! / games;
+        //     const drawProbability = draws! / games;
+        //     console.log(winProbability, drawProbability, lossProbability)
+        //   }
+        // }}
       />
       <Text
         height={r}

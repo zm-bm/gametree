@@ -1,5 +1,12 @@
+import { TransformMatrix } from "@visx/zoom/lib/types";
 import { BookNode, MoveNode, TreeNode } from "../../chess";
 import { Chess } from "chess.js";
+
+export type ZoomState = {
+  initialTransformMatrix: TransformMatrix;
+  transformMatrix: TransformMatrix;
+  isDragging: boolean;
+}
 
 export function countGames(node: TreeNode) {
   const { wins, draws, losses } = node.attributes;
