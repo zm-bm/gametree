@@ -18,6 +18,8 @@ const Board = () => {
   const fen = useSelector((state: RootState) => state.board.fen);
   const orientation = useSelector((state: RootState) => state.board.orientation);
   const infos = useSelector((state: RootState) => state.engine.infos);
+  const moveList = useSelector((state: RootState) => state.game.moveList)
+  const lastMove = moveList.at(-1)
 
   const autoShapes = useMemo(() => {
     const info = infos.at(0);
@@ -33,6 +35,7 @@ const Board = () => {
     }
     return [];
   }, [infos])
+  
 
   // ensure chessground board height/width is multiple of 8 (bc chess board)
   const size = useMemo(() => {
@@ -58,6 +61,7 @@ const Board = () => {
       orientation,
       turnColor: chess.turn() === 'w' ? 'white' : 'black',
       check: chess.inCheck(),
+      lastMove: lastMove ? [lastMove.from, lastMove.to] : [],
       movable: { dests: getDests(chess), free: false },
       events: { move },
       drawable: { autoShapes }
