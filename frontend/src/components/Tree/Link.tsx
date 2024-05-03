@@ -4,10 +4,12 @@ import { LinkHorizontal } from "@visx/shape";
 import { scalePower } from "@visx/scale";
 import { Text } from "@visx/text";
 
-import { countGames } from "./helpers";
+import { countGames } from "../../chess";
 import { TreeNode } from "../../chess";
-import { lossColor, drawColor, winColor } from "../../chess";
 
+const winColor = '#66bb6a';
+const lossColor = '#f44336';
+const drawColor = '#535353';
 const colorScale = scalePower({
   domain: [-1, 0, 1],
   range: [lossColor, drawColor, winColor],
@@ -40,7 +42,7 @@ function calcPath(
   const linetoMidBottom = `L${midX},${botY}`
   const bottomCurve = `C${midX},${botY},${quarterX},${botY},${source.y+r+endOffset},${source.x}`
 
-  return (link.target.data.attributes.title)
+  return (link.target.data.attributes.opening?.name)
     ? `${start}${topCurve}${linetoMidBottom}${bottomCurve}`
     : `${start}${topCurve}${lineToNodeTop}${lineToNodeBottom}${linetoMidBottom}${bottomCurve}`;
 }
@@ -48,12 +50,12 @@ function calcPath(
 function calcStroke(node: HierarchyPointNode<TreeNode>) {
   const games = countGames(node.data)
   if (games) {
-    const { wins, losses } = node.data.attributes;
-    const winProbability = wins! / games;
-    const lossProbability = losses! / games;
-    const outcome = node.data.attributes?.turn === 'b'
-      ? winProbability - lossProbability
-      : lossProbability - winProbability;
+    const { white, black } = node.data.attributes;
+    const whiteProb = white / games;
+    const blackProb = black / games;
+    const outcome = node.data.attributes.move?.color === 'w'
+      ? whiteProb - blackProb 
+      : blackProb - whiteProb;
     return colorScale(outcome);
   }
   else {
@@ -84,7 +86,7 @@ const Link = ({
         fill={fill}
       />
       {
-        link.target.data.attributes.title && (
+        link.target.data.attributes.opening && (
           <>
             <rect
               x={midX}
@@ -105,7 +107,7 @@ const Link = ({
               verticalAnchor='middle'
               style={{ pointerEvents: 'none', userSelect: 'none' }}
             >
-              {link.target.data.attributes.title}
+              { link.target.data.attributes.opening.name }
             </Text>
           </>
         )

@@ -125,7 +125,6 @@ const engineSlice = createSlice({
         state.infos = []
         state.fen = action.payload.fen
       }
-
     })
   },
 });

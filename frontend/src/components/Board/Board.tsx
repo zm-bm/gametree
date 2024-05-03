@@ -17,25 +17,20 @@ const Board = () => {
   const [ref, dimensions] = useDimensions()
   const fen = useSelector((state: RootState) => state.board.fen);
   const orientation = useSelector((state: RootState) => state.board.orientation);
-  const infos = useSelector((state: RootState) => state.engine.infos);
-  const moveList = useSelector((state: RootState) => state.game.moveList)
-  const lastMove = moveList.at(-1)
+  const engineFen = useSelector((state: RootState) => state.engine.fen);
+  const bestMove = useSelector((state: RootState) => state.engine.infos.at(-1)?.pv.at(0));
+  const lastMove = useSelector((state: RootState) => state.game.moves.at(state.game.currentMove-1))
 
   const autoShapes = useMemo(() => {
-    const bestMove = infos.at(-1)?.pv.at(0);
-    const chess = new Chess(fen);
-    if (bestMove) {
-      try {
-        chess.move(bestMove)
-        return [{
-          orig: bestMove.from,
-          dest: bestMove.to,
-          brush: 'paleGreen',
-        }];
-      } catch {}
+    if (bestMove && fen === engineFen) {
+      return [{
+        orig: bestMove.from,
+        dest: bestMove.to,
+        brush: 'paleGreen',
+      }];
     }
     return [];
-  }, [infos])
+  }, [bestMove, fen, engineFen])
 
   // ensure chessground board height/width is multiple of 8 (bc chess board)
   const size = useMemo(() => {

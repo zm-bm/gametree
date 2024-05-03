@@ -49,7 +49,7 @@ const EngineInfo = () => {
         console.warn(error);
       }
     }
-  }, [boardFen])
+  }, [boardFen]);
 
   const onMouseEnter = useCallback(() => setIsHovered(true), []);
   const onMouseMove = useCallback((e: any) => setCoords({ top: e.pageY-250, left: e.pageX+5 }), []);

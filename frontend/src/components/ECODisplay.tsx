@@ -1,37 +1,22 @@
 import { useSelector } from 'react-redux'
 import { RootState } from '../store'
-import { useContext, useMemo } from 'react'
-import { OpeningsContext } from './App'
+import { book } from '../redux/treeSlice'
+import { movesToString } from '../chess'
 
 const ECODisplay = () => {
-  const moveList = useSelector((state: RootState) => state.game.moveList)
-  const openings = useContext(OpeningsContext)
+  const moves = useSelector((state: RootState) => state.game.moves)
+  var name = movesToString(moves) 
 
-  const { code, title } = useMemo(() => {
-    let book = openings 
-    for (const i in moveList) {
-      const san = moveList[i].san;
-      if (book.children) {
-        const childBook = book.children.find(b => b.move === san)
-        if (childBook) {
-          book = childBook
-        } else {
-          break
-        }
-      } else {
-        break;
-      }
-    }
-    return {
-      code: book?.code,
-      title: book?.title,
-    }
-  }, [openings, moveList])
-
+  var eco = book.find(b => b.uci === name);
+  while (!eco && name) {
+    name = name.split(',').slice(0, -1).join(',')
+    eco = book.find(b => b.uci === name);
+  }
+  
   return (
     <div className='flex flex-col text-xs leading-none'>
-      <p>{code}</p>
-      <p>{title}</p>
+      <p>{eco?.eco}</p>
+      <p>{eco?.name}</p>
     </div>
   );
 }

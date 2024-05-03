@@ -10,7 +10,7 @@ import {
   IoIosPlay
 } from "react-icons/io";
 import { throttle } from "../../lib/helpers";
-import { useMoveActions } from "../../hooks/moveHooks";
+import { useMoveActions } from "../../hooks/useMoveActions";
 import { FLIP_ORIENTATION } from "../../redux/boardSlice";
 import ECODisplay from "../ECODisplay";
 import { TOGGLE_ENGINE } from "../../redux/engineSlice";

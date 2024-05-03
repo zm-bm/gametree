@@ -1,4 +1,4 @@
-import { useContext, useMemo, useEffect, MouseEventHandler } from 'react';
+import { useMemo, useEffect, MouseEventHandler } from 'react';
 import { useSelector } from 'react-redux';
 import { Tree } from '@visx/hierarchy';
 import { hierarchy } from '@visx/hierarchy';
@@ -7,13 +7,12 @@ import { HierarchyPointNode } from '@visx/hierarchy/lib/types';
 import { scaleLinear } from '@visx/scale';
 import { Group } from '@visx/group'
 
-import { ZoomState, generateGameTree } from './helpers';
 import { RootState } from '../../store';
-import { OpeningsContext } from '../App';
+import { ZoomState, margin } from './MoveTreeSvg';
 import { Node } from './Node';
 import { Link } from './Link';
-import { TreeNode } from '../../chess';
-import { margin } from './MoveTreeSvg';
+import { TreeNode, movesToString } from '../../chess';
+import { useGetOpeningByMovesQuery } from '../../redux/openingsApi';
 
 const nodeRadiusScale = scaleLinear({ domain: [300, 1200], range: [12, 24] })
 const nodeWidthScale = scaleLinear({ domain: [300, 1200], range: [200, 400] })
@@ -43,16 +42,20 @@ export const MoveTreeG = ({
   const yMax = height - margin.top - margin.bottom;
   const xMax = width - margin.left - margin.right;
 
-  const moveList = useSelector((state: RootState) => state.game.moveList);
-  const currentNode = moveList.map(mv => mv.san).join(',');
-  const moveTree = useSelector((state: RootState) => state.game.moveTree);
-  const openings = useContext(OpeningsContext);
-  const root = useMemo(() => {
-    const tree = generateGameTree(moveTree, openings);
-    return hierarchy(tree);
-  }, [moveTree, openings])
+  const moves = useSelector((state: RootState) => state.game.moves);
+  const currentNode = movesToString(moves);
 
-  return (
+  useGetOpeningByMovesQuery(moves)
+  const treeRoot = useSelector((state: RootState) => state.tree.root)
+
+  const root = useMemo(() => {
+    if (treeRoot) {
+      console.log(treeRoot)
+      return hierarchy(treeRoot);
+    }
+  }, [treeRoot])
+
+  return root && (
     <g transform={zoom.toString()}>
       <Tree<TreeNode>
         root={root}

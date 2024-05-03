@@ -4,7 +4,7 @@ import { HierarchyPointNode } from "@visx/hierarchy/lib/types";
 
 import { TreeNode } from "../../chess";
 import BaseBoard from "../Board/BaseBoard";
-import { countGames } from "./helpers";
+import { countGames } from "../../chess";
 import { Key } from "chessground/types";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
@@ -26,7 +26,7 @@ export const MoveTreeTooltip = ({ tooltip }: Props) => {
   const move = tooltipData.data.attributes.move;
   const totalGames = countGames(tooltipData.data);
   const parent = tooltipData.parent;
-  const { wins, draws, losses } = tooltipData.data.attributes;
+  const { white, draws, black } = tooltipData.data.attributes;
 
   return (
     <TooltipWithBounds
@@ -49,13 +49,13 @@ export const MoveTreeTooltip = ({ tooltip }: Props) => {
         }
       </div>
       {
-        (wins && draws && losses) &&
+        (white && draws && black) &&
         <div className="flex items-center py-1 text-sm">
           <span className="font-bold mr-1">Wins:</span>
           <WinChanceBar
-            win={wins/totalGames*100}
-            draw={draws/totalGames*100}
-            loss={losses/totalGames*100}
+            white={white/totalGames*100}
+            draws={draws/totalGames*100}
+            black={black/totalGames*100}
           />
         </div>
       }

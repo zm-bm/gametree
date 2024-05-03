@@ -5,11 +5,16 @@ import { useTooltip, useTooltipInPortal  } from '@visx/tooltip';
 import { HierarchyPointNode } from '@visx/hierarchy/lib/types';
 
 import { SvgDefs } from './SvgDefs';
-import { ZoomState } from './helpers';
 import useAnimateTransform from '../../hooks/useAnimateTransform';
 import { MoveTreeG } from './MoveTreeG';
 import { TreeNode } from '../../chess';
 import { MoveTreeTooltip } from './MoveTreeTooltip';
+
+export type ZoomState = {
+  initialTransformMatrix: TransformMatrix;
+  transformMatrix: TransformMatrix;
+  isDragging: boolean;
+}
 
 export const margin = { top: 10, left: 40, right: 40, bottom: 10 };
 const defaultMatrix: TransformMatrix = {
