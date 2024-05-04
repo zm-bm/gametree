@@ -8,7 +8,7 @@ import { SvgDefs } from './SvgDefs';
 import useAnimateTransform from '../../hooks/useAnimateTransform';
 import { MoveTreeG } from './MoveTreeG';
 import { TreeNode } from '../../chess';
-import { MoveTreeTooltip } from './MoveTreeTooltip';
+import { TreeTooltip } from './TreeTooltip';
 import { ZoomState, defaultTransformMatrix } from "./MoveTree";
 
 interface Props {
@@ -19,6 +19,7 @@ interface Props {
 export const MoveTreeSvg = ({ width, height, zoom }: Props) => {
   const [initialMatrix, setInitialMatrix] = useState<TransformMatrix>(defaultTransformMatrix);
   const [targetMatrix, setTargetMatrix] = useState<TransformMatrix>(defaultTransformMatrix);
+  const [options, setOptions] = useState(false);
   const updateInitialMatrix = useCallback(() => {
     setInitialMatrix(zoom.transformMatrix)
   }, [zoom]);
@@ -54,7 +55,7 @@ export const MoveTreeSvg = ({ width, height, zoom }: Props) => {
         onMouseUp={updateInitialMatrix}
         onTouchEnd={updateInitialMatrix}
       >
-        <SvgDefs />
+        <SvgDefs width={width} height={height} />
         <MoveTreeG
           width={width}
           height={height}
@@ -64,7 +65,26 @@ export const MoveTreeSvg = ({ width, height, zoom }: Props) => {
           hideTooltip={tooltip.hideTooltip}
         />
       </svg>
-      <MoveTreeTooltip 
+      <div
+        className='absolute top-0 right-0 flex flex-col p-1'
+      >
+        <button
+          className='btn-primary'
+          onClick={() => setOptions(!options)}
+        >
+          { options ? 'Hide' : 'Show' } Options
+        </button>
+        {
+          options &&
+          <div> hello!</div>
+        }
+      </div>
+      {/* <div
+        className='absolute bottom-0 right-0'
+      >
+
+      </div> */}
+      <TreeTooltip 
         tooltip={tooltip}
         transformMatrix={zoom.transformMatrix}
       />

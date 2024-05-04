@@ -15,7 +15,7 @@ interface Props {
   tooltip: UseTooltipParams<HierarchyPointNode<TreeNode>>
   transformMatrix: TransformMatrix,
 };
-export const MoveTreeTooltip = ({ tooltip, transformMatrix }: Props) => {
+export const TreeTooltip = ({ tooltip, transformMatrix }: Props) => {
   const orientation = useSelector((state: RootState) => state.board.orientation);
   const {
     tooltipData,

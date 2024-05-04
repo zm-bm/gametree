@@ -13,8 +13,9 @@ interface Props {
   r: number,
   fontSize: number,
   isCurrentNode: boolean,
-  onMouseEnter: MouseEventHandler,
-  onMouseLeave: () => void,
+  minimap?: boolean,
+  onMouseEnter?: MouseEventHandler,
+  onMouseLeave?: () => void,
 }
 
 const nodeClass = "transition hover:scale-110 hover:stroke-yellow-400"
@@ -24,6 +25,7 @@ export function Node({
   r,
   fontSize,
   isCurrentNode,
+  minimap = false,
   onMouseEnter,
   onMouseLeave,
 }: Props) {
@@ -44,7 +46,7 @@ export function Node({
     return (
       <Group top={node.x} left={node.y}>
         <circle
-          r={20}
+          r={r}
           fill={isCurrentNode ? 'url(#currentNodeGradient)' : 'url(#blackMoveGradient)'}
           stroke={'gray'}
           strokeWidth={2}
@@ -56,6 +58,17 @@ export function Node({
         />
       </Group>
     );
+  }
+
+  var fill;
+  if (minimap) {
+    fill = 'black'
+  } else if (isCurrentNode) {
+    fill = 'url(#currentNodeGradient)';
+  } else if (node.data.attributes.move?.color === 'w') {
+    fill = 'url(#whiteMoveGradient)';
+  } else {
+    fill = 'url(#blackMoveGradient)';
   }
 
   return (
@@ -71,27 +84,27 @@ export function Node({
         r={r}
         y={-r / 2}
         x={-r / 2}
-        rx={5}
-        fill={isCurrentNode
-          ? 'url(#currentNodeGradient)'
-          : (node.data.attributes.move?.color === 'w' ? 'url(#whiteMoveGradient)' : 'url(#blackMoveGradient)') }
+        fill={fill}
         stroke={'gray'}
-        strokeWidth={isCurrentNode ? 3 : 2}
+        strokeWidth={2}
         className={nodeClass}
       />
-      <Text
-        height={r}
-        width={r}
-        verticalAnchor='middle'
-        textAnchor="middle"
-        fontSize={fontSize}
-        fontFamily={'monospace'}
-        fontWeight={600}
-        fill={node.data.attributes.move?.color === 'w' ? 'black' : 'white'}
-        style={{ pointerEvents: 'none', userSelect: 'none' }}
-      >
-        {node.data.attributes.move?.san}
-      </Text>
+      {
+        !minimap &&
+        <Text
+          height={r}
+          width={r}
+          verticalAnchor='middle'
+          textAnchor="middle"
+          fontSize={fontSize}
+          fontFamily={'monospace'}
+          fontWeight={600}
+          fill={node.data.attributes.move?.color === 'w' ? 'black' : 'white'}
+          style={{ pointerEvents: 'none', userSelect: 'none' }}
+        >
+          {node.data.attributes.move?.san}
+        </Text>
+      }
     </Group>
   );
 }

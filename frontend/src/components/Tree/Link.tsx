@@ -9,6 +9,7 @@ import { TreeNode } from "../../chess";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import { Color } from "chessground/types";
+import { mid } from '../../lib/helpers';
 
 const winColor = '#66bb6a';
 const lossColor = '#f44336';
@@ -19,36 +20,30 @@ const colorScale = scalePower({
   exponent: 0.5
 });
 
-const mid = (a: number, b: number) => a + (b - a) * 0.5;
-
 function calcPath(
   link: HierarchyPointLink<TreeNode>,
   r: number,
+  minimap: boolean
 ) {
   const { source, target } = link;
-  const sourceGames = countGames(source.data)
-  const targetGames = countGames(target.data)
-  const frequency = (sourceGames && targetGames)
-    ? (targetGames / sourceGames) : 0;
-  const width = Math.max(
-    Math.min(Math.sqrt(frequency) * 2 * r, 2 * r),
-    2,
-  );
-  const midX = mid(source.y, target.y);
-  const quarterX = mid(source.y, midX)
-  const topY = target.x - width/2;
-  const botY = target.x + width/2;
-  const startOffset = (target.x > source.x) ? 0 : -1
-  const endOffset = (target.x < source.x) ? 0 : -1
+  var sourceGames = countGames(source.data),
+      targetGames = countGames(target.data),
+      frequency = (sourceGames && targetGames) ? (targetGames / sourceGames) : 0,
+      width = Math.max(Math.min(frequency * 2 * r, 2 * r), 4),
+      midX = mid(source.y, target.y),
+      quarterX = mid(source.y, midX),
+      topY = target.x - width / 2,
+      botY = target.x + width / 2,
+      startOffset = (target.x > source.x) ? 0 : -1,
+      endOffset = (target.x < source.x) ? 0 : -1,
+      start = `M${source.y+r+startOffset},${source.x}`,
+      topCurve = `C${quarterX},${topY},${midX},${topY},${midX},${topY}`,
+      lineToNodeTop = `L${target.y},${topY}`,
+      lineToNodeBottom = `L${target.y},${botY}`,
+      linetoMidBottom = `L${midX},${botY}`,
+      bottomCurve = `C${midX},${botY},${quarterX},${botY},${source.y+r+endOffset},${source.x}`;
 
-  const start = `M${source.y+r+startOffset},${source.x}`
-  const topCurve = `C${quarterX},${topY},${midX},${topY},${midX},${topY}`
-  const lineToNodeTop = `L${target.y},${topY}`
-  const lineToNodeBottom = `L${target.y},${botY}`
-  const linetoMidBottom = `L${midX},${botY}`
-  const bottomCurve = `C${midX},${botY},${quarterX},${botY},${source.y+r+endOffset},${source.x}`
-
-  return (link.target.data.attributes.opening?.name)
+  return (link.target.data.attributes.opening?.name && !minimap)
     ? `${start}${topCurve}${linetoMidBottom}${bottomCurve}`
     : `${start}${topCurve}${lineToNodeTop}${lineToNodeBottom}${linetoMidBottom}${bottomCurve}`;
 }
@@ -74,12 +69,15 @@ interface Props {
   r: number,
   fontSize: number,
   treeWidth: number,
+  minimap?: boolean
 }
+
 const Link = ({
   link,
   r,
   fontSize,
   treeWidth,
+  minimap = false,
 }: Props) => {
   const orientation = useSelector((state: RootState) => state.board.orientation)
   const fill = calcStroke(link.target, orientation);
@@ -88,12 +86,12 @@ const Link = ({
   return (
     <Group style={{ cursor: 'pointer' }}>
       <LinkHorizontal
-        path={link => calcPath(link, r)}
+        path={link => calcPath(link, r, minimap)}
         data={link}
         fill={fill}
       />
       {
-        link.target.data.attributes.opening && (
+        link.target.data.attributes.opening && !minimap && (
           <>
             <rect
               x={midX}
@@ -110,7 +108,7 @@ const Link = ({
               y={link.target.x}
               width={treeWidth / 2 - r}
               fill="white"
-              fontSize={fontSize+1}
+              fontSize={fontSize}
               verticalAnchor='middle'
               style={{ pointerEvents: 'none', userSelect: 'none' }}
             >

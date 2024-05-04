@@ -56,7 +56,7 @@ function useAnimateTransform(
         initialTransformRef.current = currentTransformRef.current
       }
       startTimeRef.current = undefined;
-      if (requestRef.current) {
+      if (requestRef.current && !startTimeRef.current) {
         cancelAnimationFrame(requestRef.current);
         requestRef.current = undefined
       }

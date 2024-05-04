@@ -1,6 +1,13 @@
-export const SvgDefs = () => {
+import { RectClipPath } from "@visx/clip-path"
+
+interface Props {
+  width: number,
+  height: number,
+}
+export const SvgDefs = ({ width, height }: Props) => {
   return (
     <defs>
+      <RectClipPath id="minimap" width={width} height={height} />
       <linearGradient id="currentNodeGradient" x1="0%" y1="0%" x2="0%" y2="100%">
         <stop offset="0%" stopColor="#FFD700" stopOpacity="1" />
         <stop offset="100%" stopColor="#B8960B" stopOpacity="1" />
