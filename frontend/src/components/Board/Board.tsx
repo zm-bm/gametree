@@ -9,7 +9,7 @@ import BaseBoard from "./BaseBoard";
 import { AppDispatch, RootState } from "../../store";
 import { getDests, isPromotion } from "../../chess";
 import { SET_PROMOTION_TARGET } from "../../redux/boardSlice";
-import { MAKE_MOVE } from "../../redux/actions";
+import { MAKE_MOVE } from "../../redux/gameSlice";
 import PromotionOverlay from "./PromotionOverlay";
 
 const Board = () => {

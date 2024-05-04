@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../store";
-import { GOTO_MOVE } from "../redux/actions";
+import { GOTO_MOVE } from "../redux/gameSlice";
 import { DEFAULT_POSITION } from "chess.js";
 
 export const useMoveActions = () => {

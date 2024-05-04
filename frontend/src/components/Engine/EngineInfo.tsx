@@ -5,7 +5,7 @@ import { useCallback, useState } from "react";
 import EngineBoard from "./EngineBoard";
 import { Chess, Square } from "chess.js";
 import EngineMove from "./EngineMove";
-import { MAKE_MOVE } from "../../redux/actions";
+import { MAKE_MOVE } from "../../redux/gameSlice";
 import { colorFromFen } from "../../chess";
 
 const EngineInfo = () => {

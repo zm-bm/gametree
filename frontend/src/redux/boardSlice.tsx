@@ -1,7 +1,7 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { DEFAULT_POSITION, Square } from 'chess.js';
 import * as cg from 'chessground/types';
-import { GOTO_MOVE, MAKE_MOVE } from './actions';
+import { GOTO_MOVE, MAKE_MOVE, SET_GAME } from "./gameSlice";
 
 interface BoardSlice {
   fen: string,
@@ -30,11 +30,15 @@ const boardSlice = createSlice({
     builder.addCase(MAKE_MOVE, (state, action) => {
       state.fen = action.payload.after;
       state.promotionTarget = null;
-    })
+    });
     builder.addCase(GOTO_MOVE, (state, action) => {
       state.fen = action.payload.fen;
       state.promotionTarget = null;
-    })
+    });
+    builder.addCase(SET_GAME, (state, action) => {
+      state.fen = action.payload.at(-1)?.after || DEFAULT_POSITION;
+      state.promotionTarget = null;
+    });
   },
 });
 

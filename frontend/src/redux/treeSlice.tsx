@@ -25,20 +25,20 @@ const treeSlice = createSlice({
         const node = buildTreeNode(action.payload, moves);
 
         if (!state.root) {
-          state.root = node
+          state.root = node;
         } else {
-          var head = state.root
+          var head = state.root;
           for (var i in moves) {
-            var child = head.children.find(node => node.attributes.move?.lan === moves[i].lan)
+            var child = head.children.find(node => node.attributes.move?.lan === moves[i].lan);
             if (child) {
-              head = child
+              head = child;
             } else {
-              head.children.push(node)
-              return
+              head.children.push(node);
+              return;
             }
           }
-          head.attributes.topGames = node.attributes.topGames
-          head.children = node.children
+          head.attributes.topGames = node.attributes.topGames;
+          head.children = node.children;
         }
       }
     )

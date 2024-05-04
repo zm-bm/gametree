@@ -1,8 +1,12 @@
-import { MouseEventHandler } from "react";
+import { MouseEventHandler, useCallback } from "react";
 import { Group } from "@visx/group";
 import { HierarchyPointNode } from "@visx/hierarchy/lib/types";
 import { Text } from "@visx/text";
+import { Move } from "chess.js";
 import { TreeNode } from "../../chess";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../store";
+import { SET_GAME } from "../../redux/gameSlice";
 
 interface Props {
   node: HierarchyPointNode<TreeNode>,
@@ -21,6 +25,18 @@ export function Node({
   onMouseEnter,
   onMouseLeave,
 }: Props) {
+  const dispatch = useDispatch<AppDispatch>();
+
+  const onClick = useCallback(() => {
+    const moves: Move[] = [];
+    let head: (HierarchyPointNode<TreeNode> | null) = node;
+    while (head?.data.attributes.move) {
+      moves.unshift(head?.data.attributes.move);
+      head = head.parent;
+    }
+    dispatch(SET_GAME(moves))
+  }, [node]);
+
   if (node.depth === 0) {
     // root node
     return (
@@ -32,6 +48,7 @@ export function Node({
           strokeWidth={2}
           onMouseEnter={onMouseEnter}
           onMouseLeave={onMouseLeave}
+          onClick={onClick}
         />
       </Group>
     );
@@ -44,6 +61,7 @@ export function Node({
       style={{ cursor: 'pointer' }}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
+      onClick={onClick}
     >
       <circle
         r={r}
@@ -54,17 +72,6 @@ export function Node({
         stroke={'gray'}
         strokeWidth={isCurrentNode ? 3 : 2}
         className="transition hover:scale-110 hover:stroke-yellow-400 dark:hover:stroke-yellow-400"
-        // onClick={() => {
-        //   console.log(node);
-        //   const games = countGames(node.data)
-        //   if (games) {
-        //     const { wins, losses, draws } = node.data.attributes;
-        //     const winProbability = wins! / games;
-        //     const lossProbability = losses! / games;
-        //     const drawProbability = draws! / games;
-        //     console.log(winProbability, drawProbability, lossProbability)
-        //   }
-        // }}
       />
       <Text
         height={r}
