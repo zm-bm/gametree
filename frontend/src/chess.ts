@@ -80,13 +80,6 @@ export function isPromotion(chess: Chess, from: Key, dest: Key) {
 export const colorFromFen = (fen: string) =>
   fen.split(' ').at(1) || '';
 
-export const moveNumFromFen = (fen: string) =>
-  fen.split(' ').at(-1) || '';
-
-export const piecesFromFen = (fen: string) => {
-  return fen.split(' ').at(0) || '';
-}
-
 export function countGames(node: TreeNode) {
   const { white, draws, black } = node.attributes;
   if (white !== null && draws !== null && black !== null) {

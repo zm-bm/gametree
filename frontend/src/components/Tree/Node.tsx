@@ -17,6 +17,8 @@ interface Props {
   onMouseLeave: () => void,
 }
 
+const nodeClass = "transition hover:scale-110 hover:stroke-yellow-400"
+
 export function Node({
   node,
   r,
@@ -37,8 +39,8 @@ export function Node({
     dispatch(SET_GAME(moves))
   }, [node]);
 
+  // special case for root node
   if (node.depth === 0) {
-    // root node
     return (
       <Group top={node.x} left={node.y}>
         <circle
@@ -49,6 +51,8 @@ export function Node({
           onMouseEnter={onMouseEnter}
           onMouseLeave={onMouseLeave}
           onClick={onClick}
+          className={nodeClass}
+          style={{ cursor: 'pointer' }}
         />
       </Group>
     );
@@ -68,10 +72,12 @@ export function Node({
         y={-r / 2}
         x={-r / 2}
         rx={5}
-        fill={isCurrentNode ? 'url(#currentNodeGradient)' : node.data.attributes.move?.color === 'w' ? 'url(#whiteMoveGradient)' : 'url(#blackMoveGradient)' }
+        fill={isCurrentNode
+          ? 'url(#currentNodeGradient)'
+          : (node.data.attributes.move?.color === 'w' ? 'url(#whiteMoveGradient)' : 'url(#blackMoveGradient)') }
         stroke={'gray'}
         strokeWidth={isCurrentNode ? 3 : 2}
-        className="transition hover:scale-110 hover:stroke-yellow-400 dark:hover:stroke-yellow-400"
+        className={nodeClass}
       />
       <Text
         height={r}

@@ -9,19 +9,7 @@ import useAnimateTransform from '../../hooks/useAnimateTransform';
 import { MoveTreeG } from './MoveTreeG';
 import { TreeNode } from '../../chess';
 import { MoveTreeTooltip } from './MoveTreeTooltip';
-
-export type ZoomState = {
-  initialTransformMatrix: TransformMatrix;
-  transformMatrix: TransformMatrix;
-  isDragging: boolean;
-}
-
-export const margin = { top: 10, left: 40, right: 40, bottom: 10 };
-const defaultMatrix: TransformMatrix = {
-  translateX: 0, translateY: 0,
-  scaleX: 1, scaleY: 1,
-  skewX: 0, skewY: 0,
-};
+import { ZoomState, defaultTransformMatrix } from "./MoveTree";
 
 interface Props {
   width: number,
@@ -29,8 +17,8 @@ interface Props {
   zoom: ProvidedZoom<SVGSVGElement> & ZoomState,
 }
 export const MoveTreeSvg = ({ width, height, zoom }: Props) => {
-  const [initialMatrix, setInitialMatrix] = useState<TransformMatrix>(defaultMatrix);
-  const [targetMatrix, setTargetMatrix] = useState<TransformMatrix>(defaultMatrix);
+  const [initialMatrix, setInitialMatrix] = useState<TransformMatrix>(defaultTransformMatrix);
+  const [targetMatrix, setTargetMatrix] = useState<TransformMatrix>(defaultTransformMatrix);
   const updateInitialMatrix = useCallback(() => {
     setInitialMatrix(zoom.transformMatrix)
   }, [zoom]);
@@ -47,8 +35,8 @@ export const MoveTreeSvg = ({ width, height, zoom }: Props) => {
         if (coords) {
           const { transformMatrix: m } = zoom;
           tooltip.showTooltip({
-            tooltipLeft: (node.y + margin.left) * m.scaleX + m.translateX,
-            tooltipTop: (node.x + margin.top) * m.scaleY + m.translateY,
+            tooltipLeft: node.y * m.scaleX + m.translateX,
+            tooltipTop: node.x * m.scaleY + m.translateY,
             tooltipData: node,
           });
         }
@@ -76,7 +64,10 @@ export const MoveTreeSvg = ({ width, height, zoom }: Props) => {
           hideTooltip={tooltip.hideTooltip}
         />
       </svg>
-      <MoveTreeTooltip tooltip={tooltip} />
+      <MoveTreeTooltip 
+        tooltip={tooltip}
+        transformMatrix={zoom.transformMatrix}
+      />
     </div>
   );
 };

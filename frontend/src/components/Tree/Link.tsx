@@ -6,6 +6,9 @@ import { Text } from "@visx/text";
 
 import { countGames } from "../../chess";
 import { TreeNode } from "../../chess";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store";
+import { Color } from "chessground/types";
 
 const winColor = '#66bb6a';
 const lossColor = '#f44336';
@@ -23,11 +26,14 @@ function calcPath(
   r: number,
 ) {
   const { source, target } = link;
-  const sGames = countGames(source.data)
-  const tGames = countGames(target.data)
-  const width = (sGames && tGames)
-    ? Math.sqrt(tGames / sGames) * 1.5 * r + 2
-    : r * 0.1 + 2;
+  const sourceGames = countGames(source.data)
+  const targetGames = countGames(target.data)
+  const frequency = (sourceGames && targetGames)
+    ? (targetGames / sourceGames) : 0;
+  const width = Math.max(
+    Math.min(Math.sqrt(frequency) * 2 * r, 2 * r),
+    2,
+  );
   const midX = mid(source.y, target.y);
   const quarterX = mid(source.y, midX)
   const topY = target.x - width/2;
@@ -47,13 +53,13 @@ function calcPath(
     : `${start}${topCurve}${lineToNodeTop}${lineToNodeBottom}${linetoMidBottom}${bottomCurve}`;
 }
 
-function calcStroke(node: HierarchyPointNode<TreeNode>) {
+function calcStroke(node: HierarchyPointNode<TreeNode>, orientation: Color) {
   const games = countGames(node.data)
   if (games) {
     const { white, black } = node.data.attributes;
     const whiteProb = white / games;
     const blackProb = black / games;
-    const outcome = node.data.attributes.move?.color === 'w'
+    const outcome = orientation === 'white'
       ? whiteProb - blackProb 
       : blackProb - whiteProb;
     return colorScale(outcome);
@@ -67,15 +73,16 @@ interface Props {
   link: HierarchyPointLink<TreeNode>,
   r: number,
   fontSize: number,
-  nodeWidth: number,
+  treeWidth: number,
 }
 const Link = ({
   link,
   r,
   fontSize,
-  nodeWidth,
+  treeWidth,
 }: Props) => {
-  const fill = calcStroke(link.target);
+  const orientation = useSelector((state: RootState) => state.board.orientation)
+  const fill = calcStroke(link.target, orientation);
   const midX = mid(link.source.y, link.target.y);
 
   return (
@@ -92,17 +99,17 @@ const Link = ({
               x={midX}
               y={link.target.x - r}
               rx={2}
-              width={nodeWidth / 2}
+              width={treeWidth / 2}
               height={r * 2}
               fill={fill}
+              stroke="gray"
             ></rect>
             <Text
               x={midX}
               dx={8}
               y={link.target.x}
-              width={nodeWidth / 2 - r}
+              width={treeWidth / 2 - r}
               fill="white"
-              scaleToFit='shrink-only'
               fontSize={fontSize+1}
               verticalAnchor='middle'
               style={{ pointerEvents: 'none', userSelect: 'none' }}

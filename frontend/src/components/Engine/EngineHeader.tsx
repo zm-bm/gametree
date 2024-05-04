@@ -16,7 +16,7 @@ const EngineHeader = () => {
   }
 
   return (
-    <div className="flex text-sm gap-2 py-1 px-2 border-y border-neutral-400 dark:border-neutral-600 neutral-gradient-to-b">
+    <div className="flex gap-2 py-1 px-2 border-y border-neutral-400 dark:border-neutral-600 neutral-gradient-to-b">
       {
         Object.entries(data).map((([key, value]) => (
           <div key={key} className="flex-auto overflow-hidden">

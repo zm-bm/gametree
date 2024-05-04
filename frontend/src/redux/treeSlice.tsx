@@ -28,17 +28,24 @@ const treeSlice = createSlice({
           state.root = node;
         } else {
           var head = state.root;
-          for (var i in moves) {
-            var child = head.children.find(node => node.attributes.move?.lan === moves[i].lan);
+
+          // iterate through moves to find location in tree
+          moves.forEach((move, i) => {
+            var child = head.children.find(node => node.attributes.move?.lan === move.lan);
             if (child) {
               head = child;
-            } else {
+            } else if (i === moves.length - 1) {
+              // if last move not found, add it to tree
               head.children.push(node);
               return;
+            } else {
+              return;
             }
-          }
+          });
+
           head.attributes.topGames = node.attributes.topGames;
-          head.children = node.children;
+          if (head.children.length === 0)
+            head.children = node.children;
         }
       }
     )

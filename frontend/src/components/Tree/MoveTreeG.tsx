@@ -8,14 +8,14 @@ import { scaleLinear } from '@visx/scale';
 import { Group } from '@visx/group'
 
 import { RootState } from '../../store';
-import { ZoomState, margin } from './MoveTreeSvg';
+import { ZoomState } from "./MoveTree";
 import { Node } from './Node';
 import { Link } from './Link';
 import { TreeNode, movesToString } from '../../chess';
 import { useGetOpeningByMovesQuery } from '../../redux/openingsApi';
 
 const nodeRadiusScale = scaleLinear({ domain: [300, 1200], range: [12, 24] })
-const nodeWidthScale = scaleLinear({ domain: [300, 1200], range: [200, 400] })
+const treeWidthScale = scaleLinear({ domain: [300, 1200], range: [200, 400] })
 const fontSizeScale = scaleLinear({ domain: [300, 1200], range: [8, 16] })
 
 interface Props {
@@ -36,21 +36,18 @@ export const MoveTreeG = ({
 }: Props) => {
   const fontSize = fontSizeScale(height);
   const nodeRadius = nodeRadiusScale(height);
-  const nodeWidth = nodeWidthScale(width);
-  const nodeHeight = nodeRadius * 2.2;
-  const nodeSize: [number, number] = useMemo(() => [nodeHeight, nodeWidth], [nodeHeight, nodeWidth])
-  const yMax = height - margin.top - margin.bottom;
-  const xMax = width - margin.left - margin.right;
+  const treeWidth = treeWidthScale(width);
+  const treeHeight = nodeRadius * 2.5;
 
   const moves = useSelector((state: RootState) => state.game.moves);
-  const currentNode = movesToString(moves);
+  const currentMove = useSelector((state: RootState) => state.game.currentMove);
+  const currentNode = movesToString(moves.slice(0, currentMove));
 
   useGetOpeningByMovesQuery(moves)
   const treeRoot = useSelector((state: RootState) => state.tree.root)
 
   const root = useMemo(() => {
     if (treeRoot) {
-      console.log(treeRoot)
       return hierarchy(treeRoot);
     }
   }, [treeRoot])
@@ -59,7 +56,7 @@ export const MoveTreeG = ({
     <g transform={zoom.toString()}>
       <Tree<TreeNode>
         root={root}
-        nodeSize={nodeSize}
+        nodeSize={[treeHeight, treeWidth]}
       >
         {(tree) => {
           useEffect(() => {
@@ -67,21 +64,21 @@ export const MoveTreeG = ({
             if (node) {
               setTargetMatrix({
                 ...zoom.transformMatrix,
-                translateX: (-node.y * zoom.transformMatrix.scaleX) + (xMax * 0.33),
-                translateY: (-node.x * zoom.transformMatrix.scaleY) + (yMax * 0.5),
+                translateX: (-node.y * zoom.transformMatrix.scaleX) + (width / 3),
+                translateY: (-node.x * zoom.transformMatrix.scaleY) + (height / 2),
               });
             }
-          }, [currentNode, xMax, yMax]);
+          }, [currentNode, width, height, tree]);
 
           return (
-            <Group top={margin.top} left={margin.left}>
+            <Group>
               {tree.links().map((link, i) => (
                 <Link
                   key={`link-${i}`}
                   link={link}
                   r={nodeRadius}
                   fontSize={fontSize}
-                  nodeWidth={nodeWidth}
+                  treeWidth={treeWidth}
                 />
               ))}
               {tree.descendants().map((node, i) => (

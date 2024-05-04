@@ -1,20 +1,26 @@
 import { ProvidedZoom, TransformMatrix } from '@visx/zoom/lib/types';
 import { useRef, useEffect } from 'react';
+import { ZoomState } from '../components/Tree/MoveTree';
 
 function useAnimateTransform(
   initialTransform: TransformMatrix,
   targetTransform: TransformMatrix,
-  zoom: ProvidedZoom<SVGSVGElement>,
+  zoom: ProvidedZoom<SVGSVGElement> & ZoomState,
   duration: number = 1000,
 ): void {
   const requestRef = useRef<number>();
   const startTimeRef = useRef<number>();
   const initialTransformRef = useRef<TransformMatrix>(initialTransform);
+  const currentTransformRef = useRef<TransformMatrix>(initialTransform);
   
   useEffect(() => {
     initialTransformRef.current = initialTransform;
     startTimeRef.current = undefined
   }, [initialTransform]);
+
+  useEffect(() => {
+    currentTransformRef.current = zoom.transformMatrix
+  }, [zoom])
 
   useEffect(() => {
     const animate = (time: number) => {
@@ -47,7 +53,7 @@ function useAnimateTransform(
 
     return () => {
       if (startTimeRef.current) {
-        initialTransformRef.current = targetTransform
+        initialTransformRef.current = currentTransformRef.current
       }
       startTimeRef.current = undefined;
       if (requestRef.current) {

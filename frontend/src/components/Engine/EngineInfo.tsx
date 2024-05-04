@@ -1,91 +1,67 @@
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from '../../store';
+import { useSelector } from "react-redux";
+import { RootState } from '../../store';
 import { formatScore } from "../../lib/helpers";
 import { useCallback, useState } from "react";
 import EngineBoard from "./EngineBoard";
-import { Chess, Square } from "chess.js";
-import EngineMove from "./EngineMove";
-import { MAKE_MOVE } from "../../redux/gameSlice";
+import { DEFAULT_POSITION, Square } from "chess.js";
 import { colorFromFen } from "../../chess";
+import { EngineInfoMove } from "./EngineInfoMove";
+
+const boardTooltipSize = 320;
+const columnWidth = 'w-14';
+const columnHeader = 'font-bold underline cursor-default'
 
 const EngineInfo = () => {
-  const dispatch = useDispatch<AppDispatch>()
   const infos = useSelector((state: RootState) => state.engine.infos);
   const fen = useSelector((state: RootState) => state.engine.fen)
-  const boardFen = useSelector((state: RootState) => state.board.fen)
   const orientation = useSelector((state: RootState) => state.board.orientation);
-  const [isHovered, setIsHovered] = useState(false);
-  const [hoverFen, setHoverFen] = useState<string>();
-  const [lastMove, setLastMove] = useState<Square[]>([]);
   const [coords, setCoords] = useState({ top: 0, left: 0 });
-  const turnColor = colorFromFen(fen);
+  const [tooltip, setTooltip] = useState({
+    hovered: false,
+    fen: DEFAULT_POSITION,
+    move: '',
+  });
 
-  const onHover: React.MouseEventHandler<HTMLButtonElement> = useCallback((e) => {
-    setIsHovered(true)
+  const onMouseMove: React.MouseEventHandler<HTMLDivElement> = useCallback(e => {
+    setCoords({ top: e.pageY-boardTooltipSize-30, left: e.pageX+5 })
+  }, []);
+  
+  const onMouseLeave = useCallback(() => setTooltip({ ...tooltip, hovered: false }), []);
+  const onMouseEnter: React.MouseEventHandler<HTMLDivElement> = useCallback((e) => {
     const dataFen = e.currentTarget.getAttribute('data-fen');
-    if (dataFen)
-      setHoverFen(dataFen);
-    const dataMoves = e.currentTarget.getAttribute('data-moves');
-    if (dataMoves) {
-      const lastMove = dataMoves.split(',').at(-1)
-      if (lastMove)
-        setLastMove([lastMove.substring(0, 2) as Square,
-                     lastMove.substring(2, 4) as Square])
+    const dataMove = e.currentTarget.getAttribute('data-move');
+    if (dataFen && dataMove) {
+      setTooltip({
+        hovered: true,
+        fen: dataFen,
+        move: dataMove,
+      })
     }
   }, [fen]);
-
-  const onClick: React.MouseEventHandler<HTMLButtonElement> = useCallback((e) => {
-    const moves = e.currentTarget.getAttribute('data-moves');
-    if (moves) {
-      const chess = new Chess(boardFen);
-      try {
-        moves.split(',').forEach(mv => {
-          if (mv) {
-            const move = chess.move(mv);
-            dispatch(MAKE_MOVE(move))
-          }
-        })
-      } catch (error) {
-        console.warn(error);
-      }
-    }
-  }, [boardFen]);
-
-  const onMouseEnter = useCallback(() => setIsHovered(true), []);
-  const onMouseMove = useCallback((e: any) => setCoords({ top: e.pageY-250, left: e.pageX+5 }), []);
-  const onMouseLeave = useCallback(() => setIsHovered(false), []);
 
   return (
     <div className="flex-1 p-2 font-mono text-sm leading-tight overflow-auto neutral-gradient-to-b">
       <div className="flex">
-        <span className="w-12 font-bold underline cursor-default">Depth</span>
-        <span className="w-12 font-bold underline cursor-default">Score</span>
-        <span className="flex-1 font-bold underline cursor-default">Moves</span>
+        <span className={`${columnWidth} ${columnHeader}`}>Depth</span>
+        <span className={`${columnWidth} ${columnHeader}`}>Score</span>
+        <span className={`flex-1 ${columnHeader}`}>Moves</span>
       </div>
       {
         infos.slice(0).reverse().map((info, index) => {
           return (
             <div className="flex" key={index}>
-              <span className="w-12">{info.depth}/{info.seldepth}</span>
-              <span className="w-12">{formatScore(info, turnColor, orientation)}</span>
+              <span className={columnWidth}>{info.depth}/{info.seldepth}</span>
+              <span className={columnWidth}>{formatScore(info, colorFromFen(fen), orientation)}</span>
               <div className="flex-1"
-                onMouseEnter={onMouseEnter}
-                onMouseMove={onMouseMove}
-                onMouseLeave={onMouseLeave}
               >
                 {
-                  info.pv.map((move, i) => (
-                    <>
-                      <EngineMove
-                        key={i}
-                        onHover={onHover}
-                        onClick={onClick}
-                        move={move}
-                        moves={info.pv.slice(0, i+1).map(m => m.lan)}
-                        showMoveNum={i === 0 || move.color === 'w'}
-                      />
-                      &#32;
-                    </>
+                  info.pv.map((move) => (
+                    <EngineInfoMove
+                      move={move}
+                      onMouseEnter={onMouseEnter}
+                      onMouseMove={onMouseMove}
+                      onMouseLeave={onMouseLeave}
+                    />
                   ))
                 }
               </div>
@@ -94,13 +70,17 @@ const EngineInfo = () => {
         }
       )}
       <EngineBoard
-        isHovered={isHovered}
+        size={boardTooltipSize}
+        isHovered={tooltip.hovered}
         config={{
-          fen: hoverFen,
+          fen: tooltip.fen,
           orientation,
           coordinates: false,
           viewOnly: true,
-          lastMove,
+          lastMove: [
+            tooltip.move.substring(0, 2) as Square,
+            tooltip.move.substring(2, 4) as Square,
+          ],
         }}
         coords={coords}
       />

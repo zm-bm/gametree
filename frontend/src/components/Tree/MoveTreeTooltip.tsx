@@ -9,11 +9,13 @@ import { Key } from "chessground/types";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import WinChanceBar from "../WinChanceBar";
+import { TransformMatrix } from "@visx/zoom/lib/types";
 
 interface Props {
   tooltip: UseTooltipParams<HierarchyPointNode<TreeNode>>
+  transformMatrix: TransformMatrix,
 };
-export const MoveTreeTooltip = ({ tooltip }: Props) => {
+export const MoveTreeTooltip = ({ tooltip, transformMatrix }: Props) => {
   const orientation = useSelector((state: RootState) => state.board.orientation);
   const {
     tooltipData,
@@ -21,11 +23,12 @@ export const MoveTreeTooltip = ({ tooltip }: Props) => {
     tooltipTop,
     tooltipOpen,
   } = tooltip;
-  if (!tooltipOpen || !tooltipData) return null;
+  if (!tooltipOpen || !tooltipData || !tooltipTop || !tooltipLeft) {
+    return null;
+  }
 
   const move = tooltipData.data.attributes.move;
   const totalGames = countGames(tooltipData.data);
-  console.log(tooltipData.data)
   const parent = tooltipData.parent;
   const { white, draws, black } = tooltipData.data.attributes;
 
@@ -33,7 +36,7 @@ export const MoveTreeTooltip = ({ tooltip }: Props) => {
     <TooltipWithBounds
       key={Math.random()}
       top={tooltipTop}
-      left={tooltipLeft}
+      left={tooltipLeft + (10 * transformMatrix.scaleX)}
       className="border border-neutral-400"
     >
       <div className="flex border-b border-neutral-400 text-sm">
@@ -50,7 +53,7 @@ export const MoveTreeTooltip = ({ tooltip }: Props) => {
         }
       </div>
       {
-        (white && draws && black) &&
+        (white !== null && draws !== null && black !== null) &&
         <div className="flex items-center py-1 text-sm">
           <span className="font-bold mr-1">Wins:</span>
           <WinChanceBar

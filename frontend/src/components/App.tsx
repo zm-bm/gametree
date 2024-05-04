@@ -7,7 +7,7 @@ import EngineHeader from './Engine/EngineHeader'
 import EngineControls from './Engine/EngineControls'
 
 const size = 'sm:h-screen sm:w-screen sm:flex-row min-h-0'
-const bg = 'bg-gradient-to-b from-neutral-200 via-neutral-100 to-neutral-200'
+const bg = 'bg-gradient-to-b from-neutral-300 via-neutral-200 to-neutral-300'
 const dark = 'dark:from-[#222] dark:via-neutral-800 dark:to-[#222]'
 const classes = `flex flex-col ${size} ${dark} ${bg}`
 
