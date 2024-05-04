@@ -89,7 +89,7 @@ export const piecesFromFen = (fen: string) => {
 
 export function countGames(node: TreeNode) {
   const { white, draws, black } = node.attributes;
-  if (white && draws && black) {
+  if (white !== null && draws !== null && black !== null) {
     return black + draws + white;
   } else {
     return 0;

@@ -20,18 +20,20 @@ const boardSlice = createSlice({
   initialState,
   reducers: {
     SET_PROMOTION_TARGET(state, action: PayloadAction<Square[] | null>) {
-      state.promotionTarget = action.payload
+      state.promotionTarget = action.payload;
     },
     FLIP_ORIENTATION(state) {
-      state.orientation = state.orientation === 'white' ? 'black' : 'white'
+      state.orientation = state.orientation === 'white' ? 'black' : 'white';
     },
   },
   extraReducers(builder) {
     builder.addCase(MAKE_MOVE, (state, action) => {
-      state.fen = action.payload.after
+      state.fen = action.payload.after;
+      state.promotionTarget = null;
     })
     builder.addCase(GOTO_MOVE, (state, action) => {
-      state.fen = action.payload.fen
+      state.fen = action.payload.fen;
+      state.promotionTarget = null;
     })
   },
 });

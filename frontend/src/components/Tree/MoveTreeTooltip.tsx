@@ -25,6 +25,7 @@ export const MoveTreeTooltip = ({ tooltip }: Props) => {
 
   const move = tooltipData.data.attributes.move;
   const totalGames = countGames(tooltipData.data);
+  console.log(tooltipData.data)
   const parent = tooltipData.parent;
   const { white, draws, black } = tooltipData.data.attributes;
 
