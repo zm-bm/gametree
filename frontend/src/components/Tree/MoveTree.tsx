@@ -21,7 +21,7 @@ export const defaultTransformMatrix: TransformMatrix = {
 };
 
 export const nodeRadiusScale = scaleLinear({ domain: [300, 1200], range: [12, 24] })
-export const columnWidthScale = scaleLinear({ domain: [300, 1200], range: [200, 400] })
+export const columnWidthScale = scaleLinear({ domain: [300, 1200], range: [120, 360] })
 export const fontSizeScale = scaleLinear({ domain: [300, 1200], range: [8, 16] })
 
 interface TreeDims {
@@ -33,26 +33,27 @@ interface TreeDims {
   nodeRadius: number,
 }
 
-const initialSize = { width: 800, height: 600 };
 export const TreeDimsContext = createContext<TreeDims>({
-  ...initialSize,
-  nodeRadius: 16,
-  rowHeight: 40,
-  columnWidth: 300,
-  fontSize: fontSizeScale(initialSize.height),
+  width: 0,
+  height: 0,
+  nodeRadius: 0,
+  rowHeight: 0,
+  columnWidth: 0,
+  fontSize: 0,
 });
 
 export default function MoveTree() {
-  const { parentRef, width, height } = useParentSize({ initialSize });
+  const { parentRef, width, height } = useParentSize();
+  const minDim = Math.min(height, width);
 
   return (
     <TreeDimsContext.Provider value={{
       height,
       width,
-      nodeRadius: nodeRadiusScale(height),
-      rowHeight: nodeRadiusScale(height) * 2.5,
+      nodeRadius: nodeRadiusScale(minDim),
+      rowHeight: nodeRadiusScale(minDim) * 3,
       columnWidth: columnWidthScale(width),
-      fontSize: fontSizeScale(height),
+      fontSize: fontSizeScale(minDim),
     }}>
       <div
         ref={parentRef}
