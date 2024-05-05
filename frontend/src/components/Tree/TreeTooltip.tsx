@@ -27,35 +27,44 @@ export const TreeTooltip = ({ tooltip, transformMatrix }: Props) => {
     return null;
   }
 
-  const move = tooltipData.data.attributes.move;
   const totalGames = countGames(tooltipData.data);
   const parent = tooltipData.parent;
-  const { white, draws, black } = tooltipData.data.attributes;
+  const { move, white, draws, black, averageRating } = tooltipData.data.attributes;
+  const freq = parent && totalGames / countGames(parent.data) * 100;
 
   return (
     <TooltipWithBounds
       key={Math.random()}
       top={tooltipTop}
       left={tooltipLeft + (10 * transformMatrix.scaleX)}
-      className="border border-neutral-400"
+      className="border border-neutral-400 font-mono"
     >
-      <div className="flex border-b border-neutral-400 text-sm">
-        <div className="flex-auto overflow-hidden">
-          <span className="font-bold mr-1">Games:</span>
-          <span>{totalGames.toLocaleString()}</span>
-        </div>
-        {
-          parent &&
-          <div className="flex-auto overflow-hidden">
-            <span className="font-bold mr-1">Frequency:</span>
-            <span>{(totalGames / countGames(parent.data) * 100).toFixed(2)}%</span>
-          </div>
-        }
+      <div className="text-base text-neutral-800">
+        <span className="font-bold pr-1">Games:</span>
+        <span>{totalGames.toLocaleString()}</span>
       </div>
       {
+          freq &&
+          <div className="text-base text-neutral-800">
+            <span className="font-bold pr-1">Frequency:</span>
+            <span>{(freq).toFixed(2)}%</span>
+            {
+              freq > 100 &&
+              <span className="pl-1">(from transpositions)</span>
+            }
+          </div>
+        }
+      {
+        averageRating &&
+        <div className="text-base text-neutral-800">
+          <span className="font-bold pr-1">Avg. rating:</span>
+          <span>{averageRating} Elo</span>
+        </div>
+      }
+      {
         (white !== null && draws !== null && black !== null) &&
-        <div className="flex items-center py-1 text-sm">
-          <span className="font-bold mr-1">Wins:</span>
+        <div className="flex items-center text-base text-neutral-800 pb-1">
+          <span className="font-bold pr-1">Wins:</span>
           <WinChanceBar
             white={white/totalGames*100}
             draws={draws/totalGames*100}

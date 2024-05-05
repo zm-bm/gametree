@@ -2,6 +2,7 @@ import { Middleware } from 'redux';
 import { setOption, setPos } from '../lib/helpers';
 import { restartWorker, worker, write } from '../worker';
 import { RootState } from '../store';
+import { DEFAULT_POSITION } from 'chess.js';
 
 export const createWorkerMiddleware = (): Middleware => {
 
@@ -41,12 +42,17 @@ export const createWorkerMiddleware = (): Middleware => {
       updateEngine(setOption('MultiPV', action.payload), state)
     }
 
-    if (action.type === 'common/MAKE_MOVE') {
+    if (action.type === 'game/MAKE_MOVE') {
       updateEngine(setPos(action.payload.after), state)
     }
 
-    if (action.type === 'common/GOTO_MOVE') {
+    if (action.type === 'game/GOTO_MOVE') {
       updateEngine(setPos(action.payload.fen), state)
+    }
+
+    if (action.type === 'game/SET_GAME') {
+      updateEngine(setPos(
+        action.payload.at(-1)?.after || DEFAULT_POSITION), state)
     }
 
     return next(action);

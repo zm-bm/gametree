@@ -1,12 +1,14 @@
 import { Chess, Move, SQUARES, Square } from "chess.js";
 import { Key } from 'chessground/types';
-import { book } from "./redux/treeSlice";
+import eco from './eco.json'
 
 export type ECO = {
   eco: string,
   name: string,
   uci: string,
 }
+export const book = eco as ECO[];
+
 type LichessPlayer = {
   name: string | null,
   rating: number | null,
@@ -26,6 +28,7 @@ type LichessOpening = {
 };
 type LichessMove = {
   uci: string,
+  san: string,
   white: number,
   draws: number,
   black: number,
@@ -133,8 +136,8 @@ export function buildTreeNode(openings: LichessOpenings, moves: Move[]): TreeNod
 }
 
 export function buildTreeChild(liMove: LichessMove, chess: Chess, parentName: string) {
-  const { white, draws, black, averageRating, uci } = liMove;
-  const move = chess.move(uci);
+  const { white, draws, black, averageRating, san } = liMove;
+  const move = chess.move(san);
   chess.undo();
   const name = `${parentName && (parentName + ',')}${move.lan}`;
   return {

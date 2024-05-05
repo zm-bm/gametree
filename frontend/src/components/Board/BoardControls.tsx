@@ -9,7 +9,6 @@ import {
   IoIosPause,
   IoIosPlay
 } from "react-icons/io";
-import { throttle } from "../../lib/helpers";
 import { useMoveActions } from "../../hooks/useMoveActions";
 import { FLIP_ORIENTATION } from "../../redux/boardSlice";
 import ECODisplay from "../ECODisplay";
@@ -42,9 +41,8 @@ const BoardControls = () => {
           break;
       }
     };
-    const debouncedKeyDown = throttle(handleKeyDown, 200);
-    window.addEventListener('keydown', debouncedKeyDown);
-    return () => window.removeEventListener('keydown', debouncedKeyDown);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, [undo, forward, redo, forward]);
 
   const buttonClass = "btn-primary p-2 hover:scale-110";

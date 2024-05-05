@@ -3,7 +3,6 @@ import { createWorkerMiddleware } from './redux/storeMiddleware';
 import engineReducer from './redux/engineSlice';
 import boardReducer from './redux/boardSlice';
 import gameReducer from './redux/gameSlice';
-import treeReducer from './redux/treeSlice';
 import { initEngineOptions } from './worker';
 import { openingsApi } from './redux/openingsApi';
 import { setupListeners } from '@reduxjs/toolkit/query';
@@ -14,7 +13,6 @@ const rootReducer = combineReducers({
   engine: engineReducer,
   board: boardReducer,
   game: gameReducer,
-  tree: treeReducer,
   [openingsApi.reducerPath]: openingsApi.reducer,
 });
 

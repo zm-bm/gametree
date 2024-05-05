@@ -1,25 +1,41 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useContext, useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { ProvidedZoom, TransformMatrix } from '@visx/zoom/lib/types';
 import { localPoint } from '@visx/event';
 import { useTooltip, useTooltipInPortal  } from '@visx/tooltip';
 import { HierarchyPointNode } from '@visx/hierarchy/lib/types';
+import { hierarchy } from '@visx/hierarchy';
 
 import { SvgDefs } from './SvgDefs';
 import useAnimateTransform from '../../hooks/useAnimateTransform';
-import { MoveTreeG } from './MoveTreeG';
+import { TreeG } from './TreeG';
 import { TreeNode } from '../../chess';
 import { TreeTooltip } from './TreeTooltip';
-import { ZoomState, defaultTransformMatrix } from "./MoveTree";
+import { TreeDimsContext, ZoomState, defaultTransformMatrix } from "./MoveTree";
+import { RootState } from '../../store';
+import { TreeMinimap } from './TreeMinimap';
+import { useGetOpeningByMovesQuery } from '../../redux/openingsApi';
 
 interface Props {
-  width: number,
-  height: number,
   zoom: ProvidedZoom<SVGSVGElement> & ZoomState,
 }
-export const MoveTreeSvg = ({ width, height, zoom }: Props) => {
+export const TreeSvg = ({ zoom }: Props) => {
+  const { height, width } = useContext(TreeDimsContext);
+  const [options, setOptions] = useState(false);
+
+  const moves = useSelector((state: RootState) => state.game.moves);
+  useGetOpeningByMovesQuery(moves);
+
+  // build move tree / coordinates
+  const treeRoot = useSelector((state: RootState) => state.game.root)
+  const root = useMemo(() => {
+    if (treeRoot) {
+      return hierarchy(treeRoot);
+    }
+  }, [treeRoot]);
+
   const [initialMatrix, setInitialMatrix] = useState<TransformMatrix>(defaultTransformMatrix);
   const [targetMatrix, setTargetMatrix] = useState<TransformMatrix>(defaultTransformMatrix);
-  const [options, setOptions] = useState(false);
   const updateInitialMatrix = useCallback(() => {
     setInitialMatrix(zoom.transformMatrix)
   }, [zoom]);
@@ -44,7 +60,7 @@ export const MoveTreeSvg = ({ width, height, zoom }: Props) => {
     };
   }, [zoom]);
 
-  return (
+  return root && (
     <div className='relative' ref={containerRef}>
       <svg
         width={width}
@@ -56,18 +72,23 @@ export const MoveTreeSvg = ({ width, height, zoom }: Props) => {
         onTouchEnd={updateInitialMatrix}
       >
         <SvgDefs width={width} height={height} />
-        <MoveTreeG
-          width={width}
-          height={height}
+        <TreeG
+          root={root}
           zoom={zoom}
           setTargetMatrix={setTargetMatrix}
           showNodeTooltip={showNodeTooltip}
           hideTooltip={tooltip.hideTooltip}
         />
+        <TreeMinimap
+          root={root}
+          zoom={zoom}
+        />
       </svg>
-      <div
-        className='absolute top-0 right-0 flex flex-col p-1'
-      >
+      <TreeTooltip
+        tooltip={tooltip}
+        transformMatrix={zoom.transformMatrix}
+      />
+      <div className='absolute top-0 right-0 flex flex-col p-1'>
         <button
           className='btn-primary'
           onClick={() => setOptions(!options)}
@@ -79,15 +100,6 @@ export const MoveTreeSvg = ({ width, height, zoom }: Props) => {
           <div> hello!</div>
         }
       </div>
-      {/* <div
-        className='absolute bottom-0 right-0'
-      >
-
-      </div> */}
-      <TreeTooltip 
-        tooltip={tooltip}
-        transformMatrix={zoom.transformMatrix}
-      />
     </div>
   );
 };

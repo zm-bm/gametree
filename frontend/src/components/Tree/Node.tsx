@@ -1,4 +1,4 @@
-import { MouseEventHandler, useCallback } from "react";
+import { MouseEventHandler, useCallback, useContext } from "react";
 import { Group } from "@visx/group";
 import { HierarchyPointNode } from "@visx/hierarchy/lib/types";
 import { Text } from "@visx/text";
@@ -7,11 +7,10 @@ import { TreeNode } from "../../chess";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../store";
 import { SET_GAME } from "../../redux/gameSlice";
+import { TreeDimsContext } from "./MoveTree";
 
 interface Props {
   node: HierarchyPointNode<TreeNode>,
-  r: number,
-  fontSize: number,
   isCurrentNode: boolean,
   minimap?: boolean,
   onMouseEnter?: MouseEventHandler,
@@ -22,16 +21,16 @@ const nodeClass = "transition hover:scale-110 hover:stroke-yellow-400"
 
 export function Node({
   node,
-  r,
-  fontSize,
   isCurrentNode,
   minimap = false,
   onMouseEnter,
   onMouseLeave,
 }: Props) {
   const dispatch = useDispatch<AppDispatch>();
+  const { fontSize, nodeRadius } = useContext(TreeDimsContext);
 
   const onClick = useCallback(() => {
+    console.log(node)
     const moves: Move[] = [];
     let head: (HierarchyPointNode<TreeNode> | null) = node;
     while (head?.data.attributes.move) {
@@ -46,7 +45,7 @@ export function Node({
     return (
       <Group top={node.x} left={node.y}>
         <circle
-          r={r}
+          r={nodeRadius}
           fill={isCurrentNode ? 'url(#currentNodeGradient)' : 'url(#blackMoveGradient)'}
           stroke={'gray'}
           strokeWidth={2}
@@ -81,9 +80,9 @@ export function Node({
       onClick={onClick}
     >
       <circle
-        r={r}
-        y={-r / 2}
-        x={-r / 2}
+        r={nodeRadius}
+        y={-nodeRadius / 2}
+        x={-nodeRadius / 2}
         fill={fill}
         stroke={'gray'}
         strokeWidth={2}
@@ -92,8 +91,8 @@ export function Node({
       {
         !minimap &&
         <Text
-          height={r}
-          width={r}
+          height={nodeRadius}
+          width={nodeRadius}
           verticalAnchor='middle'
           textAnchor="middle"
           fontSize={fontSize}

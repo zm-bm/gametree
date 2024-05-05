@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux'
 import { RootState } from '../store'
-import { book } from '../redux/treeSlice'
+import { book } from '../chess'
 import { movesToString } from '../chess'
 
 const ECODisplay = () => {

@@ -10,15 +10,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import { Color } from "chessground/types";
 import { mid } from '../../lib/helpers';
-
-const winColor = '#66bb6a';
-const lossColor = '#f44336';
-const drawColor = '#535353';
-const colorScale = scalePower({
-  domain: [-1, 0, 1],
-  range: [lossColor, drawColor, winColor],
-  exponent: 0.5
-});
+import { useContext } from "react";
+import { TreeDimsContext } from "./MoveTree";
 
 function calcPath(
   link: HierarchyPointLink<TreeNode>,
@@ -29,7 +22,7 @@ function calcPath(
   var sourceGames = countGames(source.data),
       targetGames = countGames(target.data),
       frequency = (sourceGames && targetGames) ? (targetGames / sourceGames) : 0,
-      width = Math.max(Math.min(frequency * 2 * r, 2 * r), 4),
+      width = Math.max(Math.min(Math.sqrt(frequency) * 2 * r, 2 * r), 4),
       midX = mid(source.y, target.y),
       quarterX = mid(source.y, midX),
       topY = target.x - width / 2,
@@ -48,9 +41,17 @@ function calcPath(
     : `${start}${topCurve}${lineToNodeTop}${lineToNodeBottom}${linetoMidBottom}${bottomCurve}`;
 }
 
+const winColor = '#66bb6a';
+const lossColor = '#f44336';
+const drawColor = '#535353';
+const colorScale = scalePower({
+  domain: [-1, 0, 1],
+  range: [lossColor, drawColor, winColor],
+  exponent: 0.66,
+});
 function calcStroke(node: HierarchyPointNode<TreeNode>, orientation: Color) {
   const games = countGames(node.data)
-  if (games) {
+  if (games > 0) {
     const { white, black } = node.data.attributes;
     const whiteProb = white / games;
     const blackProb = black / games;
@@ -58,27 +59,21 @@ function calcStroke(node: HierarchyPointNode<TreeNode>, orientation: Color) {
       ? whiteProb - blackProb 
       : blackProb - whiteProb;
     return colorScale(outcome);
-  }
-  else {
+  } else {
     return drawColor
   }
 };
 
 interface Props {
   link: HierarchyPointLink<TreeNode>,
-  r: number,
-  fontSize: number,
-  treeWidth: number,
   minimap?: boolean
 }
 
 const Link = ({
   link,
-  r,
-  fontSize,
-  treeWidth,
   minimap = false,
 }: Props) => {
+  const { fontSize, columnWidth, nodeRadius} = useContext(TreeDimsContext);
   const orientation = useSelector((state: RootState) => state.board.orientation)
   const fill = calcStroke(link.target, orientation);
   const midX = mid(link.source.y, link.target.y);
@@ -86,7 +81,7 @@ const Link = ({
   return (
     <Group style={{ cursor: 'pointer' }}>
       <LinkHorizontal
-        path={link => calcPath(link, r, minimap)}
+        path={link => calcPath(link, nodeRadius, minimap)}
         data={link}
         fill={fill}
       />
@@ -95,10 +90,10 @@ const Link = ({
           <>
             <rect
               x={midX}
-              y={link.target.x - r}
+              y={link.target.x - nodeRadius}
               rx={2}
-              width={treeWidth / 2}
-              height={r * 2}
+              width={columnWidth / 2}
+              height={nodeRadius * 2}
               fill={fill}
               stroke="gray"
             ></rect>
@@ -106,7 +101,7 @@ const Link = ({
               x={midX}
               dx={8}
               y={link.target.x}
-              width={treeWidth / 2 - r}
+              width={columnWidth / 2 - nodeRadius}
               fill="white"
               fontSize={fontSize}
               verticalAnchor='middle'
