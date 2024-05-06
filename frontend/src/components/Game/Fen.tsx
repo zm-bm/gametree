@@ -1,8 +1,9 @@
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
+import { selectFen } from "../../redux/gameSlice";
 
 const Fen = () => {
-  const fen = useSelector((state: RootState) => state.board.fen);
+  const fen = useSelector((state: RootState) => selectFen(state));
 
   return (
     <div className='flex items-center text-sm gap-1 p-1 border-t border-neutral-400 bg-neutral-200'>

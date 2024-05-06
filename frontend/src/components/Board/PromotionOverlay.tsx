@@ -3,8 +3,7 @@ import { Chess, PieceSymbol } from "chess.js";
 import { useDispatch, useSelector } from "react-redux";
 
 import { AppDispatch, RootState } from "../../store";
-import { SET_PROMOTION_TARGET } from "../../redux/boardSlice";
-import { MAKE_MOVE } from "../../redux/gameSlice";
+import { MAKE_MOVE, SET_PROMOTION_TARGET, selectFen } from "../../redux/gameSlice";
 import { colorFromFen } from "../../chess";
 
 type Promotion = { piece: string, symbol: PieceSymbol }
@@ -19,9 +18,9 @@ type Props = { size: number };
 
 const PromotionOverlay = ({ size }: Props) => {
   const dispatch = useDispatch<AppDispatch>();
-  const fen = useSelector((state: RootState) => state.board.fen);
-  const orientation = useSelector((state: RootState) => state.board.orientation);
-  const promotionTarget = useSelector((state: RootState) => state.board.promotionTarget);
+  const fen = useSelector((state: RootState) => selectFen(state));
+  const orientation = useSelector((state: RootState) => state.game.orientation);
+  const promotionTarget = useSelector((state: RootState) => state.game.promotionTarget);
   const targetFile = promotionTarget
     ? promotionTarget[1].charCodeAt(0) - 'a'.charCodeAt(0) : 0;
   const turnColor = colorFromFen(fen) === 'w' ? 'white' : 'black';

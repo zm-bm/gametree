@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import * as cg from 'chessground/types';
+import { Key } from 'chessground/types';
 import { Config } from "chessground/config";
 import { Chess, Square } from "chess.js";
 
@@ -8,19 +8,17 @@ import { useDimensions } from "../../hooks/useDimensions";
 import BaseBoard from "./BaseBoard";
 import { AppDispatch, RootState } from "../../store";
 import { getDests, isPromotion } from "../../chess";
-import { SET_PROMOTION_TARGET } from "../../redux/boardSlice";
-import { MAKE_MOVE } from "../../redux/gameSlice";
+import { MAKE_MOVE, SET_PROMOTION_TARGET, selectFen, selectLastMove } from "../../redux/gameSlice";
 import PromotionOverlay from "./PromotionOverlay";
 
 const Board = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [ref, dimensions] = useDimensions()
-  const fen = useSelector((state: RootState) => state.board.fen);
-  const orientation = useSelector((state: RootState) => state.board.orientation);
+  const orientation = useSelector((state: RootState) => state.game.orientation);
   const engineFen = useSelector((state: RootState) => state.engine.fen);
   const bestMove = useSelector((state: RootState) => state.engine.infos.at(-1)?.pv.at(0));
-  const lastMove = useSelector((state: RootState) => state.game.moveTree.at(state.game.currentMove)?.move)
-  console.log(fen)
+  const lastMove = useSelector((state: RootState) => selectLastMove(state))
+  const fen = useSelector((state: RootState) => selectFen(state))
 
   const autoShapes = useMemo(() => {
     if (bestMove && fen === engineFen) {
@@ -39,7 +37,7 @@ const Board = () => {
   }, [dimensions])
 
   // move handler for chessground board
-  const move = useCallback((from: cg.Key, to: cg.Key) => {
+  const move = useCallback((from: Key, to: Key) => {
     const chess = new Chess(fen);
     if (isPromotion(chess, from, to)) {
       dispatch(SET_PROMOTION_TARGET([from as Square, to as Square]))

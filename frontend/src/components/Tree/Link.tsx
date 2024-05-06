@@ -3,12 +3,12 @@ import { Group } from '@visx/group';
 import { LinkHorizontal } from "@visx/shape";
 import { scalePower } from "@visx/scale";
 import { Text } from "@visx/text";
+import { Color } from "chessground/types";
 
 import { countGames } from "../../chess";
 import { TreeNode } from "../../chess";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
-import { Color } from "chessground/types";
 import { mid } from '../../lib/helpers';
 import { useContext } from "react";
 import { TreeDimsContext } from "./MoveTree";
@@ -74,7 +74,7 @@ const Link = ({
   minimap = false,
 }: Props) => {
   const { fontSize, columnWidth, nodeRadius} = useContext(TreeDimsContext);
-  const orientation = useSelector((state: RootState) => state.board.orientation)
+  const orientation = useSelector((state: RootState) => state.game.orientation)
   const fill = calcStroke(link.target, orientation);
   const midX = mid(link.source.y, link.target.y);
 

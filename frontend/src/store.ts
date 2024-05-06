@@ -1,7 +1,6 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { createEngineMiddleware } from './redux/engineMiddleware';
 import engineOutputReducer from './redux/engineSlice';
-import boardReducer from './redux/boardSlice';
 import gameReducer from './redux/gameSlice';
 import treeReducer from './redux/treeSlice';
 import { initEngineOptions } from './worker';
@@ -12,7 +11,6 @@ const engineMiddleware = createEngineMiddleware();
 
 const rootReducer = combineReducers({
   engine: engineOutputReducer,
-  board: boardReducer,
   game: gameReducer,
   tree: treeReducer,
   [openingsApi.reducerPath]: openingsApi.reducer,

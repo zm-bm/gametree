@@ -1,9 +1,9 @@
 import { useSelector } from "react-redux";
+import { DEFAULT_POSITION, Square } from "chess.js";
 import { RootState } from '../../store';
 import { formatScore } from "../../lib/helpers";
 import { useCallback, useState } from "react";
 import EngineBoard from "./EngineBoard";
-import { DEFAULT_POSITION, Square } from "chess.js";
 import { colorFromFen } from "../../chess";
 import { EngineInfoMove } from "./EngineInfoMove";
 
@@ -14,7 +14,7 @@ const columnHeader = 'font-bold underline cursor-default'
 const EngineInfo = () => {
   const infos = useSelector((state: RootState) => state.engine.infos);
   const fen = useSelector((state: RootState) => state.engine.fen)
-  const orientation = useSelector((state: RootState) => state.board.orientation);
+  const orientation = useSelector((state: RootState) => state.game.orientation);
   const [coords, setCoords] = useState({ top: 0, left: 0 });
   const [tooltip, setTooltip] = useState({
     hovered: false,

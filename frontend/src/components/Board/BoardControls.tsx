@@ -9,9 +9,9 @@ import {
   IoIosPause,
   IoIosPlay
 } from "react-icons/io";
-import { useMoveActions } from "../../hooks/useMoveActions";
-import { FLIP_ORIENTATION } from "../../redux/boardSlice";
 import ECODisplay from "./ECODisplay";
+import { useMoveActions } from "../../hooks/useMoveActions";
+import { FLIP_ORIENTATION, selectFen } from "../../redux/gameSlice";
 import { TOGGLE_ENGINE } from "../../redux/engineSlice";
 import { AppDispatch, RootState } from '../../store';
 
@@ -19,7 +19,7 @@ const BoardControls = () => {
   const { undo, redo, rewind, forward } = useMoveActions();
   const dispatch = useDispatch<AppDispatch>()
   const flip = useCallback(() => dispatch(FLIP_ORIENTATION()), [])
-  const fen = useSelector((state: RootState) => state.board.fen);
+  const fen = useSelector((state: RootState) => selectFen(state));
   const running = useSelector((state: RootState) => state.engine.running);
 
   useEffect(() => {

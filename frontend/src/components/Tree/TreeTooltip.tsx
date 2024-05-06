@@ -16,7 +16,7 @@ interface Props {
   transformMatrix: TransformMatrix,
 };
 export const TreeTooltip = ({ tooltip, transformMatrix }: Props) => {
-  const orientation = useSelector((state: RootState) => state.board.orientation);
+  const orientation = useSelector((state: RootState) => state.game.orientation);
   const {
     tooltipData,
     tooltipLeft,
