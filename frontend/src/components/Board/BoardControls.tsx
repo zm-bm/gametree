@@ -11,7 +11,7 @@ import {
 } from "react-icons/io";
 import { useMoveActions } from "../../hooks/useMoveActions";
 import { FLIP_ORIENTATION } from "../../redux/boardSlice";
-import ECODisplay from "../ECODisplay";
+import ECODisplay from "./ECODisplay";
 import { TOGGLE_ENGINE } from "../../redux/engineSlice";
 import { AppDispatch, RootState } from '../../store';
 

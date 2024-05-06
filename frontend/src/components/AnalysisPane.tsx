@@ -2,6 +2,7 @@ import { useState } from "react";
 import EngineHeader from "./Engine/EngineHeader";
 import EngineInfo from "./Engine/EngineInfo";
 import EngineControls from "./Engine/EngineControls";
+import GameInfo from "./GameInfo/GameInfo";
 
 type Tab = 'engine' | 'game';
 const tabs: Tab[] = ['engine', 'game'];
@@ -12,7 +13,7 @@ const AnalysisPane = () => {
   const renderTabContent = () => {
     switch(activeTab) {
       case 'game':
-        return <div></div>
+        return <GameInfo />
       case 'engine':
         return (
           <>

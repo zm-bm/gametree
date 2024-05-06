@@ -1,8 +1,8 @@
 import { useSelector } from 'react-redux'
-import { RootState } from '../store'
-import { book } from '../chess'
-import { movesToString } from '../chess'
-import { selectMovesList } from '../redux/gameSlice'
+import { RootState } from '../../store'
+import { book } from '../../chess'
+import { movesToString } from '../../chess'
+import { selectMovesList } from '../../redux/gameSlice'
 
 const ECODisplay = () => {
   const moves = useSelector((state: RootState) => selectMovesList(state))

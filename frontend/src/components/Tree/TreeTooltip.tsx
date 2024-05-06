@@ -8,7 +8,7 @@ import { countGames } from "../../chess";
 import { Key } from "chessground/types";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
-import WinChanceBar from "../WinChanceBar";
+import WinChanceBar from "./WinChanceBar";
 import { TransformMatrix } from "@visx/zoom/lib/types";
 
 interface Props {
