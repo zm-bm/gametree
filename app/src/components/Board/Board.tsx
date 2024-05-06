@@ -33,7 +33,6 @@ const Board = () => {
 
   // ensure chessground board height/width is multiple of 8 (bc chess board)
   const size = useMemo(() => {
-    console.log(dimensions)
     return (Math.floor(dimensions.width / 8) * 8)
   }, [dimensions])
 
