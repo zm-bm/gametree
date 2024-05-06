@@ -12,7 +12,7 @@ export const useMoveActions = () => {
 
   function throttle() {
     const now = Date.now();
-    if (now - lastTime.current > 500) {
+    if (now - lastTime.current > 250) {
       lastTime.current = now;
       return false;
     }

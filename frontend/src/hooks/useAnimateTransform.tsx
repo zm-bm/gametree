@@ -16,6 +16,7 @@ function useAnimateTransform(
   useEffect(() => {
     initialTransformRef.current = initialTransform;
     startTimeRef.current = undefined
+    console.log('new initial', initialTransformRef.current)
   }, [initialTransform]);
 
   useEffect(() => {

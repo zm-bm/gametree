@@ -1,4 +1,3 @@
-import { TooltipWithBounds } from "@visx/tooltip";
 import { UseTooltipParams } from "@visx/tooltip/lib/hooks/useTooltip";
 import { HierarchyPointNode } from "@visx/hierarchy/lib/types";
 
@@ -9,13 +8,11 @@ import { Key } from "chessground/types";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import WinChanceBar from "./WinChanceBar";
-import { TransformMatrix } from "@visx/zoom/lib/types";
 
 interface Props {
   tooltip: UseTooltipParams<HierarchyPointNode<TreeNode>>
-  transformMatrix: TransformMatrix,
 };
-export const TreeTooltip = ({ tooltip, transformMatrix }: Props) => {
+export const TreeTooltip = ({ tooltip }: Props) => {
   const orientation = useSelector((state: RootState) => state.game.orientation);
   const {
     tooltipData,
@@ -33,12 +30,7 @@ export const TreeTooltip = ({ tooltip, transformMatrix }: Props) => {
   const freq = parent && totalGames / countGames(parent.data) * 100;
 
   return (
-    <TooltipWithBounds
-      key={Math.random()}
-      top={tooltipTop}
-      left={tooltipLeft + (10 * transformMatrix.scaleX)}
-      className="border border-neutral-400"
-    >
+    <>
       <div className="text-base text-neutral-800">
         <div>
           <span className="font-bold pr-1">Games:</span>
@@ -85,6 +77,6 @@ export const TreeTooltip = ({ tooltip, transformMatrix }: Props) => {
           }}
         />
       </div>
-    </TooltipWithBounds>
+    </>
   );
 }

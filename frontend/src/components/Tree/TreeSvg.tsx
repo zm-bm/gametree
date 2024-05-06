@@ -1,16 +1,12 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ProvidedZoom, TransformMatrix } from '@visx/zoom/lib/types';
-import { localPoint } from '@visx/event';
-import { useTooltip, useTooltipInPortal  } from '@visx/tooltip';
-import { HierarchyPointNode } from '@visx/hierarchy/lib/types';
+import { useTooltipInPortal  } from '@visx/tooltip';
 import { hierarchy } from '@visx/hierarchy';
 
 import { SvgDefs } from './SvgDefs';
 import useAnimateTransform from '../../hooks/useAnimateTransform';
-import { TreeG } from './TreeG';
-import { TreeNode } from '../../chess';
-import { TreeTooltip } from './TreeTooltip';
+import { TreeGroup } from './TreeGroup';
 import { TreeDimsContext, ZoomState, defaultTransformMatrix } from "./MoveTree";
 import { AppDispatch, RootState } from '../../store';
 import { TreeMinimap } from './TreeMinimap';
@@ -46,26 +42,12 @@ export const TreeSvg = ({ zoom }: Props) => {
   const updateInitialMatrix = useCallback(() => {
     setInitialMatrix(zoom.transformMatrix)
   }, [zoom]);
-  useAnimateTransform(initialMatrix, targetMatrix, zoom, 500);
+  useAnimateTransform(initialMatrix, targetMatrix, zoom, 250);
 
-  const tooltip = useTooltip<HierarchyPointNode<TreeNode>>();
-  const { containerRef } = useTooltipInPortal({
+  const { TooltipInPortal, containerRef } = useTooltipInPortal({
     detectBounds: true,
     scroll: true,
   })
-  const showNodeTooltip = useCallback((node: HierarchyPointNode<TreeNode>): React.MouseEventHandler => {
-    return (event) => {
-      const coords = localPoint(event);
-        if (coords) {
-          const { transformMatrix: m } = zoom;
-          tooltip.showTooltip({
-            tooltipLeft: node.y * m.scaleX + m.translateX,
-            tooltipTop: node.x * m.scaleY + m.translateY,
-            tooltipData: node,
-          });
-        }
-    };
-  }, [zoom]);
 
   return root && (
     <div className='relative' ref={containerRef}>
@@ -79,22 +61,17 @@ export const TreeSvg = ({ zoom }: Props) => {
         onTouchEnd={updateInitialMatrix}
       >
         <SvgDefs width={width} height={height} />
-        <TreeG
+        <TreeGroup
           root={root}
           zoom={zoom}
           setTargetMatrix={setTargetMatrix}
-          showNodeTooltip={showNodeTooltip}
-          hideTooltip={tooltip.hideTooltip}
+          TooltipInPortal={TooltipInPortal}
         />
         <TreeMinimap
           root={root}
           zoom={zoom}
         />
       </svg>
-      <TreeTooltip
-        tooltip={tooltip}
-        transformMatrix={zoom.transformMatrix}
-      />
       <div className='absolute top-0 right-0 flex flex-col p-1'>
         <select
           title='Data source'

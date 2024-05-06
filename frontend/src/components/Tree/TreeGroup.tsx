@@ -1,6 +1,7 @@
-import { useEffect, MouseEventHandler, useContext, useMemo } from 'react';
+import { useEffect, useContext, useMemo, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { Tree } from '@visx/hierarchy';
+import { localPoint } from '@visx/event';
 import { ProvidedZoom, TransformMatrix } from '@visx/zoom/lib/types';
 import { HierarchyNode, HierarchyPointNode } from '@visx/hierarchy/lib/types';
 import { Group } from '@visx/group'
@@ -11,24 +12,41 @@ import { Node } from './Node';
 import { Link } from './Link';
 import { TreeNode } from '../../chess';
 import { selectMovesList } from '../../redux/gameSlice';
+import { TooltipInPortalProps } from '@visx/tooltip/lib/hooks/useTooltipInPortal';
+import { TreeTooltip } from './TreeTooltip';
+import { useTooltip } from '@visx/tooltip';
 
 interface Props {
   root: HierarchyNode<TreeNode>,
   zoom: ProvidedZoom<SVGSVGElement> & ZoomState,
   setTargetMatrix: React.Dispatch<React.SetStateAction<TransformMatrix>>,
-  showNodeTooltip: (n: HierarchyPointNode<TreeNode>) => MouseEventHandler,
-  hideTooltip: () => void,
+  TooltipInPortal: React.FC<TooltipInPortalProps>,
 }
-export const TreeG = ({
+export const TreeGroup = ({
   root,
   zoom,
   setTargetMatrix,
-  showNodeTooltip,
-  hideTooltip,
+  TooltipInPortal,
 }: Props) => {
   const { height, width, rowHeight, columnWidth } = useContext(TreeDimsContext);
   const moves = useSelector((state: RootState) => selectMovesList(state));
   const currentNode = useMemo(() => moves.map(m => m.lan).join(','), [moves])
+
+  const tooltip = useTooltip<HierarchyPointNode<TreeNode>>();
+
+  const showNodeTooltip = useCallback((node: HierarchyPointNode<TreeNode>): React.MouseEventHandler => {
+    return (event) => {
+      const coords = localPoint(event);
+        if (coords) {
+          const { transformMatrix: m } = zoom;
+          tooltip.showTooltip({
+            tooltipLeft: node.y * m.scaleX + m.translateX,
+            tooltipTop: node.x * m.scaleY + m.translateY,
+            tooltipData: node,
+          });
+        }
+    };
+  }, [zoom]);
 
   return (
     <g transform={zoom.toString()}>
@@ -62,13 +80,24 @@ export const TreeG = ({
                   node={node}
                   isCurrentNode={currentNode === node.data.name}
                   onMouseEnter={showNodeTooltip(node)}
-                  onMouseLeave={hideTooltip}
+                  onMouseLeave={tooltip.hideTooltip}
                 />
               ))}
             </Group>
           )
         }}
       </Tree>
+      {
+        tooltip.tooltipLeft && tooltip.tooltipTop && tooltip.tooltipOpen &&
+        <TooltipInPortal
+          key={Math.random()}
+          top={tooltip.tooltipTop}
+          left={tooltip.tooltipLeft + (10 * zoom.transformMatrix.scaleX)}
+          className="border border-neutral-400"
+        >
+          <TreeTooltip tooltip={tooltip} />
+        </TooltipInPortal>
+      }
     </g>
   );
 };
