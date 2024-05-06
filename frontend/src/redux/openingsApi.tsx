@@ -2,14 +2,20 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { Move } from 'chess.js'
 import { LichessOpenings, movesToString } from '../chess'
 
+export type TreeSource = 'masters' | 'lichess';
+export interface GetOpeningsArgs {
+  moves: Move[],
+  source: TreeSource,
+}
+
 export const openingsApi = createApi({
   reducerPath: 'openingsApi',
   baseQuery: fetchBaseQuery({ baseUrl: 'https://explorer.lichess.ovh/' }),
   endpoints: (builder) => ({
-    getOpeningByMoves: builder.query<LichessOpenings, Move[]>({
-      query: (moves) => `masters?play=${movesToString(moves)}`,
+    getOpenings: builder.query<LichessOpenings, GetOpeningsArgs>({
+      query: (args) => `${args.source}?play=${movesToString(args.moves)}`,
     }),
   }),
 })
 
-export const { useGetOpeningByMovesQuery } = openingsApi
+export const { useGetOpeningsQuery } = openingsApi;

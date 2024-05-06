@@ -31,7 +31,6 @@ export const TreeTooltip = ({ tooltip, transformMatrix }: Props) => {
   const parent = tooltipData.parent;
   const { move, white, draws, black, averageRating } = tooltipData.data.attributes;
   const freq = parent && totalGames / countGames(parent.data) * 100;
-  console.log(parent, totalGames)
 
   return (
     <TooltipWithBounds

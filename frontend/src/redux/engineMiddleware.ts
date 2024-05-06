@@ -55,6 +55,10 @@ export const createEngineMiddleware = (): Middleware => {
       updateEngine(setPos(fen), state)
     }
 
+    if (action.type === 'tree/SET_SOURCE') {
+      updateEngine(setPos(DEFAULT_POSITION), state)
+    }
+
     return next(action);
   };
 };

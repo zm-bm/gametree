@@ -1,8 +1,8 @@
 import { PayloadAction, createSelector, createSlice } from '@reduxjs/toolkit';
 import { Move } from 'chess.js';
-import { openingsApi } from "./openingsApi";
-import { MoveNode, TreeNode, buildTreeNode } from "../chess";
+import { MoveNode } from "../chess";
 import { RootState } from '../store';
+import { SET_SOURCE } from './treeSlice';
 
 type GotoTarget = {
   key: number
@@ -12,7 +12,6 @@ type GotoTarget = {
 export interface GameState {
   moveTree: MoveNode[],
   currentMove: number,
-  root: TreeNode | null,
 }
 
 export const rootNode = {
@@ -24,7 +23,6 @@ export const rootNode = {
 const initialState: GameState = {
   moveTree: [rootNode],
   currentMove: 0,
-  root: null,
 };
 
 const gameSlice = createSlice({
@@ -80,43 +78,12 @@ const gameSlice = createSlice({
       state.currentMove = parent;
     },
   },
-  extraReducers: (builder) => {
-    builder.addMatcher(
-      openingsApi.endpoints.getOpeningByMoves.matchFulfilled,
-      (state, action) => {
-        // update moves / current move
-        const moves = action.meta.arg.originalArgs;
-
-        // build tree
-        const node = buildTreeNode(action.payload, moves);
-        if (!state.root) {
-          state.root = node;
-        } else {
-          var head = state.root;
-
-          // iterate through moves to find location in tree
-          moves.forEach((move, i) => {
-            var child = head.children.find(node => node.attributes.move?.lan === move.lan);
-            if (child) {
-              head = child;
-            } else if (i === moves.length - 1) {
-              // if last move not found, add it to tree
-              head.children.push(node);
-              return;
-            } else {
-              // path not found, do nothing
-              return;
-            }
-          });
-
-          // update head and add children if none (in case query has been made already)
-          head.attributes.topGames = node.attributes.topGames;
-          if (head.children.length === 0)
-            head.children = node.children;
-        }
-      }
-    )
-  }
+  extraReducers(builder) {
+    builder.addCase(SET_SOURCE, (state) => {
+      state.currentMove = 0;
+      state.moveTree = [rootNode];
+    });
+  },
 });
 
 const selectMoveTree = (state: RootState) => state.game.moveTree;

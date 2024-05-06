@@ -2,7 +2,7 @@ import { useState } from "react";
 import EngineHeader from "./Engine/EngineHeader";
 import EngineInfo from "./Engine/EngineInfo";
 import EngineControls from "./Engine/EngineControls";
-import GameInfo from "./GameInfo/GameInfo";
+import GameInfo from "./Game/GameInfo";
 
 type Tab = 'engine' | 'game';
 const tabs: Tab[] = ['engine', 'game'];
