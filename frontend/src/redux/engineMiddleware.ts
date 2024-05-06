@@ -12,7 +12,7 @@ export const createEngineMiddleware = (): Middleware => {
     }
     write(cmd)
     if (state.engine.running) {
-      write('go depth 30')
+      write('go infinite')
     }
   }
 
@@ -27,7 +27,7 @@ export const createEngineMiddleware = (): Middleware => {
     }
 
     if (action.type === 'engine/TOGGLE_ENGINE') {
-      write(state.engine.running ? 'stop' : 'go depth 30')
+      write(state.engine.running ? 'stop' : 'go infinite')
     }
 
     if (action.type === 'engine/SET_HASH') {

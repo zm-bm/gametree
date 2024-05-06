@@ -51,7 +51,7 @@ export default function MoveTree() {
       height,
       width,
       nodeRadius: nodeRadiusScale(minDim),
-      rowHeight: nodeRadiusScale(minDim) * 3,
+      rowHeight: nodeRadiusScale(minDim) * 2.4,
       columnWidth: columnWidthScale(width),
       fontSize: fontSizeScale(minDim),
     }}>

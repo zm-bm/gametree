@@ -52,11 +52,11 @@ export const TreeSvg = ({ zoom }: Props) => {
       const coords = localPoint(event);
         if (coords) {
           const { transformMatrix: m } = zoom;
-          // tooltip.showTooltip({
-          //   tooltipLeft: node.y * m.scaleX + m.translateX,
-          //   tooltipTop: node.x * m.scaleY + m.translateY,
-          //   tooltipData: node,
-          // });
+          tooltip.showTooltip({
+            tooltipLeft: node.y * m.scaleX + m.translateX,
+            tooltipTop: node.x * m.scaleY + m.translateY,
+            tooltipData: node,
+          });
         }
     };
   }, [zoom]);

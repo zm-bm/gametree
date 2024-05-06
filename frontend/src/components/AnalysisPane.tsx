@@ -27,7 +27,7 @@ const AnalysisPane = () => {
   };
 
   return (
-    <div className="flex flex-col h-full shadow-2xl min-h-64 sm:min-h-0 border border-neutral-400">
+    <div className="flex flex-col h-full shadow-2xl min-h-0 border border-neutral-400">
       {/* tabs */}
       <div className="bg-neutral-200">
         {tabs.map((tab) => (

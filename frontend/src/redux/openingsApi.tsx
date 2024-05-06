@@ -7,7 +7,7 @@ export const openingsApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: 'https://explorer.lichess.ovh/' }),
   endpoints: (builder) => ({
     getOpeningByMoves: builder.query<LichessOpenings, Move[]>({
-      query: (moves) => `lichess?play=${movesToString(moves)}`,
+      query: (moves) => `masters?play=${movesToString(moves)}`,
     }),
   }),
 })

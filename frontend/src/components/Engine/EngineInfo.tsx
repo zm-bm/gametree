@@ -23,7 +23,7 @@ const EngineInfo = () => {
   });
 
   const onMouseMove: React.MouseEventHandler<HTMLDivElement> = useCallback(e => {
-    setCoords({ top: e.pageY-boardTooltipSize-30, left: e.pageX+5 })
+    setCoords({ top: e.pageY-boardTooltipSize-10, left: e.pageX+5 })
   }, []);
   
   const onMouseLeave = useCallback(() => setTooltip({ ...tooltip, hovered: false }), []);

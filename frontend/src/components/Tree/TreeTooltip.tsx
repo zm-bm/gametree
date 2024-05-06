@@ -31,6 +31,7 @@ export const TreeTooltip = ({ tooltip, transformMatrix }: Props) => {
   const parent = tooltipData.parent;
   const { move, white, draws, black, averageRating } = tooltipData.data.attributes;
   const freq = parent && totalGames / countGames(parent.data) * 100;
+  console.log(parent, totalGames)
 
   return (
     <TooltipWithBounds
@@ -40,38 +41,40 @@ export const TreeTooltip = ({ tooltip, transformMatrix }: Props) => {
       className="border border-neutral-400"
     >
       <div className="text-base text-neutral-800">
-        <span className="font-bold pr-1">Games:</span>
-        <span>{totalGames.toLocaleString()}</span>
-      </div>
-      {
-          freq &&
-          <div className="text-base text-neutral-800">
+        <div>
+          <span className="font-bold pr-1">Games:</span>
+          <span>{totalGames.toLocaleString()}</span>
+        </div>
+        {
+          freq !== null && freq > 0 &&
+          <div>
             <span className="font-bold pr-1">Frequency:</span>
-            <span>{(freq).toFixed(2)}%</span>
+            <span>{freq.toFixed(2)}%</span>
             {
               freq > 100 &&
               <span className="pl-1">(from transpositions)</span>
             }
           </div>
         }
-      {
-        averageRating &&
-        <div className="text-base text-neutral-800">
-          <span className="font-bold pr-1">Avg. rating:</span>
-          <span>{averageRating} Elo</span>
-        </div>
-      }
-      {
-        (white !== null && draws !== null && black !== null) &&
-        <div className="flex items-center text-base text-neutral-800 pb-1">
-          <span className="font-bold pr-1">Wins:</span>
-          <WinChanceBar
-            white={white/totalGames*100}
-            draws={draws/totalGames*100}
-            black={black/totalGames*100}
-          />
-        </div>
-      }
+        {
+          averageRating &&
+          <div>
+            <span className="font-bold pr-1">Avg. rating:</span>
+            <span>{averageRating} Elo</span>
+          </div>
+        }
+        {
+          (totalGames > 0) &&
+          <div className="flex items-center pb-1">
+            <span className="font-bold pr-1">Wins:</span>
+            <WinChanceBar
+              white={white/totalGames*100}
+              draws={draws/totalGames*100}
+              black={black/totalGames*100}
+            />
+          </div>
+        }
+      </div>
       <div className='relative h-[320px] w-[320px]'>
         <BaseBoard
           config={{
