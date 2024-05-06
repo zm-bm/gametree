@@ -1,4 +1,4 @@
-import { useEffect, MouseEventHandler, useContext } from 'react';
+import { useEffect, MouseEventHandler, useContext, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { Tree } from '@visx/hierarchy';
 import { ProvidedZoom, TransformMatrix } from '@visx/zoom/lib/types';
@@ -10,6 +10,7 @@ import { TreeDimsContext, ZoomState } from "./MoveTree";
 import { Node } from './Node';
 import { Link } from './Link';
 import { TreeNode } from '../../chess';
+import { selectMovesList } from '../../redux/gameSlice';
 
 interface Props {
   root: HierarchyNode<TreeNode>,
@@ -26,7 +27,8 @@ export const TreeG = ({
   hideTooltip,
 }: Props) => {
   const { height, width, rowHeight, columnWidth } = useContext(TreeDimsContext);
-  const currentNode = useSelector((state: RootState) => state.game.currentNode);
+  const moves = useSelector((state: RootState) => selectMovesList(state));
+  const currentNode = useMemo(() => moves.map(m => m.lan).join(','), [moves])
 
   return (
     <g transform={zoom.toString()}>

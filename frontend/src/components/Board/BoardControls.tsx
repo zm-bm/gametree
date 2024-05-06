@@ -45,10 +45,10 @@ const BoardControls = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [undo, forward, redo, forward]);
 
-  const buttonClass = "btn-primary p-2 hover:scale-110";
+  const buttonClass = "btn-primary p-2 hover:scale-105";
 
   return (
-    <div className="flex items-center gap-1 py-1 neutral-gradient-to-b">
+    <div className="flex items-center gap-1 pl-1 pt-2">
       {/* game controls */}
       <button onClick={rewind} className={buttonClass} title='Rewind to first move'>
         <IoIosRewind className='m-auto' />

@@ -4,7 +4,7 @@ import { restartWorker, worker, write } from '../worker';
 import { RootState } from '../store';
 import { DEFAULT_POSITION } from 'chess.js';
 
-export const createWorkerMiddleware = (): Middleware => {
+export const createEngineMiddleware = (): Middleware => {
 
   const updateEngine = (cmd: string, state: RootState) => {
     if (state.engine.running) {
@@ -12,7 +12,7 @@ export const createWorkerMiddleware = (): Middleware => {
     }
     write(cmd)
     if (state.engine.running) {
-      write('go infinite')
+      write('go depth 30')
     }
   }
 
@@ -27,7 +27,7 @@ export const createWorkerMiddleware = (): Middleware => {
     }
 
     if (action.type === 'engine/TOGGLE_ENGINE') {
-      write(state.engine.running ? 'stop' : 'go inifinite')
+      write(state.engine.running ? 'stop' : 'go depth 30')
     }
 
     if (action.type === 'engine/SET_HASH') {
@@ -50,9 +50,9 @@ export const createWorkerMiddleware = (): Middleware => {
       updateEngine(setPos(action.payload.fen), state)
     }
 
-    if (action.type === 'game/SET_GAME') {
-      updateEngine(setPos(
-        action.payload.at(-1)?.after || DEFAULT_POSITION), state)
+    if (action.type === 'game/GOTO_PATH') {
+      const fen = action.payload.at(-1)?.after || DEFAULT_POSITION;
+      updateEngine(setPos(fen), state)
     }
 
     return next(action);

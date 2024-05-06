@@ -37,7 +37,7 @@ export const TreeTooltip = ({ tooltip, transformMatrix }: Props) => {
       key={Math.random()}
       top={tooltipTop}
       left={tooltipLeft + (10 * transformMatrix.scaleX)}
-      className="border border-neutral-400 font-mono"
+      className="border border-neutral-400"
     >
       <div className="text-base text-neutral-800">
         <span className="font-bold pr-1">Games:</span>

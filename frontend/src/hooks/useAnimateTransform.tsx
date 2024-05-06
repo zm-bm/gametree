@@ -30,13 +30,11 @@ function useAnimateTransform(
 
       const elapsedTime = time - startTimeRef.current;
       const fraction = Math.min(elapsedTime / duration, 1);
-
-      const translateX = initialTransformRef.current.translateX + (targetTransform.translateX - initialTransformRef.current.translateX) * fraction;
-      const translateY = initialTransformRef.current.translateY + (targetTransform.translateY - initialTransformRef.current.translateY) * fraction;
+      const { translateX: startX, translateY: startY } = initialTransformRef.current;
 
       zoom.setTransformMatrix({
-        translateX,
-        translateY,
+        translateX: startX + (targetTransform.translateX - startX) * fraction,
+        translateY: startY + (targetTransform.translateY - startY) * fraction,
         scaleX: targetTransform.scaleX,
         scaleY: targetTransform.scaleY,
         skewX: 0,
@@ -56,7 +54,7 @@ function useAnimateTransform(
         initialTransformRef.current = currentTransformRef.current
       }
       startTimeRef.current = undefined;
-      if (requestRef.current && !startTimeRef.current) {
+      if (requestRef.current) {
         cancelAnimationFrame(requestRef.current);
         requestRef.current = undefined
       }

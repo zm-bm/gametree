@@ -7,63 +7,54 @@ import { DEFAULT_POSITION } from "chess.js";
 export const useMoveActions = () => {
   const dispatch = useDispatch<AppDispatch>();
   const currentMove = useSelector((state: RootState) => state.game.currentMove);
-  const moves = useSelector((state: RootState) => state.game.moves);
-  const throttle = 600;
+  const moveTree = useSelector((state: RootState) => state.game.moveTree);
   const lastTime = useRef(0);
 
-  const undo = useCallback(() => {
-    if (currentMove === 0) return;
-    var now = Date.now()
-    if (now - lastTime.current >= throttle) {
-      lastTime.current = now
-      const index = currentMove - 1;
-      dispatch(GOTO_MOVE({
-        index,
-        fen: moves[index].before,
-      }))
+  function throttle() {
+    const now = Date.now();
+    if (now - lastTime.current > 500) {
+      lastTime.current = now;
+      return false;
     }
-  }, [moves, currentMove, lastTime]);
+    return true;
+  }
+
+  const undo = useCallback(() => {
+    if (throttle()) return;
+    const parent = moveTree[currentMove].parent;
+    if (parent !== null) {
+      dispatch(GOTO_MOVE({
+        key: parent,
+        fen: moveTree[parent].move?.after || DEFAULT_POSITION,
+      }));
+    }
+  }, [currentMove, moveTree]);
 
   const redo = useCallback(() => {
-    if (currentMove === moves.length) return;
-
-    var now = Date.now()
-    if (now - lastTime.current >= throttle) {
-      lastTime.current = now
-      const index = currentMove + 1;
+    if (throttle()) return;
+    const child = moveTree[currentMove].children.at(0);
+    if (child !== undefined) {
       dispatch(GOTO_MOVE({
-        index,
-        fen: moves[currentMove].after,
-      }))
+        key: child,
+        fen: moveTree[child].move?.after || DEFAULT_POSITION,
+      }));
     }
-  }, [moves, currentMove, lastTime]);
+  }, [currentMove, moveTree]);
 
   const rewind = useCallback(() => {
-    if (currentMove === 0) return;
-
-    var now = Date.now()
-    if (now - lastTime.current >= throttle) {
-        lastTime.current = now
-      dispatch(GOTO_MOVE({
-        index: 0,
-        fen: DEFAULT_POSITION,
-      }))
-    }
-  }, [moves, currentMove, lastTime]);
+    if (throttle()) return;
+    dispatch(GOTO_MOVE({ key: 0, fen: DEFAULT_POSITION }));
+  }, []);
 
   const forward = useCallback(() => {
-    if (currentMove === moves.length) return;
-
-    var now = Date.now()
-    if (now - lastTime.current >= throttle) {
-      lastTime.current = now
-      const index = moves.length;
-      dispatch(GOTO_MOVE({
-        index,
-        fen: moves[index-1].after,
-      }))
+    if (throttle()) return;
+    let key = currentMove;
+    while (moveTree[key].children.at(0) !== undefined) {
+      key = moveTree[key].children.at(0) || key
     }
-  }, [moves, currentMove, lastTime]);
+    const fen = moveTree[key].move?.after || DEFAULT_POSITION;
+    dispatch(GOTO_MOVE({ key, fen }))
+  }, [currentMove]);
 
   return { undo, redo, rewind, forward };
 }

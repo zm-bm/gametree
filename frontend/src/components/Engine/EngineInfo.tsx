@@ -40,7 +40,7 @@ const EngineInfo = () => {
   }, [fen]);
 
   return (
-    <div className="flex-1 p-2 font-mono text-sm leading-tight overflow-auto neutral-gradient-to-b">
+    <div className="flex-1 p-2 font-mono text-sm leading-tight overflow-auto">
       <div className="flex">
         <span className={`${columnWidth} ${columnHeader}`}>Depth</span>
         <span className={`${columnWidth} ${columnHeader}`}>Score</span>

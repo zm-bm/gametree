@@ -57,7 +57,7 @@ export default function MoveTree() {
     }}>
       <div
         ref={parentRef}
-        className='w-full h-full border-l border-neutral-400 dark:border-neutral-500 overflow-hidden relative'
+        className='w-full h-full border-l border-neutral-400 overflow-hidden relative'
       >
         <Zoom<SVGSVGElement>
           width={width}

@@ -1,7 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { parseCp, parseDepth, parseHashfull, parseMate, parseMoves, parseMultiPV, parseSelDepth, parseSpeed, parseTBHits, parseTime } from "../lib/parsers";
-import { GOTO_MOVE, MAKE_MOVE, SET_GAME } from "./gameSlice";
+import { GOTO_MOVE, GOTO_PATH, MAKE_MOVE } from "./gameSlice";
 import { Chess, DEFAULT_POSITION, Move } from 'chess.js';
+import { openingsApi } from './openingsApi';
 
 export type Info = {
   depth: number,
@@ -126,12 +127,12 @@ const engineSlice = createSlice({
         state.fen = action.payload.fen;
       }
     });
-    builder.addCase(SET_GAME, (state, action) => {
+    builder.addCase(GOTO_PATH, (state, action) => {
       if (state.running) {
-        state.infos = []
+        state.infos = [];
         state.fen = action.payload.at(-1)?.after || DEFAULT_POSITION;
       }
-    })
+    });
   },
 });
 

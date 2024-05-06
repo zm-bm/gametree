@@ -14,6 +14,7 @@ import { TreeTooltip } from './TreeTooltip';
 import { TreeDimsContext, ZoomState, defaultTransformMatrix } from "./MoveTree";
 import { RootState } from '../../store';
 import { TreeMinimap } from './TreeMinimap';
+import { selectMovesList } from '../../redux/gameSlice';
 import { useGetOpeningByMovesQuery } from '../../redux/openingsApi';
 
 interface Props {
@@ -23,7 +24,7 @@ export const TreeSvg = ({ zoom }: Props) => {
   const { height, width } = useContext(TreeDimsContext);
   const [options, setOptions] = useState(false);
 
-  const moves = useSelector((state: RootState) => state.game.moves);
+  const moves = useSelector((state: RootState) => selectMovesList(state))
   useGetOpeningByMovesQuery(moves);
 
   // build move tree / coordinates
@@ -51,11 +52,11 @@ export const TreeSvg = ({ zoom }: Props) => {
       const coords = localPoint(event);
         if (coords) {
           const { transformMatrix: m } = zoom;
-          tooltip.showTooltip({
-            tooltipLeft: node.y * m.scaleX + m.translateX,
-            tooltipTop: node.x * m.scaleY + m.translateY,
-            tooltipData: node,
-          });
+          // tooltip.showTooltip({
+          //   tooltipLeft: node.y * m.scaleX + m.translateX,
+          //   tooltipTop: node.x * m.scaleY + m.translateY,
+          //   tooltipData: node,
+          // });
         }
     };
   }, [zoom]);

@@ -2,12 +2,12 @@ import { MouseEventHandler, useCallback, useContext } from "react";
 import { Group } from "@visx/group";
 import { HierarchyPointNode } from "@visx/hierarchy/lib/types";
 import { Text } from "@visx/text";
-import { Move } from "chess.js";
 import { TreeNode } from "../../chess";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../store";
-import { SET_GAME } from "../../redux/gameSlice";
 import { TreeDimsContext } from "./MoveTree";
+import { Move } from "chess.js";
+import { GOTO_PATH } from "../../redux/gameSlice";
 
 interface Props {
   node: HierarchyPointNode<TreeNode>,
@@ -30,14 +30,13 @@ export function Node({
   const { fontSize, nodeRadius } = useContext(TreeDimsContext);
 
   const onClick = useCallback(() => {
-    console.log(node)
     const moves: Move[] = [];
     let head: (HierarchyPointNode<TreeNode> | null) = node;
     while (head?.data.attributes.move) {
       moves.unshift(head?.data.attributes.move);
       head = head.parent;
     }
-    dispatch(SET_GAME(moves))
+    dispatch(GOTO_PATH(moves))
   }, [node]);
 
   // special case for root node

@@ -8,6 +8,12 @@ export type ECO = {
   uci: string,
 }
 export const book = eco as ECO[];
+export type MoveNode = {
+  key: number,
+  move: Move | null,
+  parent: number | null,
+  children: number[],
+}
 
 type LichessPlayer = {
   name: string | null,

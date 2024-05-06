@@ -11,7 +11,7 @@ const EngineControls = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   return (
-    <div className="flex items-center text-sm p-2 gap-1 border-t border-gray-400 dark:border-gray-600 neutral-gradient-to-b">
+    <div className="flex items-center text-sm p-1 gap-1 border-t bg-neutral-200 border-gray-400">
       <select
         title="Hash size"
         className="btn-primary"

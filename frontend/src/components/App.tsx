@@ -1,15 +1,11 @@
 import Board from './Board/Board'
 import BoardControls from './Board/BoardControls'
+import AnalysisPane from './AnalysisPane'
 import MoveTree from './Tree/MoveTree'
 
-import EngineInfo from './Engine/EngineInfo'
-import EngineHeader from './Engine/EngineHeader'
-import EngineControls from './Engine/EngineControls'
-
 const size = 'sm:h-screen sm:w-screen sm:flex-row min-h-0'
-const bg = 'bg-gradient-to-b from-neutral-300 via-neutral-200 to-neutral-300'
-const dark = 'dark:from-[#222] dark:via-neutral-800 dark:to-[#222]'
-const classes = `flex flex-col ${size} ${dark} ${bg}`
+const bg = 'bg-gradient-to-b from-neutral-200 via-neutral-100 to-neutral-200'
+const classes = `flex flex-col ${size} ${bg}`
 
 function App() {
   return (
@@ -19,10 +15,8 @@ function App() {
           <Board />
           <BoardControls />
         </div>
-        <div className='flex-1 flex flex-col min-h-0'>
-          <EngineHeader />
-          <EngineInfo />
-          <EngineControls />
+        <div className='flex-1 flex flex-col min-h-0 p-2'>
+          <AnalysisPane />
         </div>
       </div>
       <div className='flex-auto sm:h-screen sm:w-1/2 md:w-3/5 lg:w-2/3 2xl:w-3/4'>

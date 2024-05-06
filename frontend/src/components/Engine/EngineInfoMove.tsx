@@ -15,7 +15,7 @@ export const EngineInfoMove = ({ move, ...props }: Props) => {
       key={move.lan}
       data-move={move.lan}
       data-fen={move.after}
-      className="hover:text-sky-600 dark:hover:text-sky-400 cursor-pointer"
+      className="hover:text-sky-600 cursor-pointer"
       onMouseEnter={props.onMouseEnter}
       onMouseMove={props.onMouseMove}
       onMouseLeave={props.onMouseLeave}

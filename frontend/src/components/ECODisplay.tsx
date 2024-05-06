@@ -2,9 +2,10 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../store'
 import { book } from '../chess'
 import { movesToString } from '../chess'
+import { selectMovesList } from '../redux/gameSlice'
 
 const ECODisplay = () => {
-  const moves = useSelector((state: RootState) => state.game.moves)
+  const moves = useSelector((state: RootState) => selectMovesList(state))
   var name = movesToString(moves) 
 
   var eco = book.find(b => b.uci === name);

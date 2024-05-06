@@ -19,7 +19,7 @@ const Board = () => {
   const orientation = useSelector((state: RootState) => state.board.orientation);
   const engineFen = useSelector((state: RootState) => state.engine.fen);
   const bestMove = useSelector((state: RootState) => state.engine.infos.at(-1)?.pv.at(0));
-  const lastMove = useSelector((state: RootState) => state.game.moves.at(state.game.currentMove-1))
+  const lastMove = useSelector((state: RootState) => state.game.moveTree.at(state.game.currentMove)?.move)
 
   const autoShapes = useMemo(() => {
     if (bestMove && fen === engineFen) {

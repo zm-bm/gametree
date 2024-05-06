@@ -1,16 +1,16 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
-import { createWorkerMiddleware } from './redux/storeMiddleware';
-import engineReducer from './redux/engineSlice';
+import { createEngineMiddleware } from './redux/engineMiddleware';
+import engineOutputReducer from './redux/engineSlice';
 import boardReducer from './redux/boardSlice';
 import gameReducer from './redux/gameSlice';
 import { initEngineOptions } from './worker';
 import { openingsApi } from './redux/openingsApi';
 import { setupListeners } from '@reduxjs/toolkit/query';
 
-const workerMiddleware = createWorkerMiddleware();
+const engineMiddleware = createEngineMiddleware();
 
 const rootReducer = combineReducers({
-  engine: engineReducer,
+  engine: engineOutputReducer,
   board: boardReducer,
   game: gameReducer,
   [openingsApi.reducerPath]: openingsApi.reducer,
@@ -21,7 +21,7 @@ export function setupStore(preloadedState?: Partial<RootState>) {
     reducer: rootReducer,
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware().concat(
-        [workerMiddleware, openingsApi.middleware]
+        [engineMiddleware, openingsApi.middleware]
       ),
     preloadedState
   });
