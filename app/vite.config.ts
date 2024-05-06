@@ -18,6 +18,11 @@ export default defineConfig({
   ],
   build: {
     manifest: true,
+    rollupOptions: {
+      output: {
+        assetFileNames: "assets/[name][extname]",
+      }
+    }
   },
   test: {
     environment: 'jsdom',

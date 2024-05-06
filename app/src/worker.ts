@@ -1,3 +1,4 @@
+import 'stockfish/src/stockfish-nnue-16.wasm?init';
 import Stockfish from 'stockfish/src/stockfish-nnue-16.js?worker'
 import { store } from './store';
 import { EngineState, UCI_ENGINE_ERROR, UCI_ENGINE_OUTPUT } from './redux/engineSlice';
