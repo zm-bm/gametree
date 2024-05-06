@@ -4,7 +4,7 @@ import { ProvidedZoom } from '@visx/zoom/lib/types';
 
 import { TreeNode } from "../../chess"
 import { TreeDimsContext, ZoomState } from "./MoveTree";
-import { mid } from "../../lib/helpers"
+import { mid } from "./TreeSvg";
 import { Link } from './Link'
 import { Node } from './Node'
 import { Tree } from '@visx/hierarchy';

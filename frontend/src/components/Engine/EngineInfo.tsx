@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import { DEFAULT_POSITION, Square } from "chess.js";
 import { RootState } from '../../store';
-import { formatScore } from "../../lib/helpers";
+import { formatScore } from "../../lib/formatters";
 import { useCallback, useState } from "react";
 import EngineBoard from "./EngineBoard";
 import { colorFromFen } from "../../chess";

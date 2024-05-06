@@ -1,3 +1,5 @@
+import { useContext } from "react";
+import { useSelector } from "react-redux";
 import { HierarchyPointLink, HierarchyPointNode } from "@visx/hierarchy/lib/types";
 import { Group } from '@visx/group';
 import { LinkHorizontal } from "@visx/shape";
@@ -5,12 +7,10 @@ import { scalePower } from "@visx/scale";
 import { Text } from "@visx/text";
 import { Color } from "chessground/types";
 
+import { mid } from "./TreeSvg";
 import { countGames } from "../../chess";
 import { TreeNode } from "../../chess";
-import { useSelector } from "react-redux";
 import { RootState } from "../../store";
-import { mid } from '../../lib/helpers';
-import { useContext } from "react";
 import { TreeDimsContext } from "./MoveTree";
 
 function calcPath(

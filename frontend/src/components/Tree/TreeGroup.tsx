@@ -4,7 +4,10 @@ import { Tree } from '@visx/hierarchy';
 import { localPoint } from '@visx/event';
 import { ProvidedZoom, TransformMatrix } from '@visx/zoom/lib/types';
 import { HierarchyNode, HierarchyPointNode } from '@visx/hierarchy/lib/types';
+import { useTooltip } from '@visx/tooltip';
+import { TooltipInPortalProps } from '@visx/tooltip/lib/hooks/useTooltipInPortal';
 import { Group } from '@visx/group'
+import { SpringRef } from 'react-spring';
 
 import { RootState } from '../../store';
 import { TreeDimsContext, ZoomState } from "./MoveTree";
@@ -12,20 +15,18 @@ import { Node } from './Node';
 import { Link } from './Link';
 import { TreeNode } from '../../chess';
 import { selectMovesList } from '../../redux/gameSlice';
-import { TooltipInPortalProps } from '@visx/tooltip/lib/hooks/useTooltipInPortal';
 import { TreeTooltip } from './TreeTooltip';
-import { useTooltip } from '@visx/tooltip';
 
 interface Props {
   root: HierarchyNode<TreeNode>,
   zoom: ProvidedZoom<SVGSVGElement> & ZoomState,
-  setTargetMatrix: React.Dispatch<React.SetStateAction<TransformMatrix>>,
+  spring: SpringRef<TransformMatrix>,
   TooltipInPortal: React.FC<TooltipInPortalProps>,
 }
 export const TreeGroup = ({
   root,
   zoom,
-  setTargetMatrix,
+  spring,
   TooltipInPortal,
 }: Props) => {
   const { height, width, rowHeight, columnWidth } = useContext(TreeDimsContext);
@@ -58,7 +59,7 @@ export const TreeGroup = ({
           useEffect(() => {
             const node = tree.descendants().find(node => node.data.name === currentNode);
             if (node) {
-              setTargetMatrix({
+              spring.start({
                 ...zoom.transformMatrix,
                 translateX: (-node.y * zoom.transformMatrix.scaleX) + (width / 3),
                 translateY: (-node.x * zoom.transformMatrix.scaleY) + (height / 2),

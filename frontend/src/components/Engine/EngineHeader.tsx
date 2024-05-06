@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { RootState } from '../../store';
-import { formatSpeed } from "../../lib/helpers";
+import { formatSpeed } from "../../lib/formatters";
 
 const EngineHeader = () => {
   const time = useSelector((state: RootState) => state.engine.time)

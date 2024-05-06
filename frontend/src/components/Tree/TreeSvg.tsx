@@ -1,18 +1,20 @@
-import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useContext, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ProvidedZoom, TransformMatrix } from '@visx/zoom/lib/types';
 import { useTooltipInPortal  } from '@visx/tooltip';
 import { hierarchy } from '@visx/hierarchy';
+import { useSpring } from '@react-spring/web'
 
-import { SvgDefs } from './SvgDefs';
-import useAnimateTransform from '../../hooks/useAnimateTransform';
-import { TreeGroup } from './TreeGroup';
 import { TreeDimsContext, ZoomState, defaultTransformMatrix } from "./MoveTree";
-import { AppDispatch, RootState } from '../../store';
+import { SvgDefs } from './SvgDefs';
+import { TreeGroup } from './TreeGroup';
 import { TreeMinimap } from './TreeMinimap';
+import { AppDispatch, RootState } from '../../store';
 import { selectMovesList } from '../../redux/gameSlice';
-import { TreeSource, useGetOpeningsQuery } from '../../redux/openingsApi';
 import { ADD_OPENINGS, SET_SOURCE } from '../../redux/treeSlice';
+import { TreeSource, useGetOpeningsQuery } from '../../redux/openingsApi';
+
+export const mid = (a: number, b: number) => a + (b - a) * 0.5;
 
 interface Props {
   zoom: ProvidedZoom<SVGSVGElement> & ZoomState,
@@ -20,9 +22,11 @@ interface Props {
 export const TreeSvg = ({ zoom }: Props) => {
   const { height, width } = useContext(TreeDimsContext);
   const dispatch = useDispatch<AppDispatch>();
-
   const moves = useSelector((state: RootState) => selectMovesList(state))
   const source = useSelector((state: RootState) => state.tree.source);
+  const treeRoot = useSelector((state: RootState) => state.tree.root)
+
+  // query for openings and add to store
   const { data: openings }= useGetOpeningsQuery({ moves, source });
   useEffect(() => {
     if (openings) {
@@ -30,24 +34,20 @@ export const TreeSvg = ({ zoom }: Props) => {
     }
   }, [openings])
 
-  const treeRoot = useSelector((state: RootState) => state.tree.root)
-  const root = useMemo(() => {
-    if (treeRoot) {
-      return hierarchy(treeRoot);
-    }
-  }, [treeRoot]);
+  // create tree hierarchy
+  const root = useMemo(() => treeRoot ? hierarchy(treeRoot): null, [treeRoot]);
 
-  const [initialMatrix, setInitialMatrix] = useState<TransformMatrix>(defaultTransformMatrix);
-  const [targetMatrix, setTargetMatrix] = useState<TransformMatrix>(defaultTransformMatrix);
-  const updateInitialMatrix = useCallback(() => {
-    setInitialMatrix(zoom.transformMatrix)
-  }, [zoom]);
-  useAnimateTransform(initialMatrix, targetMatrix, zoom, 250);
+  // animate transitions by setting transform matrix
+  const [_, spring] = useSpring<TransformMatrix>(() => ({
+    ...defaultTransformMatrix,
+    onChange: ({ value }) => zoom.setTransformMatrix(value as TransformMatrix),
+  }));
 
+  // create tooltip portal
   const { TooltipInPortal, containerRef } = useTooltipInPortal({
     detectBounds: true,
     scroll: true,
-  })
+  });
 
   return root && (
     <div className='relative' ref={containerRef}>
@@ -56,15 +56,15 @@ export const TreeSvg = ({ zoom }: Props) => {
         height={height}
         style={{ cursor: zoom.isDragging ? 'grabbing' : 'grab', touchAction: 'none' }}
         ref={zoom.containerRef}
-        onWheel={updateInitialMatrix}
-        onMouseUp={updateInitialMatrix}
-        onTouchEnd={updateInitialMatrix}
+        onWheel={() => spring.set(zoom.transformMatrix)}
+        onMouseUp={() => spring.set(zoom.transformMatrix)}
+        onTouchEnd={() => spring.set(zoom.transformMatrix)}
       >
         <SvgDefs width={width} height={height} />
         <TreeGroup
           root={root}
           zoom={zoom}
-          setTargetMatrix={setTargetMatrix}
+          spring={spring}
           TooltipInPortal={TooltipInPortal}
         />
         <TreeMinimap
@@ -88,3 +88,4 @@ export const TreeSvg = ({ zoom }: Props) => {
     </div>
   );
 };
+

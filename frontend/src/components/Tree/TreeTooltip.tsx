@@ -1,11 +1,11 @@
+import { useSelector } from "react-redux";
 import { UseTooltipParams } from "@visx/tooltip/lib/hooks/useTooltip";
 import { HierarchyPointNode } from "@visx/hierarchy/lib/types";
+import { Key } from "chessground/types";
 
 import { TreeNode } from "../../chess";
 import BaseBoard from "../Board/BaseBoard";
 import { countGames } from "../../chess";
-import { Key } from "chessground/types";
-import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import WinChanceBar from "./WinChanceBar";
 

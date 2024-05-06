@@ -72,7 +72,11 @@ const engineSlice = createSlice({
           const tbhits = parseTBHits(action.payload);
           tbhits && (state.tbhits = tbhits);
 
-          if (action.payload.includes(' pv ') && !action.payload.includes('upperbound') && !action.payload.includes('lowerbound')) {
+          if (
+            action.payload.includes(' pv ')
+            && !action.payload.includes('upperbound')
+            && !action.payload.includes('lowerbound')
+          ) {
             const moves = parseMoves(action.payload);
             const chess = new Chess(state.fen);
             const pv = moves.map(mv => chess.move(mv));
