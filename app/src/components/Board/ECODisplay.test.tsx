@@ -1,5 +1,4 @@
 import { describe, it } from "vitest";
-import { screen } from "@testing-library/react";
 
 import ECODisplay from "./ECODisplay";
 import { renderWithProviders } from "../../test/testUtils";
@@ -80,7 +79,6 @@ describe('ECODisplay', () => {
         }
       }
     });
-    screen.debug()
     getByText('D06');
     getByText("Queen's Gambit");
   });

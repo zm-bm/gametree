@@ -55,8 +55,9 @@ const EngineInfo = () => {
               <div className="flex-1"
               >
                 {
-                  info.pv.map((move) => (
+                  info.pv.map((move, ix) => (
                     <EngineInfoMove
+                      key={ix+move.lan}
                       move={move}
                       onMouseEnter={onMouseEnter}
                       onMouseMove={onMouseMove}

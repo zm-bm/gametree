@@ -16,7 +16,6 @@ const GameInfo = () => {
     if (datakey) {
       const key = +datakey
       dispatch(GOTO_MOVE({ key, fen: moveTree[key].move?.after || DEFAULT_POSITION }))
-      // goto(+key);
     }
   }, [moveTree])
 

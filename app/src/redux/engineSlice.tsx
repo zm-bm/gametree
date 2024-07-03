@@ -27,7 +27,7 @@ export interface EngineState {
   tbhits?: number,
 }
 
-const initialState: EngineState = {
+export const initialState: EngineState = {
   fen: DEFAULT_POSITION,
   running: false,
   nnue: false,
