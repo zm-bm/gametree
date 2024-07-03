@@ -24,7 +24,7 @@ export const rootNode = {
   parent: null,
   children: [],
 }
-const initialState: GameState = {
+export const initialState: GameState = {
   moveTree: [rootNode],
   currentMove: 0,
   promotionTarget: null,
