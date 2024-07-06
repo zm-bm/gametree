@@ -3,7 +3,7 @@ import { UseTooltipParams } from "@visx/tooltip/lib/hooks/useTooltip";
 import { HierarchyPointNode } from "@visx/hierarchy/lib/types";
 import { Key } from "chessground/types";
 
-import { TreeNode } from "../../chess";
+import { TreeNode } from "../../types/chess";
 import BaseBoard from "../Board/BaseBoard";
 import { countGames } from "../../chess";
 import { RootState } from "../../store";
@@ -11,7 +11,8 @@ import WinChanceBar from "./WinChanceBar";
 
 interface Props {
   tooltip: UseTooltipParams<HierarchyPointNode<TreeNode>>
-};
+}
+
 export const TreeTooltip = ({ tooltip }: Props) => {
   const orientation = useSelector((state: RootState) => state.game.orientation);
   const {

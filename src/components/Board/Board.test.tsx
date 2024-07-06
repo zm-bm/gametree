@@ -8,7 +8,7 @@ import Board from './Board'
 import { MockDispatch, renderWithProviders } from '../../test/testUtils';
 import { setupStore } from '../../store';
 import { MAKE_MOVE, SET_PROMOTION_TARGET, rootNode, initialState } from '../../redux/gameSlice';
-import { MoveNode } from '../../chess';
+import { MoveNode } from "../../types/chess";
 
 vi.mock('../../hooks/useDimensions', () => ({
   useDimensions: vi.fn(() => [useRef(), { width: 404, height: 404 }])

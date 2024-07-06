@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 import { MockDispatch, renderWithProviders } from "../../test/testUtils";
 import PromotionOverlay from "./PromotionOverlay";
 import { SET_PROMOTION_TARGET, initialState, rootNode } from "../../redux/gameSlice";
-import { MoveNode } from "../../chess";
+import { MoveNode } from "../../types/chess";
 import { Square } from "chess.js";
 import { fireEvent } from "@testing-library/react";
 import { setupStore } from "../../store";

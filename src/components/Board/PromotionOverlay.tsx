@@ -35,7 +35,7 @@ const PromotionOverlay = ({ size }: Props) => {
     });
     dispatch(MAKE_MOVE(move))
     dispatch(SET_PROMOTION_TARGET(null))
-  }, [promotionTarget]);
+  }, [promotionTarget, fen, dispatch]);
 
   return !promotionTarget ? null : (
     <div

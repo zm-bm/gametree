@@ -1,66 +1,9 @@
 import { Chess, Move, SQUARES, Square } from "chess.js";
 import { Key } from 'chessground/types';
 import eco from './eco.json'
+import { ECO, LichessMove, LichessOpenings, TreeNode } from "./types/chess";
 
-export type ECO = {
-  eco: string,
-  name: string,
-  uci: string,
-}
 export const book = eco as ECO[];
-export type MoveNode = {
-  key: number,
-  move: Move | null,
-  parent: number | null,
-  children: number[],
-}
-
-type LichessPlayer = {
-  name: string | null,
-  rating: number | null,
-};
-type LichessWinner = "black" | "white" | null
-type LichessGame = {
-  id: string,
-  winner: LichessWinner,
-  white: LichessPlayer,
-  black: LichessPlayer,
-  year: number,
-  month: string,
-};
-type LichessOpening = {
-  eco: string,
-  name: string,
-};
-type LichessMove = {
-  uci: string,
-  san: string,
-  white: number,
-  draws: number,
-  black: number,
-  averageRating: number,
-};
-export type LichessOpenings = {
-  white: number,
-  draws: number,
-  black: number,
-  topGames: LichessGame[],
-  opening: LichessOpening | null,
-  moves: LichessMove[],
-};
-export type TreeNode = {
-  name: string,
-  attributes: {
-    white: number,
-    draws: number,
-    black: number,
-    topGames: LichessGame[] | null,
-    opening: LichessOpening | null,
-    averageRating: number | null,
-    move: Move | null,
-  },
-  children: TreeNode[],
-};
 
 export function movesToString(moves: Move[]) {
   return moves.map(m => m.lan).join(',');
@@ -100,7 +43,7 @@ export function countGames(node: TreeNode) {
 
 export function sortTreeNodes(nodes: TreeNode[]) {
   // return tree nodes with most frequent moves in the middle
-  let result = [];
+  const result = [];
   let start = 0;
   let end = nodes.length - 1;
 

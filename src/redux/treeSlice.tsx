@@ -1,5 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { LichessOpenings, TreeNode, buildTreeNode } from "../chess";
+import { buildTreeNode } from "../chess";
+import { LichessOpenings, TreeNode } from "../types/chess";
 import { TreeSource } from "./openingsApi";
 import { Move } from "chess.js";
 
@@ -34,11 +35,11 @@ const treeSlice = createSlice({
       if (!state.root) {
         state.root = node;
       } else {
-        var head = state.root;
+        let head = state.root;
 
         // iterate through moves to find location in tree
         moves.forEach((move, i) => {
-          var child = head.children.find(node => node.attributes.move?.lan === move.lan);
+          const child = head.children.find(node => node.attributes.move?.lan === move.lan);
           if (child) {
             head = child;
           } else if (i === moves.length - 1) {
@@ -61,5 +62,6 @@ const treeSlice = createSlice({
   },
 });
 
+export type TreeAction = ReturnType<typeof treeSlice.actions[keyof typeof treeSlice.actions]>;
 export const { SET_SOURCE, ADD_OPENINGS } = treeSlice.actions;
 export default treeSlice.reducer;

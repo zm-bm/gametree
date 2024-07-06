@@ -18,7 +18,7 @@ import { AppDispatch, RootState } from '../../store';
 const BoardControls = () => {
   const { undo, redo, rewind, forward } = useMoveActions();
   const dispatch = useDispatch<AppDispatch>()
-  const flip = useCallback(() => dispatch(FLIP_ORIENTATION()), [])
+  const flip = useCallback(() => dispatch(FLIP_ORIENTATION()), [dispatch])
   const fen = useSelector((state: RootState) => selectFen(state));
   const running = useSelector((state: RootState) => state.engine.running);
 
@@ -43,7 +43,7 @@ const BoardControls = () => {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [undo, forward, redo, forward]);
+  }, [undo, forward, redo, rewind]);
 
   const buttonClass = "btn-primary p-2 hover:scale-105";
 

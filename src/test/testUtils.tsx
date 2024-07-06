@@ -32,6 +32,6 @@ export function renderWithProviders(
     store,
     ...render(ui, { wrapper: Wrapper, ...renderOptions })
   }
-};
+}
 
 export type MockDispatch = ThunkDispatch<RootState, undefined, UnknownAction>;

@@ -28,7 +28,7 @@ export const useMoveActions = () => {
         fen: moveTree[parent].move?.after || DEFAULT_POSITION,
       }));
     }
-  }, [currentMove, moveTree]);
+  }, [currentMove, moveTree, dispatch]);
 
   const redo = useCallback(() => {
     if (throttle()) return;
@@ -39,12 +39,12 @@ export const useMoveActions = () => {
         fen: moveTree[child].move?.after || DEFAULT_POSITION,
       }));
     }
-  }, [currentMove, moveTree]);
+  }, [currentMove, moveTree, dispatch]);
 
   const rewind = useCallback(() => {
     if (throttle()) return;
     dispatch(GOTO_MOVE({ key: 0, fen: DEFAULT_POSITION }));
-  }, []);
+  }, [dispatch]);
 
   const forward = useCallback(() => {
     if (throttle()) return;
@@ -54,7 +54,7 @@ export const useMoveActions = () => {
     }
     const fen = moveTree[key].move?.after || DEFAULT_POSITION;
     dispatch(GOTO_MOVE({ key, fen }))
-  }, [currentMove]);
+  }, [currentMove, moveTree, dispatch]);
 
   return { undo, redo, rewind, forward };
 }

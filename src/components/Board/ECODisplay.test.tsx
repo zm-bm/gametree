@@ -3,7 +3,7 @@ import { describe, it } from "vitest";
 import ECODisplay from "./ECODisplay";
 import { renderWithProviders } from "../../test/testUtils";
 import { initialState } from "../../redux/gameSlice";
-import { MoveNode } from "../../chess";
+import { MoveNode } from "../../types/chess";
 
 const moveTree: MoveNode[] = [
   {

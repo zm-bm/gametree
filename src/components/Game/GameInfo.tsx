@@ -17,7 +17,7 @@ const GameInfo = () => {
       const key = +datakey
       dispatch(GOTO_MOVE({ key, fen: moveTree[key].move?.after || DEFAULT_POSITION }))
     }
-  }, [moveTree])
+  }, [moveTree, dispatch])
 
   function buildHistory(children: number[], isStartOfVariation: boolean = false) {
     const pvKey = children.at(0)

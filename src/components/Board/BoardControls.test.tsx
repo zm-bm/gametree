@@ -7,10 +7,10 @@ import { MockDispatch, renderWithProviders } from '../../test/testUtils';
 import { setupStore } from '../../store';
 import { TOGGLE_ENGINE } from '../../redux/engineSlice';
 
-let mockUndo = vi.fn();
-let mockRedo = vi.fn();
-let mockRewind = vi.fn();
-let mockForward = vi.fn();
+const mockUndo = vi.fn();
+const mockRedo = vi.fn();
+const mockRewind = vi.fn();
+const mockForward = vi.fn();
 
 vi.mock('../../hooks/useMoveActions', () => ({
   useMoveActions: () => ({

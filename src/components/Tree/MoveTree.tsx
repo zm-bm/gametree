@@ -1,46 +1,13 @@
-import { createContext } from 'react';
 import { useParentSize } from '@visx/responsive';
 import { Zoom } from '@visx/zoom';
-import { TransformMatrix } from '@visx/zoom/lib/types';
 import { TreeSvg } from './TreeSvg';
+import { TreeDimsContext } from "../../contexts/TreeContext";
 import { scaleLinear } from '@visx/scale';
 
-export type ZoomState = {
-  initialTransformMatrix: TransformMatrix;
-  transformMatrix: TransformMatrix;
-  isDragging: boolean;
-};
+const nodeRadiusScale = scaleLinear({ domain: [300, 1200], range: [12, 24] });
+const columnWidthScale = scaleLinear({ domain: [300, 1200], range: [240, 360] });
+const fontSizeScale = scaleLinear({ domain: [300, 1200], range: [6, 16] });
 
-export const defaultTransformMatrix: TransformMatrix = {
-  translateX: 0,
-  translateY: 0,
-  scaleX: 1,
-  scaleY: 1,
-  skewX: 0,
-  skewY: 0,
-};
-
-export const nodeRadiusScale = scaleLinear({ domain: [300, 1200], range: [12, 24] })
-export const columnWidthScale = scaleLinear({ domain: [300, 1200], range: [120, 360] })
-export const fontSizeScale = scaleLinear({ domain: [300, 1200], range: [8, 16] })
-
-interface TreeDims {
-  height: number,
-  width: number,
-  columnWidth: number,
-  rowHeight: number,
-  fontSize: number,
-  nodeRadius: number,
-}
-
-export const TreeDimsContext = createContext<TreeDims>({
-  width: 0,
-  height: 0,
-  nodeRadius: 0,
-  rowHeight: 0,
-  columnWidth: 0,
-  fontSize: 0,
-});
 
 export default function MoveTree() {
   const { parentRef, width, height } = useParentSize();
@@ -74,5 +41,4 @@ export default function MoveTree() {
       </div>
     </TreeDimsContext.Provider>
   );
-};
-
+}

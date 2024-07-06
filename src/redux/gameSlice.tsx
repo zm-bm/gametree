@@ -2,7 +2,7 @@ import { PayloadAction, createSelector, createSlice } from '@reduxjs/toolkit';
 import { Color } from 'chessground/types';
 import { DEFAULT_POSITION, Move, Square } from 'chess.js';
 
-import { MoveNode } from "../chess";
+import { MoveNode } from "../types/chess";
 import { RootState } from '../store';
 import { SET_SOURCE } from './treeSlice';
 
@@ -66,9 +66,9 @@ const gameSlice = createSlice({
     GOTO_PATH(state, action: PayloadAction<Move[]>) {
       state.promotionTarget = null;
       const { moveTree } = state;
-      var parent = 0;
-      for (var move of action.payload) {
-        var child = moveTree[parent].children.find(ix => moveTree[ix].move?.lan === move.lan)
+      let parent = 0;
+      for (const move of action.payload) {
+        const child = moveTree[parent].children.find(ix => moveTree[ix].move?.lan === move.lan)
         if (child) {
           parent = child;
         } else {
@@ -133,6 +133,7 @@ export const selectMovesList = createSelector(
 );
 
 
+export type GameAction = ReturnType<typeof gameSlice.actions[keyof typeof gameSlice.actions]>;
 export const {
   MAKE_MOVE,
   GOTO_MOVE,

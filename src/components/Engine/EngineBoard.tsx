@@ -1,13 +1,13 @@
 import BaseBoard from "../Board/BaseBoard";
 import { Config } from "chessground/config";
 
-interface Props {
+export interface EngineBoardProps {
   size: number
   config: Config,
   isHovered: boolean,
   coords: { top: number, left: number },
 }
-const EngineBoard = ({ size, config, coords, isHovered }: Props) => {
+const EngineBoard = ({ size, config, coords, isHovered }: EngineBoardProps) => {
   return (
     <div
       className={`absolute shadow-xl z-20 ${isHovered ? 'visible' : 'hidden'}`}

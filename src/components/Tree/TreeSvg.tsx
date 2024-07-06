@@ -1,24 +1,33 @@
-import { useContext, useEffect, useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ProvidedZoom, TransformMatrix } from '@visx/zoom/lib/types';
 import { useTooltipInPortal  } from '@visx/tooltip';
 import { hierarchy } from '@visx/hierarchy';
 import { useSpring } from '@react-spring/web'
 
-import { TreeDimsContext, ZoomState, defaultTransformMatrix } from "./MoveTree";
+import { ZoomState } from "../../types/tree";
+import { TreeDimsContext } from "../../contexts/TreeContext";
 import { SvgDefs } from './SvgDefs';
-import { TreeGroup } from './TreeGroup';
+import { TreeG } from './TreeG';
 import { TreeMinimap } from './TreeMinimap';
 import { AppDispatch, RootState } from '../../store';
 import { selectMovesList } from '../../redux/gameSlice';
-import { ADD_OPENINGS, SET_SOURCE } from '../../redux/treeSlice';
+import { SET_SOURCE } from '../../redux/treeSlice';
 import { TreeSource, useGetOpeningsQuery } from '../../redux/openingsApi';
 
-export const mid = (a: number, b: number) => a + (b - a) * 0.5;
+const defaultTransformMatrix: TransformMatrix = {
+  translateX: 0,
+  translateY: 0,
+  scaleX: 1,
+  scaleY: 1,
+  skewX: 0,
+  skewY: 0,
+};
 
 interface Props {
   zoom: ProvidedZoom<SVGSVGElement> & ZoomState,
 }
+
 export const TreeSvg = ({ zoom }: Props) => {
   const { height, width } = useContext(TreeDimsContext);
   const dispatch = useDispatch<AppDispatch>();
@@ -27,18 +36,13 @@ export const TreeSvg = ({ zoom }: Props) => {
   const treeRoot = useSelector((state: RootState) => state.tree.root)
 
   // query for openings and add to store
-  const { data: openings }= useGetOpeningsQuery({ moves, source });
-  useEffect(() => {
-    if (openings) {
-      dispatch(ADD_OPENINGS({ openings, moves }))
-    }
-  }, [openings])
+  useGetOpeningsQuery({ moves, source });
 
   // create tree hierarchy
   const root = useMemo(() => treeRoot ? hierarchy(treeRoot): null, [treeRoot]);
 
   // animate transitions by setting transform matrix
-  const [_, spring] = useSpring<TransformMatrix>(() => ({
+  const [, spring] = useSpring<TransformMatrix>(() => ({
     ...defaultTransformMatrix,
     onChange: ({ value }) => zoom.setTransformMatrix(value as TransformMatrix),
   }));
@@ -61,7 +65,7 @@ export const TreeSvg = ({ zoom }: Props) => {
         onTouchEnd={() => spring.set(zoom.transformMatrix)}
       >
         <SvgDefs width={width} height={height} />
-        <TreeGroup
+        <TreeG
           root={root}
           zoom={zoom}
           spring={spring}

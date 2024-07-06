@@ -4,6 +4,7 @@ import { renderWithProviders } from "../../test/testUtils";
 import { EngineState, initialState } from "../../redux/engineSlice";
 import EngineInfo from "./EngineInfo";
 import { fireEvent } from "@testing-library/react";
+import { EngineBoardProps } from "./EngineBoard";
 
 const engineState = {
   ...initialState,
@@ -28,7 +29,7 @@ const engineState = {
   }]
 };
 
-let boardProps: any;
+let boardProps: EngineBoardProps;
 vi.mock('./EngineBoard', () => ({
   default: vi.fn(props => {
     boardProps = props;

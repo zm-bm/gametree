@@ -61,15 +61,16 @@ const engineSlice = createSlice({
     },
     UCI_ENGINE_OUTPUT(state, action: PayloadAction<string>) {
       const tokens = action.payload.split(' ');
+      let time, speed, hashfull, tbhits;
       switch (tokens[0]) {
         case 'info':
-          const time = parseTime(action.payload);
+          time = parseTime(action.payload);
           time && (state.time = time);
-          const speed = parseSpeed(action.payload);
+          speed = parseSpeed(action.payload);
           speed && (state.speed = speed);
-          const hashfull = parseHashfull(action.payload);
+          hashfull = parseHashfull(action.payload);
           hashfull && (state.hashfull = hashfull);
-          const tbhits = parseTBHits(action.payload);
+          tbhits = parseTBHits(action.payload);
           tbhits && (state.tbhits = tbhits);
 
           if (
@@ -143,6 +144,7 @@ const engineSlice = createSlice({
   },
 });
 
+export type EngineAction = ReturnType<typeof engineSlice.actions[keyof typeof engineSlice.actions]>;
 export const {
   UCI_ENGINE_OUTPUT, UCI_ENGINE_ERROR,
   TOGGLE_ENGINE, SET_HASH, SET_THREADS, SET_LINES

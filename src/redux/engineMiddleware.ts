@@ -2,10 +2,14 @@ import { Middleware } from 'redux';
 import { restartWorker, worker, write } from '../worker';
 import { RootState } from '../store';
 import { DEFAULT_POSITION } from 'chess.js';
+import { UCI_ENGINE_ERROR, TOGGLE_ENGINE, SET_HASH, SET_THREADS, SET_LINES, EngineAction } from './engineSlice';
+import { GameAction, GOTO_MOVE, GOTO_PATH, MAKE_MOVE } from './gameSlice';
+import { SET_SOURCE, TreeAction } from './treeSlice';
 
 export const setOption = (name: string, value: string | number) =>
   `setoption name ${name} value ${value}`;
 export const setPos = (fen: string) => `position fen ${fen}`;
+type WorkerAction = EngineAction | GameAction | TreeAction;
 
 export const createEngineMiddleware = (): Middleware => {
 
@@ -19,48 +23,45 @@ export const createEngineMiddleware = (): Middleware => {
     }
   }
 
-  return (store) => (next) => (action: any) => {
+  return (store) => (next) => (action) => {
     const state = store.getState();
+    const workerAction = action as WorkerAction;
 
-    if (action.type === 'engine/UCI_ENGINE_ERROR') {
-      if (action.payload.includes('OOM')) {
-        worker.terminate();
-        restartWorker({ ...state.engine, threads: state.engine.threads / 2 });
-      }
+    switch (workerAction.type) {
+      case UCI_ENGINE_ERROR.type:
+        if (workerAction.payload.includes('OOM')) {
+          worker.terminate();
+          restartWorker({ ...state.engine, threads: state.engine.threads / 2 });
+        }
+        break;
+      case TOGGLE_ENGINE.type:
+        write(state.engine.running ? 'stop' : 'go infinite');
+        break;
+      case SET_HASH.type:
+        updateEngine(setOption('Hash', workerAction.payload), state);
+        break;
+      case SET_THREADS.type:
+        updateEngine(setOption('Threads', workerAction.payload), state);
+        break;
+      case SET_LINES.type:
+        updateEngine(setOption('MultiPV', workerAction.payload), state);
+        break;
+      case MAKE_MOVE.type:
+        updateEngine(setPos(workerAction.payload.after), state);
+        break;
+      case GOTO_MOVE.type:
+        updateEngine(setPos(workerAction.payload.fen), state);
+        break;
+      case GOTO_PATH.type:
+        updateEngine(setPos(workerAction.payload.at(-1)?.after || DEFAULT_POSITION), state);
+        break;
+      case SET_SOURCE.type:
+        updateEngine(setPos(DEFAULT_POSITION), state);
+        break;
+      default:
+        break;
     }
 
-    if (action.type === 'engine/TOGGLE_ENGINE') {
-      write(state.engine.running ? 'stop' : 'go infinite');
-    }
-
-    if (action.type === 'engine/SET_HASH') {
-      updateEngine(setOption('Hash', action.payload), state);
-    }
-
-    if (action.type === 'engine/SET_THREADS') {
-      updateEngine(setOption('Threads', action.payload), state);
-    }
-
-    if (action.type === 'engine/SET_LINES') {
-      updateEngine(setOption('MultiPV', action.payload), state);
-    }
-
-    if (action.type === 'game/MAKE_MOVE') {
-      updateEngine(setPos(action.payload.after), state);
-    }
-
-    if (action.type === 'game/GOTO_MOVE') {
-      updateEngine(setPos(action.payload.fen), state);
-    }
-
-    if (action.type === 'game/GOTO_PATH') {
-      const fen = action.payload.at(-1)?.after || DEFAULT_POSITION;
-      updateEngine(setPos(fen), state);
-    }
-
-    if (action.type === 'tree/SET_SOURCE') {
-      updateEngine(setPos(DEFAULT_POSITION), state);
-    }
 
     return next(action);
   };

@@ -15,10 +15,6 @@ const BaseBoard = ({ config }: Props) => {
   const [api, setApi] = useState<Api | undefined>(undefined);
 
   useEffect(() => {
-    api?.set(config);
-  }, [api, config]);
-
-  useEffect(() => {
     if (ref && ref.current && !api) {
       const chessgroundApi = Chessground(ref.current, {
         animation: { enabled: true, duration: 200 },
@@ -28,7 +24,7 @@ const BaseBoard = ({ config }: Props) => {
     } else if (ref && ref.current && api) {
       api.set(config);
     }
-  }, [ref]);
+  }, [ref, api, config]);
 
   return (
     <div ref={ref} className='table w-full h-full' />

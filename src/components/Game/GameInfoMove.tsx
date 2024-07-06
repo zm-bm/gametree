@@ -35,6 +35,6 @@ function GameInfoMove(props: Props) {
       &#32;
     </>
   );
-};
+}
 
 export default GameInfoMove;

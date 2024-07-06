@@ -6,9 +6,9 @@ import { selectMovesList } from '../../redux/gameSlice'
 
 const ECODisplay = () => {
   const moves = useSelector((state: RootState) => selectMovesList(state))
-  var name = movesToString(moves) 
+  let name = movesToString(moves) 
 
-  var eco = book.find(b => b.uci === name);
+  let eco = book.find(b => b.uci === name);
   while (!eco && name) {
     name = name.split(',').slice(0, -1).join(',')
     eco = book.find(b => b.uci === name);

@@ -26,7 +26,7 @@ const EngineInfo = () => {
     setCoords({ top: e.pageY-boardTooltipSize-10, left: e.pageX+5 })
   }, []);
   
-  const onMouseLeave = useCallback(() => setTooltip({ ...tooltip, hovered: false }), []);
+  const onMouseLeave = useCallback(() => setTooltip({ ...tooltip, hovered: false }), [tooltip]);
   const onMouseEnter: React.MouseEventHandler<HTMLDivElement> = useCallback((e) => {
     const dataFen = e.currentTarget.getAttribute('data-fen');
     const dataMove = e.currentTarget.getAttribute('data-move');
@@ -37,7 +37,7 @@ const EngineInfo = () => {
         move: dataMove,
       })
     }
-  }, [fen]);
+  }, []);
 
   return (
     <div className="flex-1 p-2 font-mono text-sm leading-tight overflow-auto">

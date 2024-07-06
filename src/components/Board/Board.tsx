@@ -45,7 +45,7 @@ const Board = () => {
       const move = chess.move({ from, to })
       dispatch(MAKE_MOVE(move))
     }
-  }, [fen])
+  }, [fen, dispatch])
 
   // config for chessground board
   const config: Config = useMemo(() => {
@@ -60,7 +60,7 @@ const Board = () => {
       events: { move },
       drawable: { autoShapes }
     }
-  }, [fen, orientation, autoShapes])
+  }, [fen, orientation, autoShapes, lastMove, move])
 
   return (
     <div className="w-full" ref={ref}>

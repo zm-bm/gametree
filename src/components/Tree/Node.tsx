@@ -2,10 +2,10 @@ import { MouseEventHandler, useCallback, useContext } from "react";
 import { Group } from "@visx/group";
 import { HierarchyPointNode } from "@visx/hierarchy/lib/types";
 import { Text } from "@visx/text";
-import { TreeNode } from "../../chess";
+import { TreeNode } from "../../types/chess";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../store";
-import { TreeDimsContext } from "./MoveTree";
+import { TreeDimsContext } from "../../contexts/TreeContext";
 import { Move } from "chess.js";
 import { GOTO_PATH } from "../../redux/gameSlice";
 
@@ -37,7 +37,7 @@ export function Node({
       head = head.parent;
     }
     dispatch(GOTO_PATH(moves))
-  }, [node]);
+  }, [node, dispatch]);
 
   // special case for root node
   if (node.depth === 0) {
@@ -58,7 +58,7 @@ export function Node({
     );
   }
 
-  var fill;
+  let fill;
   if (minimap) {
     fill = 'black'
   } else if (isCurrentNode) {

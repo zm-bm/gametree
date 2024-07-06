@@ -42,5 +42,4 @@ export function restartWorker(state: EngineState) {
   initEngineOptions(state)
 }
 
-export var worker = initializeWorker();
-(window as any).worker = worker
+export let worker = initializeWorker();
