@@ -11,14 +11,14 @@ import {
 } from "react-icons/io";
 import ECODisplay from "./ECODisplay";
 import { useMoveActions } from "../../hooks/useMoveActions";
-import { FLIP_ORIENTATION, selectFen } from "../../redux/gameSlice";
+import { FlipOrientation, selectFen } from "../../redux/gameSlice";
 import { TOGGLE_ENGINE } from "../../redux/engineSlice";
 import { AppDispatch, RootState } from '../../store';
 
 const BoardControls = () => {
   const { undo, redo, rewind, forward } = useMoveActions();
   const dispatch = useDispatch<AppDispatch>()
-  const flip = useCallback(() => dispatch(FLIP_ORIENTATION()), [dispatch])
+  const flip = useCallback(() => dispatch(FlipOrientation()), [dispatch])
   const fen = useSelector((state: RootState) => selectFen(state));
   const running = useSelector((state: RootState) => state.engine.running);
 

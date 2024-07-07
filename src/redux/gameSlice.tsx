@@ -89,7 +89,7 @@ const gameSlice = createSlice({
     SetPromotionTarget(state, action: PayloadAction<Square[] | null>) {
       state.promotionTarget = action.payload;
     },
-    FLIP_ORIENTATION(state) {
+    FlipOrientation(state) {
       state.orientation = state.orientation === 'white' ? 'black' : 'white';
     },
   },
@@ -139,6 +139,6 @@ export const {
   GOTO_MOVE,
   GOTO_PATH,
   SetPromotionTarget,
-  FLIP_ORIENTATION,
+  FlipOrientation,
 } = gameSlice.actions;
 export default gameSlice.reducer;
