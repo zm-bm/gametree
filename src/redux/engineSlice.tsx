@@ -94,17 +94,21 @@ const engineSlice = createSlice({
       }
     },
     SetHash(state, action: PayloadAction<number>) {
+      state.infos = [];
       state.hash = action.payload;
     },
     SetThreads(state, action: PayloadAction<number>) {
+      state.infos = [];
       state.threads = action.payload;
     },
     SetLines(state, action: PayloadAction<number>) {
+      state.infos = [];
       state.lines = action.payload;
     },
   },
   extraReducers(builder) {
     builder.addCase(SetDataSource, (state) => {
+      state.infos = [];
       state.fen = DEFAULT_POSITION;
     })
   },
