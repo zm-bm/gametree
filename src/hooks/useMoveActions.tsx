@@ -1,8 +1,7 @@
 import { useCallback, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../store";
-import { GOTO_MOVE } from "../redux/gameSlice";
-import { DEFAULT_POSITION } from "chess.js";
+import { GotoMove } from "../thunks";
 
 export const useMoveActions = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -23,10 +22,7 @@ export const useMoveActions = () => {
     if (throttle()) return;
     const parent = moveTree[currentMove].parent;
     if (parent !== null) {
-      dispatch(GOTO_MOVE({
-        key: parent,
-        fen: moveTree[parent].move?.after || DEFAULT_POSITION,
-      }));
+      dispatch(GotoMove(parent));
     }
   }, [currentMove, moveTree, dispatch]);
 
@@ -34,16 +30,13 @@ export const useMoveActions = () => {
     if (throttle()) return;
     const child = moveTree[currentMove].children.at(0);
     if (child !== undefined) {
-      dispatch(GOTO_MOVE({
-        key: child,
-        fen: moveTree[child].move?.after || DEFAULT_POSITION,
-      }));
+      dispatch(GotoMove(child));
     }
   }, [currentMove, moveTree, dispatch]);
 
   const rewind = useCallback(() => {
     if (throttle()) return;
-    dispatch(GOTO_MOVE({ key: 0, fen: DEFAULT_POSITION }));
+    dispatch(GotoMove(0));
   }, [dispatch]);
 
   const forward = useCallback(() => {
@@ -52,8 +45,7 @@ export const useMoveActions = () => {
     while (moveTree[key].children.at(0) !== undefined) {
       key = moveTree[key].children.at(0) || key
     }
-    const fen = moveTree[key].move?.after || DEFAULT_POSITION;
-    dispatch(GOTO_MOVE({ key, fen }))
+    dispatch(GotoMove(key))
   }, [currentMove, moveTree, dispatch]);
 
   return { undo, redo, rewind, forward };

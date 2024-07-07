@@ -7,7 +7,8 @@ import { Chess, DEFAULT_POSITION } from 'chess.js';
 import Board from './Board'
 import { MockDispatch, renderWithProviders } from '../../test/testUtils';
 import { setupStore } from '../../store';
-import { SetPromotionTarget, rootNode, initialState } from '../../redux/gameSlice';
+import { SetPromotionTarget, rootNode, initialState as gameInitialState } from '../../redux/gameSlice';
+import { initialState as engineInitialState } from '../../redux/engineSlice';
 import { MoveNode } from "../../types/chess";
 import { MakeMove } from '../../thunks';
 
@@ -23,6 +24,8 @@ vi.mock('./BaseBoard', () => ({
   }
 )}));
 
+const a2a4 = (new Chess()).move({ from: 'a2', to: 'a4' })
+
 describe('Board', () => {
   it('renders board wrapper with correct size', () => {
     renderWithProviders(<Board />);
@@ -32,7 +35,19 @@ describe('Board', () => {
   });
 
   it('generates correct chessground config', () => {
-    renderWithProviders(<Board />);
+    renderWithProviders(<Board />, { preloadedState: {
+      engine: {
+        ...engineInitialState,
+        infos: [
+          {
+            depth: 1,
+            seldepth: 1,
+            multipv: 1,
+            pv: [a2a4],
+          },
+        ],
+      }
+    }});
 
     expect(baseboardProps.config).toMatchObject({
       fen: DEFAULT_POSITION,
@@ -40,6 +55,7 @@ describe('Board', () => {
       turnColor: 'white',
       check: false,
       lastMove: [],
+      drawable: { autoShapes: [{ orig: 'a2', dest: 'a4', brush: 'paleGreen' }] }
     });
   });
 
@@ -53,8 +69,7 @@ describe('Board', () => {
     renderWithProviders(<Board />, { store: mockStore });
     
     baseboardProps?.config?.events?.move?.('a2', 'a4');
-    const move = (new Chess()).move({ from: 'a2', to: 'a4' })
-    expect(mockStore.dispatch).toHaveBeenCalledWith(MakeMove(move))
+    expect(mockStore.dispatch).toHaveBeenCalledWith(MakeMove(a2a4))
 
     vi.clearAllMocks();
   });
@@ -62,7 +77,7 @@ describe('Board', () => {
   it('dispatches promotions', () => {
     const mockStore = setupStore({
       game: {
-        ...initialState,
+        ...gameInitialState,
         moveTree: [{
           ...rootNode,
           move: new Chess('rn1qkbnr/1Ppppppp/8/8/8/8/1PPPPPPP/RNBQKBNR b KQkq - 0 4').move('d8c8'),

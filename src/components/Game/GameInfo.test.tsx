@@ -1,9 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
-import { GOTO_MOVE, GameState, initialState } from "../../redux/gameSlice";
+import { GameState, initialState } from "../../redux/gameSlice";
 import { MockDispatch, renderWithProviders } from "../../test/testUtils";
 import GameInfo from "./GameInfo";
 import { fireEvent } from "@testing-library/react";
 import { setupStore } from "../../store";
+import { GotoMove } from "../../thunks";
 
 const gameState: GameState = {
   ...initialState,
@@ -100,12 +101,14 @@ describe('GameInfo', () => {
   it('goes to move on click', () => {
     const mockStore = setupStore({ game: gameState });
     mockStore.dispatch = vi.fn() as MockDispatch;
+    vi.mock('../../thunks', () => ({
+      GotoMove: vi.fn()
+    }))
+
     const { getByText } = renderWithProviders(<GameInfo />, { store: mockStore });
+
     const move = getByText('2.c4')
     fireEvent.click(move);
-    expect(mockStore.dispatch).toHaveBeenCalledWith(GOTO_MOVE({
-      key: 3,
-      fen: 'rnbqkbnr/ppp1pppp/8/3p4/2PP4/8/PP2PPPP/RNBQKBNR b KQkq - 0 2',
-    }));
+    expect(mockStore.dispatch).toHaveBeenCalledWith(GotoMove(3));
   });
 });

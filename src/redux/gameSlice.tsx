@@ -6,11 +6,6 @@ import { MoveNode } from "../types/chess";
 import { RootState } from '../store';
 import { SET_SOURCE } from './treeSlice';
 
-type GotoTarget = {
-  key: number
-  fen: string
-}
-
 export interface GameState {
   moveTree: MoveNode[],
   currentMove: number,
@@ -40,28 +35,28 @@ const gameSlice = createSlice({
       const prev = state.moveTree[state.currentMove];
       const existingKey = prev.children.find(
         ix => state.moveTree[ix].move?.lan === action.payload.lan
-      )
+      );
 
       // update move tree
       if (existingKey === undefined) {
         // if new move, add to move tree + update key
-        const key = state.moveTree.length
-        prev.children.push(key)
+        const key = state.moveTree.length;
+        prev.children.push(key);
         state.moveTree.push({
           key,
           move: action.payload,
           parent: state.currentMove,
           children: [],
-        })
-        state.currentMove = key
+        });
+        state.currentMove = key;
       } else {
         // if previously made move, update key
-        state.currentMove = existingKey
+        state.currentMove = existingKey;
       }
     },
-    GOTO_MOVE(state, action: PayloadAction<GotoTarget>) {
+    GotoGameMove(state, action: PayloadAction<number>) {
       state.promotionTarget = null;
-      state.currentMove = action.payload.key;
+      state.currentMove = action.payload;
     },
     GOTO_PATH(state, action: PayloadAction<Move[]>) {
       state.promotionTarget = null;
@@ -132,11 +127,10 @@ export const selectMovesList = createSelector(
   }
 );
 
-
 export type GameAction = ReturnType<typeof gameSlice.actions[keyof typeof gameSlice.actions]>;
 export const {
   MakeGameMove,
-  GOTO_MOVE,
+  GotoGameMove,
   GOTO_PATH,
   SetPromotionTarget,
   FlipOrientation,

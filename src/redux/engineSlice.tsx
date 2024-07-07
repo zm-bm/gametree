@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { parseCp, parseDepth, parseHashfull, parseMate, parseMoves, parseMultiPV, parseSelDepth, parseSpeed, parseTBHits, parseTime } from "../lib/parsers";
-import { GOTO_MOVE, GOTO_PATH  } from "./gameSlice";
+import { GOTO_PATH  } from "./gameSlice";
 import { Chess, DEFAULT_POSITION, Move } from 'chess.js';
 import { SET_SOURCE } from './treeSlice';
 
@@ -126,12 +126,6 @@ const engineSlice = createSlice({
     },
   },
   extraReducers(builder) {
-    builder.addCase(GOTO_MOVE, (state, action) => {
-      if (state.running) {
-        state.infos = [];
-        state.fen = action.payload.fen;
-      }
-    });
     builder.addCase(GOTO_PATH, (state, action) => {
       if (state.running) {
         state.infos = [];

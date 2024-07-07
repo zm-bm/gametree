@@ -1,10 +1,9 @@
 import React, { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store";
-import { DEFAULT_POSITION } from "chess.js";
 import Fen from "./Fen";
-import { GOTO_MOVE } from "../../redux/gameSlice";
 import GameInfoMove from "./GameInfoMove";
+import { GotoMove } from "../../thunks";
 
 
 const GameInfo = () => {
@@ -14,8 +13,7 @@ const GameInfo = () => {
   const onClick: React.MouseEventHandler<HTMLButtonElement> = useCallback((e) => {
     const datakey = e.currentTarget.getAttribute('data-key');
     if (datakey) {
-      const key = +datakey
-      dispatch(GOTO_MOVE({ key, fen: moveTree[key].move?.after || DEFAULT_POSITION }))
+      dispatch(GotoMove(+datakey))
     }
   }, [moveTree, dispatch])
 
