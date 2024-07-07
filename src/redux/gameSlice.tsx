@@ -86,7 +86,7 @@ const gameSlice = createSlice({
       }
       state.currentMove = parent;
     },
-    SET_PROMOTION_TARGET(state, action: PayloadAction<Square[] | null>) {
+    SetPromotionTarget(state, action: PayloadAction<Square[] | null>) {
       state.promotionTarget = action.payload;
     },
     FLIP_ORIENTATION(state) {
@@ -138,7 +138,7 @@ export const {
   MakeGameMove,
   GOTO_MOVE,
   GOTO_PATH,
-  SET_PROMOTION_TARGET,
+  SetPromotionTarget,
   FLIP_ORIENTATION,
 } = gameSlice.actions;
 export default gameSlice.reducer;

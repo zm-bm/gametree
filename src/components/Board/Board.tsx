@@ -8,7 +8,7 @@ import { useDimensions } from "../../hooks/useDimensions";
 import BaseBoard from "./BaseBoard";
 import { AppDispatch, RootState } from "../../store";
 import { getDests, isPromotion } from "../../chess";
-import { SET_PROMOTION_TARGET, selectFen, selectLastMove } from "../../redux/gameSlice";
+import { SetPromotionTarget, selectFen, selectLastMove } from "../../redux/gameSlice";
 import PromotionOverlay from "./PromotionOverlay";
 import { MakeMove } from "../../thunks";
 
@@ -41,7 +41,7 @@ const Board = () => {
   const move = useCallback((from: Key, to: Key) => {
     const chess = new Chess(fen);
     if (isPromotion(chess, from, to)) {
-      dispatch(SET_PROMOTION_TARGET([from as Square, to as Square]))
+      dispatch(SetPromotionTarget([from as Square, to as Square]))
     } else {
       const move = chess.move({ from, to })
       dispatch(MakeMove(move))

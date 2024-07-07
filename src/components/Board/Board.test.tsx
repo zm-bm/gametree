@@ -7,7 +7,7 @@ import { Chess, DEFAULT_POSITION } from 'chess.js';
 import Board from './Board'
 import { MockDispatch, renderWithProviders } from '../../test/testUtils';
 import { setupStore } from '../../store';
-import { SET_PROMOTION_TARGET, rootNode, initialState } from '../../redux/gameSlice';
+import { SetPromotionTarget, rootNode, initialState } from '../../redux/gameSlice';
 import { MoveNode } from "../../types/chess";
 import { MakeMove } from '../../thunks';
 
@@ -74,6 +74,6 @@ describe('Board', () => {
     renderWithProviders(<Board />, { store: mockStore });
     
     baseboardProps?.config?.events?.move?.('b7', 'a8');
-    expect(mockStore.dispatch).toHaveBeenCalledWith(SET_PROMOTION_TARGET(['b7', 'a8']))
+    expect(mockStore.dispatch).toHaveBeenCalledWith(SetPromotionTarget(['b7', 'a8']))
   });
 });
