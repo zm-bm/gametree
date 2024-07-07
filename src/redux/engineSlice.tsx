@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { parseCp, parseDepth, parseHashfull, parseMate, parseMoves, parseMultiPV, parseSelDepth, parseSpeed, parseTBHits, parseTime } from "../lib/parsers";
-import { GOTO_MOVE, GOTO_PATH, MAKE_MOVE } from "./gameSlice";
+import { GOTO_MOVE, GOTO_PATH  } from "./gameSlice";
 import { Chess, DEFAULT_POSITION, Move } from 'chess.js';
 import { SET_SOURCE } from './treeSlice';
 
@@ -109,6 +109,12 @@ const engineSlice = createSlice({
           break;
       }
     },
+    UPDATE_FEN(state, action: PayloadAction<string>) {
+      if (state.running) {
+        state.infos = [];
+        state.fen = action.payload;
+      }
+    },
     SET_HASH(state, action: PayloadAction<number>) {
       state.hash = action.payload;
     },
@@ -120,12 +126,6 @@ const engineSlice = createSlice({
     },
   },
   extraReducers(builder) {
-    builder.addCase(MAKE_MOVE, (state, action) => {
-      if (state.running) {
-        state.infos = [];
-        state.fen = action.payload.after;
-      }
-    })
     builder.addCase(GOTO_MOVE, (state, action) => {
       if (state.running) {
         state.infos = [];
@@ -146,7 +146,12 @@ const engineSlice = createSlice({
 
 export type EngineAction = ReturnType<typeof engineSlice.actions[keyof typeof engineSlice.actions]>;
 export const {
-  UCI_ENGINE_OUTPUT, UCI_ENGINE_ERROR,
-  TOGGLE_ENGINE, SET_HASH, SET_THREADS, SET_LINES
+  UCI_ENGINE_OUTPUT,
+  UCI_ENGINE_ERROR,
+  UPDATE_FEN,
+  TOGGLE_ENGINE,
+  SET_HASH,
+  SET_THREADS,
+  SET_LINES,
 } = engineSlice.actions;
 export default engineSlice.reducer;

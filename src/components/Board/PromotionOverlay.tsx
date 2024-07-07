@@ -3,8 +3,9 @@ import { Chess, PieceSymbol } from "chess.js";
 import { useDispatch, useSelector } from "react-redux";
 
 import { AppDispatch, RootState } from "../../store";
-import { MAKE_MOVE, SET_PROMOTION_TARGET, selectFen } from "../../redux/gameSlice";
+import { selectFen } from "../../redux/gameSlice";
 import { colorFromFen } from "../../chess";
+import { MakeMove } from "../../thunks";
 
 type Promotion = { piece: string, symbol: PieceSymbol }
 const promotions: Promotion[] = [
@@ -25,16 +26,16 @@ const PromotionOverlay = ({ size }: Props) => {
     ? promotionTarget[1].charCodeAt(0) - 'a'.charCodeAt(0) : 0;
   const turnColor = colorFromFen(fen) === 'w' ? 'white' : 'black';
 
-  const onClick: React.MouseEventHandler<HTMLDivElement> = useCallback((e) => {
+  const onClick: React.MouseEventHandler<HTMLDivElement> = useCallback(async (e) => {
     if (!promotionTarget) return;
     const chess = new Chess(fen);
     const [from, to] = promotionTarget;
     const move = chess.move({
-      from, to,
+      from,
+      to,
       promotion: e.currentTarget.getAttribute('data-promotion') as string,
     });
-    dispatch(MAKE_MOVE(move))
-    dispatch(SET_PROMOTION_TARGET(null))
+    dispatch(MakeMove(move))
   }, [promotionTarget, fen, dispatch]);
 
   return !promotionTarget ? null : (

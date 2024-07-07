@@ -2,11 +2,12 @@ import { describe, expect, it, vi } from "vitest";
 
 import { MockDispatch, renderWithProviders } from "../../test/testUtils";
 import PromotionOverlay from "./PromotionOverlay";
-import { SET_PROMOTION_TARGET, initialState, rootNode } from "../../redux/gameSlice";
+import { initialState, rootNode } from "../../redux/gameSlice";
 import { MoveNode } from "../../types/chess";
 import { Square } from "chess.js";
 import { fireEvent } from "@testing-library/react";
 import { setupStore } from "../../store";
+import { MakeMove } from "../../thunks";
 
 const preloadedState = {
   game: {
@@ -43,20 +44,24 @@ describe('PromotionOverlay', () => {
     expect(container.firstChild).toBeDefined();
   });
 
-  it('dispatches actions onClick', () => {
+  it('dispatches MakeMove onClick', () => {
     const mockStore = setupStore(preloadedState);
     mockStore.dispatch = vi.fn() as MockDispatch;
+    vi.mock('../../thunks', () => ({
+      MakeMove: vi.fn()
+    }))
+
     const { container } = renderWithProviders(
-      <PromotionOverlay size={400} />,
-      { store: mockStore }
+      <PromotionOverlay size={400} />, { store: mockStore }
     );
+
     const square = container.querySelector('[data-promotion="q"]')
     if (square) {
-      fireEvent.click(square)
+      fireEvent.click(square);
     }
-    expect(mockStore.dispatch).toHaveBeenCalledWith(expect.objectContaining({
-      type: 'game/MAKE_MOVE'
-    }))
-    expect(mockStore.dispatch).toHaveBeenCalledWith(SET_PROMOTION_TARGET(null))
+    expect(mockStore.dispatch).toHaveBeenCalledOnce();
+    expect(MakeMove).toHaveBeenCalledOnce();
+    
+    vi.clearAllMocks();
   });
 })

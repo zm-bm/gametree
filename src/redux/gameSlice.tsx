@@ -35,7 +35,7 @@ const gameSlice = createSlice({
   name: 'game',
   initialState,
   reducers: {
-    MAKE_MOVE(state, action: PayloadAction<Move>) {
+    MakeGameMove(state, action: PayloadAction<Move>) {
       state.promotionTarget = null;
       const prev = state.moveTree[state.currentMove];
       const existingKey = prev.children.find(
@@ -135,7 +135,7 @@ export const selectMovesList = createSelector(
 
 export type GameAction = ReturnType<typeof gameSlice.actions[keyof typeof gameSlice.actions]>;
 export const {
-  MAKE_MOVE,
+  MakeGameMove,
   GOTO_MOVE,
   GOTO_PATH,
   SET_PROMOTION_TARGET,
