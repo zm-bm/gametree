@@ -30,15 +30,15 @@ export const TreeGroup = ({
   const { height, width } = useContext(TreeDimsContext);
   const moves = useSelector((state: RootState) => selectMovesList(state));
   const currentNode = useMemo(() => moves.map(m => m.lan).join(','), [moves])
-  const transformationMatrixRef = useRef(zoom.transformMatrix);
+  const transformMatrixRef = useRef(zoom.transformMatrix);
 
   useEffect(() => {
-    transformationMatrixRef.current = zoom.transformMatrix;
+    transformMatrixRef.current = zoom.transformMatrix;
   }, [zoom.transformMatrix]);
 
   useEffect(() => {
     const node = tree.descendants().find(node => node.data.name === currentNode);
-    const matrix = transformationMatrixRef.current;
+    const matrix = transformMatrixRef.current;
     if (node) {
       spring.start({
         ...matrix,

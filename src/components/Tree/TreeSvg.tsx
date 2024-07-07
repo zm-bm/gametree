@@ -60,7 +60,6 @@ export const TreeSvg = ({ zoom }: Props) => {
         height={height}
         style={{ cursor: zoom.isDragging ? 'grabbing' : 'grab', touchAction: 'none' }}
         ref={zoom.containerRef}
-        onWheel={() => spring.set(zoom.transformMatrix)}
         onMouseUp={() => spring.set(zoom.transformMatrix)}
         onTouchEnd={() => spring.set(zoom.transformMatrix)}
       >
