@@ -3,7 +3,7 @@ import { restartWorker, worker, write } from '../worker';
 import { RootState } from '../store';
 import { DEFAULT_POSITION } from 'chess.js';
 import { UCI_ENGINE_ERROR, TOGGLE_ENGINE, SET_HASH, SET_THREADS, SET_LINES, EngineAction, UPDATE_FEN } from './engineSlice';
-import { GameAction, GOTO_PATH } from './gameSlice';
+import { GameAction, GotoGamePath } from './gameSlice';
 import { SET_SOURCE, TreeAction } from './treeSlice';
 
 export const setOption = (name: string, value: string | number) =>
@@ -48,15 +48,6 @@ export const createEngineMiddleware = (): Middleware => {
         break;
       case UPDATE_FEN.type:
         updateEngine(setPos(workerAction.payload), state);
-        break;
-      // case MakeGameMove.type:
-      //   updateEngine(setPos(workerAction.payload.after), state);
-      //   break;
-      // case GotoGameMove.type:
-      //   updateEngine(setPos(workerAction.payload.fen), state);
-      //   break;
-      case GOTO_PATH.type:
-        updateEngine(setPos(workerAction.payload.at(-1)?.after || DEFAULT_POSITION), state);
         break;
       case SET_SOURCE.type:
         updateEngine(setPos(DEFAULT_POSITION), state);

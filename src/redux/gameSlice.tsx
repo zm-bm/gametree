@@ -58,7 +58,7 @@ const gameSlice = createSlice({
       state.promotionTarget = null;
       state.currentMove = action.payload;
     },
-    GOTO_PATH(state, action: PayloadAction<Move[]>) {
+    GotoGamePath(state, action: PayloadAction<Move[]>) {
       state.promotionTarget = null;
       const { moveTree } = state;
       let parent = 0;
@@ -131,7 +131,7 @@ export type GameAction = ReturnType<typeof gameSlice.actions[keyof typeof gameSl
 export const {
   MakeGameMove,
   GotoGameMove,
-  GOTO_PATH,
+  GotoGamePath,
   SetPromotionTarget,
   FlipOrientation,
 } = gameSlice.actions;

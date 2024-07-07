@@ -2,12 +2,12 @@ import { MouseEventHandler, useCallback, useContext } from "react";
 import { Group } from "@visx/group";
 import { HierarchyPointNode } from "@visx/hierarchy/lib/types";
 import { Text } from "@visx/text";
+import { Move } from "chess.js";
 import { TreeNode } from "../../types/chess";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../store";
 import { TreeDimsContext } from "../../contexts/TreeContext";
-import { Move } from "chess.js";
-import { GOTO_PATH } from "../../redux/gameSlice";
+import { GotoPath } from "../../thunks";
 
 interface Props {
   node: HierarchyPointNode<TreeNode>,
@@ -36,7 +36,7 @@ export function Node({
       moves.unshift(head?.data.attributes.move);
       head = head.parent;
     }
-    dispatch(GOTO_PATH(moves))
+    dispatch(GotoPath(moves))
   }, [node, dispatch]);
 
   // special case for root node
@@ -59,9 +59,7 @@ export function Node({
   }
 
   let fill;
-  if (minimap) {
-    fill = 'black'
-  } else if (isCurrentNode) {
+  if (isCurrentNode) {
     fill = 'url(#currentNodeGradient)';
   } else if (node.data.attributes.move?.color === 'w') {
     fill = 'url(#whiteMoveGradient)';
