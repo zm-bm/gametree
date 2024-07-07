@@ -6,7 +6,7 @@ import { scaleLinear } from '@visx/scale';
 
 const nodeRadiusScale = scaleLinear({ domain: [300, 1200], range: [12, 24] });
 const columnWidthScale = scaleLinear({ domain: [300, 1200], range: [240, 360] });
-const fontSizeScale = scaleLinear({ domain: [300, 1200], range: [6, 16] });
+const fontSizeScale = scaleLinear({ domain: [300, 1200], range: [6, 14] });
 
 
 export default function MoveTree() {

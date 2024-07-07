@@ -1,6 +1,6 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { createEngineMiddleware } from './redux/engineMiddleware';
-import engineOutputReducer from './redux/engineSlice';
+import engineReducer from './redux/engineSlice';
 import gameReducer from './redux/gameSlice';
 import treeReducer from './redux/treeSlice';
 import { initEngineOptions } from './worker';
@@ -10,7 +10,7 @@ import { setupListeners } from '@reduxjs/toolkit/query';
 const engineMiddleware = createEngineMiddleware();
 
 const rootReducer = combineReducers({
-  engine: engineOutputReducer,
+  engine: engineReducer,
   game: gameReducer,
   tree: treeReducer,
   [openingsApi.reducerPath]: openingsApi.reducer,

@@ -23,11 +23,11 @@ const treeSlice = createSlice({
   name: 'tree',
   initialState,
   reducers: {
-    SET_SOURCE(state, action: PayloadAction<TreeSource>) {
+    SetDataSource(state, action: PayloadAction<TreeSource>) {
       state.source = action.payload;
       state.root = null;
     },
-    ADD_OPENINGS(state, action: PayloadAction<AddOpeningsArgs>) {
+    AddOpenings(state, action: PayloadAction<AddOpeningsArgs>) {
       const { moves, openings } = action.payload;
 
       // build tree
@@ -63,5 +63,5 @@ const treeSlice = createSlice({
 });
 
 export type TreeAction = ReturnType<typeof treeSlice.actions[keyof typeof treeSlice.actions]>;
-export const { SET_SOURCE, ADD_OPENINGS } = treeSlice.actions;
+export const { SetDataSource, AddOpenings } = treeSlice.actions;
 export default treeSlice.reducer;

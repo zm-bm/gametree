@@ -1,8 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { parseCp, parseDepth, parseHashfull, parseMate, parseMoves, parseMultiPV, parseSelDepth, parseSpeed, parseTBHits, parseTime } from "../lib/parsers";
-import { GotoGamePath  } from "./gameSlice";
 import { Chess, DEFAULT_POSITION, Move } from 'chess.js';
-import { SET_SOURCE } from './treeSlice';
+import { SetDataSource } from './treeSlice';
 
 export type Info = {
   depth: number,
@@ -11,6 +9,15 @@ export type Info = {
   mate?: number,
   multipv: number,
   pv: Move[],
+}
+
+export type EngineOutput = {
+  time?: number,
+  speed?: number,
+  hashfull?: number,
+  tbhits?: number,
+  info?: Info,
+  moves?: string[],
 }
 
 export interface EngineState {
@@ -45,88 +52,59 @@ const engineSlice = createSlice({
   name: 'engine',
   initialState,
   reducers: {
-    TOGGLE_ENGINE(state, action: PayloadAction<string>) {
+    ToggleEngine(state, action: PayloadAction<string>) {
       if (!state.running) {
         state.infos = [];
         state.fen = action.payload;
       } 
       state.running = !state.running;
     },
-    UCI_ENGINE_ERROR(state, action: PayloadAction<string>) {
+    EngineError(state, action: PayloadAction<string>) {
       console.error(action.payload);
       if (action.payload.includes('OOM')) {
         window.alert(`Engine failure: ${action.payload}`);
         state.threads /= 2;
       }
     },
-    UCI_ENGINE_OUTPUT(state, action: PayloadAction<string>) {
-      const tokens = action.payload.split(' ');
-      let time, speed, hashfull, tbhits;
-      switch (tokens[0]) {
-        case 'info':
-          time = parseTime(action.payload);
-          time && (state.time = time);
-          speed = parseSpeed(action.payload);
-          speed && (state.speed = speed);
-          hashfull = parseHashfull(action.payload);
-          hashfull && (state.hashfull = hashfull);
-          tbhits = parseTBHits(action.payload);
-          tbhits && (state.tbhits = tbhits);
+    AddEngineOutput(state, action: PayloadAction<EngineOutput>) {
+      const {
+        time, speed, hashfull, tbhits, info, moves,
+      } = action.payload;
 
-          if (
-            action.payload.includes(' pv ')
-            && !action.payload.includes('upperbound')
-            && !action.payload.includes('lowerbound')
-          ) {
-            const moves = parseMoves(action.payload);
-            const chess = new Chess(state.fen);
-            const pv = moves.map(mv => chess.move(mv));
+      time && (state.time = time);
+      speed && (state.speed = speed);
+      hashfull && (state.hashfull = hashfull);
+      tbhits && (state.tbhits = tbhits);
 
-            const info = {
-              depth: parseDepth(action.payload),
-              seldepth: parseSelDepth(action.payload),
-              cp: parseCp(action.payload),
-              mate: parseMate(action.payload),
-              multipv: parseMultiPV(action.payload),
-              pv,
-            };
+      if (moves && info) {
+        const chess = new Chess(state.fen);
+        info.pv = moves.map(mv => chess.move(mv));
 
-            if (state.lines === 1) {
-              state.infos = state.infos.concat([info]);
-            } else {
-              state.infos[info.multipv] = info;
-            }
-          }
-          break
-        case 'Load':
-          if (action.payload === 'Load eval file success: 1') {
-            state.nnue = true;
-          } else if (action.payload === 'Load eval file success: 0') {
-            state.nnue = false;
-          }
-          break;
-        default:
-          break;
+        if (state.lines === 1) {
+          state.infos = state.infos.concat([info]);
+        } else {
+          state.infos[info.multipv] = info;
+        }
       }
     },
-    UPDATE_FEN(state, action: PayloadAction<string>) {
+    UpdateFen(state, action: PayloadAction<string>) {
       if (state.running) {
         state.infos = [];
         state.fen = action.payload;
       }
     },
-    SET_HASH(state, action: PayloadAction<number>) {
+    SetHash(state, action: PayloadAction<number>) {
       state.hash = action.payload;
     },
-    SET_THREADS(state, action: PayloadAction<number>) {
+    SetThreads(state, action: PayloadAction<number>) {
       state.threads = action.payload;
     },
-    SET_LINES(state, action: PayloadAction<number>) {
+    SetLines(state, action: PayloadAction<number>) {
       state.lines = action.payload;
     },
   },
   extraReducers(builder) {
-    builder.addCase(SET_SOURCE, (state) => {
+    builder.addCase(SetDataSource, (state) => {
       state.fen = DEFAULT_POSITION;
     })
   },
@@ -134,12 +112,12 @@ const engineSlice = createSlice({
 
 export type EngineAction = ReturnType<typeof engineSlice.actions[keyof typeof engineSlice.actions]>;
 export const {
-  UCI_ENGINE_OUTPUT,
-  UCI_ENGINE_ERROR,
-  UPDATE_FEN,
-  TOGGLE_ENGINE,
-  SET_HASH,
-  SET_THREADS,
-  SET_LINES,
+  AddEngineOutput,
+  EngineError,
+  UpdateFen,
+  ToggleEngine,
+  SetHash,
+  SetThreads,
+  SetLines,
 } = engineSlice.actions;
 export default engineSlice.reducer;

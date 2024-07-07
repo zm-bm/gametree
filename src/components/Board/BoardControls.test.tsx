@@ -5,7 +5,7 @@ import { DEFAULT_POSITION } from 'chess.js';
 import BoardControls from './BoardControls';
 import { MockDispatch, renderWithProviders } from '../../test/testUtils';
 import { setupStore } from '../../store';
-import { TOGGLE_ENGINE } from '../../redux/engineSlice';
+import { ToggleEngine } from '../../redux/engineSlice';
 
 const mockUndo = vi.fn();
 const mockRedo = vi.fn();
@@ -77,12 +77,12 @@ describe('BoardControls', () => {
     expect(mockForward).toHaveBeenCalledOnce();
   });
 
-  it('dispatches toggle_engine on engine toggle', () => {
+  it('dispatches ToggleEngine on engine toggle', () => {
     const mockStore = setupStore();
     mockStore.dispatch = vi.fn() as MockDispatch;
     const { getByTitle } = renderWithProviders(<BoardControls />, { store: mockStore });
     const button = getByTitle(/Start/);
     fireEvent.click(button);
-    expect(mockStore.dispatch).toHaveBeenCalledWith(TOGGLE_ENGINE(DEFAULT_POSITION));
+    expect(mockStore.dispatch).toHaveBeenCalledWith(ToggleEngine(DEFAULT_POSITION));
   });
 });

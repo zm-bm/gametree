@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 
-import { SET_HASH, SET_LINES, SET_THREADS } from "../../redux/engineSlice";
+import { SetHash, SetLines, SetThreads } from "../../redux/engineSlice";
 import { AppDispatch, RootState } from '../../store';
 
 const EngineControls = () => {
@@ -15,7 +15,7 @@ const EngineControls = () => {
       <select
         title="Hash size"
         className="btn-primary"
-        onChange={(e) => dispatch(SET_HASH(+e.target.value))}
+        onChange={(e) => dispatch(SetHash(+e.target.value))}
         value={hash}
       >
         <option value="1">1MB</option>
@@ -28,14 +28,14 @@ const EngineControls = () => {
       <select
         title="# of threads"
         className="btn-primary"
-        onChange={(e) => dispatch(SET_THREADS(+e.target.value))}
+        onChange={(e) => dispatch(SetThreads(+e.target.value))}
         value={threads}
       >
-        <option value="1">1 CPU</option>
-        <option value="2">2 CPU</option>
-        <option value="4">4 CPU</option>
-        <option value="8">8 CPU</option>
-        <option value="16">16 CPU</option>
+        <option value="1">1 Threads</option>
+        <option value="2">2 Threads</option>
+        <option value="4">4 Threads</option>
+        <option value="8">8 Threads</option>
+        <option value="16">16 Threads</option>
       </select>
       <div className="btn-primary py-0" title="# of engine variations">
         <label className="overflow-hidden whitespace-nowrap" htmlFor="lines">Lines: </label>
@@ -43,7 +43,7 @@ const EngineControls = () => {
           id="lines" type="number"
           min={1} max={99}
           className="bg-transparent pl-1 py-1 w-8"
-          onChange={(e) => dispatch(SET_LINES(+e.target.value))}
+          onChange={(e) => dispatch(SetLines(+e.target.value))}
           value={lines}
         />
       </div>

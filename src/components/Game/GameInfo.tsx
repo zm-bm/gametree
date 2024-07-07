@@ -15,7 +15,7 @@ const GameInfo = () => {
     if (datakey) {
       dispatch(GotoMove(+datakey))
     }
-  }, [moveTree, dispatch])
+  }, [dispatch])
 
   function buildHistory(children: number[], isStartOfVariation: boolean = false) {
     const pvKey = children.at(0)

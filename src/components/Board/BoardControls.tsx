@@ -12,7 +12,7 @@ import {
 import ECODisplay from "./ECODisplay";
 import { useMoveActions } from "../../hooks/useMoveActions";
 import { FlipOrientation, selectFen } from "../../redux/gameSlice";
-import { TOGGLE_ENGINE } from "../../redux/engineSlice";
+import { ToggleEngine } from "../../redux/engineSlice";
 import { AppDispatch, RootState } from '../../store';
 
 const BoardControls = () => {
@@ -57,7 +57,7 @@ const BoardControls = () => {
         <IoIosSkipBackward className='m-auto' />
       </button>
       <button
-        onClick={() => dispatch(TOGGLE_ENGINE(fen))}
+        onClick={() => dispatch(ToggleEngine(fen))}
         className={`${buttonClass} `}
         title="Start/stop engine"
       >

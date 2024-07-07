@@ -12,7 +12,7 @@ import { TreeG } from './TreeG';
 import { TreeMinimap } from './TreeMinimap';
 import { AppDispatch, RootState } from '../../store';
 import { selectMovesList } from '../../redux/gameSlice';
-import { SET_SOURCE } from '../../redux/treeSlice';
+import { SetDataSource } from '../../redux/treeSlice';
 import { TreeSource, useGetOpeningsQuery } from '../../redux/openingsApi';
 
 const defaultTransformMatrix: TransformMatrix = {
@@ -82,7 +82,7 @@ export const TreeSvg = ({ zoom }: Props) => {
           className='btn-primary'
           value={source}
           onChange={(e) => {
-            dispatch(SET_SOURCE(e.target.value as TreeSource))
+            dispatch(SetDataSource(e.target.value as TreeSource))
           }}
         >
           <option value='masters'>Masters games</option>

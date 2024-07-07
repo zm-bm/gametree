@@ -1,14 +1,14 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { DEFAULT_POSITION, Move } from "chess.js";
 import { GotoGameMove, GotoGamePath, MakeGameMove } from "../redux/gameSlice";
-import { UPDATE_FEN } from "../redux/engineSlice";
+import { UpdateFen } from "../redux/engineSlice";
 import { AppDispatch, RootState } from "../store";
 
 export const MakeMove = createAsyncThunk(
   'MakeMove',
   async (move: Move, { dispatch }) => {
     dispatch(MakeGameMove(move));
-    dispatch(UPDATE_FEN(move.after));
+    dispatch(UpdateFen(move.after));
   }
 );
 
@@ -20,7 +20,7 @@ export const GotoMove = createAsyncThunk<
     const state: RootState = getState();
     const fen = state.game.moveTree[key].move?.after || DEFAULT_POSITION;
     dispatch(GotoGameMove(key));
-    dispatch(UPDATE_FEN(fen));
+    dispatch(UpdateFen(fen));
   }
 );
 
@@ -31,6 +31,6 @@ export const GotoPath = createAsyncThunk<
   async (moves, { dispatch }) => {
     const fen = moves.at(-1)?.after || DEFAULT_POSITION;
     dispatch(GotoGamePath(moves));
-    dispatch(UPDATE_FEN(fen));
+    dispatch(UpdateFen(fen));
   }
 );

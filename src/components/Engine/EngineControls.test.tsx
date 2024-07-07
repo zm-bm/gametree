@@ -4,7 +4,7 @@ import { fireEvent } from "@testing-library/react";
 import { MockDispatch, renderWithProviders } from "../../test/testUtils";
 import EngineControls from "./EngineControls";
 import { setupStore } from "../../store";
-import { SET_HASH, SET_LINES, SET_THREADS } from "../../redux/engineSlice";
+import { SetHash, SetLines, SetThreads } from "../../redux/engineSlice";
 
 describe('EngineControls', () => {
   it('renders sf version', () => {
@@ -20,7 +20,7 @@ describe('EngineControls', () => {
     });
     const hash = getByTitle(/Hash/);
     fireEvent.change(hash, { target: { value: '1' } })
-    expect(mockStore.dispatch).toHaveBeenCalledWith(SET_HASH(1))
+    expect(mockStore.dispatch).toHaveBeenCalledWith(SetHash(1))
   });
 
   it('dispatches set threads', () => {
@@ -31,7 +31,7 @@ describe('EngineControls', () => {
     });
     const threads = getByTitle(/threads/);
     fireEvent.change(threads, { target: { value: '1' } })
-    expect(mockStore.dispatch).toHaveBeenCalledWith(SET_THREADS(1))
+    expect(mockStore.dispatch).toHaveBeenCalledWith(SetThreads(1))
   });
   
   it('dispatches set lines', () => {
@@ -43,6 +43,6 @@ describe('EngineControls', () => {
     const variations = getByTitle(/variations/);
     const input = variations.childNodes[1];
     fireEvent.change(input, { target: { value: '2' } })
-    expect(mockStore.dispatch).toHaveBeenCalledWith(SET_LINES(2))
+    expect(mockStore.dispatch).toHaveBeenCalledWith(SetLines(2))
   });
 });

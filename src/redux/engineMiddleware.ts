@@ -2,14 +2,13 @@ import { Middleware } from 'redux';
 import { restartWorker, worker, write } from '../worker';
 import { RootState } from '../store';
 import { DEFAULT_POSITION } from 'chess.js';
-import { UCI_ENGINE_ERROR, TOGGLE_ENGINE, SET_HASH, SET_THREADS, SET_LINES, EngineAction, UPDATE_FEN } from './engineSlice';
-import { GameAction, GotoGamePath } from './gameSlice';
-import { SET_SOURCE, TreeAction } from './treeSlice';
+import { EngineError, ToggleEngine, SetHash, SetThreads, SetLines, EngineAction, UpdateFen } from './engineSlice';
+import { SetDataSource, TreeAction } from './treeSlice';
 
 export const setOption = (name: string, value: string | number) =>
   `setoption name ${name} value ${value}`;
 export const setPos = (fen: string) => `position fen ${fen}`;
-type WorkerAction = EngineAction | GameAction | TreeAction;
+type WorkerAction = EngineAction | TreeAction;
 
 export const createEngineMiddleware = (): Middleware => {
 
@@ -28,28 +27,28 @@ export const createEngineMiddleware = (): Middleware => {
     const workerAction = action as WorkerAction;
 
     switch (workerAction.type) {
-      case UCI_ENGINE_ERROR.type:
+      case EngineError.type:
         if (workerAction.payload.includes('OOM')) {
           worker.terminate();
           restartWorker({ ...state.engine, threads: state.engine.threads / 2 });
         }
         break;
-      case TOGGLE_ENGINE.type:
+      case ToggleEngine.type:
         write(state.engine.running ? 'stop' : 'go infinite');
         break;
-      case SET_HASH.type:
+      case SetHash.type:
         updateEngine(setOption('Hash', workerAction.payload), state);
         break;
-      case SET_THREADS.type:
+      case SetThreads.type:
         updateEngine(setOption('Threads', workerAction.payload), state);
         break;
-      case SET_LINES.type:
+      case SetLines.type:
         updateEngine(setOption('MultiPV', workerAction.payload), state);
         break;
-      case UPDATE_FEN.type:
+      case UpdateFen.type:
         updateEngine(setPos(workerAction.payload), state);
         break;
-      case SET_SOURCE.type:
+      case SetDataSource.type:
         updateEngine(setPos(DEFAULT_POSITION), state);
         break;
       default:

@@ -4,7 +4,7 @@ import { DEFAULT_POSITION, Move, Square } from 'chess.js';
 
 import { MoveNode } from "../types/chess";
 import { RootState } from '../store';
-import { SET_SOURCE } from './treeSlice';
+import { SetDataSource } from './treeSlice';
 
 export interface GameState {
   moveTree: MoveNode[],
@@ -89,7 +89,7 @@ const gameSlice = createSlice({
     },
   },
   extraReducers(builder) {
-    builder.addCase(SET_SOURCE, (state) => {
+    builder.addCase(SetDataSource, (state) => {
       state.currentMove = 0;
       state.moveTree = [rootNode];
       state.promotionTarget = null;
