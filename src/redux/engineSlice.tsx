@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Chess, DEFAULT_POSITION, Move } from 'chess.js';
-import { SetDataSource } from './treeSlice';
+import { SetDataSource } from './openingsTreeSlice';
 
 export type Info = {
   depth: number,
@@ -52,20 +52,6 @@ const engineSlice = createSlice({
   name: 'engine',
   initialState,
   reducers: {
-    ToggleEngine(state, action: PayloadAction<string>) {
-      if (!state.running) {
-        state.infos = [];
-        state.fen = action.payload;
-      } 
-      state.running = !state.running;
-    },
-    EngineError(state, action: PayloadAction<string>) {
-      console.error(action.payload);
-      if (action.payload.includes('OOM')) {
-        window.alert(`Engine failure: ${action.payload}`);
-        state.threads /= 2;
-      }
-    },
     AddEngineOutput(state, action: PayloadAction<EngineOutput>) {
       const {
         time, speed, hashfull, tbhits, info, moves,
@@ -87,20 +73,40 @@ const engineSlice = createSlice({
         }
       }
     },
+
+    ToggleEngine(state, action: PayloadAction<string>) {
+      if (!state.running) {
+        state.infos = [];
+        state.fen = action.payload;
+      } 
+      state.running = !state.running;
+    },
+
+    EngineError(state, action: PayloadAction<string>) {
+      console.error(action.payload);
+      if (action.payload.includes('OOM')) {
+        console.error(`Engine failure: ${action.payload}`);
+        state.threads /= 2;
+      }
+    },
+
     UpdateFen(state, action: PayloadAction<string>) {
       if (state.running) {
         state.infos = [];
         state.fen = action.payload;
       }
     },
+
     SetHash(state, action: PayloadAction<number>) {
       state.infos = [];
       state.hash = action.payload;
     },
+
     SetThreads(state, action: PayloadAction<number>) {
       state.infos = [];
       state.threads = action.payload;
     },
+
     SetLines(state, action: PayloadAction<number>) {
       state.infos = [];
       state.lines = action.payload;

@@ -4,7 +4,7 @@ import { DEFAULT_POSITION, Move, Square } from 'chess.js';
 
 import { MoveNode } from "../types/chess";
 import { RootState } from '../store';
-import { SetDataSource } from './treeSlice';
+import { SetDataSource } from './openingsTreeSlice';
 
 export interface GameState {
   moveTree: MoveNode[],
@@ -19,6 +19,7 @@ export const rootNode = {
   parent: null,
   children: [],
 }
+
 export const initialState: GameState = {
   moveTree: [rootNode],
   currentMove: 0,
@@ -26,22 +27,33 @@ export const initialState: GameState = {
   orientation: 'white',
 };
 
+function findChildKey(state: GameState, parent: MoveNode, child: Move) {
+  // find the move key of move from a parent move node
+  return state.moveTree[parent.key].children.find(
+    ix => state.moveTree[ix].move?.lan === child.lan
+  );
+}
+
 const gameSlice = createSlice({
   name: 'game',
   initialState,
   reducers: {
+    /**
+     * Make a chess move from the current position
+     * 
+     * @param state 
+     * @param {Move} action.payload - chess.js move
+     */
     MakeGameMove(state, action: PayloadAction<Move>) {
       state.promotionTarget = null;
-      const prev = state.moveTree[state.currentMove];
-      const existingKey = prev.children.find(
-        ix => state.moveTree[ix].move?.lan === action.payload.lan
-      );
 
-      // update move tree
+      // check for the move in the moveTree
+      const previousMove = state.moveTree[state.currentMove];
+      const existingKey = findChildKey(state, previousMove, action.payload);
       if (existingKey === undefined) {
-        // if new move, add to move tree + update key
+        // if it's a new move, add it to move tree and update key
         const key = state.moveTree.length;
-        prev.children.push(key);
+        previousMove.children.push(key);
         state.moveTree.push({
           key,
           move: action.payload,
@@ -50,40 +62,65 @@ const gameSlice = createSlice({
         });
         state.currentMove = key;
       } else {
-        // if previously made move, update key
+        // otherwise it's been made before so just update key
         state.currentMove = existingKey;
       }
     },
+
+    /**
+     * Go to a position given by a move key 
+     * 
+     * @param state 
+     * @param {number} action.payload - move key
+     */
     GotoGameMove(state, action: PayloadAction<number>) {
       state.promotionTarget = null;
-      state.currentMove = action.payload;
+
+      if (0 <= action.payload && action.payload < state.moveTree.length) {
+        state.currentMove = action.payload;
+      }
     },
+
+    /**
+     * Go to a position given by a list of moves
+     * 
+     * @param state 
+     * @param {Move[]} action.payload - array of moves
+     */
     GotoGamePath(state, action: PayloadAction<Move[]>) {
       state.promotionTarget = null;
-      const { moveTree } = state;
-      let parent = 0;
+
+      // walk the move tree
+      let key =  0;
       for (const move of action.payload) {
-        const child = moveTree[parent].children.find(ix => moveTree[ix].move?.lan === move.lan)
+        const child = findChildKey(state, state.moveTree[key], move);
+
         if (child) {
-          parent = child;
+          key = child;
         } else {
-          const key = state.moveTree.length;
-          moveTree[parent].children.push(key)
+          // if child / path not found, add move to the tree
+          // and update currentMove with new key
+          const newMoveKey = state.moveTree.length;
+          state.moveTree[key].children.push(newMoveKey);
           state.moveTree.push({
-            key,
+            key: newMoveKey,
+            parent: key,
             move,
-            parent,
             children: [],
-          })
-          state.currentMove = key
+          });
+          state.currentMove = newMoveKey;
           return;
         }
       }
-      state.currentMove = parent;
+
+      // otherwise this is an existing path so update currentMove
+      state.currentMove = key;
     },
+
     SetPromotionTarget(state, action: PayloadAction<Square[] | null>) {
       state.promotionTarget = action.payload;
     },
+
     FlipOrientation(state) {
       state.orientation = state.orientation === 'white' ? 'black' : 'white';
     },

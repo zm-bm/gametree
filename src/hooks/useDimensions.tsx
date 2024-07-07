@@ -26,9 +26,7 @@ export const useDimensions = () => {
 
     updateDimensions();
 
-    const resizeObserver = new ResizeObserver(() => {
-      updateDimensions();
-    });
+    const resizeObserver = new ResizeObserver(() => updateDimensions());
     resizeObserver.observe(element);
     return () => {
       resizeObserver.unobserve(element);

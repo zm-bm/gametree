@@ -1,8 +1,8 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { Move } from 'chess.js'
-import { movesToString } from '../chess'
+import { movesToString } from '../lib/chess'
 import { LichessOpenings } from "../types/chess";
-import { AddOpenings } from './treeSlice';
+import { AddOpenings } from './openingsTreeSlice';
 
 export type TreeSource = 'masters' | 'lichess';
 export interface GetOpeningsArgs {

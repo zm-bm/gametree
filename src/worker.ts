@@ -60,7 +60,7 @@ export const initializeWorker = () => {
   const worker = new Stockfish();
 
   worker.onmessage = (event) => {
-    console.log('> ', event.data);
+    // console.log('> ', event.data);
     const output = parseEngineOutput(event.data)
     if (output) {
       store.dispatch(AddEngineOutput(output));

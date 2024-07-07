@@ -1,7 +1,7 @@
-import Board from './Board/Board'
-import BoardControls from './Board/BoardControls'
+import Board from './Board'
+import BoardControls from './BoardControls'
 import AnalysisPane from './AnalysisPane'
-import MoveTree from './Tree/MoveTree'
+import MoveTree from './MoveTree'
 
 const size = 'sm:h-screen sm:w-screen sm:flex-row min-h-0'
 const bg = 'bg-gradient-to-b from-neutral-200 via-neutral-100 to-neutral-200'

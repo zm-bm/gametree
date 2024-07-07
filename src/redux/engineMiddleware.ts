@@ -3,7 +3,7 @@ import { restartWorker, worker, write } from '../worker';
 import { RootState } from '../store';
 import { DEFAULT_POSITION } from 'chess.js';
 import { EngineError, ToggleEngine, SetHash, SetThreads, SetLines, EngineAction, UpdateFen } from './engineSlice';
-import { SetDataSource, TreeAction } from './treeSlice';
+import { SetDataSource, TreeAction } from './openingsTreeSlice';
 
 export const setOption = (name: string, value: string | number) =>
   `setoption name ${name} value ${value}`;
