@@ -15,9 +15,10 @@ const ECODisplay = () => {
   }
   
   return (
-    <div className='flex flex-col text-xs leading-none'>
-      <p>{eco?.eco}</p>
-      <p>{eco?.name}</p>
+    <div className='h-8 flex items-center'>
+      <p className='text-xs leading-none'>
+        {eco?.eco}{eco ? ': ' : ''}{eco?.name}
+      </p>
     </div>
   );
 }
