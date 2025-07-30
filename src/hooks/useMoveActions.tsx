@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../store";
 import { GotoMove } from "../thunks";
 
+const throttleTime = 200; // milliseconds
+
 export const useMoveActions = () => {
   const dispatch = useDispatch<AppDispatch>();
   const currentMove = useSelector((state: RootState) => state.game.currentMove);
@@ -11,11 +13,15 @@ export const useMoveActions = () => {
 
   function throttle() {
     const now = Date.now();
-    if (now - lastTime.current > 250) {
+    if (now - lastTime.current > throttleTime) {
       lastTime.current = now;
       return false;
     }
     return true;
+  }
+
+  function clear() {
+    lastTime.current = 0;
   }
 
   const undo = useCallback(() => {
@@ -48,5 +54,5 @@ export const useMoveActions = () => {
     dispatch(GotoMove(key))
   }, [currentMove, moveTree, dispatch]);
 
-  return { undo, redo, rewind, forward };
+  return { undo, redo, rewind, forward, clear };
 }
