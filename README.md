@@ -28,6 +28,21 @@ Build
 npm run build
 ```
 
+## Roadmap
+
+- ci/cd deploy
+- eco openings explorer
+- add tree legend 
+    - line thickness = move frequency
+    - node color = win rate
+- add controls for pruning moves from tree
+    - move frequency
+    - win rate
+- prefetch node descendants
+- onboarding / instructions modal
+- improve node label typography
+- mobile layout support
+
 ## Acknowledgments
 
 - [chessground](https://github.com/lichess-org/chessground) - Chess board
