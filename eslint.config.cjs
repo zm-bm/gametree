@@ -47,4 +47,4 @@ module.exports = defineConfig([{
             allowConstantExport: true,
         }],
     },
-}, globalIgnores(["**/dist", "**/.eslintrc.cjs"])]);
+}, globalIgnores(["**/dist", "**/eslint.config.cjs"])]);

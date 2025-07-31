@@ -30,7 +30,7 @@ export const playMoveSound = () => {
     osc2.stop(ctx.currentTime + 0.1);
     
     osc1.onended = () => ctx.close();
-  } catch (e) {
+  } catch {
     // fail silently
   }
 }

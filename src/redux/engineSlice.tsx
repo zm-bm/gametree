@@ -57,10 +57,10 @@ const engineSlice = createSlice({
         time, speed, hashfull, tbhits, info, moves,
       } = action.payload;
 
-      time && (state.time = time);
-      speed && (state.speed = speed);
-      hashfull && (state.hashfull = hashfull);
-      tbhits && (state.tbhits = tbhits);
+      if (time) state.time = time;
+      if (speed) state.speed = speed;
+      if (hashfull) state.hashfull = hashfull;
+      if (tbhits) state.tbhits = tbhits;
 
       if (moves && info) {
         const chess = new Chess(state.fen);
