@@ -1,12 +1,27 @@
-import { Chess, Move, SQUARES, Square } from "chess.js";
+import { Chess, Move as ChessMove, SQUARES, Square } from "chess.js";
 import { Key } from 'chessground/types';
 import eco from '../eco.json'
-import { ECO, LichessMove, LichessOpenings, TreeNode } from "../types/chess";
+import { ECO, Move, LichessMove, LichessOpenings, TreeNode } from "../types/chess";
 
 export const book = eco as ECO[];
 
 export function movesToString(moves: Move[]) {
   return moves.map(m => m.lan).join(',');
+}
+
+export function serializeMove(move: ChessMove): Move {
+  return {
+    color: move.color,
+    from: move.from,
+    to: move.to,
+    piece: move.piece,
+    captured: move.captured || undefined,
+    promotion: move.promotion || undefined,
+    san: move.san,
+    lan: move.lan,
+    before: move.before,
+    after: move.after,
+  };
 }
 
 export function getDests(chess: Chess) {
@@ -23,7 +38,7 @@ export function getDests(chess: Chess) {
 export function isPromotion(chess: Chess, from: Key, dest: Key) {
   const piece = chess.get(from as Square);
   return (
-    piece.type === 'p' &&
+    piece?.type === 'p' &&
     ((piece.color === 'w' && dest[1] === '8') ||
      (piece.color === 'b' && dest[1] === '1'))
   );
@@ -58,7 +73,7 @@ export function sortTreeNodes(nodes: TreeNode[]) {
   return result;
 }
 
-export function buildTreeNode(openings: LichessOpenings, moves: Move[]): TreeNode {
+export function buildTreeNode(openings: LichessOpenings, moves: ChessMove[]): TreeNode {
   const {
     white, draws, black, topGames, opening, moves: lichessMoves,
   } = openings;
@@ -76,7 +91,7 @@ export function buildTreeNode(openings: LichessOpenings, moves: Move[]): TreeNod
       topGames,
       opening,
       averageRating: null,
-      move: lastMove || null,
+      move: lastMove ? serializeMove(lastMove) : null,
     },
     children: sortTreeNodes(
       lichessMoves.map(move => buildTreeChild(move, chess, name))
@@ -98,7 +113,7 @@ export function buildTreeChild(liMove: LichessMove, chess: Chess, parentName: st
       topGames: null,
       opening: book.find(b => b.uci === name) || null,
       averageRating,
-      move,
+      move: serializeMove(move),
     },
     children: [],
   };

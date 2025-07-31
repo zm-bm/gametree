@@ -2,11 +2,11 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { buildTreeNode } from "../lib/chess";
 import { LichessOpenings, TreeNode } from "../types/chess";
 import { TreeSource } from "./openingsApi";
-import { Move } from "chess.js";
+import { Move as ChessMove } from "chess.js";
 
 interface AddOpeningsArgs {
   openings: LichessOpenings,
-  moves: Move[],
+  moves: ChessMove[],
 }
 
 export interface TreeState {
@@ -38,16 +38,16 @@ const openingsTreeSlice = createSlice({
         // if tree is empty
         state.root = node;
       } else {
-        let head = state.root;
+        let cur = state.root;
 
         // iterate through moves to find location in tree
         moves.forEach((move, i) => {
-          const child = head.children.find(node => node.attributes.move?.lan === move.lan);
+          const child = cur.children.find(node => node.attributes.move?.lan === move.lan);
           if (child) {
-            head = child;
+            cur = child;
           } else if (i === moves.length - 1) {
             // if last move not found, add it to tree
-            head.children.push(node);
+            cur.children.push(node);
             return;
           } else {
             // path not found, do nothing
@@ -56,9 +56,9 @@ const openingsTreeSlice = createSlice({
         });
 
         // update head and add children if none (in case query has been made already)
-        head.attributes.topGames = node.attributes.topGames;
-        if (head.children.length === 0) {
-          head.children = node.children;
+        cur.attributes.topGames = node.attributes.topGames;
+        if (cur.children.length === 0) {
+          cur.children = node.children;
         }
       }
     },

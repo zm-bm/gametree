@@ -22,7 +22,6 @@ const moveTree: MoveNode[] = [
       from: 'd2',
       to: 'd4',
       san: 'd4',
-      flags: 'b',
       lan: 'd2d4',
       before: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
       after: 'rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1'
@@ -40,7 +39,6 @@ const moveTree: MoveNode[] = [
       from: 'd7',
       to: 'd5',
       san: 'd5',
-      flags: 'b',
       lan: 'd7d5',
       before: 'rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1',
       after: 'rnbqkbnr/ppp1pppp/8/3p4/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 2'
@@ -58,7 +56,6 @@ const moveTree: MoveNode[] = [
       from: 'c2',
       to: 'c4',
       san: 'c4',
-      flags: 'b',
       lan: 'c2c4',
       before: 'rnbqkbnr/ppp1pppp/8/3p4/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 2',
       after: 'rnbqkbnr/ppp1pppp/8/3p4/2PP4/8/PP2PPPP/RNBQKBNR b KQkq - 0 2'

@@ -21,7 +21,6 @@ const preloadedState = {
         from: 'd8',
         to: 'c8',
         san: 'Qc8',
-        flags: 'n',
         lan: 'd8c8',
         before: 'rn1qkbnr/1Ppppppp/8/8/8/8/1PPPPPPP/RNBQKBNR b KQkq - 0 4',
         after: 'rnq1kbnr/1Ppppppp/8/8/8/8/1PPPPPPP/RNBQKBNR w KQkq - 1 5'
