@@ -13,7 +13,7 @@ import { TreeMinimap } from './TreeMinimap';
 import { RootState } from '../store';
 import { selectMovesList } from '../redux/gameSlice';
 import { useGetOpeningsQuery } from '../redux/openingsApi';
-import { TreePanel } from './TreePanel';
+import { TreeControls } from './TreeControls/TreeControls';
 
 const defaultTransformMatrix: TransformMatrix = {
   translateX: 0,
@@ -75,7 +75,7 @@ export const TreeSvg = ({ zoom }: Props) => {
         />
       </svg>}
 
-      <TreePanel />
+      <TreeControls />
     </div>
   );
 };

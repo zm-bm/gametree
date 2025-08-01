@@ -11,7 +11,7 @@ export const drawColor = '#535353';
 export const colorScale = scalePower({
   domain: [-1, 0, 1],
   range: [lossColor, drawColor, winColor],
-  exponent: 0.6,
+  exponent: 0.5,
 });
 
 export function calcStroke(node: HierarchyPointNode<TreeNode>, orientation: Color) {

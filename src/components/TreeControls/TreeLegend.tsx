@@ -1,31 +1,30 @@
 import React from "react";
 import { Group } from '@visx/group';
 
-import { drawColor, colorScale } from "../lib/linkConstants"
+import { drawColor, colorScale } from "../../lib/linkConstants"
 
 export const TreeLegend: React.FC = () => {
-  const legendWidth = 150;
+  const legendWidth = '100%';
   const entryHeight = 22;
   const sampleLinkWidth = 40;
   const labelOffset = 12;
+  const fontSize = 12;
 
   const colorEntries = [
-    { label: "Winning", value: 1 },
-    { label: "Equal", value: 0 },
-    { label: "Losing", value: -1 }
+    { label: "Better", value: 0.8 },
+    { label: "Even", value: 0 },
+    { label: "Worse", value: -0.8 }
   ];
   
   const thicknessEntries = [
-    { label: "Common", frequency: 1 },
-    { label: "Uncommon", frequency: 0 }
+    { label: "Common", frequency: 0.9 },
+    { label: "Rare", frequency: 0.1 }
   ];
 
   return (
-    <div className="p-2 bg-white border border-gray-300 rounded shadow mb-2">
-      <div className="text-sm font-semibold mb-2">Legend</div>
-      
-      <div className="text-xs mb-1">Line color (outcome)</div>
-      <svg width={legendWidth} height={colorEntries.length * entryHeight}>
+    <div className="p-2">
+      <div className="text-sm font-semibold">Color → Outcome</div>
+      <svg className="ml-2" width={legendWidth} height={colorEntries.length * entryHeight}>
         {colorEntries.map((entry, i) => {
           const y = i * entryHeight + entryHeight/2;
           const outcome = entry.value;
@@ -42,17 +41,17 @@ export const TreeLegend: React.FC = () => {
                 strokeWidth={7} 
                 strokeLinecap="round"
               />
-              <text x={sampleLinkWidth + labelOffset} y={4} fontSize={12}>{entry.label}</text>
+              <text x={sampleLinkWidth + labelOffset} y={4} fontSize={fontSize}>{entry.label}</text>
             </Group>
           );
         })}
       </svg>
-      
-      <div className="text-xs mb-1 mt-2">Line thickness (frequency)</div>
-      <svg width={legendWidth} height={thicknessEntries.length * entryHeight}>
+
+      <div className="text-sm font-semibold mt-2 mb-1">Width → Popularity</div>
+      <svg className="ml-2" width={legendWidth} height={thicknessEntries.length * entryHeight}>
         {thicknessEntries.map((entry, i) => {
           const y = i * entryHeight + entryHeight/2;
-          const thickness = Math.max(Math.min(Math.sqrt(entry.frequency) * 12, 12), 2);
+          const thickness = Math.max(Math.sqrt(entry.frequency) * 12, 2);
           
           return (
             <Group key={i} top={y}>
@@ -65,7 +64,7 @@ export const TreeLegend: React.FC = () => {
                 strokeWidth={thickness} 
                 strokeLinecap="round"
               />
-              <text x={sampleLinkWidth + labelOffset} y={4} fontSize={12}>{entry.label}</text>
+              <text x={sampleLinkWidth + labelOffset} y={3} fontSize={fontSize}>{entry.label}</text>
             </Group>
           );
         })}
