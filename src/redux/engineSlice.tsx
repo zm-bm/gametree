@@ -39,7 +39,7 @@ export const initialState: EngineState = {
   running: false,
   nnue: false,
   hash: 16,
-  threads: 4,
+  threads: 1,
   lines: 1,
   infos: [],
   time: undefined,
