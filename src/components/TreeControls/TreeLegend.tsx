@@ -24,7 +24,7 @@ export const TreeLegend: React.FC = () => {
   return (
     <div className="p-2">
       <div className="text-sm font-semibold">Color → Outcome</div>
-      <svg className="ml-2" width={legendWidth} height={colorEntries.length * entryHeight}>
+      <svg className="ml-4" width={legendWidth} height={colorEntries.length * entryHeight}>
         {colorEntries.map((entry, i) => {
           const y = i * entryHeight + entryHeight/2;
           const outcome = entry.value;
@@ -48,7 +48,7 @@ export const TreeLegend: React.FC = () => {
       </svg>
 
       <div className="text-sm font-semibold mt-2 mb-1">Width → Popularity</div>
-      <svg className="ml-2" width={legendWidth} height={thicknessEntries.length * entryHeight}>
+      <svg className="ml-4" width={legendWidth} height={thicknessEntries.length * entryHeight}>
         {thicknessEntries.map((entry, i) => {
           const y = i * entryHeight + entryHeight/2;
           const thickness = Math.max(Math.sqrt(entry.frequency) * 12, 2);

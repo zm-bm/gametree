@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Chess, DEFAULT_POSITION, Move } from 'chess.js';
-import { SetDataSource } from './openingsTreeSlice';
+import { SetDataSource } from './treeSlice';
 
 export type Info = {
   depth: number,

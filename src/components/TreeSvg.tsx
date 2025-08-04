@@ -14,6 +14,7 @@ import { RootState } from '../store';
 import { selectMovesList } from '../redux/gameSlice';
 import { useGetOpeningsQuery } from '../redux/openingsApi';
 import { TreeControls } from './TreeControls/TreeControls';
+import { filterTreeNode } from '../lib/chess';
 
 const defaultTransformMatrix: TransformMatrix = {
   translateX: 0,
@@ -31,14 +32,29 @@ interface Props {
 export const TreeSvg = ({ zoom }: Props) => {
   const { height, width } = useContext(TreeDimsContext);
   const moves = useSelector((state: RootState) => selectMovesList(state))
-  const source = useSelector((state: RootState) => state.openings.source);
-  const treeRoot = useSelector((state: RootState) => state.openings.root)
+  const source = useSelector((state: RootState) => state.tree.source);
+  const treeRoot = useSelector((state: RootState) => state.tree.root)
+  const minWinRate = useSelector((state: RootState) => state.tree.minWinRate);
+  const minFrequency = useSelector((state: RootState) => state.tree.minFrequency);
+  const orientation = useSelector((state: RootState) => state.game.orientation);
 
   // query for openings and add to store
   useGetOpeningsQuery({ moves, source });
 
+  // filter tree nodes based on frequency and win rate
+  const filteredTree = useMemo(() => {
+    return treeRoot ? filterTreeNode(
+      treeRoot,
+      minFrequency,
+      orientation,
+      minWinRate,
+    ) : null;
+  }, [treeRoot, minFrequency, minWinRate, orientation]);
+
   // create tree hierarchy
-  const root = useMemo(() => treeRoot ? hierarchy(treeRoot) : null, [treeRoot]);
+  const root = useMemo(() => {
+    return filteredTree ? hierarchy(filteredTree) : null;
+  }, [filteredTree]);
 
   // animate transitions by setting transform matrix
   const [, spring] = useSpring<TransformMatrix>(() => ({

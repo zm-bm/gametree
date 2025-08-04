@@ -1,5 +1,5 @@
 import { Chess, Move as ChessMove, SQUARES, Square } from "chess.js";
-import { Key } from 'chessground/types';
+import { Color, Key } from 'chessground/types';
 import eco from '../eco.json'
 import { ECO, Move, LichessMove, LichessOpenings, TreeNode } from "../types/chess";
 
@@ -27,7 +27,7 @@ export function serializeMove(move: ChessMove): Move {
 export function getDests(chess: Chess) {
   const dests = new Map();
   SQUARES.forEach(s => {
-    const ms = chess.moves({square: s, verbose: true});
+    const ms = chess.moves({ square: s, verbose: true });
     if (ms.length) {
       dests.set(s, ms.map(m => m.to));
     }
@@ -40,7 +40,7 @@ export function isPromotion(chess: Chess, from: Key, dest: Key) {
   return (
     piece?.type === 'p' &&
     ((piece.color === 'w' && dest[1] === '8') ||
-     (piece.color === 'b' && dest[1] === '1'))
+      (piece.color === 'b' && dest[1] === '1'))
   );
 }
 
@@ -54,6 +54,38 @@ export function countGames(node: TreeNode) {
   } else {
     return 0;
   }
+}
+
+export function calcWinRate(node: TreeNode, orientation: Color) {
+  const games = countGames(node);
+  if (games === 0) return 0;
+  const { white, black } = node.attributes;
+  return orientation === 'white' ? white / games : black / games;
+}
+
+export function filterTreeNode(
+  node: TreeNode,
+  minFrequency: number,
+  orientation: Color,
+  minWinRate: number,
+): TreeNode {
+  const totalGames = countGames(node);
+
+  const children = node.children.map(child => {
+    const frequency = countGames(child) / totalGames * 100;
+    const winRate = calcWinRate(child, orientation) * 100;
+    const isLeaf = child.children.length === 0;
+
+    if (!isLeaf || (frequency > minFrequency && winRate > minWinRate)) {
+      return filterTreeNode(child, minFrequency, orientation, minWinRate);
+    }
+    return null;
+  });
+
+  return {
+    ...node,
+    children: children.filter(c => c !== null),
+  };
 }
 
 export function sortTreeNodes(nodes: TreeNode[]) {
@@ -73,7 +105,7 @@ export function sortTreeNodes(nodes: TreeNode[]) {
   return result;
 }
 
-export function buildTreeNode(openings: LichessOpenings, moves: ChessMove[]): TreeNode {
+export function buildTreeNode(openings: LichessOpenings, moves: Move[]): TreeNode {
   const {
     white, draws, black, topGames, opening, moves: lichessMoves,
   } = openings;
@@ -91,7 +123,7 @@ export function buildTreeNode(openings: LichessOpenings, moves: ChessMove[]): Tr
       topGames,
       opening,
       averageRating: null,
-      move: lastMove ? serializeMove(lastMove) : null,
+      move: lastMove ? lastMove : null,
     },
     children: sortTreeNodes(
       lichessMoves.map(move => buildTreeChild(move, chess, name))

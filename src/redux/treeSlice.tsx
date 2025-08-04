@@ -1,28 +1,37 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { buildTreeNode } from "../lib/chess";
-import { LichessOpenings, TreeNode } from "../types/chess";
+import { Move, LichessOpenings, TreeNode } from "../types/chess";
 import { TreeSource } from "./openingsApi";
-import { Move as ChessMove } from "chess.js";
 
 interface AddOpeningsArgs {
   openings: LichessOpenings,
-  moves: ChessMove[],
+  moves: Move[],
 }
 
 export interface TreeState {
   root: TreeNode | null,
   source: TreeSource ,
+  minFrequency: number,
+  minWinRate: number,
 }
 
 export const initialState: TreeState = {
   root: null,
   source: 'masters',
+  minFrequency: 0.5,
+  minWinRate: 10,
 };
 
-const openingsTreeSlice = createSlice({
-  name: 'openingsTree',
+const treeSlice = createSlice({
+  name: 'tree',
   initialState,
   reducers: {
+    SetMinFrequency(state, action: PayloadAction<number>) {
+      state.minFrequency = action.payload;
+    },
+    SetMinWinRate(state, action: PayloadAction<number>) {
+      state.minWinRate = action.payload;
+    },
     /**
      * Add an openings node to the tree
      * 
@@ -77,7 +86,7 @@ const openingsTreeSlice = createSlice({
 });
 
 export type TreeAction = ReturnType<
-  typeof openingsTreeSlice.actions[keyof typeof openingsTreeSlice.actions]
+  typeof treeSlice.actions[keyof typeof treeSlice.actions]
 >;
-export const { SetDataSource, AddOpenings } = openingsTreeSlice.actions;
-export default openingsTreeSlice.reducer;
+export const { SetDataSource, AddOpenings } = treeSlice.actions;
+export default treeSlice.reducer;

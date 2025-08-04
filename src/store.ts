@@ -2,7 +2,7 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { createEngineMiddleware } from './redux/engineMiddleware';
 import engineReducer from './redux/engineSlice';
 import gameReducer from './redux/gameSlice';
-import openingsTreeReducer from './redux/openingsTreeSlice';
+import treeReducer from './redux/treeSlice';
 import { initEngineOptions } from './worker';
 import { openingsApi } from './redux/openingsApi';
 import { setupListeners } from '@reduxjs/toolkit/query';
@@ -12,7 +12,7 @@ const engineMiddleware = createEngineMiddleware();
 const rootReducer = combineReducers({
   engine: engineReducer,
   game: gameReducer,
-  openings: openingsTreeReducer,
+  tree: treeReducer,
   [openingsApi.reducerPath]: openingsApi.reducer,
 });
 

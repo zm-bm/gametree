@@ -1,10 +1,10 @@
 import { PayloadAction, createSelector, createSlice } from '@reduxjs/toolkit';
 import { Color } from 'chessground/types';
-import { DEFAULT_POSITION, Move, Square } from 'chess.js';
+import { DEFAULT_POSITION, Square } from 'chess.js';
 
-import { MoveNode } from "../types/chess";
+import { Move, MoveNode } from "../types/chess";
 import { RootState } from '../store';
-import { SetDataSource } from './openingsTreeSlice';
+import { SetDataSource } from './treeSlice';
 
 export interface GameState {
   moveTree: MoveNode[],

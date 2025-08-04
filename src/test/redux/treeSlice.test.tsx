@@ -1,20 +1,17 @@
 import { describe, expect, it } from "vitest";
-import openingsTreeSlice, { AddOpenings, initialState, SetDataSource } from "../../redux/openingsTreeSlice";
+import treeSlice, { AddOpenings, initialState, SetDataSource } from "../../redux/treeSlice";
 import { treeNode, openings } from "../testData";
 
-describe('openingsTreeSlice', () => {
+describe('treeSlice', () => {
   it('clears tree on SetDataSource', () => {
-    expect(openingsTreeSlice({
-      root: treeNode,
-      source: 'masters'
-    }, SetDataSource('lichess'))).toMatchObject({
+    expect(treeSlice(initialState, SetDataSource('lichess'))).toMatchObject({
       root: null,
       source: 'lichess',
     })
   });
 
   it('builds tree on SetDataSource', () => {
-    expect(openingsTreeSlice(initialState, AddOpenings({
+    expect(treeSlice(initialState, AddOpenings({
       openings, 
       moves: [],
     }))).toMatchObject({
