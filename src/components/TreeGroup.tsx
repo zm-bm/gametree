@@ -8,12 +8,13 @@ import { ProvidedZoom, TransformMatrix } from "@visx/zoom/lib/types";
 
 import { Link } from "./Link";
 import { Node } from './Node';
-import { SpringRef } from "react-spring";
+import { SpringContext, SpringRef } from "react-spring";
 import { TreeNode } from "../types/chess";
 import { selectMovesList } from "../redux/gameSlice";
 import { RootState } from "../store";
 import { ZoomState } from "../types/tree";
 import { TreeDimsContext } from "../contexts/TreeContext";
+import { calcCoords } from "../lib/tree";
 
 interface Props {
   tree: HierarchyPointNode<TreeNode>,
@@ -32,6 +33,7 @@ export const TreeGroup = ({
   const moves = useSelector((state: RootState) => selectMovesList(state));
   const currentNode = useMemo(() => moves.map(m => m.lan).join(','), [moves])
   const transformMatrixRef = useRef(zoom.transformMatrix);
+  const prevNode = useRef<HierarchyPointNode<TreeNode> | null>(null);
 
   useEffect(() => {
     transformMatrixRef.current = zoom.transformMatrix;
@@ -40,12 +42,9 @@ export const TreeGroup = ({
   useEffect(() => {
     const node = tree.descendants().find(node => node.data.name === currentNode);
     const matrix = transformMatrixRef.current;
-    if (node) {
-      spring.start({
-        ...matrix,
-        translateX: (-node.y * matrix.scaleX) + (width / 3),
-        translateY: (-node.x * matrix.scaleY) + (height / 2),
-      });
+    if (node && prevNode.current?.data.name !== node.data.name) {
+      prevNode.current = node;
+      spring.start(calcCoords(node, matrix, width, height));
     }
   }, [currentNode, width, height, tree, spring]);
 

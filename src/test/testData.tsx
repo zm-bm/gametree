@@ -1,5 +1,6 @@
 import { Chess } from "chess.js";
 import { LichessGame, LichessOpenings, TreeNode } from "../types/chess";
+import { serializeMove } from "../lib/chess";
 
 const topGame: LichessGame = {
   uci: 'd2d4',
@@ -68,7 +69,7 @@ export const treeNode: TreeNode = {
           uci: 'd2d4'
         },
         averageRating: 2414,
-        move: new Chess().move('d2d4'),
+        move: serializeMove(new Chess().move('d2d4')),
       },
       children: []
     },
@@ -85,7 +86,7 @@ export const treeNode: TreeNode = {
           uci: 'e2e4'
         },
         averageRating: 2399,
-        move: new Chess().move('e2e4'),
+        move: serializeMove(new Chess().move('e2e4')),
       },
       children: []
     },

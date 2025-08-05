@@ -20,7 +20,6 @@ const engineState = {
         from: 'e2',
         to: 'e4',
         san: 'e4',
-        flags: 'n',
         lan: 'e2e4',
         before: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
         after: 'rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1'

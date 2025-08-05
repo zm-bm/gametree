@@ -1,8 +1,7 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { buildTreeNode } from "../lib/chess";
-import { LichessOpenings, TreeNode } from "../types/chess";
+import { Move, LichessOpenings, TreeNode } from "../types/chess";
 import { TreeSource } from "./openingsApi";
-import { Move } from "chess.js";
 
 interface AddOpeningsArgs {
   openings: LichessOpenings,
@@ -12,17 +11,27 @@ interface AddOpeningsArgs {
 export interface TreeState {
   root: TreeNode | null,
   source: TreeSource ,
+  minFrequency: number,
+  minWinRate: number,
 }
 
 export const initialState: TreeState = {
   root: null,
   source: 'masters',
+  minFrequency: 0.5,
+  minWinRate: 10,
 };
 
-const openingsTreeSlice = createSlice({
-  name: 'openingsTree',
+const treeSlice = createSlice({
+  name: 'tree',
   initialState,
   reducers: {
+    SetMinFrequency(state, action: PayloadAction<number>) {
+      state.minFrequency = action.payload;
+    },
+    SetMinWinRate(state, action: PayloadAction<number>) {
+      state.minWinRate = action.payload;
+    },
     /**
      * Add an openings node to the tree
      * 
@@ -38,16 +47,16 @@ const openingsTreeSlice = createSlice({
         // if tree is empty
         state.root = node;
       } else {
-        let head = state.root;
+        let cur = state.root;
 
         // iterate through moves to find location in tree
         moves.forEach((move, i) => {
-          const child = head.children.find(node => node.attributes.move?.lan === move.lan);
+          const child = cur.children.find(node => node.attributes.move?.lan === move.lan);
           if (child) {
-            head = child;
+            cur = child;
           } else if (i === moves.length - 1) {
             // if last move not found, add it to tree
-            head.children.push(node);
+            cur.children.push(node);
             return;
           } else {
             // path not found, do nothing
@@ -56,9 +65,9 @@ const openingsTreeSlice = createSlice({
         });
 
         // update head and add children if none (in case query has been made already)
-        head.attributes.topGames = node.attributes.topGames;
-        if (head.children.length === 0) {
-          head.children = node.children;
+        cur.attributes.topGames = node.attributes.topGames;
+        if (cur.children.length === 0) {
+          cur.children = node.children;
         }
       }
     },
@@ -77,7 +86,7 @@ const openingsTreeSlice = createSlice({
 });
 
 export type TreeAction = ReturnType<
-  typeof openingsTreeSlice.actions[keyof typeof openingsTreeSlice.actions]
+  typeof treeSlice.actions[keyof typeof treeSlice.actions]
 >;
-export const { SetDataSource, AddOpenings } = openingsTreeSlice.actions;
-export default openingsTreeSlice.reducer;
+export const { SetDataSource, AddOpenings } = treeSlice.actions;
+export default treeSlice.reducer;

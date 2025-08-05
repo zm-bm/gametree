@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Chess, DEFAULT_POSITION, Move } from 'chess.js';
-import { SetDataSource } from './openingsTreeSlice';
+import { SetDataSource } from './treeSlice';
 
 export type Info = {
   depth: number,
@@ -39,7 +39,7 @@ export const initialState: EngineState = {
   running: false,
   nnue: false,
   hash: 16,
-  threads: 4,
+  threads: 1,
   lines: 1,
   infos: [],
   time: undefined,
@@ -57,10 +57,10 @@ const engineSlice = createSlice({
         time, speed, hashfull, tbhits, info, moves,
       } = action.payload;
 
-      time && (state.time = time);
-      speed && (state.speed = speed);
-      hashfull && (state.hashfull = hashfull);
-      tbhits && (state.tbhits = tbhits);
+      if (time) state.time = time;
+      if (speed) state.speed = speed;
+      if (hashfull) state.hashfull = hashfull;
+      if (tbhits) state.tbhits = tbhits;
 
       if (moves && info) {
         const chess = new Chess(state.fen);

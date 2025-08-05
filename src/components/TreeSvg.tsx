@@ -1,7 +1,7 @@
 import { useContext, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { ProvidedZoom, TransformMatrix } from '@visx/zoom/lib/types';
-import { useTooltipInPortal  } from '@visx/tooltip';
+import { useTooltipInPortal } from '@visx/tooltip';
 import { hierarchy } from '@visx/hierarchy';
 import { useSpring } from '@react-spring/web'
 
@@ -10,10 +10,11 @@ import { TreeDimsContext } from "../contexts/TreeContext";
 import { SvgDefs } from './SvgDefs';
 import { TreeG } from './TreeG';
 import { TreeMinimap } from './TreeMinimap';
-import { AppDispatch, RootState } from '../store';
+import { RootState } from '../store';
 import { selectMovesList } from '../redux/gameSlice';
-import { SetDataSource } from '../redux/openingsTreeSlice';
-import { TreeSource, useGetOpeningsQuery } from '../redux/openingsApi';
+import { useGetOpeningsQuery } from '../redux/openingsApi';
+import { TreeControls } from './TreeControls/TreeControls';
+import { filterTreeNode } from '../lib/chess';
 
 const defaultTransformMatrix: TransformMatrix = {
   translateX: 0,
@@ -30,16 +31,30 @@ interface Props {
 
 export const TreeSvg = ({ zoom }: Props) => {
   const { height, width } = useContext(TreeDimsContext);
-  const dispatch = useDispatch<AppDispatch>();
   const moves = useSelector((state: RootState) => selectMovesList(state))
-  const source = useSelector((state: RootState) => state.openings.source);
-  const treeRoot = useSelector((state: RootState) => state.openings.root)
+  const source = useSelector((state: RootState) => state.tree.source);
+  const treeRoot = useSelector((state: RootState) => state.tree.root)
+  const minWinRate = useSelector((state: RootState) => state.tree.minWinRate);
+  const minFrequency = useSelector((state: RootState) => state.tree.minFrequency);
+  const orientation = useSelector((state: RootState) => state.game.orientation);
 
   // query for openings and add to store
   useGetOpeningsQuery({ moves, source });
 
+  // filter tree nodes based on frequency and win rate
+  const filteredTree = useMemo(() => {
+    return treeRoot ? filterTreeNode(
+      treeRoot,
+      minFrequency,
+      orientation,
+      minWinRate,
+    ) : null;
+  }, [treeRoot, minFrequency, minWinRate, orientation]);
+
   // create tree hierarchy
-  const root = useMemo(() => treeRoot ? hierarchy(treeRoot): null, [treeRoot]);
+  const root = useMemo(() => {
+    return filteredTree ? hierarchy(filteredTree) : null;
+  }, [filteredTree]);
 
   // animate transitions by setting transform matrix
   const [, spring] = useSpring<TransformMatrix>(() => ({
@@ -53,9 +68,9 @@ export const TreeSvg = ({ zoom }: Props) => {
     scroll: true,
   });
 
-  return root && (
+  return (
     <div className='relative' ref={containerRef}>
-      <svg
+      {root && <svg
         width={width}
         height={height}
         style={{ cursor: zoom.isDragging ? 'grabbing' : 'grab', touchAction: 'none' }}
@@ -74,20 +89,9 @@ export const TreeSvg = ({ zoom }: Props) => {
           root={root}
           zoom={zoom}
         />
-      </svg>
-      <div className='absolute top-0 right-0 flex flex-col p-1'>
-        <select
-          title='Data source'
-          className='btn-primary'
-          value={source}
-          onChange={(e) => {
-            dispatch(SetDataSource(e.target.value as TreeSource))
-          }}
-        >
-          <option value='masters'>Masters games</option>
-          <option value='lichess'>Lichess games</option>
-        </select>
-      </div>
+      </svg>}
+
+      <TreeControls />
     </div>
   );
 };
