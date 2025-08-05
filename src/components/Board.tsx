@@ -17,15 +17,15 @@ const Board = () => {
   const [ref, dimensions] = useDimensions()
   const orientation = useSelector((state: RootState) => state.game.orientation);
   const engineFen = useSelector((state: RootState) => state.engine.fen);
-  const bestMove = useSelector((state: RootState) => state.engine.infos.at(-1)?.pv.at(0));
+  const bestMove = useSelector((state: RootState) => state.engine.output.at(0)?.pv?.[0]);
   const lastMove = useSelector((state: RootState) => selectLastMove(state))
   const fen = useSelector((state: RootState) => selectFen(state))
 
   const autoShapes = useMemo(() => {
     if (bestMove && fen === engineFen) {
       return [{
-        orig: bestMove.from,
-        dest: bestMove.to,
+        orig: bestMove.slice(0, 2) as Square,
+        dest: bestMove.slice(2, 4) as Square,
         brush: 'paleGreen',
       }];
     }

@@ -9,51 +9,36 @@ const match = (line: string, regex: { [Symbol.match](string: string): RegExpMatc
   return match ? +match[1] : undefined;
 }
 
-const includeInfo = (line: string) => {
-  return line.includes(' pv ')
-    && !line.includes('upperbound')
-    && !line.includes('lowerbound');
-}
-
-const parseMoves = (line: string) => {
-  line = line.substring(line.indexOf(" pv ") + 4);
-  // Match chess moves including promotions (e.g. e2e4, e7e8q)
-  const moveRegex = /\b[a-h][1-8][a-h][1-8][qrnb]?\b/g;
-  return line.match(moveRegex) as string[];
+const skipOutput = (line: string) => {
+  return (
+    !line.startsWith('info')
+    || !line.includes(' pv ')
+    || line.includes('upperbound')
+    || line.includes('lowerbound')
+  );
 }
 
 const parseEngineOutput = (line: string): EngineOutput | undefined => {
-  const tokens = line.split(' ');
+  if (skipOutput(line))
+    return;
 
-  if (tokens[0] === 'info') {
-    const result = {
-      time: match(line, /time (\w+)/),
-      speed: match(line, /nps (\w+)/),
-      hashfull: match(line, /hashfull (\w+)/),
-      tbhits: match(line, /tbhits (\w+)/),
-    };
-    let info = undefined;
-    let moves = undefined;
+  const multipv = match(line, /multipv (\w+)/);
+  const pv = line.substring(line.indexOf(" pv ") + 4);
 
-    if (includeInfo(line)) {
-      const multipv = match(line, /multipv (\w+)/);
-      info = {
-        depth: match(line, /depth (\w+)/) || 0,
-        seldepth: match(line, /seldepth (\w+)/) || 0,
-        cp: match(line, /score cp (-?\w+)/),
-        mate: match(line, /score mate (-?\w+)/),
-        multipv: multipv ? multipv - 1 : 0,
-        pv: [],
-      }
-      moves = parseMoves(line);
-    }
+  const result: EngineOutput = {
+    time: match(line, /time (\w+)/),
+    speed: match(line, /nps (\w+)/),
+    hashfull: match(line, /hashfull (\w+)/),
+    tbhits: match(line, /tbhits (\w+)/),
+    multipv: multipv ? multipv - 1 : 0,
+    depth: match(line, /depth (\w+)/) || 0,
+    seldepth: match(line, /seldepth (\w+)/) || 0,
+    cp: match(line, /score cp (-?\w+)/),
+    mate: match(line, /score mate (-?\w+)/),
+    pv: pv.match(/\b[a-h][1-8][a-h][1-8][qrnb]?\b/g) as string[],
+  };
 
-    return {
-      ...result,
-      info,
-      moves,
-    }
-  }
+  return result;
 }
 
 export const initializeWorker = () => {

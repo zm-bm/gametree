@@ -1,23 +1,18 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Chess, DEFAULT_POSITION, Move } from 'chess.js';
+import { DEFAULT_POSITION } from 'chess.js';
 import { SetDataSource } from './treeSlice';
 
-export type Info = {
+export type EngineOutput = {
   depth: number,
   seldepth: number,
+  multipv: number,
   cp?: number
   mate?: number,
-  multipv: number,
-  pv: Move[],
-}
-
-export type EngineOutput = {
+  pv?: string[],
   time?: number,
   speed?: number,
   hashfull?: number,
   tbhits?: number,
-  info?: Info,
-  moves?: string[],
 }
 
 export interface EngineState {
@@ -27,11 +22,7 @@ export interface EngineState {
   hash: number,
   threads: number,
   lines: number,
-  infos: Info[];
-  time?: number,
-  speed?: number,
-  hashfull?: number,
-  tbhits?: number,
+  output: EngineOutput[],
 }
 
 export const initialState: EngineState = {
@@ -41,11 +32,7 @@ export const initialState: EngineState = {
   hash: 16,
   threads: 1,
   lines: 1,
-  infos: [],
-  time: undefined,
-  speed: undefined,
-  hashfull: undefined,
-  tbhits: undefined,
+  output: [],
 };
 
 const engineSlice = createSlice({
@@ -53,30 +40,12 @@ const engineSlice = createSlice({
   initialState,
   reducers: {
     AddEngineOutput(state, action: PayloadAction<EngineOutput>) {
-      const {
-        time, speed, hashfull, tbhits, info, moves,
-      } = action.payload;
-
-      if (time) state.time = time;
-      if (speed) state.speed = speed;
-      if (hashfull) state.hashfull = hashfull;
-      if (tbhits) state.tbhits = tbhits;
-
-      if (moves && info) {
-        const chess = new Chess(state.fen);
-        info.pv = moves.map(mv => chess.move(mv));
-
-        if (state.lines === 1) {
-          state.infos = state.infos.concat([info]);
-        } else {
-          state.infos[info.multipv] = info;
-        }
-      }
+      state.output[action.payload.multipv] = action.payload;
     },
 
     ToggleEngine(state, action: PayloadAction<string>) {
       if (!state.running) {
-        state.infos = [];
+        state.output = [];
         state.fen = action.payload;
       } 
       state.running = !state.running;
@@ -92,29 +61,29 @@ const engineSlice = createSlice({
 
     UpdateFen(state, action: PayloadAction<string>) {
       if (state.running) {
-        state.infos = [];
+        state.output = [];
         state.fen = action.payload;
       }
     },
 
     SetHash(state, action: PayloadAction<number>) {
-      state.infos = [];
+      state.output = [];
       state.hash = action.payload;
     },
 
     SetThreads(state, action: PayloadAction<number>) {
-      state.infos = [];
+      state.output = [];
       state.threads = action.payload;
     },
 
     SetLines(state, action: PayloadAction<number>) {
-      state.infos = [];
+      state.output = [];
       state.lines = action.payload;
     },
   },
   extraReducers(builder) {
     builder.addCase(SetDataSource, (state) => {
-      state.infos = [];
+      state.output = [];
       state.fen = DEFAULT_POSITION;
     })
   },
