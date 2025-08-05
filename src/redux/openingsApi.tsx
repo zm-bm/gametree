@@ -5,9 +5,15 @@ import { Move, LichessOpenings } from "../types/chess";
 import { AddOpenings } from './treeSlice';
 
 export type TreeSource = 'masters' | 'lichess';
+
 export interface GetOpeningsArgs {
   moves: Move[],
   source: TreeSource,
+}
+
+function getQuery(args: GetOpeningsArgs) {
+  const { moves, source } = args;
+  return `${source}?play=${movesToString(moves)}&moves=20`;
 }
 
 export const openingsApi = createApi({
@@ -15,7 +21,7 @@ export const openingsApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: 'https://explorer.lichess.ovh/' }),
   endpoints: (builder) => ({
     getOpenings: builder.query<LichessOpenings, GetOpeningsArgs>({
-      query: (args) => `${args.source}?play=${movesToString(args.moves)}`,
+      query: getQuery,
       async onQueryStarted(args, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
