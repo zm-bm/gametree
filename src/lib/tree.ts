@@ -1,8 +1,10 @@
-import { HierarchyPointLink, HierarchyPointNode } from "@visx/hierarchy/lib/types";
 import { Color } from "chessground/types";
+import { HierarchyPointLink, HierarchyPointNode } from "@visx/hierarchy/lib/types";
+import { TransformMatrix } from "@visx/zoom/lib/types";
+import scalePower from "@visx/scale/lib/scales/power";
+
 import { TreeNode } from "../types/chess";
 import { countGames } from "./chess";
-import scalePower from "@visx/scale/lib/scales/power";
 
 export const winColor = '#66bb6a';
 export const lossColor = '#f44336';
@@ -39,4 +41,17 @@ export function calcPath(
   return (link.target.data.attributes.opening?.name && !minimap)
     ? `${start}${topCurve}${linetoMidBottom}${bottomCurve}`
     : `${start}${topCurve}${lineToNodeTop}${lineToNodeBottom}${linetoMidBottom}${bottomCurve}`;
+}
+
+export function calcCoords(
+  node: HierarchyPointNode<TreeNode>,
+  matrix: TransformMatrix,
+  width: number,
+  height: number
+): { translateX: number, translateY: number } {
+  return {
+    ...matrix,
+    translateX: (-node.y * matrix.scaleX) + (width / 6),
+    translateY: (-node.x * matrix.scaleY) + (height / 2),
+  };
 }

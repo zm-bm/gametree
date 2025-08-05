@@ -1,7 +1,7 @@
 import React from "react";
 import { Group } from '@visx/group';
 
-import { drawColor, colorScale } from "../../lib/linkConstants"
+import { drawColor, colorScale } from "../../lib/tree"
 
 export const TreeLegend: React.FC = () => {
   const legendWidth = '100%';

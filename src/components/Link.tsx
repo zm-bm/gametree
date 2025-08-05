@@ -8,7 +8,7 @@ import { Text } from "@visx/text";
 import { TreeNode } from "../types/chess";
 import { RootState } from "../store";
 import { TreeDimsContext } from "../contexts/TreeContext";
-import { calcPath, calcStroke } from "../lib/linkConstants";
+import { calcPath, calcStroke } from "../lib/tree";
 
 interface Props {
   link: HierarchyPointLink<TreeNode>,
