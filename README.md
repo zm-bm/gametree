@@ -30,10 +30,23 @@ npm run build
 
 ## Roadmap
 
+- remove game tree / unify tree state
+- fix changing data source reseting the tree
+- minimap
+    - draggable minimap
+    - highlight current move
+- collapsable tree nodes
+- collapsable tree panel sections
+- typography/layout improvements
+    - make temp moves on main board
+        - when hovering tree node or move in engine/game panel
+        - remove board from hover tooltip
+    - node labels
+        - truncate repeated node labels
+        - show full variation name+ECO on hover tooltip
 - ci/cd deploy
 - eco openings explorer
 - prefetch node descendants
-- improve node label typography
 - mobile layout support
 
 ## Acknowledgments
