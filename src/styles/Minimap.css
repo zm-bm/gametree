@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .minimap-container {
+        @apply absolute bottom-0 right-0;
+    }
+
+    .minimap-tree-svg {
+        @apply backdrop-blur-md rounded-tl-lg
+        ring-1 ring-inset ring-zinc-900/10 dark:ring-white/10
+        bg-zinc-300/70 dark:bg-zinc-600/80
+        transition-all duration-300 hover:brightness-110;
+    }
+
+    .minimap-viewport {
+        @apply stroke-[0.25px]
+        stroke-zinc-800/60 dark:stroke-white/60
+        fill-zinc-900/5 dark:fill-white/10
+    }
+}

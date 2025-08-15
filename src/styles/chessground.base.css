@@ -2,6 +2,8 @@
   box-sizing: content-box;
   position: relative;
   display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 cg-container {
@@ -10,9 +12,6 @@ cg-container {
   height: 100%;
   display: block;
   top: 0;
-  box-shadow: 0 2px 2px 0 rgba(0,0,0,.14),
-    0 3px 1px -2px rgba(0,0,0,.2),
-    0 1px 5px 0 rgba(0,0,0,.12);
 }
 
 cg-board {
@@ -169,14 +168,14 @@ piece.fading {
 .orientation-white .ranks coord:nth-child(2n),
 .orientation-black .files coord:nth-child(2n),
 .orientation-black .ranks coord:nth-child(2n+1) {
-  color: #f0d9b5;
+  color: #e5e7eb;
 }
 
 .orientation-white .files coord:nth-child(2n),
 .orientation-white .ranks coord:nth-child(2n+1),
 .orientation-black .files coord:nth-child(2n+1),
 .orientation-black .ranks coord:nth-child(2n) {
-  color: #946f51;
+  color: #9ca3af;
 }
 
 

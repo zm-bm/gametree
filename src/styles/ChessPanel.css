@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .chess-panel {
+        @apply flex-1 flex flex-col overflow-auto;
+    }
+
+    .chess-board > :first-child {
+        @apply overflow-hidden rounded
+        /* shadow-xl shadow-slate-900/20 hover:shadow-indigo-200/5; */
+    }
+
+    .chess-panel-card {
+        @apply mx-3 mb-3 rounded
+        /* backdrop-blur-md */
+        /* bg-gradient-to-br from-white/80 to-blue-50/60 */
+        /* dark:from-gray-800/60 dark:to-gray-800/60 */
+        /* border border-indigo-200/40 dark:border-slate-700/30 */
+        transition-all duration-300
+        /* shadow-lg shadow-slate-900/20 hover:shadow-indigo-200/10 */
+        overflow-hidden;
+    }
+
+    .btn-primary {
+        @apply border border-slate-200/50 dark:border-slate-700/50;
+        /* @apply bg-gradient-to-b from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700; */
+        @apply hover:from-slate-200 hover:to-slate-300 dark:hover:from-slate-700 dark:hover:to-slate-600;
+        @apply transition-all duration-300 shadow-sm hover:shadow;
+        @apply rounded-lg px-4 py-2 text-slate-200 dark:text-slate-200;
+    }
+}

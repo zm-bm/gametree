@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .app {
+        @apply min-h-screen transition duration-300
+        bg-gray-100 dark:bg-gray-950
+    }
+
+    .chess-container {
+        @apply overflow-hidden relative text-gray-200
+        border-r border-zinc-400/60 dark:border-zinc-600/60
+        bg-slate-800 bg-[radial-gradient(120%_80%_at_0%_0%,rgba(255,255,255,.05),transparent)]
+        dark:bg-zinc-900 dark:bg-[radial-gradient(140%_100%_at_8%_8%,rgba(255,255,255,.05),transparent)]
+    }
+
+    .move-tree-container {
+        @apply overflow-hidden
+        bg-zinc-200 bg-[radial-gradient(72%_55%_at_72%_18%,rgba(255,255,255,0.3),transparent)]
+        dark:bg-zinc-800 dark:bg-[radial-gradient(72%_55%_at_72%_18%,rgba(100,116,139,.03),transparent)]
+    }
+}

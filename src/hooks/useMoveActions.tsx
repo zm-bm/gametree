@@ -1,14 +1,13 @@
-import { useCallback, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../store";
-import { GotoMove } from "../thunks";
+import { useCallback, useEffect, useRef } from "react";
+import { useDispatch } from "react-redux";
+
+import { AppDispatch } from "../store";
+import { GotoFirstMove, GotoLastMove, GotoNextMove, GotoPreviousMove } from "../thunks";
 
 const throttleTime = 200; // milliseconds
 
 export const useMoveActions = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const currentMove = useSelector((state: RootState) => state.game.currentMove);
-  const moveTree = useSelector((state: RootState) => state.game.moveTree);
   const lastTime = useRef(0);
 
   function throttle() {
@@ -19,40 +18,30 @@ export const useMoveActions = () => {
     }
     return true;
   }
-
-  function clear() {
+  
+  const clear = useCallback(() => {
     lastTime.current = 0;
-  }
+  }, []);
 
   const undo = useCallback(() => {
     if (throttle()) return;
-    const parent = moveTree[currentMove].parent;
-    if (parent !== null) {
-      dispatch(GotoMove(parent));
-    }
-  }, [currentMove, moveTree, dispatch]);
+    dispatch(GotoPreviousMove());
+  }, [dispatch]);
 
   const redo = useCallback(() => {
     if (throttle()) return;
-    const child = moveTree[currentMove].children.at(0);
-    if (child !== undefined) {
-      dispatch(GotoMove(child));
-    }
-  }, [currentMove, moveTree, dispatch]);
+    dispatch(GotoNextMove());
+  }, [dispatch]);
 
   const rewind = useCallback(() => {
     if (throttle()) return;
-    dispatch(GotoMove(0));
+    dispatch(GotoFirstMove());
   }, [dispatch]);
 
   const forward = useCallback(() => {
     if (throttle()) return;
-    let key = currentMove;
-    while (moveTree[key].children.at(0) !== undefined) {
-      key = moveTree[key].children.at(0) || key
-    }
-    dispatch(GotoMove(key))
-  }, [currentMove, moveTree, dispatch]);
+    dispatch(GotoLastMove());
+  }, [dispatch]);
 
   return { undo, redo, rewind, forward, clear };
 }

@@ -1,4 +1,7 @@
 import { Color, PieceSymbol, Square } from "chess.js";
+import { TreeSource } from "../redux/openingsApi";
+
+export type TreeSource = 'masters' | 'lichess';
 
 export type ECO = {
   eco: string;
@@ -15,41 +18,30 @@ export type Move = {
   promotion?: PieceSymbol;
   san: string;
   lan: string;
-  before?: string;
-  after?: string;
+  before: string;
+  after: string;
 };
 
-export type MoveNode = {
-  key: number;
-  move: Move | null;
-  parent: number | null;
-  children: number[];
-};
+export type MovePath = Move[];
 
-type LichessPlayer = {
+type LcPlayer = {
   name: string | null;
   rating: number | null;
 };
 
-type LichessWinner = "black" | "white" | null;
+type LcWinner = "black" | "white" | null;
 
-type LichessGame = {
+type LcGame = {
   id: string;
   uci: string;
-  winner: LichessWinner;
-  white: LichessPlayer;
-  black: LichessPlayer;
+  winner: LcWinner;
+  white: LcPlayer;
+  black: LcPlayer;
   year: number;
   month: string;
 };
 
-type LichessOpening = {
-  eco: string;
-  name: string;
-  uci: string;
-};
-
-export type LichessMove = {
+export type LcMoveStats = {
   uci: string;
   san: string;
   white: number;
@@ -58,25 +50,33 @@ export type LichessMove = {
   averageRating: number;
 };
 
-export type LichessOpenings = {
+export type LcOpeningStats = {
   white: number;
   draws: number;
   black: number;
-  topGames: LichessGame[];
-  opening: LichessOpening | null;
-  moves: LichessMove[];
+  topGames: LcGame[];
+  opening: ECO | null;
+  moves: LcMoveStats[];
 };
 
-export type TreeNode = {
-  name: string;
-  attributes: {
-    white: number;
-    draws: number;
-    black: number;
-    topGames: LichessGame[] | null;
-    opening: LichessOpening | null;
-    averageRating: number | null;
-    move: Move | null;
-  };
-  children: TreeNode[];
+type NodeData = {
+  id: string;
+  explored: boolean;
+  move: Move | null;
+  white: number;
+  draws: number;
+  black: number;
+  averageRating: number;
+  topGames: LcGame[];
+  opening: ECO | null;
+};
+
+export type NormalNodeData = NodeData & {
+  children: string[];
+}
+
+export type NormalTree = Record<string, NormalNodeData>;
+
+export type TreeNodeData = NodeData & {
+  children: TreeNodeData[];
 };

@@ -26,7 +26,7 @@ describe('gameSlice', () => {
   it('handles MakeGameMove with existing moves', () => {
     const move = MakeGameMove(d2d4);
     const state = gameSlice(initialState, move);
-    expect(gameSlice({ ...state, currentMove: 0 }, move)).toMatchObject(state)
+    expect(gameSlice({ ...state, moveIndex: 0 }, move)).toMatchObject(state)
   });
 
 

@@ -16,39 +16,11 @@ import { ToggleEngine } from "../redux/engineSlice";
 import { AppDispatch, RootState } from '../store';
 
 const BoardControls = () => {
-  const { undo, redo, rewind, forward, clear } = useMoveActions();
   const dispatch = useDispatch<AppDispatch>()
   const flip = useCallback(() => dispatch(FlipOrientation()), [dispatch])
   const fen = useSelector((state: RootState) => selectFen(state));
   const running = useSelector((state: RootState) => state.engine.running);
-
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      switch (event.key) {
-        case 'ArrowUp':
-          forward();
-          break;
-        case 'ArrowDown':
-          rewind();
-          break;
-        case 'ArrowLeft':
-          undo();
-          break;
-        case 'ArrowRight':
-          redo();
-          break;
-        default:
-          break;
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('keyup', clear);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('keyup', clear);
-    };
-  }, [undo, forward, redo, rewind, clear]);
-
+  const { undo, redo, rewind, forward } = useMoveActions();
   const buttonClass = "btn-primary p-2 hover:scale-105";
 
   return (

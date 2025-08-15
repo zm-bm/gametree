@@ -71,7 +71,7 @@ describe('ECODisplay', () => {
       preloadedState: {
         game: {
           ...initialState,
-          currentMove: 3,
+          moveIndex: 3,
           moveTree,
         }
       }

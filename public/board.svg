@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:x="http://www.w3.org/1999/xlink"
+    shape-rendering="crispEdges" viewBox="0 0 8 8">
+    <g id="g">
+        <g id="f">
+            <g id="e">
+                <g id="d">
+                    <path id="a" fill="#e5e7eb" d="M0 0h1v1H0z" />
+                    <path id="b" fill="#9ca3af" d="M0 1h1v1H0z" />
+                    <use x:href="#a" x="1" y="1" href="#a" />
+                    <use x:href="#b" x="1" y="-1" href="#b" />
+                    <use x:href="#c" x="-1" y="1" href="#c" />
+                </g>
+                <use x:href="#d" x="2" href="#d" />
+            </g>
+            <use x:href="#e" x="4" href="#e" />
+        </g>
+        <use x:href="#f" y="2" href="#f" />
+    </g>
+    <use x:href="#g" y="4" href="#g" />
+</svg>

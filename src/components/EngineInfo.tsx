@@ -1,25 +1,32 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Chess } from "chess.js";
-import { RootState } from '../store';
+import { AppDispatch, RootState } from '../store';
 import { formatScore } from "../lib/formatters";
 import { useCallback } from "react";
-import { colorFromFen } from "../lib/chess";
+import { SetHover } from "../redux/gameSlice";
+import { useFenColor } from "../lib/chessground";
 
 const columnWidth = 'w-14';
 const columnHeader = 'font-bold underline cursor-default'
 
 const EngineInfo = () => {
+  const dispatch = useDispatch<AppDispatch>();
+
   const engineFen = useSelector((state: RootState) => state.engine.fen);
   const engineOutput = useSelector((state: RootState) => state.engine.output);
   const fen = useSelector((state: RootState) => state.engine.fen)
   const orientation = useSelector((state: RootState) => state.game.orientation);
 
+  const turn = useFenColor(fen);
+
   const onMouseEnter = useCallback((e: React.MouseEvent<HTMLElement>) => {
-    console.log('Mouse enter', e.currentTarget.dataset.move);
-  }, []);
+    const { dataset } = e.currentTarget;
+    dispatch(SetHover({ fen: dataset.fen || "", move: dataset.move || "" }));
+  }, [dispatch]);
+
   const onMouseLeave = useCallback(() => {
-    console.log('Mouse leave');
-  }, []);
+    dispatch(SetHover(null));
+  }, [dispatch]);
 
   return (
     <div className="flex-1 p-2 font-mono text-sm leading-tight overflow-auto">
@@ -35,7 +42,7 @@ const EngineInfo = () => {
           return (
             <div className="flex" key={outputIx}>
               <span className={columnWidth}>{output.depth}/{output.seldepth}</span>
-              <span className={columnWidth}>{formatScore(output, colorFromFen(fen), orientation)}</span>
+              <span className={columnWidth}>{formatScore(output, turn, orientation)}</span>
               <div className="flex-1"
               >
                 {
@@ -53,7 +60,7 @@ const EngineInfo = () => {
 
                     return (
                       <span
-                        key={chessMove.lan}
+                        key={chessMove.lan+moveIx}
                         data-move={chessMove.lan}
                         data-fen={chessMove.after}
                         className="hover:text-sky-600 cursor-pointer"

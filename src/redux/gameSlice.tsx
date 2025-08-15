@@ -2,119 +2,68 @@ import { PayloadAction, createSelector, createSlice } from '@reduxjs/toolkit';
 import { Color } from 'chessground/types';
 import { DEFAULT_POSITION, Square } from 'chess.js';
 
-import { Move, MoveNode } from "../types/chess";
+import { Move, MovePath } from "../types/chess";
 import { RootState } from '../store';
-import { SetDataSource } from './treeSlice';
+import { getECO } from '../lib/chess';
+
+type HoverState = {
+  fen: string,
+  move: string,
+} | null;
 
 export interface GameState {
-  moveTree: MoveNode[],
-  currentMove: number,
+  moves: Move[],
+  moveIndex: number,
+  hover: HoverState,
   promotionTarget: Square[] | null,
   orientation: Color,
 }
 
-export const rootNode = {
-  key: 0,
-  move: null,
-  parent: null,
-  children: [],
-}
-
 export const initialState: GameState = {
-  moveTree: [rootNode],
-  currentMove: 0,
+  moves: [],
+  moveIndex: -1,
+  hover: null,
   promotionTarget: null,
   orientation: 'white',
 };
-
-function findChildKey(state: GameState, parent: MoveNode, child: Move) {
-  // find the move key of move from a parent move node
-  return state.moveTree[parent.key].children.find(
-    ix => state.moveTree[ix].move?.lan === child.lan
-  );
-}
 
 const gameSlice = createSlice({
   name: 'game',
   initialState,
   reducers: {
-    /**
-     * Make a chess move from the current position
-     * 
-     * @param state 
-     * @param {Move} action.payload - chess.js move
-     */
     MakeGameMove(state, action: PayloadAction<Move>) {
       state.promotionTarget = null;
-
-      // check for the move in the moveTree
-      const previousMove = state.moveTree[state.currentMove];
-      const existingKey = findChildKey(state, previousMove, action.payload);
-      if (existingKey === undefined) {
-        // if it's a new move, add it to move tree and update key
-        const key = state.moveTree.length;
-        previousMove.children.push(key);
-        state.moveTree.push({
-          key,
-          move: action.payload,
-          parent: state.currentMove,
-          children: [],
-        });
-        state.currentMove = key;
-      } else {
-        // otherwise it's been made before so just update key
-        state.currentMove = existingKey;
+      if (state.moveIndex < state.moves.length - 1) {
+        state.moves = state.moves.slice(0, state.moveIndex + 1);
       }
+      state.moves.push(action.payload);
+      state.moveIndex = state.moves.length - 1;
     },
 
-    /**
-     * Go to a position given by a move key 
-     * 
-     * @param state 
-     * @param {number} action.payload - move key
-     */
-    GotoGameMove(state, action: PayloadAction<number>) {
+    GotoGameNextMove(state) {
       state.promotionTarget = null;
-
-      if (0 <= action.payload && action.payload < state.moveTree.length) {
-        state.currentMove = action.payload;
-      }
+      state.moveIndex += 1;
     },
 
-    /**
-     * Go to a position given by a list of moves
-     * 
-     * @param state 
-     * @param {Move[]} action.payload - array of moves
-     */
-    GotoGamePath(state, action: PayloadAction<Move[]>) {
+    GotoGamePreviousMove(state) {
       state.promotionTarget = null;
+      state.moveIndex -= 1;
+    },
 
-      // walk the move tree
-      let key =  0;
-      for (const move of action.payload) {
-        const child = findChildKey(state, state.moveTree[key], move);
+    GotoGameFirstMove(state) {
+      state.promotionTarget = null;
+      state.moveIndex = -1;
+    },
 
-        if (child) {
-          key = child;
-        } else {
-          // if child / path not found, add move to the tree
-          // and update currentMove with new key
-          const newMoveKey = state.moveTree.length;
-          state.moveTree[key].children.push(newMoveKey);
-          state.moveTree.push({
-            key: newMoveKey,
-            parent: key,
-            move,
-            children: [],
-          });
-          state.currentMove = newMoveKey;
-          return;
-        }
-      }
+    GotoGameLastMove(state) {
+      state.promotionTarget = null;
+      state.moveIndex = state.moves.length - 1;
+    },
 
-      // otherwise this is an existing path so update currentMove
-      state.currentMove = key;
+    GotoGamePath(state, action: PayloadAction<MovePath>) {
+      state.promotionTarget = null;
+      state.moves = action.payload;
+      state.moveIndex = state.moves.length - 1;
     },
 
     SetPromotionTarget(state, action: PayloadAction<Square[] | null>) {
@@ -124,52 +73,64 @@ const gameSlice = createSlice({
     FlipOrientation(state) {
       state.orientation = state.orientation === 'white' ? 'black' : 'white';
     },
-  },
-  extraReducers(builder) {
-    builder.addCase(SetDataSource, (state) => {
-      state.currentMove = 0;
-      state.moveTree = [rootNode];
-      state.promotionTarget = null;
-    });
+
+    SetHover(state, action: PayloadAction<HoverState>) {
+      state.hover = action.payload;
+    }
   },
 });
 
-const selectMoveTree = (state: RootState) => state.game.moveTree;
-const selectCurrentMove = (state: RootState) => state.game.currentMove;
+export const selectMoves = (state: RootState) => state.game.moves;
+export const selectMoveIndex = (state: RootState) => state.game.moveIndex;
+export const selectFirstMove = (state: RootState) => state.game.moves[0] || null;
+export const selectLastMove = (state: RootState) => state.game.moves.at(-1) || null;
 
-export const selectLastMove = createSelector(
-  [selectMoveTree, selectCurrentMove],
-  (moveTree, currentMove) => {
-    return moveTree[currentMove].move;
-  }
+export const selectNextMove = (state: RootState) => {
+  const ix = Math.min(state.game.moveIndex + 1, state.game.moves.length - 1);
+  return state.game.moves[ix] || null;
+};
+
+export const selectPreviousMove = (state: RootState) => {
+  const ix = Math.max(state.game.moveIndex - 1, 0);
+  return state.game.moves[ix] || null;
+};
+
+export const selectCurrentMove = createSelector(
+  [selectMoves, selectMoveIndex],
+  (moves, moveIndex) => moves[moveIndex] || null
+);
+
+export const selectPath = createSelector(
+  [selectMoves, selectMoveIndex],
+  (moves, moveIndex) => moves.slice(0, moveIndex + 1)
 );
 
 export const selectFen = createSelector(
-  [selectMoveTree, selectCurrentMove],
-  (moveTree, currentMove) => {
-    return moveTree[currentMove].move?.after || DEFAULT_POSITION;
+  [selectCurrentMove],
+  (move) => {
+    return move?.after || DEFAULT_POSITION;
   }
 );
 
-export const selectMovesList = createSelector(
-  [selectMoveTree, selectCurrentMove],
-  (moveTree, currentMove) => {
-    const moves: Move[] = [];
-    let current = moveTree[currentMove];
-    while (current.move !== null && current.parent !== null) {
-      moves.unshift(current.move)
-      current = moveTree[current.parent]
-    }
-    return moves;
-  }
+export const selectEco = createSelector(
+  [selectPath],
+  (path) => getECO(path)
 );
+
+export const selectHover = (state: RootState) => state.game.hover;
 
 export type GameAction = ReturnType<typeof gameSlice.actions[keyof typeof gameSlice.actions]>;
+
 export const {
   MakeGameMove,
-  GotoGameMove,
+  GotoGameNextMove,
+  GotoGamePreviousMove,
+  GotoGameFirstMove,
+  GotoGameLastMove,
   GotoGamePath,
   SetPromotionTarget,
   FlipOrientation,
+  SetHover,
 } = gameSlice.actions;
+
 export default gameSlice.reducer;

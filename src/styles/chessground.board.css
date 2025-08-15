@@ -1,9 +1,11 @@
-/** Colored board squares as an embedded SVG */
 cg-board {
-  background-image: url('/brown.svg');
+  background-image: url('/board.svg');
 }
-
-/** Interactive board square colors */
+/* @media (prefers-color-scheme: dark) {
+    cg-board {
+    background-image: url('/board-dark.svg');
+    }
+} */
 cg-board square.move-dest {
   background: radial-gradient(rgba(20, 85, 30, 0.5) 22%, #208530 0, rgba(0, 0, 0, 0.3) 0, rgba(0, 0, 0, 0) 0);
 }

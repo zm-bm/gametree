@@ -12,7 +12,7 @@ describe('treeSlice', () => {
 
   it('builds tree on SetDataSource', () => {
     expect(treeSlice(initialState, AddOpenings({
-      openings, 
+      openingStats: openings, 
       moves: [],
     }))).toMatchObject({
       root: treeNode,
