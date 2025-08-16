@@ -1,20 +1,31 @@
 import { useDispatch, useSelector } from "react-redux";
 
-import { SetHash, SetLines, SetThreads } from "../redux/engineSlice";
+import { SetHash, SetThreads, ToggleEngine } from "../redux/engineSlice";
 import { AppDispatch, RootState } from '../store';
+import { selectFen } from "../redux/gameSlice";
+import { IoIosPause, IoIosPlay } from "react-icons/io";
 
 const EngineControls = () => {
+  const fen = useSelector((state: RootState) => selectFen(state));
   const nnue = useSelector((state: RootState) => state.engine.nnue);
   const hash = useSelector((state: RootState) => state.engine.hash);
   const threads = useSelector((state: RootState) => state.engine.threads);
-  const lines = useSelector((state: RootState) => state.engine.lines);
+  const running = useSelector((state: RootState) => state.engine.running);
   const dispatch = useDispatch<AppDispatch>();
 
   return (
-    <div className="flex items-center text-sm p-1 gap-1 border-t bg-neutral-200 border-gray-400">
+    <div className="flex items-center text-sm p-1 gap-1 border-b border-gray-400">
+      <button
+        onClick={() => dispatch(ToggleEngine(fen))}
+        className= "border border-gray-400 dark:border-gray-600 p-2 hover:scale-105"
+        title="Start/stop engine"
+      >
+        { running ? <IoIosPause /> : <IoIosPlay /> }
+      </button>
+
       <select
         title="Hash size"
-        className="btn-primary"
+        className="p-2"
         onChange={(e) => dispatch(SetHash(+e.target.value))}
         value={hash}
       >
@@ -27,7 +38,7 @@ const EngineControls = () => {
       </select>
       <select
         title="# of threads"
-        className="btn-primary"
+        className="p-2"
         onChange={(e) => dispatch(SetThreads(+e.target.value))}
         value={threads}
       >
@@ -37,16 +48,6 @@ const EngineControls = () => {
         <option value="8">8 Threads</option>
         <option value="16">16 Threads</option>
       </select>
-      <div className="btn-primary py-0" title="# of engine variations">
-        <label className="overflow-hidden whitespace-nowrap" htmlFor="lines">Lines: </label>
-        <input
-          id="lines" type="number"
-          min={1} max={99}
-          className="bg-transparent pl-1 py-1 w-8"
-          onChange={(e) => dispatch(SetLines(+e.target.value))}
-          value={lines}
-        />
-      </div>
       <div className="flex flex-col text-xs leading-none overflow-hidden whitespace-nowrap	">
         <div>
           <span>Stockfish 16</span>

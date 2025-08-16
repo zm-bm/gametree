@@ -1,4 +1,4 @@
-import { Info } from "../redux/engineSlice";
+import { EngineOutput } from "../redux/engineSlice";
 
 function getLocale() {
   if (navigator.languages != undefined) 
@@ -10,16 +10,17 @@ const locale = getLocale();
 export const formatSpeed = (speed: number) =>(
   Intl.NumberFormat(locale, {
     notation: 'compact',
-    minimumFractionDigits: 1,
-    maximumFractionDigits: 1,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
   }).format(speed)
 )
 
 export const formatScore = (
-  { cp, mate }: Info,
+  engineOutput: EngineOutput,
   turnColor: string,
   orientation: string,
 ) => {
+  const { cp, mate } = engineOutput;
   const turn = turnColor === 'w' ? 1 : -1;
   const flipped = orientation === 'white' ? 1 : -1;
   if (cp !== undefined) {

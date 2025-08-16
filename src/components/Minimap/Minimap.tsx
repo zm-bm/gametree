@@ -12,7 +12,6 @@ import { ZoomContext } from '../../contexts/ZoomContext';
 import { useTreeMinimap } from '../../hooks/useTreeMinimap';
 import { SVGDefs } from '../MoveTree/SVGDefs';
 import { SEPARATION } from "../MoveTree/constants";
-import '../../styles/Minimap.css';
 
 interface Props {
   root: HierarchyNode<TreeNodeData>
@@ -23,9 +22,10 @@ interface Props {
 
 export const Minimap = ({ root, spring, width, height }: Props) => {
   const treeDimensions = useContext(MoveTreeContext);
+  const { rowHeight, columnWidth } = treeDimensions;
   const { zoom } = useContext(ZoomContext);
   const { transformMatrix, isDragging, setTransformMatrix, dragStart, dragEnd } = zoom;
-  const nodeSize = useMemo(() => [treeDimensions.rowHeight, treeDimensions.columnWidth], [treeDimensions]);
+  const nodeSize = useMemo(() => [rowHeight, columnWidth], [rowHeight, columnWidth]);
   const nodes = useMemo(() => root.descendants() as HierarchyPointNode<TreeNodeData>[], [root]);
   const svgStyle = useMemo(() => ({ cursor: isDragging ? 'grabbing' : 'grab' }), [isDragging]);
 
@@ -59,9 +59,9 @@ export const Minimap = ({ root, spring, width, height }: Props) => {
   const handleMouseLeave = useCallback(() => { if (isDragging) dragEnd() }, [isDragging, dragEnd]);
 
   return (
-    <div className="minimap-container">
+    <div className="absolute bottom-0 right-0">
       <svg
-        className="minimap-tree-svg"
+        className="minimap"
         width={width}
         height={height}
         style={svgStyle}
@@ -94,10 +94,11 @@ export const Minimap = ({ root, spring, width, height }: Props) => {
             y={viewport.y}
             width={viewport.width}
             height={viewport.height}
-            rx={6}
-            ry={6}
+            rx={4}
+            ry={4}
             z={100}
             filter="url(#minimapGlow)"
+            vectorEffect="non-scaling-stroke"
           />
         </g>
       </svg>

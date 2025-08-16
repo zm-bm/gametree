@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { 
   IoIosRewind,
@@ -21,10 +21,11 @@ const BoardControls = () => {
   const fen = useSelector((state: RootState) => selectFen(state));
   const running = useSelector((state: RootState) => state.engine.running);
   const { undo, redo, rewind, forward } = useMoveActions();
-  const buttonClass = "btn-primary p-2 hover:scale-105";
+  const buttonClass = "p-2 hover:scale-105 border border-zinc-400/60 dark:border-zinc-600/60";
 
   return (
-    <div className="flex items-center gap-1 pl-1 pt-2">
+    <div className="flex items-center gap-1 p-2">
+      <div className="font-bold pr-1">Board controls</div>
       {/* game controls */}
       <button onClick={rewind} className={buttonClass} title='Rewind to first move'>
         <IoIosRewind className='m-auto' />
@@ -32,6 +33,7 @@ const BoardControls = () => {
       <button onClick={undo} className={buttonClass} title='Undo last move'>
         <IoIosSkipBackward className='m-auto' />
       </button>
+
       <button
         onClick={() => dispatch(ToggleEngine(fen))}
         className={`${buttonClass} `}
@@ -39,6 +41,7 @@ const BoardControls = () => {
       >
         { running ? <IoIosPause /> : <IoIosPlay /> }
       </button>
+
       <button onClick={redo} className={buttonClass} title='Redo next move'>
         <IoIosSkipForward className='m-auto' />
       </button>

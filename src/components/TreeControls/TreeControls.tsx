@@ -4,7 +4,7 @@ import { TreeFilters } from "./TreeFilters";
 export const TreeControls = () => {
   return (
     <>
-      {/* <div className="p-2 font-bold text-lg">Move Tree</div> */}
+      <div className="pt-3 px-3 font-bold text-lg">Tree Controls</div>
       <DataSource />
       <TreeFilters />
     </>

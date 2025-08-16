@@ -16,7 +16,7 @@ import { MoveTreeSvg } from './MoveTreeSvg';
 import { TreeGrid } from './TreeGrid';
 import { ZoomControls } from './ZoomControls';
 import { TreeTooltip } from '../Tooltip/TreeTooltip';
-import { TreeLegend } from '../TreeControls/TreeLegend';
+import { TreeLegend } from './TreeLegend';
 import '../../styles/MoveTree.css';
 
 export const MoveTree = () => {
@@ -30,6 +30,7 @@ export const MoveTree = () => {
   const svgTransform = useMemo(() => zoom.toString(), [zoom]);
   const svgStyle = useMemo(() => ({ cursor: zoom.isDragging ? 'grabbing' : 'grab' }), [zoom.isDragging]);
   const tooltip = useTreeTooltip();
+  const minimapSize = useMemo(() => Math.min(width, height) * 0.3, [width, height]);
 
   const { 
     spring,
@@ -82,11 +83,9 @@ export const MoveTree = () => {
         </g>
       </svg>
 
-      { root && <Minimap root={root} spring={spring} width={260} height={260}  /> }
+      { root && <Minimap root={root} spring={spring} width={minimapSize} height={minimapSize}  /> }
       <ZoomControls zoomIn={zoomIn} zoomOut={zoomOut} />
-      {/* <div className="absolute top-2 right-2 backdrop-blur-sm bg-white/90 rounded-xl shadow-lg border border-gray-200 w-[260px] overflow-hidden transition-all duration-200 hover:shadow-xl">
-        <TreeLegend />
-      </div> */}
+      <TreeLegend />
       <TreeTooltip {...tooltip} />
     </div>
   );

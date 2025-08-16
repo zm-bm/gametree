@@ -1,8 +1,9 @@
 import Board from './Board'
 import BoardControls from './BoardControls'
-import AnalysisPane from './AnalysisPane'
+import EngineView from './EngineView'
 import '../styles/ChessPanel.css';
 import { TreeControls } from './TreeControls/TreeControls';
+import Fen from './Fen';
 
 export const ChessPanel = () => {
   return (
@@ -11,7 +12,7 @@ export const ChessPanel = () => {
         <Board />
       </div>
       
-      <div className="chess-panel-card -mt-1">
+      <div className="chess-panel-card">
         <BoardControls />
       </div>
 
@@ -20,7 +21,11 @@ export const ChessPanel = () => {
       </div>
 
       <div className="chess-panel-card">
-        {/* <AnalysisPane /> */}
+        <EngineView />
+      </div>
+
+      <div className="chess-panel-card">
+        <Fen />
       </div>
 
     </div>
