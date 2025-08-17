@@ -59,12 +59,13 @@ const WidthRamp = React.memo(() => {
 });
 
 export const TreeLegend = () => {
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(!localStorage.mtLegendDismissed);
   
   const toggleExpanded = useCallback(() => {
+    localStorage.mtLegendDismissed = isExpanded ? '1' : '';
     setIsExpanded(prev => !prev);
-  }, []);
-  
+  }, [isExpanded]);
+
   const arrowStyle = useMemo(() => ({
     transform: isExpanded ? 'rotate(0deg)' : 'rotate(180deg)',
   }), [isExpanded]);

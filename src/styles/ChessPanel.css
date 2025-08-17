@@ -12,7 +12,7 @@
         /* backdrop-blur-md */
         /* bg-gradient-to-br from-white/80 to-blue-50/60 */
         /* dark:from-gray-800/60 dark:to-gray-800/60 */
-        border border-zinc-400/60 dark:border-zinc-600/60
+        ring-1 ring-zinc-400/60 dark:ring-zinc-600/60
         transition-all duration-300
         /* shadow-lg shadow-slate-900/20 hover:shadow-indigo-200/10 */
         overflow-hidden;

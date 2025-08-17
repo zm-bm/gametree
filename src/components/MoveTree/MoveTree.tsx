@@ -18,6 +18,7 @@ import { ZoomControls } from './ZoomControls';
 import { TreeTooltip } from '../Tooltip/TreeTooltip';
 import { TreeLegend } from './TreeLegend';
 import '../../styles/MoveTree.css';
+import { TreeDPad } from './TreeDPad';
 
 export const MoveTree = () => {
   const { height, width, rowHeight, columnWidth } = useContext(MoveTreeContext);
@@ -87,6 +88,7 @@ export const MoveTree = () => {
       <ZoomControls zoomIn={zoomIn} zoomOut={zoomOut} />
       <TreeLegend />
       <TreeTooltip {...tooltip} />
+      <TreeDPad />
     </div>
   );
 };
