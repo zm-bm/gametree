@@ -4,7 +4,7 @@ import { screen } from '@testing-library/react'
 import { Config } from 'chessground/config';
 import { Chess, DEFAULT_POSITION } from 'chess.js';
 
-import Board from '../../components/Board';
+import Board from '../../components/Board/Board';
 import { MockDispatch, renderWithProviders } from '../../test/testUtils';
 import { setupStore } from '../../store';
 import { SetPromotionTarget, rootNode, initialState as gameInitialState } from '../../redux/gameSlice';

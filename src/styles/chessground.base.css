@@ -2,8 +2,6 @@
   box-sizing: content-box;
   position: relative;
   display: block;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 cg-container {
@@ -26,6 +24,7 @@ cg-board {
   user-select: none;
   line-height: 0;
   background-size: cover;
+  border-radius: 0.25rem;
 }
 
 .cg-wrap.manipulable cg-board {
