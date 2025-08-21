@@ -1,18 +1,20 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { ProvidedZoom, TransformMatrix } from '@visx/zoom/lib/types';
-import { useSpring } from '@react-spring/web'
 import { HierarchyPointNode } from '@visx/hierarchy/lib/types';
+import { useSpring } from '@react-spring/web'
 
-import { TreeNodeData } from '../types/chess';
-import { ZoomState } from '../types/tree';
+import { TreeNodeData } from '../types';
+import { ZoomState } from "../types";
 import { DEFAULT_TRANSFORM } from '../components/MoveTree/constants';
+import { RootState } from '../store';
+import { selectCurrentNode } from '../store/selectors';
 
 export interface Props {
   zoom: ProvidedZoom<SVGSVGElement> & ZoomState;
   transformRef: React.MutableRefObject<TransformMatrix>;
   width: number;
   height: number;
-  source: string | null;
 }
 
 export function useTreeNavigation({
@@ -20,13 +22,8 @@ export function useTreeNavigation({
   transformRef,
   width,
   height,
-  source
 }: Props) {
-  // Refs and state for tracking nodes
-  const currentNodeRef = useRef<HierarchyPointNode<TreeNodeData> | null>(null);
-  const [currentNodeId, setCurrentNodeId] = useState<string | null>(null);
-  const lastNodeRef = useRef<HierarchyPointNode<TreeNodeData> | null>(null);
-  const sourceRef = useRef<string | null>(null);
+  const currentNode = useSelector((s: RootState) => selectCurrentNode(s));
 
   // React-spring, used for animating zoom and pan
   const [, spring] = useSpring<TransformMatrix>(() => ({
@@ -61,27 +58,15 @@ export function useTreeNavigation({
     });
   }, [spring, transformRef, width, height]);
 
-  // Handler for updating the current node
-  const updateCurrentNode = useCallback((node: HierarchyPointNode<TreeNodeData>) => {
-    currentNodeRef.current = node;
-    setCurrentNodeId(node.data.id);
-  }, []);
-
-  // Panning to current node when node or source changes
+  // If currentNode changes, pan to it
   useEffect(() => {
-    if (!currentNodeRef.current) return;
-    if (currentNodeId !== lastNodeRef.current?.data.id || source !== sourceRef.current) {
-      panToNode(currentNodeRef.current);
-      lastNodeRef.current = currentNodeRef.current;
-      sourceRef.current = source;
+    if (currentNode) {
+      panToNode(currentNode as HierarchyPointNode<TreeNodeData>);
     }
-  }, [source, currentNodeId, panToNode]);
+  }, [currentNode, panToNode]);
 
   return {
     spring,
-    currentNodeRef,
-    currentNodeId,
-    updateCurrentNode,
     updateSpring,
     panToNode,
     handleZoom,

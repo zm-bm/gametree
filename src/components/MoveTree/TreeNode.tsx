@@ -1,18 +1,18 @@
 import React, { useCallback, useContext, useMemo, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { DEFAULT_POSITION } from "chess.js";
 import { Group } from "@visx/group";
 import { HierarchyPointNode } from "@visx/hierarchy/lib/types";
 import { UseTooltipParams } from "@visx/tooltip/lib/hooks/useTooltip";
 
-import { TreeNodeData } from "../../types/chess";
-import { AppDispatch } from "../../store";
-import { SetHover } from "../../redux/gameSlice";
-import { MoveTreeContext } from "../../contexts/MoveTreeContext";
-import { GotoPath } from "../../thunks";
-import { NodeTooltipData } from "../../hooks/useTreeTooltip";
+import { RootState, AppDispatch } from "../../store";
+import { NodeTooltipData } from "../../hooks";
+import { TreeNodeData } from "../../types";
+import { MoveTreeContext } from "../../contexts";
 import { TreeNodeText } from "./TreeNodeText";
 import { gameCount } from "../../lib/tree";
+import { selectCurrentId } from "../../store/selectors";
+import { ui } from "../../store/slices";
 
 const GRADIENTS = {
   current: 'url(#currentNodeGradient)',
@@ -40,7 +40,6 @@ const getToolTipData = (node: HierarchyPointNode<TreeNodeData>): NodeTooltipData
 
 interface Props {
   node: HierarchyPointNode<TreeNodeData>,
-  isCurrentNode: boolean,
   minimap?: boolean,
   showTooltip?: React.MouseEventHandler<SVGGElement>,
   hideTooltip?: UseTooltipParams<NodeTooltipData>['hideTooltip'],
@@ -48,7 +47,6 @@ interface Props {
 
 export const TreeNode = ({
   node,
-  isCurrentNode,
   minimap = false,
   showTooltip,
   hideTooltip,
@@ -56,6 +54,8 @@ export const TreeNode = ({
   const dispatch = useDispatch<AppDispatch>();
   const { fontSize, nodeRadius } = useContext(MoveTreeContext);
   const [isHovered, setIsHovered] = useState(false);
+  const currentNodeId = useSelector((s: RootState) => selectCurrentId(s));
+  const isCurrentNode = currentNodeId === node.data.id;
 
   const onMouseEnter = useCallback((e: React.MouseEvent<SVGGElement>) => {
     setIsHovered(true);
@@ -64,14 +64,12 @@ export const TreeNode = ({
 
   const onMouseLeave = useCallback(() => {
     setIsHovered(false);
-    dispatch(SetHover(null));
     if (hideTooltip) hideTooltip();
-  }, [dispatch, hideTooltip]);
+  }, [hideTooltip]);
 
-  const onClick = useCallback((e: React.MouseEvent<SVGGElement>) => {
-    const path = e.currentTarget.getAttribute('data-path') || '';
-    dispatch(GotoPath(path))
-  }, [dispatch]);
+  const onClick = useCallback(() => {
+    dispatch(ui.actions.setCurrent(node.data.id))
+  }, [dispatch, node]);
 
   const groupProps = useMemo(() => ({
     style: minimap ? undefined : { cursor: 'pointer' },
@@ -82,7 +80,7 @@ export const TreeNode = ({
     'data-tooltip': minimap ? undefined : (getToolTipData ? JSON.stringify(getToolTipData(node)) : undefined),
     'data-fen': minimap ? undefined : (node.data.move?.after || DEFAULT_POSITION),
     'data-move': minimap ? undefined : (node.data.move?.lan || ''),
-    'data-path': minimap ? undefined : node.data.id,
+    'data-id': minimap ? undefined : node.data.id,
   }), [minimap, onMouseEnter, onMouseLeave, onClick, node]);
 
   const rectProps = useMemo(() => ({

@@ -1,7 +1,7 @@
 import { HierarchyPointNode } from '@visx/hierarchy/lib/types';
 import { scaleLinear } from '@visx/scale';
 import { TransformMatrix } from '@visx/zoom/lib/types';
-import { TreeNodeData } from '../../types/chess';
+import { TreeNodeData } from '../../types';
 
 export const DEFAULT_TRANSFORM: TransformMatrix = {
   translateX: 0,

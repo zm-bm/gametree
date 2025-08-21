@@ -1,13 +1,6 @@
 import { Color, PieceSymbol, Square } from "chess.js";
-import { TreeSource } from "../redux/openingsApi";
+import { TransformMatrix } from "@visx/zoom/lib/types";
 
-export type TreeSource = 'masters' | 'lichess';
-
-export type ECO = {
-  eco: string;
-  name: string;
-  uci: string;
-};
 
 export type Move = {
   color: Color;
@@ -22,7 +15,15 @@ export type Move = {
   after: string;
 };
 
+export type Id = string;
 export type MovePath = Move[];
+export type TreeSource = 'masters' | 'lichess';
+
+export type LcOpening = {
+  eco: string;
+  name: string;
+  uci: string;
+};
 
 type LcPlayer = {
   name: string | null;
@@ -55,7 +56,7 @@ export type LcOpeningStats = {
   draws: number;
   black: number;
   topGames: LcGame[];
-  opening: ECO | null;
+  opening: LcOpening | null;
   moves: LcMoveStats[];
 };
 
@@ -68,7 +69,7 @@ type NodeData = {
   black: number;
   averageRating: number;
   topGames: LcGame[];
-  opening: ECO | null;
+  opening: LcOpening | null;
 };
 
 export type NormalNodeData = NodeData & {
@@ -79,4 +80,23 @@ export type NormalTree = Record<string, NormalNodeData>;
 
 export type TreeNodeData = NodeData & {
   children: TreeNodeData[];
+};
+
+export type ZoomState = {
+  initialTransformMatrix: TransformMatrix;
+  transformMatrix: TransformMatrix;
+  isDragging: boolean;
+};
+
+export type EngineOutput = {
+  depth: number,
+  seldepth: number,
+  multipv?: number,
+  cp?: number
+  mate?: number,
+  pv?: string[],
+  time?: number,
+  speed?: number,
+  hashfull?: number,
+  tbhits?: number,
 };

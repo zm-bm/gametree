@@ -4,7 +4,7 @@ import { fireEvent } from "@testing-library/react";
 import { MockDispatch, renderWithProviders } from "../../test/testUtils";
 import EngineControls from "../../components/EngineControls";
 import { setupStore } from "../../store";
-import { SetHash, SetLines, SetThreads } from "../../redux/engineSlice";
+import { SetHash, SetLines, SetThreads } from "../../store/engineSlice";
 
 describe('EngineControls', () => {
   it('renders sf version', () => {

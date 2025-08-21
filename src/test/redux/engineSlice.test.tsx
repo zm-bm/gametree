@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
-import engineReducer, { AddEngineOutput, EngineError, EngineOutput, initialState, SetHash, SetLines, SetThreads, ToggleEngine, UpdateFen } from "../../redux/engineSlice";
+import engineReducer, { AddEngineOutput, EngineError, EngineOutput, initialState, SetHash, SetLines, SetThreads, ToggleEngine, UpdateFen } from "../../store/engineSlice";
 import { Chess, DEFAULT_POSITION } from "chess.js";
-import { SetDataSource } from "../../redux/treeSlice";
+import { SetDataSource } from "../../store/treeSlice";
 
 const chess = new Chess();
 const d2d4 = chess.move('d2d4');

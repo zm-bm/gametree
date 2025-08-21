@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useMemo } from "react";
 import { HierarchyPointLink } from "@visx/hierarchy/lib/types";
 import { LinkHorizontal } from "@visx/shape";
 
-import { TreeNodeData } from "../../types/chess";
+import { TreeNodeData } from "../../types";
 import { MoveTreeContext } from "../../contexts/MoveTreeContext";
 import { COLORS, colorScale } from "./constants";
 import { gameCount } from "../../lib/tree";

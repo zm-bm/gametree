@@ -5,7 +5,7 @@ import { HierarchyNode, HierarchyPointNode } from "@visx/hierarchy/lib/types"
 import { Tree } from '@visx/hierarchy';
 import { Group } from '@visx/group'
 
-import { TreeNodeData } from "../../types/chess";
+import { TreeNodeData } from "../../types";
 import { MoveTreeContext } from "../../contexts/MoveTreeContext";
 import { MinimapTree } from './MinimapTree';
 import { ZoomContext } from '../../contexts/ZoomContext';
@@ -14,26 +14,25 @@ import { SVGDefs } from '../MoveTree/SVGDefs';
 import { SEPARATION } from "../MoveTree/constants";
 
 interface Props {
-  root: HierarchyNode<TreeNodeData>
+  tree: HierarchyNode<TreeNodeData> | null,
   spring: SpringRef<TransformMatrix>,
-  width: number,
-  height: number,
+  size: number,
 };
 
-export const Minimap = ({ root, spring, width, height }: Props) => {
+export const Minimap = ({ tree, spring, size }: Props) => {
   const treeDimensions = useContext(MoveTreeContext);
   const { rowHeight, columnWidth } = treeDimensions;
   const { zoom } = useContext(ZoomContext);
   const { transformMatrix, isDragging, setTransformMatrix, dragStart, dragEnd } = zoom;
   const nodeSize = useMemo(() => [rowHeight, columnWidth], [rowHeight, columnWidth]);
-  const nodes = useMemo(() => root.descendants() as HierarchyPointNode<TreeNodeData>[], [root]);
+  const nodes = useMemo(() => tree ? tree.descendants() as HierarchyPointNode<TreeNodeData>[] : [], [tree]);
   const svgStyle = useMemo(() => ({ cursor: isDragging ? 'grabbing' : 'grab' }), [isDragging]);
 
   const { transform, viewport, centerViewport } = useTreeMinimap({
     spring,
     nodes,
-    minimapWidth: width,
-    minimapHeight: height,
+    minimapWidth: size,
+    minimapHeight: size,
     treeWidth: treeDimensions.width,
     treeHeight: treeDimensions.height,
     transformMatrix,
@@ -59,26 +58,26 @@ export const Minimap = ({ root, spring, width, height }: Props) => {
   const handleMouseLeave = useCallback(() => { if (isDragging) dragEnd() }, [isDragging, dragEnd]);
 
   return (
-    <div className="absolute bottom-0 right-0">
-      <svg
-        className="minimap"
-        width={width}
-        height={height}
-        style={svgStyle}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseLeave}
-        onTouchStart={handleTouch}
-        onTouchMove={handleTouch}
-        onTouchEnd={handleMouseUp}
-        shapeRendering="crispEdges"
+    <svg
+      className="minimap"
+      width={size}
+      height={size}
+      style={svgStyle}
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseLeave}
+      onTouchStart={handleTouch}
+      onTouchMove={handleTouch}
+      onTouchEnd={handleMouseUp}
+      shapeRendering="crispEdges"
 
-      >
-        <SVGDefs />
-        <g>
+    >
+      <SVGDefs />
+      <g>
+        { tree && 
           <Tree<TreeNodeData>
-            root={root}
+            root={tree}
             nodeSize={nodeSize as [number, number]}
             separation={SEPARATION}
           >
@@ -88,20 +87,20 @@ export const Minimap = ({ root, spring, width, height }: Props) => {
               </Group>
             )}
           </Tree>
-          <rect
-            className='minimap-viewport'
-            x={viewport.x}
-            y={viewport.y}
-            width={viewport.width}
-            height={viewport.height}
-            rx={4}
-            ry={4}
-            z={100}
-            filter="url(#minimapGlow)"
-            vectorEffect="non-scaling-stroke"
-          />
-        </g>
-      </svg>
-    </div>
+        }
+        <rect
+          className='minimap-viewport'
+          x={viewport.x}
+          y={viewport.y}
+          width={viewport.width}
+          height={viewport.height}
+          rx={4}
+          ry={4}
+          z={100}
+          filter="url(#minimapGlow)"
+          vectorEffect="non-scaling-stroke"
+        />
+      </g>
+    </svg>
   );
 };

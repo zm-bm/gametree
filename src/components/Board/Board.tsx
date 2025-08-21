@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 
-import { useChessgroundConfig } from "../../lib/chessground";
-import { useDimensions } from "../../hooks/useDimensions";
+import { useDimensions, useChessgroundConfig } from "../../hooks";
 import BaseBoard from "./BaseBoard";
 import PromotionOverlay from "../PromotionOverlay";
 
@@ -13,6 +12,7 @@ const calculateBoardSize = (width: number) => {
 const Board = () => {
   const [ref, bounds] = useDimensions();
   const config = useChessgroundConfig();
+  
   const boardSize = useMemo(() => calculateBoardSize(bounds.width), [bounds]);
   const style = useMemo(() => ({
     width: `${boardSize}px`,

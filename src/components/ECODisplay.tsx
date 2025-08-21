@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux'
 import { RootState } from '../store'
-import { selectEco } from '../redux/gameSlice'
+import { selectEco } from '../store/slices/ui'
 
 const ECODisplay = () => {
   const eco = useSelector((state: RootState) => selectEco(state));

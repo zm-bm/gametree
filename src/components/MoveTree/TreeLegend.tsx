@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useMemo } from "react";
 
 import { colorScale } from "./constants";
+import clsx from "clsx";
 
 const LEGEND_STYLES = {
   colorValues: [0.5, 0.2, 0.0, -0.2, -0.5],
@@ -59,34 +60,33 @@ const WidthRamp = React.memo(() => {
 });
 
 export const TreeLegend = () => {
-  const [isExpanded, setIsExpanded] = useState(!localStorage.mtLegendDismissed);
-  
-  const toggleExpanded = useCallback(() => {
-    localStorage.mtLegendDismissed = isExpanded ? '1' : '';
-    setIsExpanded(prev => !prev);
-  }, [isExpanded]);
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(localStorage.gtLegendCollapsed === '1');
+
+  const toggleCollapsed = useCallback(() => {
+    localStorage.gtLegendCollapsed = isCollapsed ? '' : '1';
+    setIsCollapsed(prev => !prev);
+  }, [isCollapsed]);
 
   const arrowStyle = useMemo(() => ({
-    transform: isExpanded ? 'rotate(0deg)' : 'rotate(180deg)',
-  }), [isExpanded]);
-
-  const contentClass = useMemo(() =>
-    `border-t border-gray-500 transition-all duration-300 ease-in-out overflow-hidden ${isExpanded ? 'max-h-60 opacity-100' : 'max-h-0 opacity-0'}`
-  , [isExpanded]);
+    transform: isCollapsed ? 'rotate(180deg)' : 'rotate(0deg)',
+  }), [isCollapsed]);
 
   return (
-    <div className="tree-overlay min-w-44 absolute top-2 right-2">
+    <div className="tree-overlay min-w-44">
       {/* Collapsible header */}
       <div 
         className="px-3 py-2 flex justify-between items-center cursor-pointer"
-        onClick={toggleExpanded}
+        onClick={toggleCollapsed}
       >
         <div className="text-sm font-bold">Legend</div>
         <div className="text-sm transition-transform duration-300" style={arrowStyle}>▲</div>
       </div>
 
       {/* Animated collapsible content */}
-      <div className={contentClass}>
+      <div 
+        className={clsx("border-t border-gray-500 transition-all duration-300 ease-in-out overflow-hidden",
+                        isCollapsed ? 'max-h-0 opacity-0' : 'max-h-60 opacity-100')}
+      >
         <div className="p-3 space-y-4">
           <div className="space-y-1">
             <ColorRamp />

@@ -1,5 +1,5 @@
 
-import EngineOutput from "./EngineOutput";
+import EngineOutputDisplay from "./EngineOutputDisplay";
 import EngineControls from "./EngineControls";
 
 const EngineView = () => {
@@ -8,10 +8,10 @@ const EngineView = () => {
       <div className="flex-1 flex flex-col min-h-0 p-2">
         <div className="font-bold">Engine controls/output</div>
         <EngineControls />
-        <EngineOutput />
+        <EngineOutputDisplay />
       </div>
     </div>
   )
-}
+};
 
 export default EngineView;

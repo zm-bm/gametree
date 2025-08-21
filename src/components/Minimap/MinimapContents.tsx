@@ -3,15 +3,15 @@ import { HierarchyPointLink, HierarchyPointNode } from "@visx/hierarchy/lib/type
 
 import { TreeLink } from "../MoveTree/TreeLink";
 import { TreeNode } from "../MoveTree/TreeNode";
-import { TreeNodeData } from "../../types/chess";
+import { TreeNodeData } from "../../types";
 
 interface Props {
   links: HierarchyPointLink<TreeNodeData>[],
   nodes: HierarchyPointNode<TreeNodeData>[],
-  currentPathId: string,
+  pathId: string,
 };
 
-const MinimapContents = (({ links, nodes, currentPathId }: Props) => {
+const MinimapContents = (({ links, nodes, pathId }: Props) => {
   return (
     <>
       {links.map((link) => (
@@ -26,7 +26,7 @@ const MinimapContents = (({ links, nodes, currentPathId }: Props) => {
         <TreeNode
           key={`node-${node.data.id}`}
           node={node}
-          isCurrentNode={node.data.id === currentPathId}
+          isCurrentNode={node.data.id === pathId}
           minimap={true}
         />
       ))}

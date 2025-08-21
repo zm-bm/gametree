@@ -5,7 +5,7 @@ const iconClass = 'h-5 w-5 text-gray-700 dark:text-gray-300';
 
 export const ZoomControls = ({ zoomIn, zoomOut }: { zoomIn: () => void; zoomOut: () => void }) => {
   return (
-    <div className="tree-overlay absolute bottom-2 left-2 flex flex-col gap-1">
+    <div className="tree-overlay flex flex-col gap-1">
       <button className={buttonClass} onClick={zoomIn} aria-label="Zoom in">
         <FaPlus className={iconClass} />
       </button>

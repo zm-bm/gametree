@@ -1,5 +1,5 @@
 import { Chess } from "chess.js";
-import { LichessGame, LcOpeningStats, TreeNodeData } from "../types/chess";
+import { LichessGame, LcOpeningStats, TreeNodeData } from "../types";
 import { serializeMove } from "../lib/chess";
 
 const topGame: LichessGame = {

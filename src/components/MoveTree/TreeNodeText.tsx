@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Move } from "../../types/chess";
+import { Move } from "../../types";
 
 const PIECE_SYMBOLS: Record<string, string> = {
   k: "♚",

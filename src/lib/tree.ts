@@ -1,11 +1,32 @@
-import { Chess } from "chess.js";
+import { Chess, DEFAULT_POSITION } from "chess.js";
 
-import { Move, MovePath, NormalNodeData, NormalTree, TreeNodeData, LcMoveStats, Node } from "../types/chess";
-import { getECO, pathId, serializeMove } from "./chess";
+import { Move, NormalNodeData, NormalTree, TreeNodeData, LcMoveStats } from "../types";
+import { getECO, serializeMove } from "./chess";
 
-export function gameCount(node: Node) {
+export function gameCount(node: TreeNodeData | NormalNodeData) {
   const { white, draws, black } = node;
   return black + draws + white;
+}
+
+export const getParentId = (nodeId: string) => {
+  const parts = nodeId.split(',');
+  if (parts.length > 0) {
+    parts.pop();
+    return parts.join(',');
+  }
+  return null;
+};
+
+export const getChildId = (parentId: string, move: Move) => {
+  return [parentId, move.lan].filter(Boolean).join(',');
+}
+
+export const getMove = (nodeId: string) => {
+  const chess = new Chess(DEFAULT_POSITION);
+  const moves = nodeId.split(',');
+  moves.forEach(move => move && chess.move(move));
+  const move = chess.history({ verbose: true }).at(-1) || null;
+  return move ? serializeMove(move) : null;
 }
 
 export function orderChildren(nodes: TreeNodeData[]) {
@@ -28,7 +49,7 @@ export function orderChildren(nodes: TreeNodeData[]) {
 function filterTreeNode(
   nodes: NormalTree,
   id: string,
-  minFrequency:number,
+  frequencyMin:number,
   parentGames: number
 ) {
   const node = nodes[id];
@@ -36,21 +57,21 @@ function filterTreeNode(
   if (node.explored) return true;
 
   const frequency = gameCount(node) / parentGames * 100;
-  return frequency >= minFrequency;
+  return frequency >= frequencyMin;
 }
 
 export function buildTree(
   nodes: NormalTree,
   id: string,
-  minFrequency: number
+  frequencyMin: number
 ): TreeNodeData | null {
   const node = nodes[id];
   if (!node) return null;
 
   const games = gameCount(node);
   const children = node.children.map(childId => {
-    if (!filterTreeNode(nodes, childId, minFrequency, games)) return null;
-    return buildTree(nodes, childId, minFrequency)
+    if (!filterTreeNode(nodes, childId, frequencyMin, games)) return null;
+    return buildTree(nodes, childId, frequencyMin)
   }).filter(Boolean) as TreeNodeData[];
 
   return {
@@ -61,16 +82,17 @@ export function buildTree(
 
 export function processChildNodes(
   nodes: Record<string, NormalNodeData>,
-  path: MovePath,
-  move: Move | null,
+  parentId: string,
   moveStats: LcMoveStats[],
 ): string[] {
   const children: string[] = [];
+  const parentNode = nodes[parentId];
+  const chess = new Chess(parentNode?.move?.after || DEFAULT_POSITION);
 
   for (const stats of moveStats) {
-    const childMove = serializeMove(new Chess(move?.after).move(stats.san));
-    const childPath = [...path, childMove];
-    const childId = pathId(childPath);
+    const childMove = serializeMove(chess.move(stats.san));
+    chess.undo();
+    const childId = getChildId(parentId, childMove);
     
     if (nodes[childId]) continue;
     
@@ -84,7 +106,8 @@ export function processChildNodes(
       black: stats.black,
       averageRating: stats.averageRating,
       topGames: [],
-      opening: getECO(childPath),
+      // opening: getECO(childPath),
+      opening: null,
       children: [],
     };
   }

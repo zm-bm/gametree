@@ -1,12 +1,12 @@
 import { renderHook, act } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { describe, it, expect, vi } from "vitest";
-import { GameState, initialState } from "../../redux/gameSlice";
+import { UIState, initialState } from "../../store/slices/ui";
 import { useMoveActions } from "../../hooks/useMoveActions";
 import { AppStore, setupStore } from "../../store";
 import { MockDispatch } from "../testUtils";
 
-const gameState: GameState = {
+const gameState: UIState = {
   ...initialState,
   moveIndex: 1,
   moveTree: [

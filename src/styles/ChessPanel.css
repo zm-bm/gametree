@@ -4,18 +4,35 @@
 
 @layer components {
     .chess-panel {
-        @apply flex-1 flex flex-col overflow-auto;
+        @apply flex-1 flex flex-col overflow-y-auto sm:h-screen;
+    }
+
+    .chess-panel {
+        scrollbar-width: thin;
+        scrollbar-color: #888 transparent;
+        scrollbar-gutter: stable both-edges;
+    }
+
+    .chess-panel:-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .chess-panel:-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .chess-panel:-webkit-scrollbar-thumb {
+        background-color: #555;
+        border-radius: 4px;
     }
 
     .chess-panel-card {
-        @apply rounded
-        /* backdrop-blur-md */
-        /* bg-gradient-to-br from-white/80 to-blue-50/60 */
-        /* dark:from-gray-800/60 dark:to-gray-800/60 */
-        ring-1 ring-zinc-400/60 dark:ring-zinc-600/60
-        transition-all duration-300
-        /* shadow-lg shadow-slate-900/20 hover:shadow-indigo-200/10 */
-        overflow-hidden;
+        @apply 
+        rounded-xl
+        bg-slate-900/25 dark:bg-zinc-900/50
+        ring-1 ring-inset ring-white/10 dark:ring-white/10
+        shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_1px_2px_rgba(0,0,0,0.20)]
+        hover:bg-slate-900/30 dark:hover:bg-zinc-900/55;
     }
 
     .engine-chip {

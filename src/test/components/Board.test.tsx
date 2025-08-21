@@ -7,10 +7,10 @@ import { Chess, DEFAULT_POSITION } from 'chess.js';
 import Board from '../../components/Board/Board';
 import { MockDispatch, renderWithProviders } from '../../test/testUtils';
 import { setupStore } from '../../store';
-import { SetPromotionTarget, rootNode, initialState as gameInitialState } from '../../redux/gameSlice';
-import { initialState as engineInitialState } from '../../redux/engineSlice';
-import { MoveNode } from "../../types/chess";
-import { MakeMove } from '../../thunks';
+import { setPromotionTarget, rootNode, initialState as gameInitialState } from '../../store/slices/ui';
+import { initialState as engineInitialState } from '../../store/engineSlice';
+import { MoveNode } from "../../types";
+import { MakeMove } from '../../store/thunks';
 
 vi.mock('../../hooks/useDimensions', () => ({
   useDimensions: vi.fn(() => [useRef(), { width: 404, height: 404 }])
@@ -89,6 +89,6 @@ describe('Board', () => {
     renderWithProviders(<Board />, { store: mockStore });
     
     baseboardProps?.config?.events?.move?.('b7', 'a8');
-    expect(mockStore.dispatch).toHaveBeenCalledWith(SetPromotionTarget(['b7', 'a8']))
+    expect(mockStore.dispatch).toHaveBeenCalledWith(setPromotionTarget(['b7', 'a8']))
   });
 });

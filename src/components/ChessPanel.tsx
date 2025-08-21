@@ -1,16 +1,16 @@
 import Board from './Board/Board'
 import EngineView from './EngineView'
 import { TreeControls } from './TreeControls/TreeControls';
-import { FlipButton } from './Board/FlipButton';
+import { ToggleOrientationButton } from './Board/ToggleOrientationButton';
 import Fen from './Fen';
 
 import '../styles/ChessPanel.css';
 
 export const ChessPanel = () => {
   return (
-    <div className="chess-panel space-y-4 p-4">
-      <div className="aspect-square sm:h-auto relative ">
-        <FlipButton />
+    <div className="chess-panel space-y-4 py-4 px-1">
+      <div className="aspect-square sm:h-auto relative">
+        <ToggleOrientationButton />
         <Board />
       </div>
       
@@ -25,7 +25,6 @@ export const ChessPanel = () => {
       <div className="chess-panel-card">
         <Fen />
       </div>
-
     </div>
   );
 };

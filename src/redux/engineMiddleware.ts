@@ -1,6 +1,6 @@
 import { Middleware } from 'redux';
-import { restartWorker, worker, write } from '../worker';
-import { RootState } from '../store';
+import { restartWorker, worker, intputUCI } from '../worker';
+import { RootState } from './store';
 import { DEFAULT_POSITION } from 'chess.js';
 import { EngineError, ToggleEngine, SetHash, SetThreads, SetLines, EngineAction, UpdateFen } from './engineSlice';
 import { SetDataSource, TreeAction } from './treeSlice';
@@ -8,17 +8,18 @@ import { SetDataSource, TreeAction } from './treeSlice';
 export const setOption = (name: string, value: string | number) =>
   `setoption name ${name} value ${value}`;
 export const setPos = (fen: string) => `position fen ${fen}`;
+
 type WorkerAction = EngineAction | TreeAction;
 
 export const createEngineMiddleware = (): Middleware => {
 
   const updateEngine = (cmd: string, state: RootState) => {
     if (state.engine.running) {
-      write('stop');
+      intputUCI('stop');
     }
-    write(cmd);
+    intputUCI(cmd);
     if (state.engine.running) {
-      write('go infinite');
+      intputUCI('go infinite');
     }
   }
 
@@ -34,7 +35,7 @@ export const createEngineMiddleware = (): Middleware => {
         }
         break;
       case ToggleEngine.type:
-        write(state.engine.running ? 'stop' : 'go infinite');
+        intputUCI(state.engine.running ? 'stop' : 'go infinite');
         break;
       case SetHash.type:
         updateEngine(setOption('Hash', workerAction.payload), state);

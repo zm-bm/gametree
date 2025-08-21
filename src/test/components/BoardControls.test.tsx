@@ -5,7 +5,7 @@ import { DEFAULT_POSITION } from 'chess.js';
 import BoardControls from '../../components/BoardControls';
 import { MockDispatch, renderWithProviders } from '../../test/testUtils';
 import { setupStore } from '../../store';
-import { ToggleEngine } from '../../redux/engineSlice';
+import { ToggleEngine } from '../../store/engineSlice';
 
 const mockUndo = vi.fn();
 const mockRedo = vi.fn();

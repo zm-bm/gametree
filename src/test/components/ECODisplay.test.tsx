@@ -2,8 +2,8 @@ import { describe, it } from "vitest";
 
 import ECODisplay from "../../components/ECODisplay";
 import { renderWithProviders } from "../../test/testUtils";
-import { initialState } from "../../redux/gameSlice";
-import { MoveNode } from "../../types/chess";
+import { initialState } from "../../store/slices/ui";
+import { MoveNode } from "../../types";
 
 const moveTree: MoveNode[] = [
   {

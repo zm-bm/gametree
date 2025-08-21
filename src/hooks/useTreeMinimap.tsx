@@ -1,6 +1,6 @@
 import { HierarchyPointNode } from "@visx/hierarchy/lib/types";
 import { useCallback, useMemo } from "react";
-import { TreeNodeData } from "../types/chess";
+import { TreeNodeData } from "../types";
 import { TransformMatrix } from "@visx/zoom/lib/types";
 import { SpringRef } from "react-spring";
 

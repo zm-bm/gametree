@@ -2,10 +2,9 @@ import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { useTooltip, useTooltipInPortal } from '@visx/tooltip';
 import { localPoint } from '@visx/event';
-import { DEFAULT_POSITION } from 'chess.js';
 
 import { AppDispatch } from '../store';
-import { SetHover } from '../redux/gameSlice';
+import { ui } from '../store/slices';
 
 export type NodeTooltipData = {
   white: number;
@@ -38,10 +37,8 @@ export function useTreeTooltip() {
     const target = e.currentTarget as SVGElement;
     if (!target || !target.ownerSVGElement) return;
 
-    dispatch(SetHover({
-      fen: target.getAttribute('data-fen') || DEFAULT_POSITION,
-      move: target.getAttribute('data-move') || '',
-    }));
+    const nodeId = target.getAttribute('data-id');
+    dispatch(ui.actions.setHover(nodeId));
 
     const coords = localPoint(target.ownerSVGElement, e);
     const tooltipData = JSON.parse(target.getAttribute('data-tooltip') || '{}');
@@ -52,6 +49,11 @@ export function useTreeTooltip() {
     });
   }, [dispatch, showTooltip]);
 
+  const hideTooltipFn = useCallback(() => {
+    dispatch(ui.actions.setHover(null));
+    hideTooltip();
+  }, [dispatch, hideTooltip]);
+
   return {
     tooltipOpen,
     tooltipData,
@@ -61,7 +63,7 @@ export function useTreeTooltip() {
     tooltipOffsetTop: 4,
     TooltipInPortal,
     showTooltip: showTooltipFn,
-    hideTooltip,
+    hideTooltip: hideTooltipFn,
     tooltipContainerRef: containerRef,
   }
 };

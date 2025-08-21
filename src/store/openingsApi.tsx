@@ -1,18 +1,20 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
-import { pathId } from '../lib/chess'
-import { LcOpeningStats, MovePath, TreeSource } from "../types/chess";
-import { AddOpenings } from './treeSlice';
-
+import { LcOpeningStats, TreeSource } from "../types";
+import tree  from './slices/tree';
 
 export interface GetOpeningsArgs {
-  path: MovePath,
+  nodeId: string,
   source: TreeSource,
 }
 
 function getQuery(args: GetOpeningsArgs) {
-  const { path, source } = args;
-  return `${source}?play=${pathId(path)}&moves=20`;
+  const { nodeId, source } = args;
+  if (nodeId === '') {
+    return `${source}?play=${nodeId}&moves=20`;
+  } else {
+    return `${source}?play=${nodeId}`;
+  }
 }
 
 export const openingsApi = createApi({
@@ -25,13 +27,13 @@ export const openingsApi = createApi({
         try {
           // query the first source
           const { data } = await queryFulfilled;
-          dispatch(AddOpenings({ openingStats: data, ...args }));
+          dispatch(tree.actions.addOpenings({ openingStats: data, ...args }));
 
           // then query the second source (to avoid rate limiting)
           const source2 = args.source === 'lichess' ? 'masters' : 'lichess';
           const response = await fetch(`https://explorer.lichess.ovh/${getQuery({ ...args, source: source2 })}`);
           const data2 = await response.json();
-          dispatch(AddOpenings({ openingStats: data2, path: args.path, source: source2 }));
+          dispatch(tree.actions.addOpenings({ openingStats: data2, nodeId: args.nodeId, source: source2 }));
         } catch(error) {
           console.error('Query failed:', error)
         }

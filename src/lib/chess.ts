@@ -1,7 +1,7 @@
 import { Move as ChessMove } from "chess.js";
 
 import eco from '../eco.json'
-import { ECO, Move, MovePath } from "../types/chess";
+import { LcOpening, Move, MovePath } from "../types";
 
 export function pathId(moves: MovePath) {
   return moves.map(m => m.lan).join(',');
@@ -22,7 +22,7 @@ export function serializeMove(move: ChessMove): Move {
   };
 }
 
-export const book = eco as ECO[];
+export const book = eco as LcOpening[];
 
 export function getECO(path: MovePath) {
   if (path.length === 0) return null;
@@ -36,4 +36,3 @@ export function getECO(path: MovePath) {
 
   return null;
 }
-

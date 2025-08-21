@@ -30,10 +30,24 @@ npm run build
 
 ## Roadmap
 
-- unify gameSlice/treeSlice
-    - remove game.moves/Index
-    - use tree path / current move
-- navigate tree w arrow keys
+- Tree controls
+- Tooltip
+- Engine Pane
+
+- stable node ordering
+- throttle keyboard in hook
+- animated nodes
+    - fading in/out nodes while fetching 
+    - expand from parent?
+    - experiment
+- fixed eco
+- better child selection (remember last)
+- tree colors respective to orientation
+- d-pad hints
+- fix zoom calc to zoom on screen center
+
+- org useChessground
+- org openingsApi / build tree
 
 - collapsable tree nodes
 - collapsable tree panel sections

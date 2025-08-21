@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import treeSlice, { AddOpenings, initialState, SetDataSource } from "../../redux/treeSlice";
+import treeSlice, { AddOpenings, initialState, SetDataSource } from "../../store/treeSlice";
 import { treeNode, openings } from "../testData";
 
 describe('treeSlice', () => {

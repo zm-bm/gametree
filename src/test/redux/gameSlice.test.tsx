@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import gameSlice, { FlipOrientation, GotoGameMove, GotoGamePath, initialState, MakeGameMove, rootNode, SetPromotionTarget } from "../../redux/gameSlice";
+import uiSlice, { flipOrientation, GotoGameMove, GotoGamePath, initialState, MakeGameMove, rootNode, setPromotionTarget } from "../../store/slices/ui";
 import { Chess } from "chess.js";
 
 const chess = new Chess();
@@ -9,7 +9,7 @@ const c2c4 = chess.move('c2c4');
 
 describe('gameSlice', () => {
   it('adds new moves to moveTree on MakeGameMove', () => {
-    expect(gameSlice(initialState, MakeGameMove(d2d4))).toMatchObject({
+    expect(uiSlice(initialState, MakeGameMove(d2d4))).toMatchObject({
       moveTree: [{
         ...rootNode,
         children: [1],
@@ -25,41 +25,41 @@ describe('gameSlice', () => {
 
   it('handles MakeGameMove with existing moves', () => {
     const move = MakeGameMove(d2d4);
-    const state = gameSlice(initialState, move);
-    expect(gameSlice({ ...state, moveIndex: 0 }, move)).toMatchObject(state)
+    const state = uiSlice(initialState, move);
+    expect(uiSlice({ ...state, moveIndex: 0 }, move)).toMatchObject(state)
   });
 
 
   it('updates currentMove on GotoGameMove', () => {
-    const state = gameSlice(initialState, MakeGameMove(d2d4));
-    expect(gameSlice(state, GotoGameMove(0))).toMatchObject({ currentMove: 0 })
+    const state = uiSlice(initialState, MakeGameMove(d2d4));
+    expect(uiSlice(state, GotoGameMove(0))).toMatchObject({ currentMove: 0 })
   });
 
   it('makes new moves with GotoGamePath', () => {
-    const d2d4State = gameSlice(initialState, MakeGameMove(d2d4));
-    const d7d5State = gameSlice(d2d4State, MakeGameMove(d7d5));
-    const c2c4State = gameSlice(d7d5State, MakeGameMove(c2c4));
-    expect(gameSlice(d7d5State, GotoGamePath([d2d4, d7d5, c2c4]))).toMatchObject(c2c4State);
+    const d2d4State = uiSlice(initialState, MakeGameMove(d2d4));
+    const d7d5State = uiSlice(d2d4State, MakeGameMove(d7d5));
+    const c2c4State = uiSlice(d7d5State, MakeGameMove(c2c4));
+    expect(uiSlice(d7d5State, GotoGamePath([d2d4, d7d5, c2c4]))).toMatchObject(c2c4State);
   });
 
   it('goes to existing moves with GotoGamePath', () => {
-    const d2d4State = gameSlice(initialState, MakeGameMove(d2d4));
-    const d7d5State = gameSlice(d2d4State, MakeGameMove(d7d5));
-    const c2c4State = gameSlice(d7d5State, MakeGameMove(c2c4));
-    expect(gameSlice(c2c4State, GotoGamePath([d2d4]))).toMatchObject({
+    const d2d4State = uiSlice(initialState, MakeGameMove(d2d4));
+    const d7d5State = uiSlice(d2d4State, MakeGameMove(d7d5));
+    const c2c4State = uiSlice(d7d5State, MakeGameMove(c2c4));
+    expect(uiSlice(c2c4State, GotoGamePath([d2d4]))).toMatchObject({
       ...c2c4State,
       currentMove: 1,
     });
   });
 
   it('sets promotion target', () => {
-    expect(gameSlice(initialState, SetPromotionTarget(['a7', 'a8']))).toMatchObject({
+    expect(uiSlice(initialState, setPromotionTarget(['a7', 'a8']))).toMatchObject({
       promotionTarget: ['a7', 'a8'],
     });
   });
 
   it('flips orientation', () => {
-    expect(gameSlice(initialState, FlipOrientation())).toMatchObject({
+    expect(uiSlice(initialState, flipOrientation())).toMatchObject({
       orientation: 'black',
     });
   })

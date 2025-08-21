@@ -1,23 +1,31 @@
+import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
-import { SetHash, SetThreads, ToggleEngine } from "../redux/engineSlice";
-import { AppDispatch, RootState } from '../store';
-import { selectFen } from "../redux/gameSlice";
 import { IoIosPause, IoIosPlay } from "react-icons/io";
 
+import { AppDispatch, RootState } from '../store';
+import { selectEngineHash, selectEngineRunning, selectEngineThreads } from "../store/selectors";
+import { ui } from "../store/slices";
+
 const EngineControls = () => {
-  const fen = useSelector((state: RootState) => selectFen(state));
-  const nnue = useSelector((state: RootState) => state.engine.nnue);
-  const hash = useSelector((state: RootState) => state.engine.hash);
-  const threads = useSelector((state: RootState) => state.engine.threads);
-  const running = useSelector((state: RootState) => state.engine.running);
   const dispatch = useDispatch<AppDispatch>();
+  const hash = useSelector((s: RootState) => selectEngineHash(s));
+  const threads = useSelector((s: RootState) => selectEngineThreads(s));
+  const running = useSelector((s: RootState) => selectEngineRunning(s));
+
+  const engineToggle = useCallback(() =>
+    dispatch(ui.actions.toggleEngine()), [dispatch]);
+
+  const selectHash = useCallback((e: React.ChangeEvent<HTMLSelectElement>) =>
+    dispatch(ui.actions.setEngineHash(parseInt(e.target.value))), [dispatch]);
+
+  const selectThreads = useCallback((e: React.ChangeEvent<HTMLSelectElement>) =>
+    dispatch(ui.actions.setEngineThreads(parseInt(e.target.value))), [dispatch]);
 
   return (
     <div className="flex items-center text-sm p-1 gap-1 border-b border-gray-400">
       <button
-        onClick={() => dispatch(ToggleEngine(fen))}
-        className= "border border-gray-400 dark:border-gray-600 p-2 hover:scale-105"
+        onClick={engineToggle}
+        className= "border border-gray-400/60 dark:border-gray-600/60 p-2 hover:scale-105"
         title="Start/stop engine"
       >
         { running ? <IoIosPause /> : <IoIosPlay /> }
@@ -26,7 +34,7 @@ const EngineControls = () => {
       <select
         title="Hash size"
         className="p-2"
-        onChange={(e) => dispatch(SetHash(+e.target.value))}
+        onChange={selectHash}
         value={hash}
       >
         <option value="1">1MB</option>
@@ -39,7 +47,7 @@ const EngineControls = () => {
       <select
         title="# of threads"
         className="p-2"
-        onChange={(e) => dispatch(SetThreads(+e.target.value))}
+        onChange={selectThreads}
         value={threads}
       >
         <option value="1">1 Threads</option>
@@ -49,13 +57,7 @@ const EngineControls = () => {
         <option value="16">16 Threads</option>
       </select>
       <div className="flex flex-col text-xs leading-none overflow-hidden whitespace-nowrap	">
-        <div>
-          <span>Stockfish 16</span>
-          {
-            nnue &&
-            <span className="text-green-700"> NNUE</span>
-          }
-        </div>
+        <span>Stockfish 16</span>
         <p>in local browser</p>
       </div>
     </div>

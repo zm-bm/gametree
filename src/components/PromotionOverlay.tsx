@@ -3,10 +3,11 @@ import { Chess, PieceSymbol } from "chess.js";
 import { useDispatch, useSelector } from "react-redux";
 
 import { AppDispatch, RootState } from "../store";
-import { selectFen } from "../redux/gameSlice";
+import { selectFen } from "../store/slices/ui";
 import { serializeMove } from "../lib/chess";
-import { MakeMove } from "../thunks";
-import { useFenColor } from "../lib/chessground";
+import { useFenColor } from "../hooks";
+import { selectBoardOrientation, selectBoardPromotionTarget, selectCurrentFen } from "../store/selectors";
+import { nav } from "../store/slices";
 
 type Promotion = { piece: string, symbol: PieceSymbol }
 const promotions: Promotion[] = [
@@ -60,9 +61,9 @@ type Props = { size: number };
 const PromotionOverlay = ({ size }: Props) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const fen = useSelector((state: RootState) => selectFen(state));
-  const orientation = useSelector((state: RootState) => state.game.orientation);
-  const target = useSelector((state: RootState) => state.game.promotionTarget);
+  const fen = useSelector((s: RootState) => selectCurrentFen(s));
+  const orientation = useSelector((s: RootState) => selectBoardOrientation(s));
+  const target = useSelector((s: RootState) => selectBoardPromotionTarget(s));
   const color = useFenColor(fen) === 'w' ? 'white' : 'black';
 
   const targetFile = useMemo(() => 
@@ -78,7 +79,7 @@ const PromotionOverlay = ({ size }: Props) => {
       if (!promotion) return;
       
       const move = chess.move({ from, to, promotion });
-      dispatch(MakeMove(serializeMove(move)));
+      dispatch(nav.actions.commitMove(serializeMove(move)));
     } catch (error) {
       console.error("Failed to make promotion move:", error);
     }

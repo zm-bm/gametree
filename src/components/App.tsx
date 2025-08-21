@@ -1,12 +1,10 @@
-import { useMoveActions } from '../hooks/useMoveActions'
 import { MoveTreePanel } from './MoveTree/MoveTreePanel'
 import { ChessPanel } from './ChessPanel';
+import { useKeyboardActions } from '../hooks';
 import '../styles/App.css'
-import { useMoveActionKeys } from '../hooks/useMoveActionKeys';
 
 function App() {
-  const moveActions = useMoveActions();
-  useMoveActionKeys(moveActions);
+  useKeyboardActions();
 
   return (
     <main className="flex flex-col w-full h-full min-h-screen app">

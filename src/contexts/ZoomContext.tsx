@@ -1,7 +1,7 @@
 import { createContext } from 'react';
 import { ProvidedZoom, TransformMatrix } from '@visx/zoom/lib/types';
 
-import { ZoomState } from "../types/tree";
+import { ZoomState } from "../types";
 
 type ZoomContextType = {
   zoom: ProvidedZoom<SVGSVGElement> & ZoomState;
