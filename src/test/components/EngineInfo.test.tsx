@@ -2,9 +2,9 @@ import { describe, expect, it, vi } from "vitest";
 
 import { renderWithProviders } from "../testUtils";
 import { EngineState, initialState } from "../../store/engineSlice";
-import EngineOutputDisplay from "../../components/EngineOutputDisplay";
+import EngineOutputDisplay from "../../features/ChessPanel/components/EngineOutputDisplay";
 import { fireEvent } from "@testing-library/react";
-import { EngineBoardProps } from "../../components/EngineBoard";
+import { EngineBoardProps } from "../../features/ChessPanel/components/EngineBoard";
 
 const engineState = {
   ...initialState,

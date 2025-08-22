@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
-import { LcOpeningStats, TreeSource } from "../types";
+import { LcOpeningStats, TreeSource } from "../shared/types";
 import tree  from './slices/tree';
 
 export interface GetOpeningsArgs {

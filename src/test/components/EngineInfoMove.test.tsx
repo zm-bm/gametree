@@ -1,6 +1,6 @@
 import { describe, it, vi } from "vitest";
 import { renderWithProviders } from "../../test/testUtils";
-import { EngineInfoMove } from "../../components/EngineInfoMove";
+import { EngineInfoMove } from "../../features/ChessPanel/components/EngineInfoMove";
 import { Move } from "chess.js";
 
 const props = {

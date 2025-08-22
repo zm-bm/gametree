@@ -1,7 +1,7 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
-import { Id, LcOpeningStats, NormalNodeData, TreeSource } from "../../types";
-import { getMove, getParentId, processChildNodes } from "../../lib/tree";
+import { Id, LcOpeningStats, NormalNodeData, TreeSource } from "../../shared/types";
+import { getMove, getParentId, processChildNodes } from "../../shared/lib/tree";
 
 interface AddOpeningsArgs {
   openingStats: LcOpeningStats,

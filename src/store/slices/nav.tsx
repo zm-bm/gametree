@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import { Id, Move } from "../../types";
+import { Id, Move } from "../../shared/types";
 
 const nav = createSlice({
   name: 'nav',

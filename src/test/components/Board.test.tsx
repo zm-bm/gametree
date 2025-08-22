@@ -4,12 +4,12 @@ import { screen } from '@testing-library/react'
 import { Config } from 'chessground/config';
 import { Chess, DEFAULT_POSITION } from 'chess.js';
 
-import Board from '../../components/Board/Board';
+import Board from '../../features/ChessPanel/components/Board/Board';
 import { MockDispatch, renderWithProviders } from '../../test/testUtils';
 import { setupStore } from '../../store';
 import { setPromotionTarget, rootNode, initialState as gameInitialState } from '../../store/slices/ui';
 import { initialState as engineInitialState } from '../../store/engineSlice';
-import { MoveNode } from "../../types";
+import { MoveNode } from "../../shared/types";
 import { MakeMove } from '../../store/thunks';
 
 vi.mock('../../hooks/useDimensions', () => ({

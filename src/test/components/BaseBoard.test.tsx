@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Chessground } from 'chessground';
 
-import BaseBoard from '../../components/Board/BaseBoard'
+import BaseBoard from '../../features/ChessPanel/components/Board/BaseBoard'
 import { renderWithProviders } from '../testUtils';
 
 const setMock = vi.fn()

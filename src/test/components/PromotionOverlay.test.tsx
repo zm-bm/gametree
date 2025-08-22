@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
 
 import { MockDispatch, renderWithProviders } from "../../test/testUtils";
-import PromotionOverlay from "../../components/PromotionOverlay";
+import PromotionOverlay from "../../features/ChessPanel/components/PromotionOverlay";
 import { initialState, rootNode } from "../../store/slices/ui";
-import { MoveNode } from "../../types";
+import { MoveNode } from "../../shared/types";
 import { Square } from "chess.js";
 import { fireEvent } from "@testing-library/react";
 import { setupStore } from "../../store";

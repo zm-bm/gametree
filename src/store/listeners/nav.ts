@@ -4,8 +4,8 @@ import { RootState } from "../";
 import { startAppListening } from "../listener";
 import { nav, ui } from "../slices";
 import { selectCurrentId, selectCurrentNode } from "../selectors";
-import { getChildId } from "../../lib/tree";
-import { Id, Move } from "../../types";
+import { getChildId } from "../../shared/lib/tree";
+import { Id, Move } from "../../shared/types";
 
 const getDestinationNode = (action: UnknownAction, state: RootState): Id | undefined => {
   const currentId = selectCurrentId(state);

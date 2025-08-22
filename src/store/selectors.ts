@@ -2,7 +2,7 @@ import { createSelector } from "@reduxjs/toolkit";
 import { DEFAULT_POSITION } from 'chess.js';
 
 import { RootState } from ".";
-import { buildTree } from "../lib/tree";
+import { buildTree } from "../shared/lib/tree";
 import { hierarchy } from "@visx/hierarchy";
 
 // UI selectors

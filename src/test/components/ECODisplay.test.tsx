@@ -1,9 +1,9 @@
 import { describe, it } from "vitest";
 
-import ECODisplay from "../../components/ECODisplay";
+import ECODisplay from "../../features/ChessPanel/components/ECODisplay";
 import { renderWithProviders } from "../../test/testUtils";
 import { initialState } from "../../store/slices/ui";
-import { MoveNode } from "../../types";
+import { MoveNode } from "../../shared/types";
 
 const moveTree: MoveNode[] = [
   {
