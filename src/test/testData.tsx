@@ -1,5 +1,5 @@
 import { Chess } from "chess.js";
-import { LichessGame, LcOpeningStats, TreeNodeData } from "../shared/types";
+import { LichessGame, LcOpeningData, TreeNodeData } from "../shared/types";
 import { serializeMove } from "../lib/chess";
 
 const topGame: LichessGame = {
@@ -18,7 +18,7 @@ const topGame: LichessGame = {
   month: '2019-08'
 }
 
-export const openings: LcOpeningStats = {
+export const openings: LcOpeningData = {
   white: 10,
   draws: 20,
   black: 30,

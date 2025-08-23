@@ -25,9 +25,7 @@ export const MoveTree = () => {
   const tooltip = useTreeTooltip();
   const minimapSize = useMemo(() => Math.round(Math.min(width, height) * 0.3), [width, height]);
   const { spring, updateSpring, handleZoom } = useTreeNavigation({ zoom, transformRef, width, height });
-
-  // Fetch openings data based on the current path and source
-  const { isFetching: _f, isSuccess: _s } = openingsApi.useGetOpeningsQuery({ nodeId: currentNodeId, source });
+  openingsApi.useGetNodesQuery({ nodeId: currentNodeId, source });
 
   // TODO: add spring to zoom context -> update spring on wheel events
   const onWheel = useCallback(() => setTimeout(updateSpring, 20), [updateSpring]);

@@ -7,16 +7,9 @@ import { Config } from "chessground/config";
 import { AppDispatch, RootState } from "@/store";
 import { nav, ui } from "@/store/slices";
 import {
-  selectBoardOrientation,
-  selectCurrentFen,
-  selectCurrentMove,
-  selectEngineOutput
+  selectBoardOrientation, selectBoardFen, selectCurrentMove, selectEngineOutput
 } from "@/store/selectors";
 import { serializeMove } from "@/shared/lib/chess";
-
-export function useFenColor(fen: string) {
-  return useMemo(() => fen.split(' ').at(1) || '', [fen]);
-};
 
 export function useBoardDisplay(fen: string) {
   // const hoverNodeId = useSelector((s: RootState) => selectHoverId(s));
@@ -61,7 +54,7 @@ export function useChessState(fen: string) {
 export function useChessgroundConfig(): Config {
   const dispatch = useDispatch<AppDispatch>();
   const orientation = useSelector((s: RootState) => selectBoardOrientation(s));
-  const fen = useSelector((s: RootState) => selectCurrentFen(s));
+  const fen = useSelector((s: RootState) => selectBoardFen(s));
   const engineOutput = useSelector((s: RootState) => selectEngineOutput(s));
 
   const { displayFen, displayMove, check } = useBoardDisplay(fen);

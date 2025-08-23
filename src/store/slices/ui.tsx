@@ -1,6 +1,6 @@
 import { PayloadAction as PA, createSlice } from '@reduxjs/toolkit';
 import { Color } from 'chessground/types';
-import { Square } from 'chess.js';
+import { DEFAULT_POSITION, Square } from 'chess.js';
 
 import { TreeSource, Id } from "../../shared/types";
 
@@ -11,6 +11,7 @@ const ui = createSlice({
     currentId: '' as Id,
     hoverId: null as Id | null,
     // board state
+    boardFen: DEFAULT_POSITION as string,
     boardOrientation: 'white' as Color,
     boardPromotionTarget: null as Square[] | null,
     // tree state
@@ -26,6 +27,7 @@ const ui = createSlice({
   reducers: {
     setCurrent: (s, a: PA<Id>) => { s.currentId = a.payload; },
     setHover: (s, a: PA<Id | null>) => { s.hoverId = a.payload; },
+    setFen: (s, a: PA<string>) => { s.boardFen = a.payload; },
     toggleOrientation(state) { state.boardOrientation = state.boardOrientation === 'white' ? 'black' : 'white'; },
     setPromotionTarget(state, action: PA<Square[] | null>) { state.boardPromotionTarget = action.payload; },
     setTreeSource(state, action: PA<TreeSource>) { state.treeSource = action.payload; },

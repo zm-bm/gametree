@@ -1,0 +1,41 @@
+#promotion-overlay {
+  background-color: rgba(22,21,18,.7);
+  z-index: 205;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#promotion-overlay .square {
+  cursor: pointer;
+  border-radius: 50%;
+  background-color: #b0b0b0;
+  box-shadow: inset 0 0 25px 3px gray;
+  pointer-events: all;
+  transition: all 150ms;
+}
+
+#promotion-overlay .piece {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 1;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  transition: all 150ms;
+  transform: scale(0.8);
+  pointer-events: none;
+  z-index: 2;
+  will-change: transform;
+}
+
+#promotion-overlay .square:hover {
+  box-shadow: inset 0 0 48px 8px #d64f00;
+  border-radius: 0%;
+}
+
+#promotion-overlay .square:hover .piece {
+  transform: none;
+}

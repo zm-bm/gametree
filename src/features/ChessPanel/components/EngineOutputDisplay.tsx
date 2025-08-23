@@ -1,11 +1,13 @@
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
-import { AppDispatch, RootState } from '../../../store';
-import { ui } from "../../../store/slices";
-import { selectBoardOrientation, selectCurrentFen, selectEngineOutput, selectSideToMove } from "../../../store/selectors";
-import { EngineOutput } from "../../../shared/types";
 import { Chess } from "chess.js";
+
+import { AppDispatch, RootState } from '@/store';
+import { ui } from "@/store/slices";
+import { EngineOutput } from "@/shared/types";
+import {
+  selectBoardOrientation, selectBoardFen, selectEngineOutput, selectSideToMove,
+} from "@/store/selectors";
 
 function getLocale() {
   if (navigator.languages != undefined) 
@@ -47,7 +49,7 @@ const EngineOutputDisplay = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const engineOutput = useSelector((s: RootState) => selectEngineOutput(s));
-  const fen = useSelector((s: RootState) => selectCurrentFen(s));
+  const fen = useSelector((s: RootState) => selectBoardFen(s));
   const orientation = useSelector((s: RootState) => selectBoardOrientation(s));
   const sideToMove = useSelector((s: RootState) => selectSideToMove(s));
 

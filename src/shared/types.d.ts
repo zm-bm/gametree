@@ -41,7 +41,7 @@ type LcGame = {
   month: string;
 };
 
-export type LcMoveStats = {
+export type LcMoveData = {
   uci: string;
   san: string;
   white: number;
@@ -50,23 +50,23 @@ export type LcMoveStats = {
   averageRating: number;
 };
 
-export type LcOpeningStats = {
+export type LcOpeningData = {
   white: number;
   draws: number;
   black: number;
   topGames: LcGame[];
   opening: LcOpening | null;
-  moves: LcMoveStats[];
+  moves: LcMoveData[];
 };
 
 type NodeData = {
-  id: string;
+  id: Id;
   explored: boolean;
   move: Move | null;
   white: number;
   draws: number;
   black: number;
-  averageRating: number;
+  averageRating?: number;
   topGames: LcGame[];
   opening: LcOpening | null;
 };
@@ -75,11 +75,13 @@ export type NormalNodeData = NodeData & {
   children: string[];
 }
 
-export type NormalTree = Record<string, NormalNodeData>;
+export type NormalTree = Record<Id, NormalNodeData>;
 
 export type TreeNodeData = NodeData & {
   children: TreeNodeData[];
 };
+
+export type Tree = Record<Id, TreeNodeData>;
 
 export type ZoomState = {
   initialTransformMatrix: TransformMatrix;

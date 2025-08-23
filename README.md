@@ -30,12 +30,10 @@ npm run build
 
 ## Roadmap
 
-- Tree controls
 - Tooltip
 - Engine Pane
 
 - stable node ordering
-- throttle keyboard in hook
 - animated nodes
     - fading in/out nodes while fetching 
     - expand from parent?

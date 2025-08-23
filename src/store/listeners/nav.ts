@@ -1,35 +1,54 @@
 import { isAnyOf, UnknownAction } from "@reduxjs/toolkit";
+import { DEFAULT_POSITION } from "chess.js";
 
-import { RootState } from "../";
-import { startAppListening } from "../listener";
-import { nav, ui } from "../slices";
-import { selectCurrentId, selectCurrentNode } from "../selectors";
-import { getChildId } from "../../shared/lib/tree";
-import { Id, Move } from "../../shared/types";
+import { RootState } from "@/store";
+import { startAppListening } from "@/store/listener";
+import { nav, ui } from "@/store/slices";
+import { selectCurrentId, selectCurrentNode, selectTreeDataNodes } from "@/store/selectors";
+import { getChildId, getFenFromId } from "@/shared/lib/id";
+import { Id, Move } from "@/shared/types";
 
-const getDestinationNode = (action: UnknownAction, state: RootState): Id | undefined => {
+const getNavTarget = (action: UnknownAction, state: RootState) => {
   const currentId = selectCurrentId(state);
   const currentNode = selectCurrentNode(state);
+  const nodes = selectTreeDataNodes(state);
   const actionType = action.type;
 
   switch (actionType) {
-    case nav.actions.commitMove.type:
-      return getChildId(currentId, action.payload as Move);
+    case nav.actions.commitMove.type: {
+      const move = action.payload as Move;
+      const id = getChildId(currentId, move);
+      const fen = move.after || DEFAULT_POSITION
+      return { id, fen };
+    }
     
-    case nav.actions.navigateToId.type:
-      return action.payload as Id;
+    case nav.actions.navigateToId.type: {
+      const id = action.payload as Id;
+      const fen = nodes[id]?.move?.after || DEFAULT_POSITION;
+      return { id, fen };
+    }
     
-    case nav.actions.navigateUp.type:
-      return currentNode?.parent?.data.id as Id;
+    case nav.actions.navigateUp.type: {
+      const id = currentNode?.parent?.data.id as Id;
+      if (id === undefined) return undefined;
+      const fen = nodes[id]?.move?.after || DEFAULT_POSITION;
+      return { id, fen };
+    }
     
     case nav.actions.navigateDown.type: {
-      if (!currentNode?.children?.length) return undefined;
+      const children = currentNode?.children;
+      if (!children?.length) return undefined;
       
-      const exploredChild = currentNode.children.find(child => child.data.explored);
-      const centerChild = currentNode.children[Math.floor(currentNode.children.length / 2)];
-      const child = exploredChild || centerChild;
-      
-      return child?.data.id;
+      const exploredChild = children.find(child => child.data.explored);
+      const middleChild = children.length % 2
+        ? children[Math.floor(children.length / 2)]
+        : children[Math.floor(children.length / 2 - 1)];
+      const child = exploredChild || middleChild;
+
+      const id = child?.data.id;
+      if (id === undefined) return undefined;
+      const fen = nodes[id]?.move?.after || DEFAULT_POSITION;
+      return { id, fen };
     }
     
     case nav.actions.navigateNextSibling.type:
@@ -45,16 +64,15 @@ const getDestinationNode = (action: UnknownAction, state: RootState): Id | undef
       
       if (siblingIndex < 0 || siblingIndex >= siblings.length) return undefined;
       
-      return siblings[siblingIndex].data.id;
+      const id = siblings[siblingIndex].data.id;
+      const fen = nodes[id]?.move?.after || DEFAULT_POSITION;
+      return { id, fen };
     }
     
     default:
       return undefined;
   }
 }
-
-let lastNavTime = 0;
-const NAV_THROTTLE_MS = 333;
 
 startAppListening({
   matcher: isAnyOf(
@@ -67,18 +85,12 @@ startAppListening({
   ),
   effect: async (action, listenerApi) => {
     const { dispatch, getState } = listenerApi;
-    const now = Date.now();
-    if (now - lastNavTime < NAV_THROTTLE_MS) return;
-    lastNavTime = now;
-
-    console.log("Navigation action:", action.type);
-
-    
     const state = getState();
-    const destinationId = getDestinationNode(action, state);
-    
-    if (destinationId !== undefined) {
-      dispatch(ui.actions.setCurrent(destinationId));
+    const target = getNavTarget(action, state);
+
+    if (target !== undefined) {
+      dispatch(ui.actions.setFen(target.fen));
+      dispatch(ui.actions.setCurrent(target.id));
     }
   }
 });

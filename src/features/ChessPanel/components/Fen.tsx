@@ -1,10 +1,10 @@
 import { useSelector } from "react-redux";
 
 import { RootState } from "../../../store";
-import { selectCurrentFen } from "../../../store/selectors";
+import { selectBoardFen } from "../../../store/selectors";
 
 const Fen = () => {
-  const fen = useSelector((s: RootState) => selectCurrentFen(s));
+  const fen = useSelector((s: RootState) => selectBoardFen(s));
 
   return (
     <div className='flex flex-col text-xs gap-1 p-4'>

@@ -1,5 +1,4 @@
 import { createSelector } from "@reduxjs/toolkit";
-import { DEFAULT_POSITION } from 'chess.js';
 
 import { RootState } from ".";
 import { buildTree } from "../shared/lib/tree";
@@ -9,6 +8,7 @@ import { hierarchy } from "@visx/hierarchy";
 export const selectUI = (s: RootState) => s.ui;
 export const selectCurrentId = (s: RootState) => selectUI(s).currentId;
 export const selectHoverId = (s: RootState) => selectUI(s).hoverId;
+export const selectBoardFen = (s: RootState) => selectUI(s).boardFen;
 export const selectBoardOrientation = (s: RootState) => selectUI(s).boardOrientation;
 export const selectBoardPromotionTarget = (s: RootState) => selectUI(s).boardPromotionTarget;
 export const selectTreeSource = (s: RootState) => selectUI(s).treeSource;
@@ -68,13 +68,8 @@ export const selectCurrentMove = createSelector(
   (node) => node?.move || null
 );
 
-export const selectCurrentFen = createSelector(
-  [selectCurrentMove],
-  (move) => move?.after || DEFAULT_POSITION,
-);
-
 export const selectSideToMove = createSelector(
-  [selectCurrentFen],
+  [selectBoardFen],
   (fen) => fen.split(' ')[1] === 'w' ? 'white' : 'black'
 );
 

@@ -4,7 +4,7 @@ import Stockfish from 'stockfish/src/stockfish-nnue-16.js?worker'
 import { store } from './store';
 import { engine } from './store/slices';
 import {
-  selectCurrentFen,
+  selectBoardFen,
   selectEngineDepth,
   selectEngineHash,
   selectEngineThreads,
@@ -41,7 +41,7 @@ export const initializeEngine = () => {
 
 export const startEngine = () => {
   const state = store.getState();
-  const fen = selectCurrentFen(state);
+  const fen = selectBoardFen(state);
   const hash = selectEngineHash(state);
   const threads = selectEngineThreads(state);
   const depth = selectEngineDepth(state);
