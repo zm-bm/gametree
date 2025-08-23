@@ -36,6 +36,7 @@ const tree = createSlice({
         ? state.lichessNodes
         : state.mastersNodes;
 
+      // build and add new nodes to tree
       const newNodes = buildNodes(nodes, nodeId, openingData);
       for (const node of newNodes) {
         nodes[node.id] = node;
@@ -43,7 +44,7 @@ const tree = createSlice({
 
       // update parent node with new child
       const parentId = getParentId(nodeId);
-      if (parentId !== null && nodes[parentId] && !nodes[parentId].children.includes(nodeId)) {
+      if (parentId && nodes[parentId] && !nodes[parentId].children.includes(nodeId)) {
         nodes[parentId].children.push(nodeId);
       }
     },
