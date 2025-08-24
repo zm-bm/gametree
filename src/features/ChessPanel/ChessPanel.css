@@ -4,19 +4,17 @@
 
 @layer components {
     .chess-panel {
-        @apply flex-1 flex flex-col;
+        @apply flex-1 flex flex-col space-y-3;
         @apply h-full;
-        @apply overflow-y-scroll;
+        @apply overflow-y-auto;
+        @apply py-4 px-[2px];
         scrollbar-color: var(--chess-panel-scrollbar-color) transparent;
         scrollbar-gutter: stable both-edges;
     }
     
     .chess-panel-card {
-        @apply 
-        rounded-xl
-        bg-slate-900/25 dark:bg-zinc-900/50
-        ring-1 ring-inset ring-white/10 dark:ring-white/10
-        shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_1px_2px_rgba(0,0,0,0.20)]
-        hover:bg-slate-900/30 dark:hover:bg-zinc-900/55;
+        @apply rounded-md shadow-xl;
+        background-color: var(--chess-panel-card-bg-color);
+        border: 1px solid var(--chess-panel-card-border);
     }
 }

@@ -39,7 +39,7 @@ const Board = ({ config, promotionOverlay = false }: Props) => {
   return (
     <div ref={ref} className="w-full h-full">
       <div style={style} className="relative mx-auto" data-testid="board-wrapper">
-        <div ref={chessgroundRef} className='w-full h-full table cg-wrap' />
+        <div ref={chessgroundRef} className='w-full h-full table shadow-xl cg-wrap' />
         {
           promotionOverlay && <PromotionOverlay size={boardSize} />
         }

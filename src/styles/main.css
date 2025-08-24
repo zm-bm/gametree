@@ -17,12 +17,15 @@
 :root {
     --app-inactive-tab-bg: theme(colors.slate.200);
     --app-active-tab-bg: theme(colors.slate.300);
-    --app-border-color: theme(colors.zinc.400/60);
+    --app-border-color: theme(colors.zinc.400);
     
     --chess-primary-text-color: theme(colors.slate.50);
     --chess-panel-bg-color: theme(colors.slate.800);
     --chess-panel-bg-gradient: radial-gradient(120% 80% at 0% 0%, rgba(255, 255, 255, .05), transparent);
-    --chess-panel-scrollbar-color: theme(colors.slate.600);
+    --chess-panel-scrollbar-color: theme(colors.zinc.400);
+
+    --chess-panel-card-bg-color: theme(colors.slate.900 / 25%);
+    --chess-panel-card-border: theme(colors.white / 20%);
 
     --move-tree-panel-bg-color: theme(colors.zinc.200);
     --move-tree-panel-bg-gradient: radial-gradient(72% 55% at 72% 18%, rgba(255, 255, 255, .3), transparent);
@@ -34,12 +37,15 @@
     :root {
         --app-inactive-tab-bg: theme(colors.zinc.900);
         --app-active-tab-bg: theme(colors.zinc.800);
-        --app-border-color: theme(colors.zinc.600/60);
+        --app-border-color: theme(colors.zinc.600);
 
         --chess-panel-primary-text-color: theme(colors.slate.50);
         --chess-panel-bg-color: theme(colors.zinc.900);
         --chess-panel-bg-gradient: radial-gradient(120% 80% at 0% 0%, rgba(255, 255, 255, .05), transparent);
-        --chess-panel-scrollbar-color: theme(colors.zinc.700);
+        --chess-panel-scrollbar-color: theme(colors.zinc.600);
+
+        --chess-panel-card-bg-color: theme(colors.zinc.950 / 25%);
+        --chess-panel-card-border: theme(colors.white / 20%);
 
         --move-tree-panel-bg-color: theme(colors.zinc.800);
         --move-tree-panel-bg-gradient: radial-gradient(72% 55% at 72% 18%, rgba(100, 116, 139, .03), transparent);
