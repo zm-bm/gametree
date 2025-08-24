@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
 import { MockDispatch, renderWithProviders } from "../../test/testUtils";
-import PromotionOverlay from "../../features/ChessPanel/components/PromotionOverlay/PromotionOverlay";
+import PromotionOverlay from "../../shared/ui/PromotionOverlay/PromotionOverlay";
 import { initialState, rootNode } from "../../store/slices/ui";
 import { MoveNode } from "../../shared/types";
 import { Square } from "chess.js";

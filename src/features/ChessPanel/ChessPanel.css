@@ -6,26 +6,11 @@
     .chess-panel {
         @apply flex-1 flex flex-col;
         @apply h-full;
-        @apply overflow-y-auto;
-        @apply sm:space-y-4 sm:py-4 px-1;
-        scrollbar-width: thin;
-        scrollbar-color: #888 transparent;
+        @apply overflow-y-scroll;
+        scrollbar-color: var(--chess-panel-scrollbar-color) transparent;
         scrollbar-gutter: stable both-edges;
     }
-
-    .chess-panel:-webkit-scrollbar {
-        width: 6px;
-    }
-
-    .chess-panel:-webkit-scrollbar-track {
-        background: transparent;
-    }
-
-    .chess-panel:-webkit-scrollbar-thumb {
-        background-color: #555;
-        border-radius: 4px;
-    }
-
+    
     .chess-panel-card {
         @apply 
         rounded-xl
@@ -33,19 +18,5 @@
         ring-1 ring-inset ring-white/10 dark:ring-white/10
         shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_1px_2px_rgba(0,0,0,0.20)]
         hover:bg-slate-900/30 dark:hover:bg-zinc-900/55;
-    }
-
-    .engine-chip {
-        @apply p-2 rounded-xl shadow-sm
-        border border-gray-400/50 dark:border-gray-600/50
-        bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700
-    }
-
-    .engine-chip > :first-child {
-        @apply text-xs font-medium text-gray-800 dark:text-gray-200;
-    }
-
-    .engine-chip > :last-child {
-        @apply font-bold text-gray-800 dark:text-gray-200;
     }
 }

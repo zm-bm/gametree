@@ -8,6 +8,7 @@ import { EngineOutput } from "@/shared/types";
 import {
   selectBoardOrientation, selectBoardFen, selectEngineOutput, selectSideToMove,
 } from "@/store/selectors";
+import './EngineView.css';
 
 function getLocale() {
   if (navigator.languages != undefined) 
@@ -74,19 +75,20 @@ const EngineOutputDisplay = () => {
   const chess = new Chess(fen);
 
   return (
-    <div className="py-2 space-y-2">
-      <div className="grid grid-cols-4 text-xs gap-2">
+    <div className="p-2 p space-y-2 h-full">
+      <div className="grid grid-cols-4 gap-2">
       {
         Object.entries(data).map((([key, value]) => (
           <div key={key} className="engine-chip">
             <div className="text-xs">{key}: </div>
-            <div className="text-sm">{value}</div>
+            <div className="font-bold">{value}</div>
           </div>
         )))
       }
       </div>
-      <div className="flex-1 font-mono text-sm leading-tight overflow-auto">
-        <span className="font-semibold">Best line: </span>
+      <div className="engine-chip">
+        <div className="text-xs">Best line: </div>
+        <div className="text-sm">
         {
           engineOutput?.pv?.map((move, moveIx) => {
             try {
@@ -116,6 +118,7 @@ const EngineOutputDisplay = () => {
                   )}
                   <span>{chessMove.san}</span>
                   {' '}
+                  {isWhiteMove ? " " : <>&nbsp;</>}
                 </span>
               );
             } catch {
@@ -123,6 +126,7 @@ const EngineOutputDisplay = () => {
             }
           })
         }
+        </div>
       </div>
     </div>
   )

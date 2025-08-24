@@ -1,7 +1,6 @@
-import Board from './components/Board/Board'
+import ChessBoard from './components/ChessBoard'
 import EngineView from './components/EngineView'
-import { TreeControls } from './components/TreeControls';
-import { ToggleOrientationButton } from './components/ToggleOrientationButton';
+import TreeOptions from './components/TreeOptions';
 import Fen from './components/Fen';
 
 import './ChessPanel.css';
@@ -9,13 +8,10 @@ import './ChessPanel.css';
 const ChessPanel = () => {
   return (
     <div className="chess-panel">
-      <div className="aspect-square h-auto relative">
-        <ToggleOrientationButton />
-        <Board />
-      </div>
+      <ChessBoard />
       
       <div className="chess-panel-card">
-        <TreeControls />
+        <TreeOptions />
       </div>
 
       <div className="chess-panel-card">
@@ -23,6 +19,9 @@ const ChessPanel = () => {
       </div>
 
       <div className="chess-panel-card">
+        <Fen />
+        <Fen />
+        <Fen />
         <Fen />
       </div>
     </div>

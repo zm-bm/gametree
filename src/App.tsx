@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import MoveTreePanel from '@/features/MoveTreePanel';
 import ChessPanel from '@/features/ChessPanel';
 import { useKeyboardActions } from '@/shared/hooks';
-import './App.css'
+import './styles/App.css'
 
 const TABS = [
   { id: 'chess', label: 'Chess' },

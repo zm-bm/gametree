@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Chessground } from 'chessground';
 
-import BaseBoard from '../../features/ChessPanel/components/Board/BaseBoard'
+import Board from '../../shared/ui/Board/Board'
 import { renderWithProviders } from '../testUtils';
 
 const setMock = vi.fn()
@@ -17,15 +17,15 @@ describe('BaseBoard', () => {
   });
 
   it('calls chessground', () => {
-    renderWithProviders(<BaseBoard config={{}} />)
+    renderWithProviders(<Board config={{}} />)
     expect(Chessground).toHaveBeenCalledTimes(1);
     expect(setMock).toHaveBeenCalledTimes(1);
   })
 
   it('calls set on config changes', () => {
-    const { rerender } = renderWithProviders(<BaseBoard config={{}} />)
+    const { rerender } = renderWithProviders(<Board config={{}} />)
     const config = { fen: '' };
-    rerender(<BaseBoard config={config} />);
+    rerender(<Board config={config} />);
     expect(setMock).toHaveBeenCalledTimes(2);
     expect(setMock).toBeCalledWith(config)
   })

@@ -1,20 +1,18 @@
 import { useState, useCallback, useRef, useLayoutEffect } from 'react';
 
-interface Dimensions {
-  width: number;
-  height: number;
-}
+const calculateBoardSize = (width: number) => {
+  // board must be multiple of 8px + small margin for chessground
+  return (Math.floor(width * window.devicePixelRatio / 8) * 8) / window.devicePixelRatio + 0.1;
+};
 
-export const useDimensions = () => {
+export const useBoardSize = () => {
   const ref = useRef<HTMLDivElement>(null);
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const [boardSize, setBoardSize] = useState(0);
 
   const updateDimensions = useCallback(() => {
     if (ref.current) {
-      setDimensions({
-        width: ref.current.offsetWidth,
-        height: ref.current.offsetHeight
-      });
+      const newSize = calculateBoardSize(ref.current.offsetWidth);
+      setBoardSize(newSize);
     }
   }, []);
 
@@ -33,5 +31,5 @@ export const useDimensions = () => {
     };
   }, [updateDimensions]);
 
-  return [ref, dimensions] as [React.RefObject<HTMLDivElement>, Dimensions];
+  return [ref, boardSize] as [React.RefObject<HTMLDivElement>, number];
 };

@@ -4,7 +4,7 @@ import { screen } from '@testing-library/react'
 import { Config } from 'chessground/config';
 import { Chess, DEFAULT_POSITION } from 'chess.js';
 
-import Board from '../../features/ChessPanel/components/Board/Board';
+import ChessBoard from '../../features/ChessPanel/components/ChessBoard';
 import { MockDispatch, renderWithProviders } from '../../test/testUtils';
 import { setupStore } from '../../store';
 import { setPromotionTarget, rootNode, initialState as gameInitialState } from '../../store/slices/ui';
@@ -28,14 +28,14 @@ const a2a4 = (new Chess()).move({ from: 'a2', to: 'a4' })
 
 describe('Board', () => {
   it('renders board wrapper with correct size', () => {
-    renderWithProviders(<Board />);
+    renderWithProviders(<ChessBoard />);
     
     expect(screen.getByTestId('board-wrapper').style.height).toEqual('400px');
     expect(screen.getByTestId('board-wrapper').style.width).toEqual('400px');
   });
 
   it('generates correct chessground config', () => {
-    renderWithProviders(<Board />, { preloadedState: {
+    renderWithProviders(<ChessBoard />, { preloadedState: {
       engine: {
         ...engineInitialState,
         infos: [
@@ -66,7 +66,7 @@ describe('Board', () => {
       MakeMove: vi.fn()
     }))
 
-    renderWithProviders(<Board />, { store: mockStore });
+    renderWithProviders(<ChessBoard />, { store: mockStore });
     
     baseboardProps?.config?.events?.move?.('a2', 'a4');
     expect(mockStore.dispatch).toHaveBeenCalledWith(MakeMove(a2a4))
@@ -86,7 +86,7 @@ describe('Board', () => {
     });
     mockStore.dispatch = vi.fn() as MockDispatch;
 
-    renderWithProviders(<Board />, { store: mockStore });
+    renderWithProviders(<ChessBoard />, { store: mockStore });
     
     baseboardProps?.config?.events?.move?.('b7', 'a8');
     expect(mockStore.dispatch).toHaveBeenCalledWith(setPromotionTarget(['b7', 'a8']))

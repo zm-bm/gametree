@@ -2,9 +2,9 @@ import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { IoIosPause, IoIosPlay } from "react-icons/io";
 
-import { AppDispatch, RootState } from '../../../store';
-import { selectEngineHash, selectEngineRunning, selectEngineThreads } from "../../../store/selectors";
-import { ui } from "../../../store/slices";
+import { AppDispatch, RootState } from '../../../../store';
+import { selectEngineHash, selectEngineRunning, selectEngineThreads } from "../../../../store/selectors";
+import { ui } from "../../../../store/slices";
 
 const EngineControls = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -22,7 +22,7 @@ const EngineControls = () => {
     dispatch(ui.actions.setEngineThreads(parseInt(e.target.value))), [dispatch]);
 
   return (
-    <div className="flex items-center text-sm p-1 gap-1 border-b border-gray-400">
+    <div className="flex items-center text-sm p-2 gap-2 border-b border-white/5 dark:border-white/10">
       <button
         onClick={engineToggle}
         className= "border border-gray-400/60 dark:border-gray-600/60 p-2 hover:scale-105"

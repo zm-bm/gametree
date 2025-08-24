@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/store";
 import { ui } from "@/store/slices";
 
-export const ToggleOrientationButton = () => {
+const ToggleOrientationButton = () => {
   const dispatch = useDispatch<AppDispatch>()
   const toggle = useCallback(() => dispatch(ui.actions.toggleOrientation()), [dispatch])
 
@@ -20,3 +20,5 @@ export const ToggleOrientationButton = () => {
     </button>
   );
 };
+
+export default ToggleOrientationButton;

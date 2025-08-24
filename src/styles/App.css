@@ -4,30 +4,30 @@
 
 @layer components {
     .app-wrapper {
-        @apply w-full h-full min-h-screen;
+        @apply w-full h-full min-h-screen max-h-screen;
     }
 
     .app {
-        @apply flex flex-col sm:flex-row w-full h-full
+        @apply flex flex-col sm:flex-row w-full h-full;
     }
 
     .app-tab-wrapper {
-        @apply flex flex-row w-full;
+        @apply flex flex-row w-full h-[48px];
         @apply sm:hidden;
         @apply border-b;
-        border-color: var(--border-color);
+        border-color: var(--app-border-color);
     }
 
     .app-tab-button {
         @apply flex-1 py-3 text-center font-medium;
         @apply border-b-4 border-transparent;
         @apply transition-colors duration-200;
-        background-color: var(--bg-inactive-tab);
+        background-color: var(--app-inactive-tab-bg);
     }
 
     .app-tab-button-active {
         @apply border-sky-800 dark:border-sky-600;
-        background-color: var(--bg-active-tab);
+        background-color: var(--app-active-tab-bg);
     }
 
     .chess-panel-container {
@@ -35,16 +35,17 @@
         @apply h-[calc(100vh-48px)] sm:h-screen;
         @apply relative overflow-auto;
         @apply sm:border-r;
-        background-color: var(--bg-color-chess-panel);
-        background-image: var(--bg-gradient-chess-panel);
-        border-color: var(--border-color);
+        background-color: var(--chess-panel-bg-color);
+        background-image: var(--chess-panel-bg-gradient);
+        border-color: var(--app-border-color);
+        color: var(--chess-primary-text-color);
     }
 
     .move-tree-panel-container {
         @apply w-full sm:w-1/2 md:w-3/5 lg:w-2/3 2xl:w-3/4;
         @apply h-[calc(100vh-48px)] sm:h-screen;
         @apply overflow-hidden;
-        background-color: var(--bg-color-move-tree-panel);
-        background-image: var(--bg-gradient-move-tree-panel);
+        background-color: var(--move-tree-panel-bg-color);
+        background-image: var(--move-tree-panel-bg-gradient);
     }
 }

@@ -40,7 +40,7 @@ export const TreeNodeText  = ({ move, fontSize }: Props) => {
       y={0}
       dx={symbol ? "-0.05em" : undefined}
       dy={fontSize / 3}
-      fill="#f8fafc"
+      fill="#f8fafc" // slate-50
       fontWeight={600}
       fontSize={fontSize}
       textAnchor="middle"

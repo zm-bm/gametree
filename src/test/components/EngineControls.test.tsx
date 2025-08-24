@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { fireEvent } from "@testing-library/react";
 
 import { MockDispatch, renderWithProviders } from "../../test/testUtils";
-import EngineControls from "../../features/ChessPanel/components/EngineControls";
+import EngineControls from "../../features/ChessPanel/components/EngineView/EngineControls";
 import { setupStore } from "../../store";
 import { SetHash, SetLines, SetThreads } from "../../store/engineSlice";
 
