@@ -4,10 +4,10 @@
 
 @layer components {
     .chess-panel {
-        @apply flex-1 flex flex-col space-y-3;
+        @apply flex-1 flex flex-col space-y-5;
         @apply h-full;
         @apply overflow-y-auto;
-        @apply py-4 px-[2px];
+        @apply py-5 px-[2px];
         scrollbar-color: var(--chess-panel-scrollbar-color) transparent;
         scrollbar-gutter: stable both-edges;
     }

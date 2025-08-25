@@ -29,7 +29,6 @@
 
     --move-tree-panel-bg-color: theme(colors.zinc.200);
     --move-tree-panel-bg-gradient: radial-gradient(72% 55% at 72% 18%, rgba(255, 255, 255, .3), transparent);
-
 }
 
 /* dark mode */
