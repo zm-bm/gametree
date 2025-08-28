@@ -4,9 +4,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { ui } from "@/store/slices";
 import { selectTreeFrequencyMin, selectTreeSource } from "@/store/selectors";
 import { RootState } from "@/store";
-import { CollapsibleCard } from "./CollapsibleCard";
+import { cn } from "@/shared/lib/cn";
 
-const TreeOptions = () => {
+const dataSourceLabel = 'flex gap-2 p-1 rounded text-sm font-medium cursor-pointer interactive-sidebar';
+const radioInput = 'accent-sky-500 dark:accent-sky-400 cursor-pointer';
+
+const TreeOptions = ({ className }: { className?: string }) => {
   const dispatch = useDispatch();
   const source = useSelector((s: RootState) => selectTreeSource(s));
   const minFrequency = useSelector((state: RootState) => selectTreeFrequencyMin(state));
@@ -25,37 +28,37 @@ const TreeOptions = () => {
   }, [dispatch]);
 
   return (
-    <CollapsibleCard header={<span className="font-semibold tracking-tight">Tree Options</span>}>
+    <div className={className}>
       {/* Data source radio input */}
-      <div className="border-t border-white/5 dark:border-white/10 p-4 space-y-1">
-        <div className="text-xs text-slate-400 dark:text-zinc-400 mb-1">Data Source</div>
-        <label className="group flex items-center gap-2 text-sm rounded px-1 transition-colors hover:bg-white/5 cursor-pointer">
+      <div>
+        <div className="text-xs text-secondary mb-1">Data Source</div>
+        <label className={cn(dataSourceLabel)}>
           <input
             type="radio"
             name="src"
-            className="accent-sky-500 dark:accent-sky-400"
+            className={cn(radioInput)}
             checked={source === 'masters'}
             onKeyDown={preventDefault}
             onChange={selectMasters}
           />
-          <span className="text-slate-300 dark:text-zinc-200 font-medium">Masters games</span>
+          <span>Masters games</span>
         </label>
-        <label className="group flex items-center gap-2 text-sm rounded px-1 transition-colors hover:bg-white/5 cursor-pointer">
+        <label className={cn(dataSourceLabel)}>
           <input
             type="radio"
             name="src"
-            className="accent-sky-500 dark:accent-sky-400"
+            className={cn(radioInput)}
             checked={source === 'lichess'}
             onKeyDown={preventDefault}
             onChange={selectLichess}
           />
-          <span className="text-slate-300 dark:text-zinc-200 font-medium">Lichess games</span>
+          <span>Lichess games</span>
         </label>
       </div>
 
       {/* Move frequency filter slider */}
-      <div className="border-t border-white/5 dark:border-white/10 p-4">
-        <div className="text-xs text-slate-400 dark:text-zinc-400 mb-1">
+      <div>
+        <div className="text-xs text-secondary mb-1">
           Move Frequency Filter
         </div>
         <input
@@ -66,20 +69,28 @@ const TreeOptions = () => {
           value={minFrequency}
           onChange={setFrequency}
           onKeyDown={preventDefault}
-          className="w-full appearance-none h-1.5 rounded-full
-          bg-white/80 dark:bg-white/10
-          ring-1 ring-inset ring-black/10 dark:ring-white/10
-          accent-sky-500 dark:accent-sky-400"
+          className={cn([
+            'w-full appearance-none h-1.5 rounded-full cursor-pointer',
+            'bg-lightmode-300 dark:bg-darkmode-300',
+            'hover:bg-lightmode-100 dark:hover:bg-darkmode-100',
+            'accent-sky-500',
+          ])}
         />
-        <div className="mt-1 text-xs text-slate-400 dark:text-zinc-400 flex justify-between select-none">
+        <div className="mt-1 text-xs text-secondary flex justify-between select-none">
           <span>0%</span>
-          <span className="px-1.5 py-0.5 -mt-1 rounded-md tabular-nums text-slate-50 font-semibold
-                ring-1 ring-sky-500/60 dark:ring-sky-400/60 shadow-sm
-                ">{minFrequency}%</span>
+          <span className={cn([
+            'px-2 py-1 -mt-1 rounded-md shadow-md',
+            'font-semibold text-primary tabular-nums',
+            'bg-gradient-to-br from-lightmode-600 to-lightmode-700',
+            'dark:from-darkmode-700 dark:to-darkmode-800',
+            'ring-1 ring-sky-400/20 dark:ring-sky-600/20',
+          ])}>
+            {minFrequency}%
+          </span>
           <span>20%</span>
         </div>
       </div>
-    </CollapsibleCard>
+    </div>
   );
 };
 

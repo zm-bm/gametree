@@ -12,6 +12,7 @@ import { TreeNodeData, NodeTooltipData } from "@/shared/types";
 import { gameCount } from "@/shared/lib/tree";
 import { MoveTreeContext } from "../../context/MoveTreeContext";
 import { TreeNodeText } from "./TreeNodeText";
+import { cn } from "@/shared/lib/cn";
 
 const GRADIENTS = {
   current: 'url(#currentNodeGradient)',
@@ -43,6 +44,12 @@ interface Props {
   showTooltip?: React.MouseEventHandler<SVGGElement>,
   hideTooltip?: UseTooltipParams<NodeTooltipData>['hideTooltip'],
 }
+
+const nodeClass = [
+  'transition-all duration-500 hover:scale-110',
+  'stroke-[0.75] stroke-lightmode-900/10 dark:stroke-darkmode-400/10',
+];
+const minimapNodeClass = 'stroke-1 stroke-lightmode-900/30 dark:stroke-darkmode-400/60';
 
 export const TreeNode = ({
   node,
@@ -91,7 +98,7 @@ export const TreeNode = ({
     height: nodeRadius * 2,
     fill: isCurrentNode ? GRADIENTS.current : isHovered ? GRADIENTS.hover : GRADIENTS.default,
     filter: isHovered ? FILTERS.hover : isCurrentNode ? FILTERS.current : FILTERS.default,
-    className: minimap ? 'tree-node-minimap' : 'tree-node',
+    className: cn(nodeClass, { [minimapNodeClass]: minimap }),
   }), [nodeRadius, isHovered, isCurrentNode, minimap]);
 
   return (

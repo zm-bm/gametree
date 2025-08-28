@@ -107,7 +107,7 @@ export type NodeTooltipData = {
   draws: number;
   black: number;
   parent: number;
-  rating: number;
+  rating?: number;
   eco?: string;
   name?: string;
 };

@@ -11,7 +11,6 @@ import { Minimap } from '../Minimap';
 import { TreeTooltip } from '../Tooltip';
 import { TreeZoomControls, TreeLegend, TreeDPad, TreeChips } from '../Overlays';
 import { MoveTreeContext, ZoomContext } from "../../context";
-import './MoveTree.css';
 
 export const MoveTree = () => {
   const { height, width, rowHeight, columnWidth } = useContext(MoveTreeContext);
@@ -29,8 +28,6 @@ export const MoveTree = () => {
 
   // TODO: add spring to zoom context -> update spring on wheel events
   const onWheel = useCallback(() => setTimeout(updateSpring, 20), [updateSpring]);
-  const zoomIn = useCallback(() => handleZoom('in'), [handleZoom]);
-  const zoomOut = useCallback(() => handleZoom('out'), [handleZoom]);
 
   return (
     <div className='relative h-full' ref={tooltip.tooltipContainerRef}>
@@ -58,7 +55,7 @@ export const MoveTree = () => {
       </svg>
 
       {/* top left overlays */}
-      <div className="absolute top-2 left-2 flex flex-row gap-1">
+      <div className="absolute top-2 left-2">
         <TreeChips />
       </div>
 
@@ -69,7 +66,7 @@ export const MoveTree = () => {
 
       {/* bottom left overlays */}
       <div className="absolute bottom-2 left-2">
-        <TreeZoomControls zoomIn={zoomIn} zoomOut={zoomOut} />
+        <TreeZoomControls handleZoom={handleZoom} />
       </div>
 
       {/* bottom right overlays */}

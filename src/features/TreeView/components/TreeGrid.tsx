@@ -1,13 +1,10 @@
 import { useContext } from 'react';
-import { MoveTreeContext } from '@/features/MoveTreePanel/context/MoveTreeContext';
+import { MoveTreeContext } from '../context/MoveTreeContext';
 
-interface Props {
-  id?: string;
-}
+const id = 'tree-grid-pattern';
+const gridStroke = 'stroke-lightmode-500/40 dark:stroke-darkmode-500/40';
 
-export const TreeGrid = ({
-  id = 'tree-grid-pattern',
-}: Props) => {
+export const TreeGrid = () => {
   const { columnWidth } = useContext(MoveTreeContext);
   
   const gridSize = columnWidth / 2;
@@ -25,16 +22,16 @@ export const TreeGrid = ({
           <path
             d={`M 0 0 V ${gridSize}`}
             fill="none"
-            strokeWidth="1"
-            className="tree-grid-line"
+            strokeWidth="0.75"
+            className={gridStroke}
             strokeDasharray="2,2"
           />
           {/* Horizontal line */}
           <path
             d={`M 0 0 H ${gridSize}`}
             fill="none"
-            strokeWidth="1"
-            className="tree-grid-line"
+            strokeWidth="0.75"
+            className={gridStroke}
             strokeDasharray="2,2"
           />
         </pattern>

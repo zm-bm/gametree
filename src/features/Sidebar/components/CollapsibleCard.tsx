@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, ReactNode } from "react";
-import clsx from "clsx";
+import { cn } from "@/shared/lib/cn";
 
 interface CollapsibleCardProps {
   header: ReactNode;
@@ -8,6 +8,7 @@ interface CollapsibleCardProps {
   children: ReactNode;
   maxHeight?: string; // e.g. "max-h-60"
   duration?: number; // ms
+  className?: string;
 }
 
 export const CollapsibleCard = ({
@@ -17,6 +18,7 @@ export const CollapsibleCard = ({
   children,
   maxHeight = "max-h-60",
   duration = 300,
+  className,
 }: CollapsibleCardProps) => {
   const [isCollapsed, setIsCollapsed] = useState(collapsed);
   const [showContent, setShowContent] = useState(!collapsed);
@@ -48,9 +50,9 @@ export const CollapsibleCard = ({
   };
 
   return (
-    <div className="flex flex-col">
+    <div className={cn("flex flex-col", className)}>
       <div
-        className="w-full flex items-center justify-between p-3 gap-2 text-sm cursor-pointer select-none"
+        className="w-full flex items-center justify-between p-3 gap-2 text-sm cursor-pointer select-none interactive-sidebar"
         onClick={handleToggle}
       >
         <div>{header}</div>
@@ -62,7 +64,7 @@ export const CollapsibleCard = ({
         </div>
       </div>
       <div
-        className={clsx(
+        className={cn(
           "transition-all ease-in-out overflow-hidden",
           isCollapsed ? "max-h-0 opacity-0" : `${maxHeight} opacity-100`
         )}

@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent } from '@testing-library/react';
 import { DEFAULT_POSITION } from 'chess.js';
 
-import BoardControls from '../../features/ChessPanel/components/BoardControls';
+import BoardControls from '../../features/Sidebar/components/BoardControls';
 import { MockDispatch, renderWithProviders } from '../../test/testUtils';
 import { setupStore } from '../../store';
 import { ToggleEngine } from '../../store/engineSlice';

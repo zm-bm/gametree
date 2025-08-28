@@ -8,13 +8,13 @@ export const TreeChips = () => {
   const frequencyMin = useSelector((s: RootState) => selectTreeFrequencyMin(s));
 
   return (
-    <>
-      <div className="tree-overlay text-xs px-2 py-1 select-none">
+    <div className="flex flex-row gap-2 text-xs *:px-1.5 *:py-0.5">
+      <div className="treeview-card select-none">
         Games: {source === 'lichess' ? 'Lichess' : 'Masters'}
       </div>
-      <div className="tree-overlay text-xs px-2 py-1 select-none">
+      <div className="treeview-card select-none">
         Moves {`≥${frequencyMin}`}%
       </div>
-    </>
+    </div>
   );
 };

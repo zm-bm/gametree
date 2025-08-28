@@ -4,8 +4,7 @@ import { UseTooltipParams } from "@visx/tooltip/lib/hooks/useTooltip";
 
 import { TreeLink } from "../TreeLink";
 import { TreeNode } from '../TreeNode/TreeNode';
-import { TreeNodeData } from "../../types";
-import { NodeTooltipData } from "../../hooks/useTreeTooltip";
+import { NodeTooltipData, TreeNodeData } from "@/shared/types";
 
 interface Props {
   tree: HierarchyPointNode<TreeNodeData>,

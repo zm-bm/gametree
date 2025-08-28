@@ -25,6 +25,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "src/features/ChessPanel/components/App.test.tsx"],
+  "include": ["src", "src/features/Sidebar/components/App.test.tsx"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

@@ -6,11 +6,15 @@ import { TreeNodeData } from "@/shared/types";
 import { gameCount } from "@/shared/lib/tree";
 import { MoveTreeContext } from "../context/MoveTreeContext";
 import { COLORS, colorScale } from "../lib/colors";
+import { cn } from "@/shared/lib/cn";
 
 interface Props {
   link: HierarchyPointLink<TreeNodeData>,
   minimap?: boolean,
 };
+
+const linkClass = 'stroke-[0.75] stroke-lightmode-900/20 dark:stroke-white/20 dark:mix-blend-screen';
+const linkStyle: React.CSSProperties = { vectorEffect: 'non-scaling-stroke' };
 
 export const TreeLink = ({ link, minimap = false }: Props) => {
   const { nodeRadius } = useContext(MoveTreeContext);
@@ -52,12 +56,9 @@ export const TreeLink = ({ link, minimap = false }: Props) => {
     return (games === 0) ? COLORS.draw : colorScale((white - black) / games);
   }, [link.target.data]);
 
-  const linkClass = useMemo(() => minimap ? 'tree-link-minimap' : 'tree-link', [minimap]);
-  const linkStyle: React.CSSProperties = useMemo(() => ({ vectorEffect: 'non-scaling-stroke' }), []);
-
   return (
     <LinkHorizontal
-      className={linkClass}
+      className={cn(linkClass, { ['stroke-1']: minimap })}
       path={linkPath}
       fill={linkFill}
       filter="url(#linkShadow)"

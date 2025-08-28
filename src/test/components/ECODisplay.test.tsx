@@ -1,6 +1,6 @@
 import { describe, it } from "vitest";
 
-import ECODisplay from "../../features/ChessPanel/components/ECODisplay";
+import ECODisplay from "../../features/Sidebar/components/ECODisplay";
 import { renderWithProviders } from "../../test/testUtils";
 import { initialState } from "../../store/slices/ui";
 import { MoveNode } from "../../shared/types";

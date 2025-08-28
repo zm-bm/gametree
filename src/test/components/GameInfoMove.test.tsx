@@ -1,7 +1,7 @@
 import { describe, it, vi } from "vitest";
 import { renderWithProviders } from "../../test/testUtils";
 import { Move } from "chess.js";
-import GameInfoMove from "../../features/ChessPanel/components/GameInfoMove";
+import GameInfoMove from "../../features/Sidebar/components/GameInfoMove";
 
 const wMove: Move = {
   color: 'w',

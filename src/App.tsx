@@ -1,28 +1,37 @@
 import { useState } from 'react';
-import clsx from 'clsx';
 
-import MoveTreePanel from '@/features/MoveTreePanel';
-import ChessPanel from '@/features/ChessPanel';
+import TreeView from '@/features/TreeView';
+import Sidebar from '@/features/Sidebar';
 import { useKeyboardActions } from '@/shared/hooks';
-import './styles/App.css'
+import { cn } from '@/shared/lib/cn';
 
 const TABS = [
-  { id: 'chess', label: 'Chess' },
-  { id: 'moveTree', label: 'Tree' },
+  { id: 'sidebar', label: 'Chess' },
+  { id: 'tree', label: 'Move Tree' },
 ];
+
+const tabWrapper = [
+  'flex flex-row w-full h-[48px] sm:hidden',
+  'text-primary font-medium text-center',
+  'bg-sidebar border-b border-sidebar',
+]
+
+const tabBase = 'flex-1 bg-sidebar border-b-4 border-transparent';
+const tabActive = 'bg-lightmode-700/50 dark:bg-darkmode-900/80 border-highlight-500';
 
 function App() {
   useKeyboardActions();
-  const [activeTab, setActiveTab] = useState('chess');
+  const [activeTab, setActiveTab] = useState('tree');
 
   return (
-    <main className="app-wrapper">
-      <div className="app">
-        <div className="app-tab-wrapper">
+    <div className="w-full h-full min-h-screen max-h-screen">
+      <div className="flex flex-col sm:flex-row w-full h-full">
+
+        <div className={cn(tabWrapper)}>
           {TABS.map(tab => (
             <button
               key={tab.id}
-              className={clsx('app-tab-button', { 'app-tab-button-active': activeTab === tab.id })}
+              className={cn(tabBase, { [tabActive]: activeTab === tab.id })}
               onClick={() => setActiveTab(tab.id)}
             >
               {tab.label}
@@ -30,15 +39,15 @@ function App() {
           ))}
         </div>
 
-        <div className={clsx('chess-panel-container', { hidden: activeTab !== 'chess' }, 'sm:block')}>
-          <ChessPanel />
-        </div>
+        <aside className={cn({ hidden: activeTab !== 'sidebar' }, 'gt-sidebar sm:block')}>
+          <Sidebar />
+        </aside>
 
-        <div className={clsx('move-tree-panel-container', { hidden: activeTab !== 'moveTree' }, 'sm:block')}>
-          <MoveTreePanel />
-        </div>
+        <main className={cn({ hidden: activeTab !== 'tree' }, 'gt-treeview sm:block')}>
+          <TreeView />
+        </main>
       </div>
-    </main>
+    </div>
   );
 }
 

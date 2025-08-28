@@ -18,7 +18,7 @@ export const TreeTooltipContents = ({ data }: Props) => {
   } : null;
 
   return (
-    <div className="tree-overlay w-[260px]">
+    <div className="treeview-card w-[260px]">
       {/* ECO Header */}
       {data.name && (
         <div className="p-4">

@@ -19,7 +19,7 @@ const zoomProps = {
   }
 };
 
-const MoveTreePanel = () =>  {
+const TreeView = () =>  {
   const { parentRef, width, height } = useParentSize();
 
   return (
@@ -41,4 +41,4 @@ const MoveTreePanel = () =>  {
   );
 }
 
-export default MoveTreePanel;
+export default TreeView;

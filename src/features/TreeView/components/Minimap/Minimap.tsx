@@ -11,12 +11,25 @@ import { MinimapTree } from './MinimapTree';
 import { SVGDefs } from '../SVGDefs';
 import { ZoomContext, MoveTreeContext } from "../../context";
 import { separation } from '../../lib/separation';
+import { cn } from '@/shared/lib/cn';
 
 interface Props {
   tree: HierarchyNode<TreeNodeData> | null,
   spring: SpringRef<TransformMatrix>,
   size: number,
 };
+
+const minimapClass = [
+  'treeview-card backdrop-blur-lg',
+  'border-none border-t border-l',
+  'rounded-none rounded-tl-md',
+  'hover:bg-lightmode-200/90 dark:hover:bg-darkmode-800/90',
+];
+
+const viewportClass = [
+  'stroke-[0.75] stroke-lightmode-950/50 dark:stroke-darkmode-50/50',
+  'fill-lightmode-950/10 dark:fill-darkmode-100/10'
+];
 
 export const Minimap = ({ tree, spring, size }: Props) => {
   const treeDimensions = useContext(MoveTreeContext);
@@ -58,7 +71,7 @@ export const Minimap = ({ tree, spring, size }: Props) => {
 
   return (
     <svg
-      className="minimap"
+      className={cn(minimapClass, 'bg-opacity-5')}
       width={size}
       height={size}
       style={svgStyle}
@@ -89,13 +102,13 @@ export const Minimap = ({ tree, spring, size }: Props) => {
         }
         { viewport &&
           <rect
-            className='minimap-viewport'
+            className={cn(viewportClass)}
             x={viewport.x}
             y={viewport.y}
             width={viewport.width}
             height={viewport.height}
-            rx={4}
-            ry={4}
+            rx={6}
+            ry={6}
             z={100}
             filter="url(#minimapGlow)"
             vectorEffect="non-scaling-stroke"

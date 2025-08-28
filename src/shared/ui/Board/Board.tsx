@@ -3,6 +3,7 @@ import { Chessground } from 'chessground';
 import { Api } from 'chessground/api';
 import { Config } from 'chessground/config';
 
+import { cn } from '@/shared/lib/cn';
 import { useBoardSize } from '@/shared/hooks/useBoardSize';
 import PromotionOverlay from '@/shared/ui/PromotionOverlay';
 import "./chessground.base.css";
@@ -11,10 +12,11 @@ import "./chessground.pieces.css";
 
 interface Props {
   config: Config,
+  className?: string,
   promotionOverlay?: boolean,
 }
 
-const Board = ({ config, promotionOverlay = false }: Props) => {
+const Board = ({ config, className, promotionOverlay = false }: Props) => {
   const chessgroundRef = useRef<HTMLDivElement>(null);
   const [api, setApi] = useState<Api | undefined>(undefined);
   const [ref, boardSize] = useBoardSize();
@@ -39,7 +41,7 @@ const Board = ({ config, promotionOverlay = false }: Props) => {
   return (
     <div ref={ref} className="w-full h-full">
       <div style={style} className="relative mx-auto" data-testid="board-wrapper">
-        <div ref={chessgroundRef} className='w-full h-full table shadow-xl cg-wrap' />
+        <div ref={chessgroundRef} className={cn('w-full h-full table shadow-xl cg-wrap', className)} />
         {
           promotionOverlay && <PromotionOverlay size={boardSize} />
         }
