@@ -78,6 +78,7 @@ export function buildNodes(
     node = {
       id: nodeId,
       explored: true,
+      loading: false,
       move: getMoveFromId(nodeId),
       white: openingData.white,
       draws: openingData.draws,
@@ -113,6 +114,7 @@ export function buildChildNodes(
     children.push({
       id: childId,
       explored: false,
+      loading: false,
       move: childMove,
       white: moveData.white,
       draws: moveData.draws,

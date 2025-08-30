@@ -6,6 +6,15 @@ export default {
   ],
   theme: {
     "extend": {
+      "animation": {
+        "tree-pulse": "tree-pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;"
+      },
+      "keyframes": {
+        "tree-pulse": {
+          "0%, 100%": { "opacity": "1" },
+          "50%": { "opacity": "0.1" }
+        }
+      },
       "colors": {
         "lightmode": {
           "50": "#f8fafc",

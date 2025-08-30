@@ -20,4 +20,5 @@ export const COLORS = {
   draw: COLOR_RANGE.at(Math.floor(COLOR_RANGE.length / 2)),
   losing: COLOR_RANGE.at(Math.floor(COLOR_RANGE.length / 4)),
   lose: COLOR_RANGE.at(0),
+  loading: '#888888',
 };

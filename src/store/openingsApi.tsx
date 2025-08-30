@@ -27,6 +27,7 @@ export const openingsApi = createApi({
         try {
           // query the first source
           const { data } = await queryFulfilled;
+          await new Promise(r => setTimeout(r, 2000));
           dispatch(tree.actions.addNodes({ openingData: data, ...args }));
 
           // then query the second source (to avoid rate limiting)
@@ -37,7 +38,7 @@ export const openingsApi = createApi({
         } catch(error) {
           console.error('Query failed:', error)
         }
-      }
+      },
     }),
   }),
-})
+});

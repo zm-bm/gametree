@@ -5,7 +5,7 @@ import { RootState } from "@/store";
 import { startAppListening } from "@/store/listener";
 import { nav, ui } from "@/store/slices";
 import { selectCurrentId, selectCurrentNode, selectTreeDataNodes } from "@/store/selectors";
-import { getChildId, getFenFromId } from "@/shared/lib/id";
+import { getChildId } from "@/shared/lib/id";
 import { Id, Move } from "@/shared/types";
 
 const getNavTarget = (action: UnknownAction, state: RootState) => {
@@ -25,6 +25,7 @@ const getNavTarget = (action: UnknownAction, state: RootState) => {
     case nav.actions.navigateToId.type: {
       const id = action.payload as Id;
       const fen = nodes[id]?.move?.after || DEFAULT_POSITION;
+      console.log(fen);
       return { id, fen };
     }
     

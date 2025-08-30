@@ -1,10 +1,6 @@
 import { Color, PieceSymbol, Square } from "chess.js";
 import { TransformMatrix } from "@visx/zoom/lib/types";
-
-export type Move = {
-  color: Color;
-  from: Square;
-  to: Square;
+export type Move = { color: Color; from: Square; to: Square;
   piece: PieceSymbol;
   captured?: PieceSymbol;
   promotion?: PieceSymbol;
@@ -62,6 +58,7 @@ export type LcOpeningData = {
 type NodeData = {
   id: Id;
   explored: boolean;
+  loading: boolean;
   move: Move | null;
   white: number;
   draws: number;

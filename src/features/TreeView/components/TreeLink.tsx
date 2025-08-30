@@ -13,11 +13,12 @@ interface Props {
   minimap?: boolean,
 };
 
-const linkClass = 'stroke-[0.75] stroke-lightmode-900/20 dark:stroke-white/20 dark:mix-blend-screen';
+const linkClass = 'stroke-[0.75] stroke-lightmode-900/60 dark:stroke-white dark:mix-blend-screen';
 const linkStyle: React.CSSProperties = { vectorEffect: 'non-scaling-stroke' };
 
 export const TreeLink = ({ link, minimap = false }: Props) => {
   const { nodeRadius } = useContext(MoveTreeContext);
+  const { loading } = link.target.data;
 
   const linkPath = useCallback((link: HierarchyPointLink<TreeNodeData>) => {
     const { source, target } = link;
@@ -29,36 +30,47 @@ export const TreeLink = ({ link, minimap = false }: Props) => {
 
     // Calculate the width of the link based on frequency
     const minWidth = minimap ? nodeRadius * 2/3 : nodeRadius / 3;
-    const maxWidth = nodeRadius * 2 - 2;
-    const calcWidth = (maxWidth - minWidth) * frequency + minWidth;
-    const width = Math.min(calcWidth, maxWidth);
+    const maxWidth = nodeRadius * 2 - 8;
+    const scaledWidth = (maxWidth - minWidth) * frequency + minWidth;
+    const width = Math.min(scaledWidth, maxWidth);
 
     // Calculate the control points for the bezier curve
-    const midX = (source.y + target.y) / 2;
-    const curveOffset = Math.min(80, (target.y - source.y) * 0.4);
-    const controlPointX = midX - curveOffset;
-    const topY = target.x - width / 2;
-    const botY = target.x + width / 2;
-    const offsetY = nodeRadius - 1;
-    const offsetX = nodeRadius * 2 / 3;
+    const sourceVertical = source.x;
+    const sourceHorizontal = source.y;
+    const targetVertical = target.x;
+    const targetHorizontal = target.y;
+    
+    const midHorizontal = (sourceHorizontal + targetHorizontal) / 2;
+    const curveOffset = Math.min(80, (targetHorizontal - sourceHorizontal) * 0.4);
+    const controlHorizontal = midHorizontal - curveOffset;
+    const topVertical = targetVertical - width / 2;
+    const bottomVertical = targetVertical + width / 2;
+    const verticalOffset = nodeRadius * 2 / 3;
+    const sourceRightEdge = sourceHorizontal + nodeRadius - 1;
+    const targetLeftEdge = targetHorizontal - nodeRadius;
 
     // Create the path string
-    const start = `M${source.y+offsetY},${source.x-offsetX}`;
-    const ctrl1 = `C${controlPointX},${source.x} ${midX},${topY} ${target.y},${topY}`;
-    const lineT = `L${target.y},${botY}`;
-    const ctrl2 = `C${midX},${botY} ${controlPointX},${source.x} ${source.y+offsetY},${source.x+offsetX}`;
+    const start = `M${sourceRightEdge},${sourceVertical-verticalOffset}`;
+    const ctrl1 = `C${controlHorizontal},${sourceVertical} ${midHorizontal},${topVertical} ${targetLeftEdge},${topVertical}`;
+    const lineT = `L${targetLeftEdge},${bottomVertical}`;
+    const ctrl2 = `C${midHorizontal},${bottomVertical} ${controlHorizontal},${sourceVertical} ${sourceRightEdge},${sourceVertical+verticalOffset}`;
     return `${start} ${ctrl1} ${lineT} ${ctrl2} Z`;
   }, [nodeRadius, minimap]);
 
   const linkFill = useMemo(() => {
+    if (loading) return 'transparent';
     const { white, draws, black } = link.target.data;
     const games = white + draws + black;
     return (games === 0) ? COLORS.draw : colorScale((white - black) / games);
-  }, [link.target.data]);
+  }, [link.target.data, loading]);
 
   return (
     <LinkHorizontal
-      className={cn(linkClass, { ['stroke-1']: minimap })}
+      className={cn(
+        linkClass,
+        minimap && 'stroke-1',
+        loading && 'animate-tree-pulse',
+      )}
       path={linkPath}
       fill={linkFill}
       filter="url(#linkShadow)"

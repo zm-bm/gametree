@@ -7,7 +7,7 @@ import { UseTooltipParams } from "@visx/tooltip/lib/hooks/useTooltip";
 
 import { RootState, AppDispatch } from "@/store";
 import { selectCurrentId } from "@/store/selectors";
-import { ui } from "@/store/slices";
+import { nav, ui } from "@/store/slices";
 import { TreeNodeData, NodeTooltipData } from "@/shared/types";
 import { gameCount } from "@/shared/lib/tree";
 import { MoveTreeContext } from "../../context/MoveTreeContext";
@@ -18,12 +18,14 @@ const GRADIENTS = {
   current: 'url(#currentNodeGradient)',
   hover: 'url(#hoverNodeGradient)',
   default: 'url(#moveGradient)',
+  // loading: 'url(#loadingNodeGradient)', // Add gradient for loading state
 };
 
 const FILTERS = {
   current: 'url(#currentNodeFilter)',
   hover: 'url(#hoverNodeFilter)',
   default: 'url(#nodeFilter)',
+  // loading: 'url(#loadingNodeFilter)', // Add filter for loading state
 };
 
 const getToolTipData = (node: HierarchyPointNode<TreeNodeData>): NodeTooltipData => {
@@ -46,10 +48,9 @@ interface Props {
 }
 
 const nodeClass = [
-  'transition-all duration-500 hover:scale-110',
+  'transition-all duration-200 hover:scale-110',
   'stroke-[0.75] stroke-lightmode-900/10 dark:stroke-darkmode-400/10',
 ];
-const minimapNodeClass = 'stroke-1 stroke-lightmode-900/30 dark:stroke-darkmode-400/60';
 
 export const TreeNode = ({
   node,
@@ -57,54 +58,55 @@ export const TreeNode = ({
   showTooltip,
   hideTooltip,
 }: Props) => {
+  const { id, loading } = node.data;
+
   const dispatch = useDispatch<AppDispatch>();
   const { fontSize, nodeRadius } = useContext(MoveTreeContext);
-  const [isHovered, setIsHovered] = useState(false);
   const currentNodeId = useSelector((s: RootState) => selectCurrentId(s));
-  const isCurrentNode = currentNodeId === node.data.id;
-
-  const onMouseEnter = useCallback((e: React.MouseEvent<SVGGElement>) => {
-    setIsHovered(true);
-    showTooltip?.(e);
-  }, [showTooltip]);
-
-  const onMouseLeave = useCallback(() => {
-    setIsHovered(false);
-    if (hideTooltip) hideTooltip();
-  }, [hideTooltip]);
+  const isCurrent = useMemo(() => currentNodeId === id, [currentNodeId, id]);
 
   const onClick = useCallback(() => {
-    dispatch(ui.actions.setCurrent(node.data.id))
-  }, [dispatch, node]);
+    dispatch(nav.actions.navigateToId(id));
+  }, [dispatch, id]);
 
-  const groupProps = useMemo(() => ({
-    style: minimap ? undefined : { cursor: 'pointer' },
-    onMouseEnter: minimap ? undefined : onMouseEnter,
-    onMouseMove: minimap ? undefined : onMouseEnter,
-    onMouseLeave: minimap ? undefined : onMouseLeave,
-    onClick: minimap ? undefined : onClick,
-    'data-tooltip': minimap ? undefined : (getToolTipData ? JSON.stringify(getToolTipData(node)) : undefined),
-    'data-fen': minimap ? undefined : (node.data.move?.after || DEFAULT_POSITION),
-    'data-move': minimap ? undefined : (node.data.move?.lan || ''),
-    'data-id': minimap ? undefined : node.data.id,
-  }), [minimap, onMouseEnter, onMouseLeave, onClick, node]);
+  const groupProps = useMemo(() => {
+    return (!minimap && !loading) ? {
+      style: { cursor: 'pointer' },
+      onMouseEnter: showTooltip,
+      onMouseMove: showTooltip,
+      onMouseLeave: hideTooltip,
+      onClick: onClick,
+      'data-tooltip': JSON.stringify(getToolTipData(node)),
+      'data-fen': (node.data.move?.after || DEFAULT_POSITION),
+      'data-move': (node.data.move?.lan || ''),
+      'data-id': node.data.id,
+    } : {};
+  }, [node, minimap, loading, showTooltip, hideTooltip, onClick]);
 
   const rectProps = useMemo(() => ({
     x: -nodeRadius,
     y: -nodeRadius,
-    rx: 8,
-    ry: 8,
+    rx: 6,
+    ry: 6,
     width: nodeRadius * 2,
     height: nodeRadius * 2,
-    fill: isCurrentNode ? GRADIENTS.current : isHovered ? GRADIENTS.hover : GRADIENTS.default,
-    filter: isHovered ? FILTERS.hover : isCurrentNode ? FILTERS.current : FILTERS.default,
-    className: cn(nodeClass, { [minimapNodeClass]: minimap }),
-  }), [nodeRadius, isHovered, isCurrentNode, minimap]);
+    fill: loading ? GRADIENTS.default : 
+          isCurrent ? GRADIENTS.current : 
+          GRADIENTS.default,
+    filter: loading ? FILTERS.default : 
+            isCurrent ? FILTERS.current : 
+            FILTERS.default,
+    className: cn(nodeClass, { 
+      [ 'stroke-1 stroke-lightmode-900/30 dark:stroke-darkmode-400/60']: minimap,
+      ['hover:fill-[url(#hoverNodeGradient)] hover:filter-[url(#hoverNodeFilter)]']: !minimap && !loading,
+      ['animate-tree-pulse']: loading,
+    }),
+  }), [nodeRadius, isCurrent, minimap, loading]);
 
   return (
     <Group {...groupProps} top={node.x} left={node.y}>
       <rect {...rectProps} />
-      {!minimap && <TreeNodeText move={node.data.move} fontSize={fontSize} />}
+      {!minimap && !loading && <TreeNodeText move={node.data.move} fontSize={fontSize} />}
     </Group>
   );
 };
