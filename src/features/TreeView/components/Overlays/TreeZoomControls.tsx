@@ -9,7 +9,7 @@ export const TreeZoomControls = ({ handleZoom }: { handleZoom: (direction: 'in' 
   const zoomOut = useCallback(() => handleZoom('out'), [handleZoom]);
 
   return (
-    <div className="treeview-card flex flex-col gap-1 divide-y divide-zinc-300">
+    <div className="treeview-card flex flex-col gap-1 divide-y divide-lightmode-900/20 dark:divide-darkmode-100/20">
       <button className={buttonClass} onClick={zoomIn} aria-label="Zoom in">
         <FaPlus className={iconClass} />
       </button>

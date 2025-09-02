@@ -36,10 +36,18 @@ const tree = createSlice({
         nodes[node.id] = node;
       }
 
-      // update parent node with new child
+      // update parent node and remove any loading placeholders
       const parentId = getParentId(nodeId);
-      if (parentId && nodes[parentId] && !nodes[parentId].children.includes(nodeId)) {
-        nodes[parentId].children.push(nodeId);
+      if (parentId && nodes[parentId]) {
+        if (!nodes[parentId].children.includes(nodeId)) {
+          nodes[parentId].children.push(nodeId);
+        }
+        nodes[parentId].children = nodes[parentId].children.filter(
+          (id) => !id.startsWith(`loading:${parentId}:`)
+        );
+        Object.keys(nodes).forEach((id) => {
+          if (id.startsWith(`loading:${parentId}:`)) delete nodes[id];
+        });
       }
     },
 

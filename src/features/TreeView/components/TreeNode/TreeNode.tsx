@@ -1,9 +1,10 @@
-import React, { useCallback, useContext, useMemo, useState } from "react";
+import React, { useCallback, useContext, useMemo, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { DEFAULT_POSITION } from "chess.js";
 import { Group } from "@visx/group";
 import { HierarchyPointNode } from "@visx/hierarchy/lib/types";
 import { UseTooltipParams } from "@visx/tooltip/lib/hooks/useTooltip";
+import { animated, useSpring } from "react-spring";
 
 import { RootState, AppDispatch } from "@/store";
 import { selectCurrentId } from "@/store/selectors";
@@ -45,6 +46,8 @@ interface Props {
   hideTooltip?: UseTooltipParams<NodeTooltipData>['hideTooltip'],
 }
 
+const AnimatedGroup = animated(Group);
+
 export const TreeNode = ({
   node,
   minimap = false,
@@ -57,6 +60,8 @@ export const TreeNode = ({
   const { fontSize, nodeRadius } = useContext(MoveTreeContext);
   const currentNodeId = useSelector((s: RootState) => selectCurrentId(s));
   const isCurrent = useMemo(() => currentNodeId === id, [currentNodeId, id]);
+  const isFirstRender = useRef(true);
+  useEffect(() => { isFirstRender.current = false; }, []);
 
   const onClick = useCallback(() => {
     dispatch(nav.actions.navigateToId(id));
@@ -98,10 +103,23 @@ export const TreeNode = ({
     }),
   }), [nodeRadius, isCurrent, minimap, loading]);
 
+  const springs = useSpring({
+    immediate: loading || id.startsWith('loading:'),
+    to: { 
+      y: node.y, 
+      x: node.x 
+    },
+    config: { tension: 170, friction: 26 },
+  });
+
   return (
-    <Group {...groupProps} top={node.x} left={node.y}>
+    <AnimatedGroup
+      {...groupProps}
+      top={springs.x}
+      left={springs.y}
+    >
       <rect {...rectProps} />
       {!minimap && !loading && <TreeNodeText move={node.data.move} fontSize={fontSize} />}
-    </Group>
+    </AnimatedGroup>
   );
 };

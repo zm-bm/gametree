@@ -29,7 +29,6 @@ startAppListening({
     const key = gateKey(nodeId, source);
 
     gates.ensure(key).resolve(() => {
-      listenerApi.dispatch(tree.actions.removeLoadingNodes({ nodeId, source }));
       const { lichess, masters } = action.payload;
       if (lichess && masters) {
         listenerApi.dispatch(tree.actions.addNodes({ openingData: lichess, nodeId, source: 'lichess' }));
