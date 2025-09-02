@@ -7,7 +7,7 @@ import { UseTooltipParams } from "@visx/tooltip/lib/hooks/useTooltip";
 
 import { RootState, AppDispatch } from "@/store";
 import { selectCurrentId } from "@/store/selectors";
-import { nav, ui } from "@/store/slices";
+import { nav } from "@/store/slices";
 import { TreeNodeData, NodeTooltipData } from "@/shared/types";
 import { gameCount } from "@/shared/lib/tree";
 import { MoveTreeContext } from "../../context/MoveTreeContext";
@@ -18,14 +18,12 @@ const GRADIENTS = {
   current: 'url(#currentNodeGradient)',
   hover: 'url(#hoverNodeGradient)',
   default: 'url(#moveGradient)',
-  // loading: 'url(#loadingNodeGradient)', // Add gradient for loading state
+  loading: 'url(#loadingNodeGradient)',
 };
 
 const FILTERS = {
   current: 'url(#currentNodeFilter)',
-  hover: 'url(#hoverNodeFilter)',
   default: 'url(#nodeFilter)',
-  // loading: 'url(#loadingNodeFilter)', // Add filter for loading state
 };
 
 const getToolTipData = (node: HierarchyPointNode<TreeNodeData>): NodeTooltipData => {
@@ -46,11 +44,6 @@ interface Props {
   showTooltip?: React.MouseEventHandler<SVGGElement>,
   hideTooltip?: UseTooltipParams<NodeTooltipData>['hideTooltip'],
 }
-
-const nodeClass = [
-  'transition-all duration-200 hover:scale-110',
-  'stroke-[0.75] stroke-lightmode-900/10 dark:stroke-darkmode-400/10',
-];
 
 export const TreeNode = ({
   node,
@@ -90,16 +83,18 @@ export const TreeNode = ({
     ry: 6,
     width: nodeRadius * 2,
     height: nodeRadius * 2,
-    fill: loading ? GRADIENTS.default : 
-          isCurrent ? GRADIENTS.current : 
+    fill: loading ? GRADIENTS.loading :
+          isCurrent ? GRADIENTS.current :
           GRADIENTS.default,
-    filter: loading ? FILTERS.default : 
-            isCurrent ? FILTERS.current : 
+    filter: isCurrent ? FILTERS.current :
             FILTERS.default,
-    className: cn(nodeClass, { 
-      [ 'stroke-1 stroke-lightmode-900/30 dark:stroke-darkmode-400/60']: minimap,
-      ['hover:fill-[url(#hoverNodeGradient)] hover:filter-[url(#hoverNodeFilter)]']: !minimap && !loading,
-      ['animate-tree-pulse']: loading,
+    className: cn([
+      'transition-all duration-200 hover:scale-110',
+      'stroke-[0.75] stroke-lightmode-900/10 dark:stroke-darkmode-400/10',
+    ], { 
+      ['stroke-1 stroke-lightmode-900/30 dark:stroke-darkmode-400/60']: minimap,
+      ['animate-breathe']: loading,
+      ['hover:fill-[url(#hoverNodeGradient)]']: !minimap && !loading,
     }),
   }), [nodeRadius, isCurrent, minimap, loading]);
 

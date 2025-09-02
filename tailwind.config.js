@@ -7,13 +7,15 @@ export default {
   theme: {
     "extend": {
       "animation": {
-        "tree-pulse": "tree-pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;"
+        'stroke-dash': 'stroke-dash 1.2s linear infinite',
+        'breathe': 'breathe 1.6s ease-in-out infinite',
       },
       "keyframes": {
-        "tree-pulse": {
-          "0%, 100%": { "opacity": "1" },
-          "50%": { "opacity": "0.1" }
-        }
+        'stroke-dash': { to: { strokeDashoffset: '-64' } },
+        'breathe': {
+          '0%,100%': { opacity: .70, transform: 'scale(1)' },
+          '50%': { opacity: 0.9, transform: 'scale(1.05)' },
+        },
       },
       "colors": {
         "lightmode": {

@@ -1,7 +1,7 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 import { Id, LcOpeningData, NormalTree, TreeSource } from "@/shared/types";
-import { buildNodes } from "@/shared/lib/tree";
+import { buildNodes, getLoadingNode } from "@/shared/lib/tree";
 import { getParentId } from "@/shared/lib/id";
 
 interface AddNodes {
@@ -15,10 +15,11 @@ interface AddLoadingNode {
   source: TreeSource,
 };
 
+const makeLoadingId = (parentId: string, i: number) => `loading:${parentId}:${i}`;
+
 const tree = createSlice({
   name: 'tree',
   initialState: {
-    loadingId: null as Id | null,
     lichessNodes: {} as NormalTree,
     mastersNodes: {} as NormalTree,
   },
@@ -40,70 +41,41 @@ const tree = createSlice({
       if (parentId && nodes[parentId] && !nodes[parentId].children.includes(nodeId)) {
         nodes[parentId].children.push(nodeId);
       }
-
-      // remove loading node
-      if (state.loadingId && nodes[state.loadingId]) {
-        nodes[state.loadingId].children
-          = nodes[state.loadingId].children.filter(id => !id.startsWith('loading'));
-      }
-      state.loadingId = null;
     },
 
     addLoadingNode(state, action: PayloadAction<AddLoadingNode>) {
-      const { nodeId, source } = action.payload;
-      if (!nodeId) return;
+      const { nodeId: parentId, source } = action.payload;
       const nodes = source === 'lichess'
         ? state.lichessNodes
         : state.mastersNodes;
+      if (!parentId || !nodes[parentId]) return;
 
-      if (state.loadingId && nodes[state.loadingId]) {
-        nodes[state.loadingId].children
-          = nodes[state.loadingId].children.filter(id => id.startsWith('loading'));
+      // render 3 placeholder loading nodes
+      const count = 3;
+      for (let i = 1; i <= count; i++) {
+        const id = makeLoadingId(parentId, i);
+        nodes[id] = getLoadingNode(id);
+
+        if (!nodes[parentId].children.includes(id)) {
+          nodes[parentId].children.push(id);
+        }
       }
+    },
 
-      state.loadingId = nodeId;
-      if (nodes[nodeId]) {
-        nodes[nodeId].children.push('loading1');
-        nodes[nodeId].children.push('loading2');
-        nodes[nodeId].children.push('loading3');
-      }
+    removeLoadingNodes(state, action: PayloadAction<AddLoadingNode>) {
+      const { nodeId: parentId, source } = action.payload;
+      const nodes = source === 'lichess'
+        ? state.lichessNodes
+        : state.mastersNodes;
+      if (!parentId || !nodes[parentId]) return;
 
-      nodes['loading1'] = {
-        id: 'loading1',
-        explored: true,
-        loading: true,
-        move: null,
-        white: 0,
-        draws: 0,
-        black: 0,
-        topGames: [],
-        opening: null,
-        children: [],
-      };
-      nodes['loading2'] = {
-        id: 'loading2',
-        explored: true,
-        loading: true,
-        move: null,
-        white: 0,
-        draws: 0,
-        black: 0,
-        topGames: [],
-        opening: null,
-        children: [],
-      };
-      nodes['loading3'] = {
-        id: 'loading3',
-        explored: true,
-        loading: true,
-        move: null,
-        white: 0,
-        draws: 0,
-        black: 0,
-        topGames: [],
-        opening: null,
-        children: [],
-      };
+      nodes[parentId].children = nodes[parentId].children.filter(
+        (id) => !id.startsWith(`loading:${parentId}:`)
+      );
+
+      Object.keys(nodes).forEach((id) => {
+        if (id.startsWith(`loading:${parentId}:`)) delete nodes[id];
+      });
     },
   },
 });

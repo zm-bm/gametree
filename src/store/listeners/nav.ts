@@ -25,7 +25,6 @@ const getNavTarget = (action: UnknownAction, state: RootState) => {
     case nav.actions.navigateToId.type: {
       const id = action.payload as Id;
       const fen = nodes[id]?.move?.after || DEFAULT_POSITION;
-      console.log(fen);
       return { id, fen };
     }
     

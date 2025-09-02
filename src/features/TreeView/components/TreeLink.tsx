@@ -2,18 +2,17 @@ import React, { useCallback, useContext, useMemo } from "react";
 import { HierarchyPointLink } from "@visx/hierarchy/lib/types";
 import { LinkHorizontal } from "@visx/shape";
 
+import { cn } from "@/shared/lib/cn";
 import { TreeNodeData } from "@/shared/types";
 import { gameCount } from "@/shared/lib/tree";
 import { MoveTreeContext } from "../context/MoveTreeContext";
 import { COLORS, colorScale } from "../lib/colors";
-import { cn } from "@/shared/lib/cn";
 
 interface Props {
   link: HierarchyPointLink<TreeNodeData>,
   minimap?: boolean,
 };
 
-const linkClass = 'stroke-[0.75] stroke-lightmode-900/60 dark:stroke-white dark:mix-blend-screen';
 const linkStyle: React.CSSProperties = { vectorEffect: 'non-scaling-stroke' };
 
 export const TreeLink = ({ link, minimap = false }: Props) => {
@@ -58,7 +57,7 @@ export const TreeLink = ({ link, minimap = false }: Props) => {
   }, [nodeRadius, minimap]);
 
   const linkFill = useMemo(() => {
-    if (loading) return 'transparent';
+    if (loading) return COLORS.loading;
     const { white, draws, black } = link.target.data;
     const games = white + draws + black;
     return (games === 0) ? COLORS.draw : colorScale((white - black) / games);
@@ -67,10 +66,10 @@ export const TreeLink = ({ link, minimap = false }: Props) => {
   return (
     <LinkHorizontal
       className={cn(
-        linkClass,
-        minimap && 'stroke-1',
-        loading && 'animate-tree-pulse',
-      )}
+        'stroke-[0.75] stroke-lightmode-900/60 dark:stroke-white dark:mix-blend-screen', {
+        ['stroke-1']: minimap,
+        ['[stroke-dasharray:6_10] animate-stroke-dash']: loading,
+      })}
       path={linkPath}
       fill={linkFill}
       filter="url(#linkShadow)"

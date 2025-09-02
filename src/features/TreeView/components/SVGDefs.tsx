@@ -20,16 +20,17 @@ export const SVGDefs = () => {
         <feDropShadow dx="0" dy="0" stdDeviation="2" floodColor="#f59e0b" floodOpacity="0.35"/>
       </filter>
       
-      {/* Hover gradient gradient */}
+      {/* Hover node gradient */}
       <linearGradient id="hoverNodeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
         <stop offset="0%" className="stop-zinc-400 dark:stop-zinc-700" stopOpacity="1" />
         <stop offset="100%" className="stop-slate-500 dark:stop-slate-700" stopOpacity="1" />
       </linearGradient>
-      <filter id="hoverNodeFilter">
-        <feDropShadow dx="0" dy="1" stdDeviation="1.0"
-          floodColor="#38bdf8" floodOpacity="0.22"/>
-      </filter>
 
+      {/* Loading node gradient */}
+      <linearGradient id="loadingNodeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" className="stop-zinc-400 dark:stop-zinc-600" stopOpacity="1" />
+        <stop offset="100%" className="stop-slate-400 dark:stop-slate-600" stopOpacity="1" />
+      </linearGradient>
 
       {/* Link filter */}
       <filter id="linkShadow" x="-20%" y="-20%" width="140%" height="140%">

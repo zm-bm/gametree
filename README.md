@@ -43,6 +43,7 @@ npm run build
 - tree colors respective to orientation
 - d-pad hints
 - fix zoom calc to zoom on screen center
+- hover node gradient -> filter (try hovering root node)
 
 - org useChessground
 - org openingsApi / build tree

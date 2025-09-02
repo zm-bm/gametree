@@ -13,6 +13,7 @@
 }
 
 @layer utilities {
+    .stop-zinc-300 { stop-color: theme(colors.zinc.300); }
     .stop-zinc-400 { stop-color: theme(colors.zinc.400); }
     .stop-zinc-500 { stop-color: theme(colors.zinc.500); }
     .stop-zinc-600 { stop-color: theme(colors.zinc.600); }

@@ -34,7 +34,7 @@ function filterTreeNode(
 ) {
   const node = nodes[id];
   if (!node) return false;
-  if (node.explored) return true;
+  if (node.explored || node.loading) return true;
 
   const frequency = gameCount(node) / parentGames * 100;
   return frequency >= frequencyMin;
@@ -128,4 +128,19 @@ export function buildChildNodes(
   }
   
   return children;
+}
+
+export function getLoadingNode(id: Id): NormalNodeData {
+  return {
+    id,
+    explored: false,
+    loading: true,
+    move: null,
+    white: 0,
+    draws: 0,
+    black: 0,
+    topGames: [],
+    opening: null,
+    children: [],
+  };
 }

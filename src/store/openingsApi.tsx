@@ -1,14 +1,18 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import { createApi, fetchBaseQuery, FetchBaseQueryError } from '@reduxjs/toolkit/query/react'
 
 import { LcOpeningData, TreeSource } from "../shared/types";
-import tree  from './slices/tree';
 
-export interface GetNodes {
+export interface GetNodesArgs {
   nodeId: string,
   source: TreeSource,
-}
+};
 
-function getQuery(args: GetNodes) {
+export interface GetNodesResponse {
+  lichess?: LcOpeningData,
+  masters?: LcOpeningData,
+};
+
+function getQuery(args: GetNodesArgs) {
   const { nodeId, source } = args;
   if (nodeId === '') {
     return `${source}?play=${nodeId}&moves=20`;
@@ -20,24 +24,24 @@ function getQuery(args: GetNodes) {
 export const openingsApi = createApi({
   reducerPath: 'openingsApi',
   baseQuery: fetchBaseQuery({ baseUrl: 'https://explorer.lichess.ovh/' }),
-  endpoints: (builder) => ({
-    getNodes: builder.query<LcOpeningData, GetNodes>({
-      query: getQuery,
-      async onQueryStarted(args, { dispatch, queryFulfilled }) {
-        try {
-          // query the first source
-          const { data } = await queryFulfilled;
-          await new Promise(r => setTimeout(r, 2000));
-          dispatch(tree.actions.addNodes({ openingData: data, ...args }));
+  endpoints: (build) => ({
+    getNodes: build.query<GetNodesResponse, GetNodesArgs>({
+      async queryFn(args, _queryApi, _extra, fetchBaseQuery) {
+        const q1 = getQuery(args);
+        const r1 = await fetchBaseQuery(q1);
+        if ('error' in r1) return { error: r1.error as FetchBaseQueryError };
 
-          // then query the second source (to avoid rate limiting)
-          const source2 = args.source === 'lichess' ? 'masters' : 'lichess';
-          const response = await fetch(`https://explorer.lichess.ovh/${getQuery({ ...args, source: source2 })}`);
-          const data2 = await response.json();
-          dispatch(tree.actions.addNodes({ openingData: data2, nodeId: args.nodeId, source: source2 }));
-        } catch(error) {
-          console.error('Query failed:', error)
-        }
+        const source2: TreeSource = args.source === 'lichess' ? 'masters' : 'lichess';
+        const q2 = getQuery({ ...args, source: source2 });
+        const r2 = await fetchBaseQuery(q2);
+        if ('error' in r2) return { error: r2.error as FetchBaseQueryError };
+
+        return {
+          data: {
+            [args.source]: r1.data as GetNodesResponse[typeof args.source],
+            [source2]: r2.data as GetNodesResponse[typeof source2],
+          },
+        };
       },
     }),
   }),
