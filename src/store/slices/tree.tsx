@@ -1,21 +1,47 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 import { Id, LcOpeningData, NormalTree, TreeSource } from "@/shared/types";
-import { buildNodes, getLoadingNode } from "@/shared/lib/tree";
+import { buildNodes } from "@/shared/lib/tree";
 import { getParentId } from "@/shared/lib/id";
 
 interface AddNodes {
-  openingData: LcOpeningData,
   nodeId: Id,
-  source: TreeSource,
+  lichess: LcOpeningData,
+  masters: LcOpeningData,
 };
 
-interface AddLoadingNode {
+interface SetNodeLoading {
   nodeId: Id,
   source: TreeSource,
+  value: boolean,
 };
 
-const makeLoadingId = (parentId: string, i: number) => `loading:${parentId}:${i}`;
+// Helper to get nodes object based on source
+const selectNodes = (state: TreeState, source: TreeSource): NormalTree => {
+  return source === 'lichess' ? state.lichessNodes : state.mastersNodes;
+};
+
+// Helper to add new nodes to the tree
+const addNodesToTree = (nodes: NormalTree, nodeId: Id, openingData: LcOpeningData) => {
+  // Build and add new nodes to tree
+  const newNodes = buildNodes(nodes, nodeId, openingData);
+  for (const node of newNodes) {
+    nodes[node.id] = node;
+  }
+
+  // Update parent node
+  const parentId = getParentId(nodeId);
+  if (parentId && nodes[parentId]) {
+    if (!nodes[parentId].children.includes(nodeId)) {
+      nodes[parentId].children.push(nodeId);
+    }
+  }
+};
+
+interface TreeState {
+  lichessNodes: NormalTree;
+  mastersNodes: NormalTree;
+}
 
 const tree = createSlice({
   name: 'tree',
@@ -25,65 +51,17 @@ const tree = createSlice({
   },
   reducers: {
     addNodes(state, action: PayloadAction<AddNodes>) {
-      const { nodeId, openingData, source } = action.payload;
-      const nodes = source === 'lichess'
-        ? state.lichessNodes
-        : state.mastersNodes;
-
-      // build and add new nodes to tree
-      const newNodes = buildNodes(nodes, nodeId, openingData);
-      for (const node of newNodes) {
-        nodes[node.id] = node;
-      }
-
-      // update parent node and remove any loading placeholders
-      const parentId = getParentId(nodeId);
-      if (parentId && nodes[parentId]) {
-        if (!nodes[parentId].children.includes(nodeId)) {
-          nodes[parentId].children.push(nodeId);
-        }
-        nodes[parentId].children = nodes[parentId].children.filter(
-          (id) => !id.startsWith(`loading:${parentId}:`)
-        );
-        Object.keys(nodes).forEach((id) => {
-          if (id.startsWith(`loading:${parentId}:`)) delete nodes[id];
-        });
-      }
+      const { nodeId, lichess, masters } = action.payload;
+      addNodesToTree(state.lichessNodes, nodeId, lichess);
+      addNodesToTree(state.mastersNodes, nodeId, masters);
     },
 
-    addLoadingNode(state, action: PayloadAction<AddLoadingNode>) {
-      const { nodeId: parentId, source } = action.payload;
-      const nodes = source === 'lichess'
-        ? state.lichessNodes
-        : state.mastersNodes;
-      if (!parentId || !nodes[parentId]) return;
-
-      // render 3 placeholder loading nodes
-      const count = 3;
-      for (let i = 1; i <= count; i++) {
-        const id = makeLoadingId(parentId, i);
-        nodes[id] = getLoadingNode(id);
-
-        if (!nodes[parentId].children.includes(id)) {
-          nodes[parentId].children.push(id);
-        }
+    setNodeLoading(state, action: PayloadAction<SetNodeLoading>) {
+      const { nodeId, source, value } = action.payload;
+      const nodes = selectNodes(state, source);
+      if (nodeId !== null && nodes[nodeId]) {
+        nodes[nodeId].loading = value;
       }
-    },
-
-    removeLoadingNodes(state, action: PayloadAction<AddLoadingNode>) {
-      const { nodeId: parentId, source } = action.payload;
-      const nodes = source === 'lichess'
-        ? state.lichessNodes
-        : state.mastersNodes;
-      if (!parentId || !nodes[parentId]) return;
-
-      nodes[parentId].children = nodes[parentId].children.filter(
-        (id) => !id.startsWith(`loading:${parentId}:`)
-      );
-
-      Object.keys(nodes).forEach((id) => {
-        if (id.startsWith(`loading:${parentId}:`)) delete nodes[id];
-      });
     },
   },
 });

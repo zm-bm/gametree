@@ -104,7 +104,7 @@ export const TreeNode = ({
   }), [nodeRadius, isCurrent, minimap, loading]);
 
   const springs = useSpring({
-    immediate: loading || id.startsWith('loading:'),
+    // immediate: loading,
     to: { 
       y: node.y, 
       x: node.x 
@@ -119,7 +119,29 @@ export const TreeNode = ({
       left={springs.y}
     >
       <rect {...rectProps} />
-      {!minimap && !loading && <TreeNodeText move={node.data.move} fontSize={fontSize} />}
+      {!minimap && <TreeNodeText move={node.data.move} fontSize={fontSize} />}
+
+      {loading && (
+        <g className="pointer-events-none">
+          {/* ring track */}
+          <circle
+            r={nodeRadius-2}
+            className="fill-none stroke-neutral-400/30 dark:stroke-neutral-500/30"
+            style={{ strokeWidth: 2 }}
+          />
+          {/* animated arc (either dash or rotate) */}
+          <circle
+            r={nodeRadius-2}
+            className={cn(
+              'fill-none stroke-neutral-500/70 dark:stroke-neutral-300/70',
+              'animate-spin-slow'
+            )}
+            strokeDasharray={(nodeRadius-2)* Math.PI / 3}
+            strokeDashoffset={(nodeRadius-2)* Math.PI / 3}
+            style={{ strokeWidth: 2, strokeLinecap: 'round' }}
+          />
+        </g>
+      )}
     </AnimatedGroup>
   );
 };

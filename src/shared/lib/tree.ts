@@ -129,18 +129,3 @@ export function buildChildNodes(
   
   return children;
 }
-
-export function getLoadingNode(id: Id): NormalNodeData {
-  return {
-    id,
-    explored: false,
-    loading: true,
-    move: null,
-    white: 0,
-    draws: 0,
-    black: 0,
-    topGames: [],
-    opening: null,
-    children: [],
-  };
-}

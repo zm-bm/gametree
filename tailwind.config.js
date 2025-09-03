@@ -9,6 +9,7 @@ export default {
       "animation": {
         'stroke-dash': 'stroke-dash 1.2s linear infinite',
         'breathe': 'breathe 1.6s ease-in-out infinite',
+        'spin-slow': 'spin 1.2s linear infinite',
       },
       "keyframes": {
         'stroke-dash': { to: { strokeDashoffset: '-64' } },

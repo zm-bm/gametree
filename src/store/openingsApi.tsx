@@ -38,8 +38,8 @@ export const openingsApi = createApi({
 
         return {
           data: {
-            [args.source]: r1.data as GetNodesResponse[typeof args.source],
-            [source2]: r2.data as GetNodesResponse[typeof source2],
+            [args.source]: r1.data as LcOpeningData,
+            [source2]: r2.data as LcOpeningData,
           },
         };
       },

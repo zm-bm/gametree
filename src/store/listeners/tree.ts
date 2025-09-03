@@ -12,12 +12,12 @@ const gates = createSkeletonGateRegistry({
 
 startAppListening({
   matcher: openingsApi.endpoints.getNodes.matchPending,
-  effect: async (action, listenerApi) => {
+  effect: async (action, api) => {
     const { nodeId, source } = action.meta.arg.originalArgs;
     const key = gateKey(nodeId, source);
 
     gates.ensure(key).start(() => {
-      listenerApi.dispatch(tree.actions.addLoadingNode({ nodeId, source }));
+      api.dispatch(tree.actions.setNodeLoading({ nodeId, source, value: true }));
     });
   },
 });
@@ -29,11 +29,10 @@ startAppListening({
     const key = gateKey(nodeId, source);
 
     gates.ensure(key).resolve(() => {
+      listenerApi.dispatch(tree.actions.setNodeLoading({ nodeId, source, value: false }));
       const { lichess, masters } = action.payload;
-      if (lichess && masters) {
-        listenerApi.dispatch(tree.actions.addNodes({ openingData: lichess, nodeId, source: 'lichess' }));
-        listenerApi.dispatch(tree.actions.addNodes({ openingData: masters, nodeId, source: 'masters' }));
-      } 
+      if (!lichess || !masters) return;
+      listenerApi.dispatch(tree.actions.addNodes({ nodeId, lichess, masters }));
     });
   },
 });
@@ -46,9 +45,8 @@ startAppListening({
 
     if (isRejectedWithValue(action)) {
       gates.ensure(key).resolve(() => {
-        listenerApi.dispatch(tree.actions.removeLoadingNodes({ nodeId, source }));
+        listenerApi.dispatch(tree.actions.setNodeLoading({ nodeId, source, value: false }));
       });
     }
   },
 });
-

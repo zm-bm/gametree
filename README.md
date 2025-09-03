@@ -34,10 +34,6 @@ npm run build
 - Engine Pane
 
 - stable node ordering
-- animated nodes
-    - fading in/out nodes while fetching 
-    - expand from parent?
-    - experiment
 - fixed eco
 - better child selection (remember last)
 - tree colors respective to orientation
@@ -49,7 +45,7 @@ npm run build
 - org openingsApi / build tree
 
 - collapsable tree nodes
-- collapsable tree panel sections
+- collapsable tree panel wrapper / minimap
 - eco openings explorer
 - graceful query failure handling
 - small display board in node tooltip

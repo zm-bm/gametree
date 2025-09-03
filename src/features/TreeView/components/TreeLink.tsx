@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useMemo } from "react";
+import { useCallback, useContext, useMemo } from "react";
 import { HierarchyPointLink } from "@visx/hierarchy/lib/types";
 import { useSpring, animated, to } from "react-spring";
 
@@ -8,7 +8,6 @@ import { gameCount } from "@/shared/lib/tree";
 import { MoveTreeContext } from "../context/MoveTreeContext";
 import { COLORS, colorScale } from "../lib/colors";
 
-// Create an animated path component
 const AnimatedPath = animated.path;
 
 interface Props {
@@ -16,15 +15,14 @@ interface Props {
   minimap?: boolean,
 };
 
-const linkStyle: React.CSSProperties = { vectorEffect: 'non-scaling-stroke' };
+// const loadingClass = '[stroke-dasharray:6_10] animate-stroke-dash';
 
 export const TreeLink = ({ link, minimap = false }: Props) => {
   const { nodeRadius } = useContext(MoveTreeContext);
-  const { loading } = link.target.data;
   
   // Extract individual spring values
   const { sourceX, sourceY, targetX, targetY } = useSpring({
-    immediate: loading,
+    // immediate: loading,
     sourceX: link.source.x,
     sourceY: link.source.y,
     targetX: link.target.x,
@@ -74,11 +72,10 @@ export const TreeLink = ({ link, minimap = false }: Props) => {
   }, [nodeRadius, minimap, link.source.data, link.target.data]);
 
   const linkFill = useMemo(() => {
-    if (loading) return COLORS.loading;
     const { white, draws, black } = link.target.data;
     const games = white + draws + black;
     return (games === 0) ? COLORS.draw : colorScale((white - black) / games);
-  }, [link.target.data, loading]);
+  }, [link.target.data]);
 
   // Use the 'to' function to create an interpolated path
   const d = to(
@@ -91,12 +88,11 @@ export const TreeLink = ({ link, minimap = false }: Props) => {
       className={cn(
         'stroke-[0.75] stroke-lightmode-900/60 dark:stroke-white dark:mix-blend-screen', {
         ['stroke-1']: minimap,
-        ['[stroke-dasharray:6_10] animate-stroke-dash']: loading,
       })}
       d={d}
       fill={linkFill}
       filter="url(#linkShadow)"
-      style={linkStyle}
+      vectorEffect={"non-scaling-stroke"}
     />
   );
 };
