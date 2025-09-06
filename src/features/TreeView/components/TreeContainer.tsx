@@ -1,42 +1,43 @@
-import React from "react";
+import React, { useContext } from "react";
 import { HierarchyNode } from "@visx/hierarchy/lib/types";
 import { UseTooltipParams } from "@visx/tooltip/lib/hooks/useTooltip";
-import { Tree } from "@visx/hierarchy";
+import { Tree as VisxTree } from "@visx/hierarchy";
 
 import { TreeNodeData, NodeTooltipData } from "@/shared/types";
-import { MoveTreeContents } from "./MoveTreeContents";
-import { separation } from "../../lib/separation";
+import { TreeContents } from "./TreeContents";
+import { separation } from "../lib/separation";
+import { TreeDimensionsContext } from "../context";
 
 interface Props {
   root: HierarchyNode<TreeNodeData> | null,
-  nodeSize: [number, number],
   showTooltip: React.MouseEventHandler<SVGGElement>,
   hideTooltip: UseTooltipParams<NodeTooltipData>['hideTooltip'],
-}
+};
 
-const MoveTreeSvgBase = ({
+const TreeContainerBase = ({
   root,
-  nodeSize,
   showTooltip,
   hideTooltip,
 }: Props)  => {
-  if (!root) return null;
+  const { nodeSize } = useContext(TreeDimensionsContext);
 
+  if (!root) return null;
   return (
-    <Tree<TreeNodeData>
+    <VisxTree<TreeNodeData>
       root={root}
       nodeSize={nodeSize}
       separation={separation}
     >
-      {(tree) => 
-        <MoveTreeContents
+      {(tree) =>
+        <TreeContents
           tree={tree}
+          nodeSize={nodeSize}
           showTooltip={showTooltip}
           hideTooltip={hideTooltip}
         />
       }
-    </Tree>
+    </VisxTree>
   );
 };
 
-export const MoveTreeSvg = React.memo(MoveTreeSvgBase);
+export const TreeContainer = React.memo(TreeContainerBase);

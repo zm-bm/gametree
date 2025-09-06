@@ -1,5 +1,6 @@
 import { TooltipInPortalProps } from "@visx/tooltip/lib/hooks/useTooltipInPortal";
-import { NodeTooltipData } from "../../hooks/useTreeTooltip";
+
+import { NodeTooltipData } from "@/shared/types";
 import { TreeTooltipContents } from "./TreeTooltipContents";
 
 interface Props {

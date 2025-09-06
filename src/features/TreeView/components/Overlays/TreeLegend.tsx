@@ -54,7 +54,7 @@ const WidthRamp = React.memo(() => (
   </>
 ));
 
-export const TreeLegend = () => {
+const TreeLegendBase = () => {
   const [isCollapsed, setIsCollapsed] = useState<boolean>(localStorage.gtLegendCollapsed === '1');
 
   const toggleCollapsed = useCallback(() => {
@@ -94,3 +94,5 @@ export const TreeLegend = () => {
     </div>
   );
 };
+
+export const TreeLegend = React.memo(TreeLegendBase);

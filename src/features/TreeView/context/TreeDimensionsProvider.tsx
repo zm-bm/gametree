@@ -1,17 +1,11 @@
 import React, { useMemo }  from "react";
 import { scaleLinear } from "@visx/scale";
 
-import { MoveTreeContext } from "./MoveTreeContext";
+import { TreeDimensionsContext } from "./TreeDimensionsContext";
 
 const nodeScale = scaleLinear({
   domain: [360, 1440],
   range: [10, 24],
-  clamp: true,
-});
-
-const columnScale = scaleLinear({
-  domain: [360, 1440],
-  range: [84, 220],
   clamp: true,
 });
 
@@ -21,13 +15,13 @@ const fontScale = scaleLinear({
   clamp: true,
 });
 
-type MoveTreeProviderProps = {
+type TreeDimensionsProviderProps = {
   height: number;
   width: number;
   children: React.ReactNode;
 };
 
-export const MoveTreeProvider: React.FC<MoveTreeProviderProps> = ({
+export const TreeDimensionsProvider: React.FC<TreeDimensionsProviderProps> = ({
   height,
   width,
   children,
@@ -35,19 +29,23 @@ export const MoveTreeProvider: React.FC<MoveTreeProviderProps> = ({
   const dimensions = useMemo(() => {
     const minDimension = Math.min(height, width);
     const r = nodeScale(minDimension);
+    const rowHeight = Math.round(r * 2.4);
+    const columnWidth = Math.round(r * 8);
+
     return {
       width,
       height,
       nodeRadius: Math.round(r),
-      rowHeight: Math.round(r * 2.4),
-      columnWidth: Math.round(columnScale(minDimension)),
+      rowHeight,
+      columnWidth,
+      nodeSize: [rowHeight, columnWidth] as [number, number],
       fontSize: Math.round(fontScale(minDimension)),
     };
   }, [height, width]);
   
   return (
-    <MoveTreeContext.Provider value={{ ...dimensions }}>
+    <TreeDimensionsContext.Provider value={{ ...dimensions }}>
       {children}
-    </MoveTreeContext.Provider>
+    </TreeDimensionsContext.Provider>
   );
 };

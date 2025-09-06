@@ -7,6 +7,8 @@ interface Props {
   showLabels?: boolean;
 }
 
+const barClass = "flex items-center justify-center relative";
+
 const GameOutcomeBar = ({ white, draws, black, showLabels = false }: Props) => {
   // Format percentages with 1 decimal place
   const whiteFormatted = white.toFixed(1);
@@ -15,13 +17,14 @@ const GameOutcomeBar = ({ white, draws, black, showLabels = false }: Props) => {
 
   return (
     <div className="w-full h-6 rounded-xl overflow-hidden flex text-xs font-medium shadow-md backdrop-blur-sm">
+
       {white > 0 && (
         <div
           style={{ 
             width: `${white}%`, 
-            background: `linear-gradient(to right, ${COLORS.winning}, ${COLORS.winning}cc)`
+            background: `linear-gradient(to right, ${COLORS.win}, ${COLORS.nearwin}cc)`
           }}
-          className="flex items-center justify-center relative"
+          className={barClass}
           title={`White: ${whiteFormatted}%`}
         >
           {showLabels && white >= 8 && (
@@ -31,13 +34,14 @@ const GameOutcomeBar = ({ white, draws, black, showLabels = false }: Props) => {
           )}
         </div>
       )}
+
       {draws > 0 && (
         <div
           style={{ 
             width: `${draws}%`,
             background: `linear-gradient(to right, ${COLORS.draw}, ${COLORS.draw}cc)`
           }}
-          className="flex items-center justify-center relative"
+          className={barClass}
           title={`Draws: ${drawsFormatted}%`}
         >
           {showLabels && draws >= 8 && (
@@ -47,13 +51,14 @@ const GameOutcomeBar = ({ white, draws, black, showLabels = false }: Props) => {
           )}
         </div>
       )}
+
       {black > 0 && (
         <div
           style={{ 
             width: `${black}%`, 
-            background: `linear-gradient(to right, ${COLORS.losing}, ${COLORS.losing}cc)`
+            background: `linear-gradient(to right, ${COLORS.nearlose}, ${COLORS.lose}cc)`
           }}
-          className="flex items-center justify-center relative"
+          className={barClass}
           title={`Black: ${blackFormatted}%`}
         >
           {showLabels && black >= 8 && (

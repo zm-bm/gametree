@@ -10,7 +10,6 @@ interface TreeDPadProps {
   icon: React.ReactNode;
   onClick: () => void;
   visible?: boolean;
-  className?: string;
 }
 
 const DPadButton = ({ 
@@ -32,10 +31,11 @@ const DPadButton = ({
   </button>
 );
 
-const btnBase = "absolute transition-all duration-300";
-const btnCenter = "left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2";
-const btnVert = "left-1/2 -translate-x-1/2";
-const btnHoriz = "top-1/2 -translate-y-1/2";
+const DPAD_STYLES = {
+  base: "absolute transition-all duration-300",
+  vert: "left-1/2 -translate-x-1/2",
+  horiz: "top-1/2 -translate-y-1/2",
+};
 
 export const TreeDPad = () => {
   const dispatch = useDispatch();
@@ -59,7 +59,7 @@ export const TreeDPad = () => {
         )}
       >
         {/* Center button */}
-        <div className={cn(btnBase, btnCenter, "z-10")}>
+        <div className={cn(DPAD_STYLES.base, "left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10")}>
           <DPadButton 
             label={isCollapsed ? "collapse" : "open tree nav"} 
             icon={isCollapsed ? <BiCollapse size={20} /> : <BiExpand size={20} />}
@@ -68,7 +68,7 @@ export const TreeDPad = () => {
         </div>
         
         {/* Up button */}
-        <div className={cn(btnBase, btnVert, isCollapsed && "top-0")}>
+        <div className={cn(DPAD_STYLES.base, DPAD_STYLES.vert, isCollapsed && "top-0")}>
           <DPadButton 
             label="up" 
             icon="↑" 
@@ -78,7 +78,7 @@ export const TreeDPad = () => {
         </div>
         
         {/* Left button */}
-        <div className={cn(btnBase, btnHoriz, isCollapsed && "left-0")}>
+        <div className={cn(DPAD_STYLES.base, DPAD_STYLES.horiz, isCollapsed && "left-0")}>
           <DPadButton 
             label="left" 
             icon="←" 
@@ -88,7 +88,7 @@ export const TreeDPad = () => {
         </div>
         
         {/* Right button */}
-        <div className={cn(btnBase, btnHoriz, isCollapsed && "right-0")}>
+        <div className={cn(DPAD_STYLES.base, DPAD_STYLES.horiz, isCollapsed && "right-0")}>
           <DPadButton 
             label="right" 
             icon="→" 
@@ -98,7 +98,7 @@ export const TreeDPad = () => {
         </div>
         
         {/* Down button */}
-        <div className={cn(btnBase, btnVert, isCollapsed && "bottom-0")}>
+        <div className={cn(DPAD_STYLES.base, DPAD_STYLES.vert, isCollapsed && "bottom-0")}>
           <DPadButton 
             label="down" 
             icon="↓" 

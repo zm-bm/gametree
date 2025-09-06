@@ -6,47 +6,32 @@ import { Tree } from '@visx/hierarchy';
 import { Group } from '@visx/group'
 
 import { TreeNodeData } from "@/shared/types";
-import { useTreeMinimap } from './useTreeMinimap';
-import { MinimapTree } from './MinimapTree';
-import { SVGDefs } from '../SVGDefs';
-import { ZoomContext, MoveTreeContext } from "../../context";
-import { separation } from '../../lib/separation';
 import { cn } from '@/shared/lib/cn';
+import { useTreeMinimap } from '../../hooks';
+import { ZoomContext, TreeDimensionsContext } from "../../context";
+import { SVGDefs } from '../SVGDefs';
+import { TreeContents } from '../TreeContents';
+import { separation } from '../../lib/separation';
 
 interface Props {
   tree: HierarchyNode<TreeNodeData> | null,
   spring: SpringRef<TransformMatrix>,
-  size: number,
 };
 
-const minimapClass = [
-  'treeview-card backdrop-blur-lg',
-  'border-none border-t border-l',
-  'rounded-none rounded-tl-md',
-  'hover:bg-lightmode-200/90 dark:hover:bg-darkmode-800/90',
-];
+export const TreeMinimap = ({ tree, spring }: Props) => {
+  const { nodeSize, width, height } = useContext(TreeDimensionsContext);
+  const { zoom: { transformMatrix, isDragging, setTransformMatrix, dragStart, dragEnd }} = useContext(ZoomContext);
 
-const viewportClass = [
-  'stroke-[0.75] stroke-lightmode-950/50 dark:stroke-darkmode-50/50',
-  'fill-lightmode-950/10 dark:fill-darkmode-100/10'
-];
-
-export const Minimap = ({ tree, spring, size }: Props) => {
-  const treeDimensions = useContext(MoveTreeContext);
-  const { rowHeight, columnWidth } = treeDimensions;
-  const { zoom } = useContext(ZoomContext);
-  const { transformMatrix, isDragging, setTransformMatrix, dragStart, dragEnd } = zoom;
-  const nodeSize = useMemo(() => [rowHeight, columnWidth], [rowHeight, columnWidth]);
+  const minimapSize = useMemo(() => Math.round(Math.min(width, height) * 0.3), [width, height]);
   const nodes = useMemo(() => tree ? tree.descendants() as HierarchyPointNode<TreeNodeData>[] : [], [tree]);
-  const svgStyle = useMemo(() => ({ cursor: isDragging ? 'grabbing' : 'grab' }), [isDragging]);
 
   const { transform, viewport, centerViewport } = useTreeMinimap({
     spring,
     nodes,
-    minimapWidth: size,
-    minimapHeight: size,
-    treeWidth: treeDimensions.width,
-    treeHeight: treeDimensions.height,
+    minimapWidth: minimapSize,
+    minimapHeight: minimapSize,
+    treeWidth: width,
+    treeHeight: height,
     transformMatrix,
     setTransformMatrix,
   });
@@ -71,10 +56,12 @@ export const Minimap = ({ tree, spring, size }: Props) => {
 
   return (
     <svg
-      className={cn(minimapClass, 'bg-opacity-5')}
-      width={size}
-      height={size}
-      style={svgStyle}
+      className={cn([
+        'treeview-card border-none border-t border-l rounded-none rounded-tl-md',
+        'bg-opacity-5 backdrop-blur-lg hover:bg-lightmode-200/90 dark:hover:bg-darkmode-800/90',
+      ])}
+      width={minimapSize}
+      height={minimapSize}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
@@ -82,27 +69,34 @@ export const Minimap = ({ tree, spring, size }: Props) => {
       onTouchStart={handleTouch}
       onTouchMove={handleTouch}
       onTouchEnd={handleMouseUp}
+      cursor={isDragging ? 'grabbing' : 'grab'}
       shapeRendering="crispEdges"
-
     >
       <SVGDefs />
       <g>
         { tree && transform &&
           <Tree<TreeNodeData>
             root={tree}
-            nodeSize={nodeSize as [number, number]}
+            nodeSize={nodeSize}
             separation={separation}
           >
             {(tree) => (
               <Group transform={transform.matrix}>
-                <MinimapTree tree={tree} />
+                <TreeContents
+                  tree={tree}
+                  nodeSize={nodeSize}
+                  minimap={true}
+                />
               </Group>
             )}
           </Tree>
         }
         { viewport &&
           <rect
-            className={cn(viewportClass)}
+            className={cn([
+              'stroke-[0.75] stroke-lightmode-950/50 dark:stroke-darkmode-50/50',
+              'fill-lightmode-950/10 dark:fill-darkmode-100/10'
+            ])}
             x={viewport.x}
             y={viewport.y}
             width={viewport.width}

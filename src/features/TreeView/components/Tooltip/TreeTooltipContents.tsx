@@ -1,9 +1,20 @@
 import { NodeTooltipData } from "@/shared/types";
+import { cn } from "@/shared/lib/cn";
+
 import GameOutcomeBar from "./GameOutcomeBar";
 
 interface Props {
   data?: NodeTooltipData;
 }
+
+const TOOLTIP = {
+  card: [
+    "p-2.5 rounded-xl border border-gray-400/50 shadow-sm backdrop-blur-sm",
+    "bg-gradient-to-br from-white to-gray-100 dark:from-zinc-800 dark:to-zinc-900",
+  ],
+  label: "font-medium text-xs text-zinc-500 dark:text-zinc-300",
+  value: "font-bold text-zinc-700 dark:text-zinc-200",
+};
 
 export const TreeTooltipContents = ({ data }: Props) => {
   if (!data) return null;
@@ -36,18 +47,18 @@ export const TreeTooltipContents = ({ data }: Props) => {
       <div className="p-4 space-y-3 text-sm">
         <div className="grid grid-cols-2 gap-3">
           {/* Games Count */}
-          <div className="bg-gradient-to-br from-white to-gray-100 p-2.5 rounded-xl border border-gray-400/50 shadow-sm backdrop-blur-sm">
-            <div className="text-gray-500 text-xs font-medium">Games</div>
-            <div className="font-bold text-gray-800">
+          <div className={cn(TOOLTIP.card)}>
+            <div className={TOOLTIP.label}>Games</div>
+            <div className={TOOLTIP.value}>
               { Intl.NumberFormat('en-US', { notation: "compact", maximumFractionDigits: 1 }).format(games) }
             </div>
           </div>
           
           {/* Frequency */}
           {frequency !== null && (
-            <div className="bg-gradient-to-br from-white to-gray-100 p-2.5 rounded-xl border border-gray-400/50 shadow-sm backdrop-blur-sm">
-              <div className="text-gray-500 text-xs font-medium">Frequency</div>
-              <div className="font-bold text-gray-800">{frequency.toFixed(1)}%</div>
+            <div className={cn(TOOLTIP.card)}>
+              <div className={TOOLTIP.label}>Frequency</div>
+              <div className={TOOLTIP.value}>{frequency.toFixed(1)}%</div>
               {hasTranspositions && (
                 <div className="text-xs text-blue-500">from transpositions</div>
               )}
@@ -56,26 +67,26 @@ export const TreeTooltipContents = ({ data }: Props) => {
           
           {/* Average Rating */}
           {data.rating > 0 && (
-            <div className="bg-gradient-to-br from-white to-gray-100 p-2.5 rounded-xl border border-gray-400/50 shadow-sm backdrop-blur-sm">
-              <div className="text-gray-500 text-xs font-medium">Avg. Rating</div>
-              <div className="font-bold text-gray-800">{data.rating} Elo</div>
+            <div className={cn(TOOLTIP.card)}>
+              <div className={TOOLTIP.label}>Avg. Rating</div>
+              <div className={TOOLTIP.value}>{data.rating} Elo</div>
             </div>
           )}
 
           {/* ECO code */}
           {data.eco && (
-            <div className="bg-gradient-to-br from-white to-gray-100 p-2.5 rounded-xl border border-gray-400/50 shadow-sm backdrop-blur-sm">
-              <div className="text-gray-500 text-xs font-medium">ECO Code</div>
-              <div className="font-bold text-gray-800">{data.eco}</div>
+            <div className={cn(TOOLTIP.card)}>
+              <div className={TOOLTIP.label}>ECO Code</div>
+              <div className={TOOLTIP.value}>{data.eco}</div>
             </div>
           )}
         </div>
         
         {/* Win Statistics */}
         {winStats && (
-          <div className="bg-gradient-to-br from-white to-gray-100 p-2.5 rounded-xl border border-gray-400/50 shadow-sm backdrop-blur-sm">
-            <div className="text-gray-500 text-xs font-medium">Outcomes</div>
-            <div className="mt-2 p-px rounded-xl bg-gradient-to-r from-zinc-300 to-zinc-600 backdrop-blur-sm shadow-inner">
+          <div className={cn(TOOLTIP.card)}>
+            <div className={TOOLTIP.label}>Outcomes</div>
+            <div className="mt-2 p-px rounded-xl bg-zinc-300 backdrop-blur-sm shadow-inner">
               <GameOutcomeBar
                 white={winStats.white}
                 draws={winStats.draws}

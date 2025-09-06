@@ -30,30 +30,29 @@ npm run build
 
 ## Roadmap
 
-- Tooltip
-- Engine Pane
+- TreeView
+    - collapsable tree nodes
+    - tree colors respective to orientation
+    - stable node ordering
+    - better child selection (remember last)
+    - fix zoom calc to zoom on screen center
+    - org tree lib
+    - collapsable minimap
+    - Tooltip
+        - reuse sidepane opening view?
+        - small board view
 
-- stable node ordering
-- fixed eco
-- better child selection (remember last)
-- tree colors respective to orientation
-- d-pad hints
-- fix zoom calc to zoom on screen center
-- hover node gradient -> filter (try hovering root node)
+- Sidepane
+    - engine view
+    - opening view - eco
+    - org useChessground?
 
-- org useChessground
-- org openingsApi / build tree
+- capture sound
 
-- collapsable tree nodes
-- collapsable tree panel wrapper / minimap
-- eco openings explorer
-- graceful query failure handling
-- small display board in node tooltip
+- tests
 - code formatter + pre-commit
 - ci/cd deploy
 - store tree in indexedDB
-- mobile layout support
-- capture sound
 
 ## Acknowledgments
 

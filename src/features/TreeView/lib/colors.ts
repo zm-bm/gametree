@@ -16,9 +16,10 @@ export const colorScale = (value: number) => {
 
 export const COLORS = {
   win: COLOR_RANGE.at(-1),
+  nearwin: COLOR_RANGE.at(Math.floor(COLOR_RANGE.length * 7 / 8)),
   winning: COLOR_RANGE.at(Math.floor(COLOR_RANGE.length * 3 / 4)),
   draw: COLOR_RANGE.at(Math.floor(COLOR_RANGE.length / 2)),
   losing: COLOR_RANGE.at(Math.floor(COLOR_RANGE.length / 4)),
+  nearlose: COLOR_RANGE.at(Math.floor(COLOR_RANGE.length / 8)),
   lose: COLOR_RANGE.at(0),
-  loading: '#71717a40',
 };

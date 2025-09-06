@@ -1,11 +1,11 @@
 import { useContext } from 'react';
-import { MoveTreeContext } from '../context/MoveTreeContext';
+import { TreeDimensionsContext } from '../context/TreeDimensionsContext';
 
 const id = 'tree-grid-pattern';
 const gridStroke = 'stroke-lightmode-500/40 dark:stroke-darkmode-500/40';
 
 export const TreeGrid = () => {
-  const { columnWidth } = useContext(MoveTreeContext);
+  const { columnWidth } = useContext(TreeDimensionsContext);
   
   const gridSize = columnWidth / 2;
   

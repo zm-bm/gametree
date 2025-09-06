@@ -1,8 +1,8 @@
 import { useParentSize } from '@visx/responsive';
 import { Zoom } from '@visx/zoom';
 
-import { MoveTree } from './components/MoveTree';
-import { ZoomProvider, MoveTreeProvider  } from "./context";
+import { Tree } from './components/Tree';
+import { ZoomProvider, TreeDimensionsProvider  } from "./context";
 
 const zoomProps = {
   scaleXMin: 1 / 8,
@@ -24,7 +24,7 @@ const TreeView = () =>  {
 
   return (
     <div ref={parentRef} className="w-full h-full relative overflow-hidden">
-      <MoveTreeProvider height={height} width={width}>
+      <TreeDimensionsProvider height={height} width={width}>
         <Zoom<SVGSVGElement>
           width={width}
           height={height}
@@ -32,11 +32,11 @@ const TreeView = () =>  {
         >
           {zoom => (
             <ZoomProvider zoom={zoom}>
-              <MoveTree />
+              <Tree />
             </ZoomProvider>
           )}
         </Zoom>
-      </MoveTreeProvider>
+      </TreeDimensionsProvider>
     </div>
   );
 }

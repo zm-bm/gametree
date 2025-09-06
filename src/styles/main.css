@@ -17,6 +17,7 @@
     .stop-zinc-400 { stop-color: theme(colors.zinc.400); }
     .stop-zinc-500 { stop-color: theme(colors.zinc.500); }
     .stop-zinc-600 { stop-color: theme(colors.zinc.600); }
+    .stop-zinc-700 { stop-color: theme(colors.zinc.700); }
 
     .stop-slate-300 { stop-color: theme(colors.slate.300); }
     .stop-slate-400 { stop-color: theme(colors.slate.400); }
@@ -70,7 +71,7 @@
         @apply dark:bg-[radial-gradient(72%_55%_at_72%_18%,_rgba(113,123,139,0.03))];
     }
 
-    /* panels */
+    /* cards */
 
     .sidebar-card {
         @apply rounded-lg;

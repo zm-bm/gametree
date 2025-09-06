@@ -1,1 +1,0 @@
-export { Minimap } from "./Minimap";

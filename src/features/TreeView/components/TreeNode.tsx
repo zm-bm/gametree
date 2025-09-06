@@ -1,31 +1,20 @@
-import React, { useCallback, useContext, useMemo, useRef, useEffect } from "react";
+import React, { useCallback, useContext, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { DEFAULT_POSITION } from "chess.js";
 import { Group } from "@visx/group";
 import { HierarchyPointNode } from "@visx/hierarchy/lib/types";
 import { UseTooltipParams } from "@visx/tooltip/lib/hooks/useTooltip";
-import { animated, useSpring } from "react-spring";
+import { animated } from "react-spring";
+import { FluidValue } from '@react-spring/shared';
 
+import { cn } from "@/shared/lib/cn";
 import { RootState, AppDispatch } from "@/store";
 import { selectCurrentId } from "@/store/selectors";
 import { nav } from "@/store/slices";
 import { TreeNodeData, NodeTooltipData } from "@/shared/types";
 import { gameCount } from "@/shared/lib/tree";
-import { MoveTreeContext } from "../../context/MoveTreeContext";
+import { TreeDimensionsContext } from "../context/TreeDimensionsContext";
 import { TreeNodeText } from "./TreeNodeText";
-import { cn } from "@/shared/lib/cn";
-
-const GRADIENTS = {
-  current: 'url(#currentNodeGradient)',
-  hover: 'url(#hoverNodeGradient)',
-  default: 'url(#moveGradient)',
-  loading: 'url(#loadingNodeGradient)',
-};
-
-const FILTERS = {
-  current: 'url(#currentNodeFilter)',
-  default: 'url(#nodeFilter)',
-};
 
 const getToolTipData = (node: HierarchyPointNode<TreeNodeData>): NodeTooltipData => {
   return {
@@ -41,6 +30,8 @@ const getToolTipData = (node: HierarchyPointNode<TreeNodeData>): NodeTooltipData
 
 interface Props {
   node: HierarchyPointNode<TreeNodeData>,
+  x: FluidValue<number>,
+  y: FluidValue<number>,
   minimap?: boolean,
   showTooltip?: React.MouseEventHandler<SVGGElement>,
   hideTooltip?: UseTooltipParams<NodeTooltipData>['hideTooltip'],
@@ -50,36 +41,36 @@ const AnimatedGroup = animated(Group);
 
 export const TreeNode = ({
   node,
+  x,
+  y,
   minimap = false,
   showTooltip,
   hideTooltip,
 }: Props) => {
-  const { id, loading } = node.data;
-
   const dispatch = useDispatch<AppDispatch>();
-  const { fontSize, nodeRadius } = useContext(MoveTreeContext);
+  const { fontSize, nodeRadius } = useContext(TreeDimensionsContext);
   const currentNodeId = useSelector((s: RootState) => selectCurrentId(s));
-  const isCurrent = useMemo(() => currentNodeId === id, [currentNodeId, id]);
-  const isFirstRender = useRef(true);
-  useEffect(() => { isFirstRender.current = false; }, []);
+  const { id, loading } = node.data;
+  const isCurrent = currentNodeId === id;
+  const loadingRadius = nodeRadius - 2;
 
   const onClick = useCallback(() => {
     dispatch(nav.actions.navigateToId(id));
   }, [dispatch, id]);
 
   const groupProps = useMemo(() => {
-    return (!minimap && !loading) ? {
+    return !minimap ? {
       style: { cursor: 'pointer' },
       onMouseEnter: showTooltip,
       onMouseMove: showTooltip,
       onMouseLeave: hideTooltip,
-      onClick: onClick,
+      onClick,
       'data-tooltip': JSON.stringify(getToolTipData(node)),
       'data-fen': (node.data.move?.after || DEFAULT_POSITION),
       'data-move': (node.data.move?.lan || ''),
       'data-id': node.data.id,
     } : {};
-  }, [node, minimap, loading, showTooltip, hideTooltip, onClick]);
+  }, [node, minimap, showTooltip, hideTooltip, onClick]);
 
   const rectProps = useMemo(() => ({
     x: -nodeRadius,
@@ -88,56 +79,38 @@ export const TreeNode = ({
     ry: 6,
     width: nodeRadius * 2,
     height: nodeRadius * 2,
-    fill: loading ? GRADIENTS.loading :
-          isCurrent ? GRADIENTS.current :
-          GRADIENTS.default,
-    filter: isCurrent ? FILTERS.current :
-            FILTERS.default,
-    className: cn([
-      'transition-all duration-200 hover:scale-110',
-      'stroke-[0.75] stroke-lightmode-900/10 dark:stroke-darkmode-400/10',
-    ], { 
+    fill: isCurrent ? 'url(#currentNodeGradient)' :  'url(#moveGradient)',
+    filter: isCurrent ? 'url(#currentNodeFilter)' :  'url(#nodeFilter)',
+    className: cn('stroke-[0.75] stroke-lightmode-900/10 dark:stroke-darkmode-400/10', { 
       ['stroke-1 stroke-lightmode-900/30 dark:stroke-darkmode-400/60']: minimap,
-      ['animate-breathe']: loading,
-      ['hover:fill-[url(#hoverNodeGradient)]']: !minimap && !loading,
+      ['transition-all duration-200 hover:scale-110 hover:brightness-125']: !minimap,
     }),
-  }), [nodeRadius, isCurrent, minimap, loading]);
-
-  const springs = useSpring({
-    // immediate: loading,
-    to: { 
-      y: node.y, 
-      x: node.x 
-    },
-    config: { tension: 170, friction: 26 },
-  });
+  }), [nodeRadius, isCurrent, minimap]);
 
   return (
     <AnimatedGroup
       {...groupProps}
-      top={springs.x}
-      left={springs.y}
+      top={x}
+      left={y}
     >
       <rect {...rectProps} />
+
+      {/* Move Text */}
       {!minimap && <TreeNodeText move={node.data.move} fontSize={fontSize} />}
 
+      {/* Loading Indicator */}
       {loading && (
         <g className="pointer-events-none">
-          {/* ring track */}
           <circle
-            r={nodeRadius-2}
-            className="fill-none stroke-neutral-400/30 dark:stroke-neutral-500/30"
-            style={{ strokeWidth: 2 }}
+            r={loadingRadius}
+            className="fill-none stroke-amber-700/20 dark:stroke-amber-300/20"
+            style={{ strokeWidth: 1.5 }}
           />
-          {/* animated arc (either dash or rotate) */}
           <circle
-            r={nodeRadius-2}
-            className={cn(
-              'fill-none stroke-neutral-500/70 dark:stroke-neutral-300/70',
-              'animate-spin-slow'
-            )}
-            strokeDasharray={(nodeRadius-2)* Math.PI / 3}
-            strokeDashoffset={(nodeRadius-2)* Math.PI / 3}
+            r={loadingRadius}
+            className={'fill-none stroke-white/90 dark:stroke-white/80 animate-spin-slow'}
+            strokeDasharray={loadingRadius * Math.PI / 2}
+            strokeDashoffset={loadingRadius * Math.PI / 2}
             style={{ strokeWidth: 2, strokeLinecap: 'round' }}
           />
         </g>

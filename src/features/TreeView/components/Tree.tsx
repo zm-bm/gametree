@@ -1,28 +1,25 @@
-import { useCallback, useContext, useMemo } from 'react';
+import { useCallback, useContext } from 'react';
 import { useSelector } from 'react-redux';
 
 import { RootState } from '@/store';
 import { openingsApi } from '@/store/openingsApi';
 import { selectCurrentId, selectTree, selectTreeSource } from '@/store/selectors';
-import { useTreeNavigation, useTreeTooltip, MoveTreeSvg  } from './';
-import { SVGDefs } from '../SVGDefs';
-import { TreeGrid } from '../TreeGrid';
-import { Minimap } from '../Minimap';
-import { TreeTooltip } from '../Tooltip';
-import { TreeZoomControls, TreeLegend, TreeDPad, TreeChips } from '../Overlays';
-import { MoveTreeContext, ZoomContext } from "../../context";
+import { TreeContainer } from './TreeContainer';
+import { SVGDefs } from './SVGDefs';
+import { TreeGrid } from './TreeGrid';
+import { TreeTooltip } from './Tooltip';
+import { useTreeNavigation, useTreeTooltip } from '../hooks';
+import { TreeZoomControls, TreeLegend, TreeDPad, TreeChips, TreeMinimap } from './Overlays';
+import { TreeDimensionsContext, ZoomContext } from "../context";
 
-export const MoveTree = () => {
-  const { height, width, rowHeight, columnWidth } = useContext(MoveTreeContext);
+export const Tree = () => {
+  const { height, width } = useContext(TreeDimensionsContext);
   const { zoom, transformRef } = useContext(ZoomContext);
   const currentNodeId = useSelector((state: RootState) => selectCurrentId(state))
   const source = useSelector((state: RootState) => selectTreeSource(state));
   const tree = useSelector((state: RootState) => selectTree(state));
-  const nodeSize = useMemo(() => [rowHeight, columnWidth], [rowHeight, columnWidth]);
-  const svgTransform = useMemo(() => zoom.toString(), [zoom]);
-  const svgStyle = useMemo(() => ({ cursor: zoom.isDragging ? 'grabbing' : 'grab' }), [zoom.isDragging]);
+
   const tooltip = useTreeTooltip();
-  const minimapSize = useMemo(() => Math.round(Math.min(width, height) * 0.3), [width, height]);
   const { spring, updateSpring, handleZoom } = useTreeNavigation({ zoom, transformRef, width, height });
   openingsApi.useGetNodesQuery({ nodeId: currentNodeId, source });
 
@@ -35,7 +32,7 @@ export const MoveTree = () => {
         className='touch-none'
         width={width}
         height={height}
-        style={svgStyle}
+        cursor={zoom.isDragging ? 'grabbing' : 'grab'}
         ref={zoom.containerRef}
         onMouseUp={updateSpring}
         onTouchEnd={updateSpring}
@@ -43,11 +40,10 @@ export const MoveTree = () => {
       >
         <SVGDefs/>
 
-        <g transform={svgTransform}>
+        <g transform={zoom.toString()}>
           <TreeGrid />
-          <MoveTreeSvg
+          <TreeContainer
             root={tree}
-            nodeSize={nodeSize as [number, number]}
             showTooltip={tooltip.showTooltip}
             hideTooltip={tooltip.hideTooltip}
           />
@@ -72,7 +68,7 @@ export const MoveTree = () => {
       {/* bottom right overlays */}
       <div className="absolute bottom-0 right-0 space-y-2 flex flex-col items-end">
         <TreeDPad />
-        <Minimap tree={tree} spring={spring} size={minimapSize} />
+        <TreeMinimap tree={tree} spring={spring} />
       </div>
 
       <TreeTooltip {...tooltip} />

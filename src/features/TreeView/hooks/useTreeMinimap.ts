@@ -1,8 +1,9 @@
-import { HierarchyPointNode } from "@visx/hierarchy/lib/types";
 import { useCallback, useMemo } from "react";
-import { TreeNodeData } from "../types";
+import { HierarchyPointNode } from "@visx/hierarchy/lib/types";
 import { TransformMatrix } from "@visx/zoom/lib/types";
 import { SpringRef } from "react-spring";
+
+import { TreeNodeData } from "@/shared/types";
 
 const INITIAL_BOUNDS = {
   left: Infinity,
