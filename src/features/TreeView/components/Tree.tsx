@@ -7,8 +7,8 @@ import { selectCurrentId, selectTree, selectTreeSource } from '@/store/selectors
 import { TreeContainer } from './TreeContainer';
 import { SVGDefs } from './SVGDefs';
 import { TreeGrid } from './TreeGrid';
-import { TreeTooltip } from './Tooltip';
-import { useTreeNavigation, useTreeTooltip } from '../hooks';
+// import { TreeTooltip } from './Tooltip';
+import { useTreeNavigation } from '../hooks';
 import { TreeZoomControls, TreeLegend, TreeDPad, TreeChips, TreeMinimap } from './Overlays';
 import { TreeDimensionsContext, ZoomContext } from "../context";
 
@@ -19,7 +19,7 @@ export const Tree = () => {
   const source = useSelector((state: RootState) => selectTreeSource(state));
   const tree = useSelector((state: RootState) => selectTree(state));
 
-  const tooltip = useTreeTooltip();
+  // const tooltip = useTreeTooltip();
   const { spring, updateSpring, handleZoom } = useTreeNavigation({ zoom, transformRef, width, height });
   openingsApi.useGetNodesQuery({ nodeId: currentNodeId, source });
 
@@ -27,7 +27,10 @@ export const Tree = () => {
   const onWheel = useCallback(() => setTimeout(updateSpring, 20), [updateSpring]);
 
   return (
-    <div className='relative h-full' ref={tooltip.tooltipContainerRef}>
+    <div
+      className='relative h-full'
+      // ref={tooltip.tooltipContainerRef}
+    >
       <svg
         className='touch-none'
         width={width}
@@ -44,8 +47,6 @@ export const Tree = () => {
           <TreeGrid />
           <TreeContainer
             root={tree}
-            showTooltip={tooltip.showTooltip}
-            hideTooltip={tooltip.hideTooltip}
           />
         </g>
       </svg>
@@ -71,7 +72,7 @@ export const Tree = () => {
         <TreeMinimap tree={tree} spring={spring} />
       </div>
 
-      <TreeTooltip {...tooltip} />
+      {/* <TreeTooltip {...tooltip} /> */}
     </div>
   );
 };

@@ -1,7 +1,6 @@
 import React, { useMemo } from "react";
 import { HierarchyPointNode } from "d3-hierarchy";
-import { UseTooltipParams } from "@visx/tooltip/lib/hooks/useTooltip";
-import { NodeTooltipData, TreeNodeData } from "@/shared/types";
+import { TreeNodeData } from "@/shared/types";
 
 import { TreeLink } from "./TreeLink";
 import { TreeNode } from './TreeNode';
@@ -9,16 +8,12 @@ import { useAnimatedTreeLayout } from "../hooks";
 
 interface Props {
   tree: HierarchyPointNode<TreeNodeData>,
-  showTooltip?: React.MouseEventHandler<SVGGElement>,
-  hideTooltip?: UseTooltipParams<NodeTooltipData>['hideTooltip'],
   nodeSize: [number, number],
   minimap?: boolean,
 }
 
 const TreeContentsBase = ({
   tree,
-  showTooltip,
-  hideTooltip,
   nodeSize,
   minimap = false,
 }: Props) => {
@@ -45,8 +40,6 @@ const TreeContentsBase = ({
           node={node}
           x={ax(node.data.id)}
           y={ay(node.data.id)}
-          showTooltip={showTooltip}
-          hideTooltip={hideTooltip}
           minimap={minimap}
         />
       ))}

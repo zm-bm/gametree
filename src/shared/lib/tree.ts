@@ -34,7 +34,8 @@ function filterTreeNode(
 ) {
   const node = nodes[id];
   if (!node) return false;
-  if (node.explored || node.loading) return true;
+  if (node.collapsed) return false;
+  if (node.explored) return true;
 
   const frequency = gameCount(node) / parentGames * 100;
   return frequency >= frequencyMin;
@@ -78,6 +79,7 @@ export function buildNodes(
     node = {
       id: nodeId,
       explored: true,
+      collapsed: false,
       loading: false,
       move: getMoveFromId(nodeId),
       white: openingData.white,
@@ -114,6 +116,7 @@ export function buildChildNodes(
     children.push({
       id: childId,
       explored: false,
+      collapsed: false,
       loading: false,
       move: childMove,
       white: moveData.white,

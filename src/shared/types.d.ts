@@ -58,6 +58,7 @@ export type LcOpeningData = {
 type NodeData = {
   id: Id;
   explored: boolean;
+  collapsed: boolean;
   loading: boolean;
   move: Move | null;
   white: number;
