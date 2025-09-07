@@ -1,9 +1,13 @@
 import React, { useCallback, useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { HierarchyPointNode } from "@visx/hierarchy/lib/types";
 import { IconType } from "react-icons";
 import { FaBookmark, FaBullseye, FaChevronRight, FaRobot } from "react-icons/fa";
 
+import { AppDispatch, RootState } from "@/store";
 import { TreeNodeData } from "@/shared/types";
+import { tree } from "@/store/slices";
+import { selectTreeSource } from "@/store/selectors";
 
 interface ButtonConfig {
   key: string;
@@ -24,6 +28,8 @@ export const TreeNodeButtons = ({
   onMouseLeave,
 }: Props) => {
   const { collapsed } = node.data;
+  const dispatch = useDispatch<AppDispatch>();
+  const source = useSelector((s: RootState) => selectTreeSource(s))
 
   const stopPropagation = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
@@ -33,7 +39,7 @@ export const TreeNodeButtons = ({
     { 
       key: 'collapse', 
       icon: FaChevronRight, 
-      onClick: () => console.log('Collapse clicked'), 
+      onClick: () => dispatch(tree.actions.setNodeCollapsed({ nodeId: node.data.id, source, value: !collapsed })), 
       rotate: collapsed ? 0 : 90 
     },
     { 
@@ -46,7 +52,7 @@ export const TreeNodeButtons = ({
       icon: FaBookmark, 
       onClick: (e: React.MouseEvent) => { e.stopPropagation(); } 
     },
-  ], [collapsed]);
+  ], [collapsed, node, source, dispatch]);
 
   const drawerConfig = useMemo(() => {
     const numIcons = buttonConfigs.length;

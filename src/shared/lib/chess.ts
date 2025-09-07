@@ -1,11 +1,7 @@
 import { Move as ChessMove } from "chess.js";
 
-import eco from './eco.json'
 import { LcOpening, Move, MovePath } from "@/shared/types";
-
-export function pathId(moves: MovePath) {
-  return moves.map(m => m.lan).join(',');
-}
+import eco from './eco.json'
 
 export function serializeMove(move: ChessMove): Move {
   return {

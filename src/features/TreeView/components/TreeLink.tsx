@@ -5,7 +5,7 @@ import { FluidValue } from '@react-spring/shared';
 
 import { cn } from "@/shared/lib/cn";
 import { TreeNodeData } from "@/shared/types";
-import { gameCount } from "@/shared/lib/tree";
+import { gameCount } from "@/shared/lib/treeTransform";
 import { TreeDimensionsContext } from "../context/TreeDimensionsContext";
 import { COLORS, colorScale } from "../lib/colors";
 

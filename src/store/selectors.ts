@@ -1,8 +1,8 @@
 import { createSelector } from "@reduxjs/toolkit";
-
-import { RootState } from ".";
-import { buildTree } from "../shared/lib/tree";
 import { hierarchy } from "@visx/hierarchy";
+
+import { RootState } from "@/store";
+import { buildTree } from "@/shared/lib/treeTransform";
 
 // UI selectors
 export const selectUI = (s: RootState) => s.ui;

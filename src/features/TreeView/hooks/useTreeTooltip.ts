@@ -2,11 +2,24 @@ import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { useTooltip, useTooltipInPortal } from '@visx/tooltip';
 import { localPoint } from '@visx/event';
+import { HierarchyPointNode } from '@visx/hierarchy/lib/types';
 
 import { AppDispatch } from '@/store';
 import { ui } from '@/store/slices';
-import { NodeTooltipData } from '@/shared/types';
+import { NodeTooltipData, TreeNodeData } from '@/shared/types';
+import { gameCount } from '@/shared/lib/treeTransform';
 
+export const getToolTipData = (node: HierarchyPointNode<TreeNodeData>): NodeTooltipData => {
+  return {
+    white: node.data.white,
+    draws: node.data.draws,
+    black: node.data.black,
+    parent: node.parent ? gameCount(node.parent.data) : 0,
+    rating: node.data.averageRating,
+    eco: node.data.opening?.eco,
+    name: node.data.opening?.name,
+  };
+};
 
 export function useTreeTooltip() {
   const dispatch = useDispatch<AppDispatch>();
