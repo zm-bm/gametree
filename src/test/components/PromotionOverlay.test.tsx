@@ -1,13 +1,13 @@
 import { describe, expect, it, vi } from "vitest";
 
 import { MockDispatch, renderWithProviders } from "../../test/testUtils";
-import PromotionOverlay from "../../components/PromotionOverlay";
-import { initialState, rootNode } from "../../redux/gameSlice";
-import { MoveNode } from "../../types/chess";
+import PromotionOverlay from "../../shared/ui/PromotionOverlay/PromotionOverlay";
+import { initialState, rootNode } from "../../store/slices/ui";
+import { MoveNode } from "../../shared/types";
 import { Square } from "chess.js";
 import { fireEvent } from "@testing-library/react";
 import { setupStore } from "../../store";
-import { MakeMove } from "../../thunks";
+import { MakeMove } from "../../store/thunks";
 
 const preloadedState = {
   game: {

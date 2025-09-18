@@ -1,9 +1,9 @@
 import { describe, it } from "vitest";
 
-import ECODisplay from "../../components/ECODisplay";
+import ECODisplay from "../../features/Sidebar/components/ECODisplay";
 import { renderWithProviders } from "../../test/testUtils";
-import { initialState } from "../../redux/gameSlice";
-import { MoveNode } from "../../types/chess";
+import { initialState } from "../../store/slices/ui";
+import { MoveNode } from "../../shared/types";
 
 const moveTree: MoveNode[] = [
   {
@@ -71,7 +71,7 @@ describe('ECODisplay', () => {
       preloadedState: {
         game: {
           ...initialState,
-          currentMove: 3,
+          moveIndex: 3,
           moveTree,
         }
       }

@@ -1,10 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
 
 import { renderWithProviders } from "../testUtils";
-import { EngineState, initialState } from "../../redux/engineSlice";
-import EngineInfo from "../../components/EngineInfo";
+import { EngineState, initialState } from "../../store/engineSlice";
+import EngineOutputDisplay from "../../features/Sidebar/components/EngineView/EngineOutputDisplay";
 import { fireEvent } from "@testing-library/react";
-import { EngineBoardProps } from "../../components/EngineBoard";
+import { EngineBoardProps } from "../../features/Sidebar/components/EngineBoard";
 
 const engineState = {
   ...initialState,
@@ -38,7 +38,7 @@ vi.mock('../../components/EngineBoard', () => ({
 
 describe('EngineInfo', () => {
   it('renders depth, score, move', () => {
-    const { getByText } = renderWithProviders(<EngineInfo />, {
+    const { getByText } = renderWithProviders(<EngineOutputDisplay />, {
       preloadedState: { engine: engineState as EngineState }
     });
     getByText('1/1')
@@ -47,25 +47,25 @@ describe('EngineInfo', () => {
   });
 
   it('renders correctly on move hover', () => {
-    const { getByText, rerender } = renderWithProviders(<EngineInfo />, {
+    const { getByText, rerender } = renderWithProviders(<EngineOutputDisplay />, {
       preloadedState: { engine: engineState as EngineState }
     });
     const moveElem = getByText('1.e4');
     fireEvent.mouseEnter(moveElem);
-    rerender(<EngineInfo />);
+    rerender(<EngineOutputDisplay />);
     expect(boardProps.config.fen).toEqual(engineState.infos[0].pv[0].after);
     expect(boardProps.config.lastMove).toEqual(['e2', 'e4']);
     expect(boardProps.isHovered).toEqual(true);
   });
 
   it('renders correctly on move leave', () => {
-    const { getByText, rerender } = renderWithProviders(<EngineInfo />, {
+    const { getByText, rerender } = renderWithProviders(<EngineOutputDisplay />, {
       preloadedState: { engine: engineState as EngineState }
     });
     const moveElem = getByText('1.e4');
     fireEvent.mouseEnter(moveElem);
     fireEvent.mouseLeave(moveElem);
-    rerender(<EngineInfo />);
+    rerender(<EngineOutputDisplay />);
     expect(boardProps.isHovered).toEqual(false);
   });
 });

@@ -1,8 +1,8 @@
 import { describe, it } from "vitest";
 
 import { renderWithProviders } from "../testUtils";
-import { initialState } from "../../redux/engineSlice";
-import EngineHeader from "../../components/EngineHeader";
+import { initialState } from "../../store/engineSlice";
+import EngineHeader from "../../features/Sidebar/components/EngineHeader";
 
 describe('EngineHeader', () => {
   it('renders engine info', () => {

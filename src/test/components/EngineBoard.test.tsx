@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { renderWithProviders } from "../testUtils";
-import EngineBoard from "../../components/EngineBoard";
+import EngineBoard from "../../features/Sidebar/components/EngineBoard";
 
 const props = {
   size: 320,

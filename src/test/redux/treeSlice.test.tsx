@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import treeSlice, { AddOpenings, initialState, SetDataSource } from "../../redux/treeSlice";
+import treeSlice, { AddOpenings, initialState, SetDataSource } from "../../store/treeSlice";
 import { treeNode, openings } from "../testData";
 
 describe('treeSlice', () => {
@@ -12,7 +12,7 @@ describe('treeSlice', () => {
 
   it('builds tree on SetDataSource', () => {
     expect(treeSlice(initialState, AddOpenings({
-      openings, 
+      openingStats: openings, 
       moves: [],
     }))).toMatchObject({
       root: treeNode,

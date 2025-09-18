@@ -30,24 +30,29 @@ npm run build
 
 ## Roadmap
 
-- remove game tree / unify tree state
-- fix changing data source reseting the tree
-- minimap
-    - draggable minimap
-    - highlight current move
-- collapsable tree nodes
-- collapsable tree panel sections
-- typography/layout improvements
-    - make temp moves on main board
-        - when hovering tree node or move in engine/game panel
-        - remove board from hover tooltip
-    - node labels
-        - truncate repeated node labels
-        - show full variation name+ECO on hover tooltip
+- TreeView
+    - collapsable tree nodes
+    - tree colors respective to orientation
+    - stable node ordering
+    - better child selection (remember last)
+    - fix zoom calc to zoom on screen center
+    - org tree lib
+    - collapsable minimap
+    - Tooltip
+        - reuse sidepane opening view?
+        - small board view
+
+- Sidepane
+    - engine view
+    - opening view - eco
+    - org useChessground?
+
+- capture sound
+
+- tests
+- code formatter + pre-commit
 - ci/cd deploy
-- eco openings explorer
-- prefetch node descendants
-- mobile layout support
+- store tree in indexedDB
 
 ## Acknowledgments
 

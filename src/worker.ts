@@ -1,99 +1,59 @@
 import 'stockfish/src/stockfish-nnue-16.wasm?init';
 import Stockfish from 'stockfish/src/stockfish-nnue-16.js?worker'
+
 import { store } from './store';
-import { EngineState, EngineError, AddEngineOutput, EngineOutput } from './redux/engineSlice';
-import { setOption } from './redux/engineMiddleware';
+import { engine } from './store/slices';
+import {
+  selectBoardFen,
+  selectEngineDepth,
+  selectEngineHash,
+  selectEngineThreads,
+  selectEngineTime
+} from './store/selectors';
 
-const match = (line: string, regex: { [Symbol.match](string: string): RegExpMatchArray | null; }) => {
-  const match = line.match(regex);
-  return match ? +match[1] : undefined;
-}
+let worker: Worker;
 
-const includeInfo = (line: string) => {
-  return line.includes(' pv ')
+const isEngineInfo = (line: string) => {
+  return (
+    line.startsWith('info')
+    && line.includes(' pv ')
     && !line.includes('upperbound')
-    && !line.includes('lowerbound');
+    && !line.includes('lowerbound')
+  );
 }
 
-const parseMoves = (line: string) => {
-  line = line.substring(line.indexOf(" pv ") + 4);
-  // Match chess moves including promotions (e.g. e2e4, e7e8q)
-  const moveRegex = /\b[a-h][1-8][a-h][1-8][qrnb]?\b/g;
-  return line.match(moveRegex) as string[];
-}
-
-const parseEngineOutput = (line: string): EngineOutput | undefined => {
-  const tokens = line.split(' ');
-
-  if (tokens[0] === 'info') {
-    const result = {
-      time: match(line, /time (\w+)/),
-      speed: match(line, /nps (\w+)/),
-      hashfull: match(line, /hashfull (\w+)/),
-      tbhits: match(line, /tbhits (\w+)/),
-    };
-    let info = undefined;
-    let moves = undefined;
-
-    if (includeInfo(line)) {
-      const multipv = match(line, /multipv (\w+)/);
-      info = {
-        depth: match(line, /depth (\w+)/) || 0,
-        seldepth: match(line, /seldepth (\w+)/) || 0,
-        cp: match(line, /score cp (-?\w+)/),
-        mate: match(line, /score mate (-?\w+)/),
-        multipv: multipv ? multipv - 1 : 0,
-        pv: [],
-      }
-      moves = parseMoves(line);
-    }
-
-    return {
-      ...result,
-      info,
-      moves,
-    }
+const onmessage = (event: MessageEvent) => {
+  if (isEngineInfo(event.data)) {
+    store.dispatch(engine.actions.reportEngineOutput(event.data));
   }
-}
-
-export const initializeWorker = () => {
-  const worker = new Stockfish();
-
-  worker.onmessage = (event) => {
-    // console.log('> ', event.data);
-    const output = parseEngineOutput(event.data)
-    if (output) {
-      store.dispatch(AddEngineOutput(output));
-    }
-  };
-
-  worker.onerror = (error) => {
-    console.error('Worker error:', error);
-    store.dispatch(EngineError(error.message));
-  };
-
-  return worker;
 };
 
-export const write = (cmd: string) => {
-  // console.log('< ', cmd);
-  worker.postMessage(cmd);
+const onerror = (error: ErrorEvent) => {
+  store.dispatch(engine.actions.reportEngineError(error.message));
 };
 
-export const initEngineOptions = (state: EngineState) => {
-  write('uci')
-  configEngineOptions(state)
+export const initializeEngine = () => {
+  worker = new Stockfish();
+  worker.onmessage = onmessage;
+  worker.onerror = onerror;
+  worker.postMessage('uci');
+};
+
+export const startEngine = () => {
+  const state = store.getState();
+  const fen = selectBoardFen(state);
+  const hash = selectEngineHash(state);
+  const threads = selectEngineThreads(state);
+  const depth = selectEngineDepth(state);
+  const time = selectEngineTime(state);
+
+  worker.postMessage('stop');
+  worker.postMessage(`setoption name Hash value ${hash}`);
+  worker.postMessage(`setoption name Threads value ${threads}`);
+  worker.postMessage(`position fen ${fen}`);
+  worker.postMessage(`go depth ${depth} movetime ${time}`);
 }
 
-export const configEngineOptions = (state: EngineState) => {
-  write(setOption('Hash', state.hash))
-  write(setOption('Threads', state.threads))
-  write(setOption('MultiPV', state.lines))
+export const stopEngine = () => {
+  worker.postMessage('stop');
 }
-
-export function restartWorker(state: EngineState) {
-  worker = initializeWorker()
-  initEngineOptions(state)
-}
-
-export let worker = initializeWorker();

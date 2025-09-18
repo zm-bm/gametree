@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .engine-chip {
+        @apply py-2 px-4 rounded-xl shadow-sm
+        border border-gray-400/50 dark:border-gray-600/50
+        bg-gradient-to-br from-gray-100 to-gray-200 dark:from-zinc-900 dark:to-zinc-950
+        text-gray-800 dark:text-gray-200
+    }
+}

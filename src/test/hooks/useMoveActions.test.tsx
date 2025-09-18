@@ -1,14 +1,14 @@
 import { renderHook, act } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { describe, it, expect, vi } from "vitest";
-import { GameState, initialState } from "../../redux/gameSlice";
+import { UIState, initialState } from "../../store/slices/ui";
 import { useMoveActions } from "../../hooks/useMoveActions";
 import { AppStore, setupStore } from "../../store";
 import { MockDispatch } from "../testUtils";
 
-const gameState: GameState = {
+const gameState: UIState = {
   ...initialState,
-  currentMove: 1,
+  moveIndex: 1,
   moveTree: [
     {
       key: 0,
@@ -68,7 +68,7 @@ describe("useMoveActions", () => {
       result.current.undo();
     });
 
-    expect(store.getState().game.currentMove).toBe(0);
+    expect(store.getState().game.moveIndex).toBe(0);
   });
 
   it("performs redo action", () => {
@@ -79,29 +79,29 @@ describe("useMoveActions", () => {
       result.current.redo();
     });
 
-    expect(store.getState().game.currentMove).toBe(2);
+    expect(store.getState().game.moveIndex).toBe(2);
   });
 
   it("performs rewind action", () => {
-    const store = setupStore({ game: { ...gameState, currentMove: 2 } });
+    const store = setupStore({ game: { ...gameState, moveIndex: 2 } });
     const { result } = renderUseMoveActions(store);
 
     act(() => {
       result.current.rewind();
     });
 
-    expect(store.getState().game.currentMove).toBe(0);
+    expect(store.getState().game.moveIndex).toBe(0);
   });
 
   it("performs forward action", () => {
-    const store = setupStore({ game: { ...gameState, currentMove: 0 } });
+    const store = setupStore({ game: { ...gameState, moveIndex: 0 } });
     const { result } = renderUseMoveActions(store);
 
     act(() => {
       result.current.forward();
     });
 
-    expect(store.getState().game.currentMove).toBe(2);
+    expect(store.getState().game.moveIndex).toBe(2);
   });
 
   it("throttles actions", () => {

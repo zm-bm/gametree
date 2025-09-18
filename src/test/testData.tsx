@@ -1,5 +1,5 @@
 import { Chess } from "chess.js";
-import { LichessGame, LichessOpenings, TreeNode } from "../types/chess";
+import { LichessGame, LcOpeningData, TreeNodeData } from "../shared/types";
 import { serializeMove } from "../lib/chess";
 
 const topGame: LichessGame = {
@@ -18,7 +18,7 @@ const topGame: LichessGame = {
   month: '2019-08'
 }
 
-export const openings: LichessOpenings = {
+export const openings: LcOpeningData = {
   white: 10,
   draws: 20,
   black: 30,
@@ -44,8 +44,8 @@ export const openings: LichessOpenings = {
   ]
 };
 
-export const treeNode: TreeNode = {
-  name: '',
+export const treeNode: TreeNodeData = {
+  id: '',
   attributes: {
     white: 10,
     draws: 20,
@@ -57,7 +57,7 @@ export const treeNode: TreeNode = {
   },
   children: [
     {
-      name: 'd2d4',
+      id: 'd2d4',
       attributes: {
         white: 4,
         draws: 5,
@@ -74,7 +74,7 @@ export const treeNode: TreeNode = {
       children: []
     },
     {
-      name: 'e2e4',
+      id: 'e2e4',
       attributes: {
         white: 1,
         draws: 2,
