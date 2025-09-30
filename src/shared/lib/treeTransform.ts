@@ -6,6 +6,23 @@ export function gameCount(node: TreeNodeData | NormalNodeData) {
   return black + draws + white;
 }
 
+function makePlaceholderNode(id: Id): TreeNodeData {
+  return {
+    id: `${id}-placeholder`,
+    explored: false,
+    collapsed: false,
+    loading: false,
+    move: null,
+    white: 0,
+    draws: 0,
+    black: 0,
+    topGames: [],
+    opening: null,
+    averageRating: undefined,
+    children: [],
+  };
+}
+
 // return tree nodes with most frequent moves in the middle
 function orderTreeNodes(nodes: TreeNodeData[]) {
   const result = [];
@@ -26,14 +43,12 @@ function orderTreeNodes(nodes: TreeNodeData[]) {
 // return true if node should be included in tree
 function filterTreeNodes(
   nodes: NormalTree,
-  parentId: Id,
   id: Id,
   frequencyMin:number,
   parentGames: number
 ) {
   const node = nodes[id];
   if (!node) return false;
-  if (nodes[parentId]?.collapsed) return false;
   if (node.explored) return true;
 
   const frequency = gameCount(node) / parentGames * 100;
@@ -49,15 +64,19 @@ export function buildTree(
   const node = nodes[id];
   if (!node) return null;
 
-  const games = gameCount(node);
-  const children = node.children.map(childId => {
-    return filterTreeNodes(nodes, id, childId, frequencyMin, games)
-      ? buildTree(nodes, childId, frequencyMin)
-      : null;
-  }).filter(Boolean) as TreeNodeData[];
+  let children: TreeNodeData[] = [];
 
-  return {
-    ...node,
-    children: orderTreeNodes(children),
-  };
+  if (node.collapsed) {
+    children = [makePlaceholderNode(id)];
+  } else {
+    const games = gameCount(node);
+    children = node.children.map(childId => {
+      return filterTreeNodes(nodes, childId, frequencyMin, games)
+        ? buildTree(nodes, childId, frequencyMin)
+        : null;
+    }).filter(Boolean) as TreeNodeData[];
+    children = orderTreeNodes(children);
+  }
+
+  return { ...node, children };
 }

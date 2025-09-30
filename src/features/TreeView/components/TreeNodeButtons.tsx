@@ -39,8 +39,14 @@ export const TreeNodeButtons = ({
     { 
       key: 'collapse', 
       icon: FaChevronRight, 
-      onClick: () => dispatch(tree.actions.setNodeCollapsed({ nodeId: node.data.id, source, value: !collapsed })), 
-      rotate: collapsed ? 0 : 90 
+      onClick: () => {
+        if (!node.data.explored) {
+          console.log('Loading children for', node.data.id);
+        } else {
+          dispatch(tree.actions.setNodeCollapsed({ nodeId: node.data.id, source, value: !collapsed }))
+        }
+      },
+      rotate: (collapsed || node.data.children.length === 0) ? 0 : 90 
     },
     { 
       key: 'isolate',  
@@ -104,9 +110,10 @@ export const TreeNodeButtons = ({
             key={button.key}
             transform={`translate(${drawerConfig.buttonSize/2}, ${index * drawerConfig.buttonSize + drawerConfig.buttonSize/2}) rotate(${button.rotate ?? 0})`}
             onClick={button.onClick}
-            className="cursor-pointer group"
+            className="cursor-pointer select-none group"
             style={{ pointerEvents: "auto" }}
           >
+            <title>{button.key}</title>
             <rect 
               x={-drawerConfig.buttonSize/2} 
               y={-drawerConfig.buttonSize/2} 
@@ -121,7 +128,6 @@ export const TreeNodeButtons = ({
               <button.icon 
                 size={drawerConfig.buttonSize/2}
                 className="text-slate-700 dark:text-slate-200" 
-                title={button.key}
               />
             </g>
           </g>

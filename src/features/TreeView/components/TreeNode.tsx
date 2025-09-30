@@ -32,17 +32,15 @@ export const TreeNode = ({
   minimap = false,
 }: Props) => {
   const { id, loading } = node.data;
+  const isPlaceholder = node.parent?.data.collapsed ?? false;
 
   const dispatch = useDispatch<AppDispatch>();
   const { fontSize, nodeRadius } = useContext(TreeDimensionsContext);
   const currentNodeId = useSelector((s: RootState) => selectCurrentId(s));
-  const isCurrent = useMemo(() => currentNodeId === id, [currentNodeId, id]);
   const [hovered, setHovered] = useState(false);
-  const handleMouseEnter = useCallback(() => setHovered(true), []);
-  const handleMouseLeave = useCallback(() => setHovered(false), []);
   
   const nodeProps = useMemo(() => {
-    if (minimap) return {};
+    if (minimap || isPlaceholder) return {};
     
     return {
       cursor: 'pointer',
@@ -51,7 +49,7 @@ export const TreeNode = ({
       'data-move': node.data.move?.lan || '',
       'data-id': node.data.id,
     };
-  }, [node, minimap, dispatch]);
+  }, [node, minimap, isPlaceholder, dispatch]);
 
   const rectProps = useMemo(() => ({
     x: -nodeRadius,
@@ -60,13 +58,16 @@ export const TreeNode = ({
     ry: 6,
     width: nodeRadius * 2,
     height: nodeRadius * 2,
-    fill: isCurrent ? 'url(#currentNodeGradient)' : 'url(#moveGradient)',
-    filter: isCurrent ? 'url(#currentNodeFilter)' : 'url(#nodeFilter)',
+    fill: currentNodeId === id ? 'url(#currentNodeGradient)' : 'url(#moveGradient)',
+    filter: currentNodeId === id ? 'url(#currentNodeFilter)' : 'url(#nodeFilter)',
     className: cn('stroke-[0.75] stroke-lightmode-900/10 dark:stroke-darkmode-400/10', { 
       ['stroke-1 stroke-lightmode-900/30 dark:stroke-darkmode-400/60']: minimap,
       ['transition-all duration-200 hover:scale-110 hover:brightness-125']: !minimap,
     }),
-  }), [nodeRadius, isCurrent, minimap]);
+  }), [nodeRadius, minimap, currentNodeId, id]);
+
+  const handleMouseEnter = useCallback(() => setHovered(true), []);
+  const handleMouseLeave = useCallback(() => setHovered(false), []);
 
   return (
     <AnimatedGroup
@@ -87,7 +88,13 @@ export const TreeNode = ({
       {/* Move node*/}
       <g {...nodeProps}>
         <rect {...rectProps} />
-        {!minimap && <TreeNodeText move={node.data.move} fontSize={fontSize} />}
+        {!minimap && (
+          <TreeNodeText
+            move={node.data.move}
+            isPlaceholder={isPlaceholder}
+            fontSize={fontSize}
+          />
+        )}
         {loading && <TreeNodeLoadingIndicator radius={nodeRadius - 2} />}
       </g>
     </AnimatedGroup>
