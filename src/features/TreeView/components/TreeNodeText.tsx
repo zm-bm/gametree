@@ -17,10 +17,11 @@ const textStyle: React.CSSProperties = {
 
 interface Props {
   move: Move | null;
+  isPlaceholder: boolean;
   fontSize: number;
 }
 
-export const TreeNodeText  = ({ move, fontSize }: Props) => {
+export const TreeNodeText  = ({ move, isPlaceholder, fontSize }: Props) => {
 
   const { symbol, notation } = useMemo(() => {
     if (!move?.san)
@@ -33,7 +34,7 @@ export const TreeNodeText  = ({ move, fontSize }: Props) => {
     return { symbol, notation };
   }, [move?.san, move?.piece]);
 
-  if (!move) return null;
+  if (!move && !isPlaceholder) return null;
   return (
     <text
       x={0}
@@ -53,7 +54,7 @@ export const TreeNodeText  = ({ move, fontSize }: Props) => {
         </tspan>
       )}
       <tspan dx={symbol ? "-0.1em" : undefined}>
-        {notation}
+        {notation || (isPlaceholder ? "..." : "")}
       </tspan>
     </text>
   );
