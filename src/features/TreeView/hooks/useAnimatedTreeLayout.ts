@@ -12,79 +12,93 @@ const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
 export function useAnimatedTreeLayout(
   nodes: HierarchyPointNode<TreeNodeData>[],
-  nodeSize: [number, number],
   minimap: boolean
 ) {
+  const prevPositionsRef = useRef<XYMap>(new Map());
+  const nextPositionsRef = useRef<XYMap>(new Map());
+  const pendingUpdateRef = useRef<XYMap | null>(null);
 
-  // Previous and next layout maps (id → xy)
-  const prevRef = useRef<XYMap>(new Map());
-  const nextRef = useRef<XYMap>(
-    new Map(nodes.map(n => [n.data.id, { x: n.x, y: n.y }]))
-  );
-
-  // Lookup for origin ids (where to animate from)
-  const originMap = useMemo(() => {
-    console.log('building origins for nodes:', nodes.map(n => n.data.id));
-    // console.log('previous nodes:', Array.from(prevRef.current.keys()));
-    // console.log('next nodes:', Array.from(nextRef.current.keys()));
-    const m = new Map<string, string>();
-    for (const n of nodes) {
-      if (n.parent) {
-        const placeholderId = getPlaceholderId(n.parent.data.id);
-        const originId = prevRef.current.has(placeholderId)
-          ? placeholderId
-          : n.parent.data.id;
-        m.set(n.data.id, originId);
-      }
-    }
-    return m;
+  // Build next position map
+  const nextPositions: XYMap = useMemo(() => {
+    const map = new Map<string, XY>();
+    nodes.forEach((n) => {
+      map.set(n.data.id, { x: n.x, y: n.y });
+    });
+    return map;
   }, [nodes]);
+
+  // Resolve origin for each node
+  const getOriginPosition = useCallback(
+    (nodeId: string): XY | undefined => {
+      const node = nodes.find((n) => n.data.id === nodeId);
+      if (!node?.parent) return undefined;
+
+      // Check if expanding from placeholder (sibling position)
+      const placeholderId = getPlaceholderId(node.parent.data.id);
+      if (prevPositionsRef.current.has(placeholderId)) {
+        return prevPositionsRef.current.get(placeholderId);
+      }
+
+      // Default to parent position
+      return (
+        prevPositionsRef.current.get(node.parent.data.id) ||
+        { x: node.parent.x, y: node.parent.y }
+      );
+    },
+    [nodes]
+  );
 
   // Shared spring for animation
   const [{ t }, api] = useSpring(() => ({
     t: 1,
     config: { tension: 300, friction: 30 },
     immediate: minimap,
+    onRest: () => {
+      // Update prev positions when animation completes
+      if (pendingUpdateRef.current) {
+        prevPositionsRef.current = new Map(pendingUpdateRef.current);
+        pendingUpdateRef.current = null;
+      }
+    },
   }));
 
   // Interpolates position for a node id at time t
-  const xyAt = useCallback(
-    (id: string, tt: number): XY | undefined => {
-      const prev = prevRef.current.get(id);
-      const next = nextRef.current.get(id);
-      if (prev && next) {
-        return { x: lerp(prev.x, next.x, tt), y: lerp(prev.y, next.y, tt) };
-      }
-      if (!next) return prev;
-      const origin = originMap.get(id);
-      const pPrev = origin ? prevRef.current.get(origin) : undefined;
-      const pNext = origin ? nextRef.current.get(origin) : undefined;
-      const from = pPrev || pNext || next;
-      // console.log('originating', id, 'from', origin, from, 'to', next);
-      return { x: lerp(from.x, next.x, tt), y: lerp(from.y, next.y, tt) };
-    },
-    [originMap]
-  );
+  const xyAt = useCallback((id: string, tt: number): XY | undefined => {
+    const prev = prevPositionsRef.current.get(id);
+    const next = nextPositionsRef.current.get(id);
+
+    // If node exists in both layouts, interpolate
+    if (prev && next) {
+      return { x: lerp(prev.x, next.x, tt), y: lerp(prev.y, next.y, tt) };
+    }
+
+    // If node is new, animate from origin (parent or sibling placeholder)
+    if (!next) {
+      return prev || { x: 0, y: 0 };
+    }
+
+    const origin = getOriginPosition(id);
+    const from = origin || next;
+    return { x: lerp(from.x, next.x, tt), y: lerp(from.y, next.y, tt) };
+  }, [getOriginPosition]);
 
   // Update layout and animate on node changes
   useEffect(() => {
-    console.log('Updating layout for nodes: ', nodes.map(n => n.data.id));
-    const tNow = t.get();
-    const ids = new Set<string>([
-      // ...Array.from(prevRef.current.keys()),
-      ...Array.from(nextRef.current.keys()),
-      ...nodes.map(n => n.data.id),
-    ]);
-    const newPrev: XYMap = new Map();
-    for (const id of ids) {
-      const cur = xyAt(id, tNow);
-      if (cur) newPrev.set(id, cur);
+    // Always update next positions ref first
+    nextPositionsRef.current = new Map(nextPositions);
+
+    if (minimap) {
+      // For minimap, set prev positions to match next (no animation)
+      prevPositionsRef.current = new Map(nextPositions);
+      pendingUpdateRef.current = null;
+    } else {
+      // Store pending update for when animation completes
+      pendingUpdateRef.current = new Map(nextPositions);
     }
-    prevRef.current = newPrev;
-    nextRef.current = new Map(nodes.map(n => [n.data.id, { x: n.x, y: n.y }]));
+
+    // Start animation
     api.start({ from: { t: 0 }, to: { t: 1 }, immediate: minimap });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [nodes, nodeSize, api, minimap]);
+  }, [nextPositions, api, minimap]);
 
   // Animated x/y accessors
   const ax = (id: string) => to(t, (tt) => xyAt(id, tt)?.x ?? 0);

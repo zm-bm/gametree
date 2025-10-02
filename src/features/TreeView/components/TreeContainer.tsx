@@ -24,10 +24,7 @@ const TreeContainerBase = ({
       separation={separation}
     >
       {(tree) =>
-        <TreeContents
-          tree={tree}
-          nodeSize={nodeSize}
-        />
+        <TreeContents tree={tree} />
       }
     </VisxTree>
   );
