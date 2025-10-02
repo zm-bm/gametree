@@ -8,8 +8,8 @@ import { FluidValue } from '@react-spring/shared';
 
 import { cn } from "@/shared/lib/cn";
 import { RootState, AppDispatch } from "@/store";
-import { selectCurrentId } from "@/store/selectors";
-import { nav } from "@/store/slices";
+import { selectCurrentId, selectTreeSource } from "@/store/selectors";
+import { nav, tree } from "@/store/slices";
 import { TreeNodeData } from "@/shared/types";
 import { TreeDimensionsContext } from "../context/TreeDimensionsContext";
 import { TreeNodeText } from "./TreeNodeText";
@@ -37,19 +37,28 @@ export const TreeNode = ({
   const dispatch = useDispatch<AppDispatch>();
   const { fontSize, nodeRadius } = useContext(TreeDimensionsContext);
   const currentNodeId = useSelector((s: RootState) => selectCurrentId(s));
+  const source = useSelector((s: RootState) => selectTreeSource(s))
   const [hovered, setHovered] = useState(false);
   
   const nodeProps = useMemo(() => {
-    if (minimap || isPlaceholder) return {};
+    if (minimap) return {};
     
     return {
       cursor: 'pointer',
-      onClick: () => dispatch(nav.actions.navigateToId(node.data.id)),
+      onClick: () => {
+        if (!isPlaceholder) {
+          // Navigate to the selected node
+          dispatch(nav.actions.navigateToId(node.data.id));
+        } else {
+          // Expand the parent node
+          dispatch(tree.actions.setNodeCollapsed({ nodeId: node.parent?.data.id || '', source, value: false }));
+        }
+      },
       'data-fen': node.data.move?.after || DEFAULT_POSITION,
       'data-move': node.data.move?.lan || '',
       'data-id': node.data.id,
     };
-  }, [node, minimap, isPlaceholder, dispatch]);
+  }, [node, minimap, isPlaceholder, source, dispatch]);
 
   const rectProps = useMemo(() => ({
     x: -nodeRadius,
@@ -77,7 +86,7 @@ export const TreeNode = ({
       onMouseLeave={handleMouseLeave}
     >
       {/* Button drawer */}
-      {!minimap && hovered && (
+      {!minimap && !isPlaceholder && hovered && (
         <TreeNodeButtons
           node={node}
           nodeRadius={nodeRadius}

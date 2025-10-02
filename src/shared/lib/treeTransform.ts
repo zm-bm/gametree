@@ -1,4 +1,5 @@
 import { Id, NormalNodeData, NormalTree, TreeNodeData } from "@/shared/types";
+import { getPlaceholderId } from "./id";
 
 // return total games for a node
 export function gameCount(node: TreeNodeData | NormalNodeData) {
@@ -6,9 +7,10 @@ export function gameCount(node: TreeNodeData | NormalNodeData) {
   return black + draws + white;
 }
 
+// create a placeholder node for collapsed nodes
 function makePlaceholderNode(id: Id): TreeNodeData {
   return {
-    id: `${id}-placeholder`,
+    id: getPlaceholderId(id),
     explored: false,
     collapsed: false,
     loading: false,
@@ -59,7 +61,7 @@ function filterTreeNodes(
 export function buildTree(
   nodes: NormalTree,
   id: Id,
-  frequencyMin: number
+  frequencyMin: number,
 ): TreeNodeData | null {
   const node = nodes[id];
   if (!node) return null;
@@ -69,9 +71,9 @@ export function buildTree(
   if (node.collapsed) {
     children = [makePlaceholderNode(id)];
   } else {
-    const games = gameCount(node);
+    const numGames = gameCount(node);
     children = node.children.map(childId => {
-      return filterTreeNodes(nodes, childId, frequencyMin, games)
+      return filterTreeNodes(nodes, childId, frequencyMin, numGames)
         ? buildTree(nodes, childId, frequencyMin)
         : null;
     }).filter(Boolean) as TreeNodeData[];
