@@ -78,6 +78,24 @@ export const TreeNode = ({
   const handleMouseEnter = useCallback(() => setHovered(true), []);
   const handleMouseLeave = useCallback(() => setHovered(false), []);
 
+  const badgeProps = useMemo(() => {
+    const hasHidden = node.data.childrenLoaded && node.data.collapsed;
+    
+    if (!hasHidden) return null;
+    
+    const label = `+${Math.min(node.data.childCount, 99)}`;
+    const badgeH = 16;
+    const badgeW = Math.max(22, label.length * 7 + 10);
+    const badgeX = nodeRadius + 4 + badgeW/2; // right edge of parent
+    
+    return {
+      label,
+      badgeH,
+      badgeW,
+      badgeX,
+    };
+  }, [node.data.childrenLoaded, node.data.collapsed, node.data.childCount, nodeRadius]);
+
   return (
     <AnimatedGroup
       top={x}
@@ -106,6 +124,36 @@ export const TreeNode = ({
         )}
         {loading && <TreeNodeLoadingIndicator radius={nodeRadius - 2} />}
       </g>
+
+      {/* Collapsed nodes badge */}
+      {badgeProps && (
+        <g
+          transform={`translate(${badgeProps.badgeX},0)`}
+          className="cursor-pointer select-none"
+          onClick={(e)=>{ e.stopPropagation();  }}
+        >
+          <rect
+            x={-badgeProps.badgeW/2}
+            y={-badgeProps.badgeH/2}
+            rx={badgeProps.badgeH/2}
+            ry={badgeProps.badgeH/2}
+            width={badgeProps.badgeW}
+            height={badgeProps.badgeH}
+            filter="drop-shadow(0 0 2px rgba(255,255,255,0.2))"
+            className="fill-slate-800/70 dark:fill-slate-200/70
+                      stroke-white/10 dark:stroke-white/20"
+            strokeWidth={1}
+          />
+          <text
+            x={0}
+            y={4}
+            textAnchor="middle"
+            className="text-[10px] font-semibold fill-white/85 dark:fill-gray-700/85"
+          >
+              {badgeProps.label}
+          </text>
+        </g>
+      )}
     </AnimatedGroup>
   );
 };

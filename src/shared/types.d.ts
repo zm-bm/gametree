@@ -81,6 +81,7 @@ export type NormalTree = Record<Id, NormalNodeData>;
 
 export type TreeNodeData = NodeData & {
   children: TreeNodeData[];
+  childCount: number;
 };
 
 export type Tree = Record<Id, TreeNodeData>;
