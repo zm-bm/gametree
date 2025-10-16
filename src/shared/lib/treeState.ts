@@ -14,14 +14,14 @@ export function buildNodes(
   if (node) {
     node = {
       ...node,
-      explored: true,
+      childrenLoaded: true,
       topGames: openingData.topGames,
       opening: openingData.opening,
     };
   } else {
     node = {
       id: nodeId,
-      explored: true,
+      childrenLoaded: true,
       collapsed: false,
       loading: false,
       move: getMoveFromId(nodeId),
@@ -58,7 +58,7 @@ export function buildChildNodes(
     
     children.push({
       id: childId,
-      explored: false,
+      childrenLoaded: false,
       collapsed: false,
       loading: false,
       move: childMove,

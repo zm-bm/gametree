@@ -4,7 +4,7 @@ import { Move, Id } from "@/shared/types";
 import { serializeMove } from "./chess";
 
 export const getPlaceholderId = (nodeId: Id) => {
-  return `${nodeId}-placeholder`;
+  return `${nodeId}::collapsedStub`;
 }
 
 export const getParentId = (nodeId: Id) => {

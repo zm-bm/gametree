@@ -42,7 +42,7 @@ export const TreeNodeButtons = ({
       key: 'collapse/expand',
       icon: FaChevronRight, 
       onClick: () => {
-        if (!node.data.explored) {
+        if (!node.data.childrenLoaded) {
           dispatch(nav.actions.navigateToId(node.data.id));
         } else {
           dispatch(tree.actions.setNodeCollapsed({ nodeId: node.data.id, source, value: !collapsed }))

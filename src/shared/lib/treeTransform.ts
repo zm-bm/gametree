@@ -11,7 +11,7 @@ export function gameCount(node: TreeNodeData | NormalNodeData) {
 function makePlaceholderNode(id: Id): TreeNodeData {
   return {
     id: getPlaceholderId(id),
-    explored: false,
+    childrenLoaded: false,
     collapsed: false,
     loading: false,
     move: null,
@@ -51,7 +51,7 @@ function filterTreeNodes(
 ) {
   const node = nodes[id];
   if (!node) return false;
-  if (node.explored) return true;
+  if (node.childrenLoaded) return true;
 
   const frequency = gameCount(node) / parentGames * 100;
   return frequency >= frequencyMin;
