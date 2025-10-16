@@ -30,29 +30,29 @@ npm run build
 
 ## Roadmap
 
-- TreeView
-    - collapsable tree nodes
+- treeview
+    - collapsible tree nodes
+        - fix arrow navigation for collapsed nodes
+        - fix panning when collapsing nodes
+        - decide how to handle current node on collapse
+    - fix sticky node buttons bug
+    - isolate button
     - tree colors respective to orientation
-    - stable node ordering
     - better child selection (remember last)
     - fix zoom calc to zoom on screen center
-    - org tree lib
     - collapsable minimap
-    - Tooltip
-        - reuse sidepane opening view?
-        - small board view
+    - minimap clips corner of Treeview
 
-- Sidepane
+- sidepane
     - engine view
-    - opening view - eco
-    - org useChessground?
+    - openings view
+    - bookmarks view
 
-- capture sound
-
-- tests
-- code formatter + pre-commit
-- ci/cd deploy
-- store tree in indexedDB
+- code
+    - useDispacth<Appdisatch> -> useAppDispatch
+    - code formatter + pre-commit
+    - fix tests
+    - ci/cd deploy
 
 ## Acknowledgments
 

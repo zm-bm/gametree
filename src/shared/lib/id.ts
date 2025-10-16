@@ -3,6 +3,10 @@ import { Chess, DEFAULT_POSITION } from "chess.js";
 import { Move, Id } from "@/shared/types";
 import { serializeMove } from "./chess";
 
+export const getPlaceholderId = (nodeId: Id) => {
+  return `${nodeId}-placeholder`;
+}
+
 export const getParentId = (nodeId: Id) => {
   const parts = nodeId.split(',');
   if (parts.length > 0) {

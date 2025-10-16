@@ -59,7 +59,7 @@ export function useTreeNavigation({
   // If currentNode changes, pan to it
   useEffect(() => {
     if (currentNode) {
-      panToNode(currentNode as HierarchyPointNode<TreeNodeData>);
+      // panToNode(currentNode as HierarchyPointNode<TreeNodeData>);
     }
   }, [currentNode, panToNode]);
 

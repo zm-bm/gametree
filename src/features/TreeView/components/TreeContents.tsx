@@ -8,18 +8,16 @@ import { useAnimatedTreeLayout } from "../hooks";
 
 interface Props {
   tree: HierarchyPointNode<TreeNodeData>,
-  nodeSize: [number, number],
   minimap?: boolean,
 }
 
 const TreeContentsBase = ({
   tree,
-  nodeSize,
   minimap = false,
 }: Props) => {
   const links = useMemo(() => tree.links(), [tree]);
   const nodes = useMemo(() => tree.descendants(), [tree]);
-  const { ax, ay } = useAnimatedTreeLayout(nodes, nodeSize, minimap);
+  const { ax, ay } = useAnimatedTreeLayout(nodes, minimap);
 
   return (
     <>

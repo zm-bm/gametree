@@ -82,11 +82,7 @@ export const TreeMinimap = ({ tree, spring }: Props) => {
           >
             {(tree) => (
               <Group transform={transform.matrix}>
-                <TreeContents
-                  tree={tree}
-                  nodeSize={nodeSize}
-                  minimap={true}
-                />
+                <TreeContents tree={tree} minimap={true} />
               </Group>
             )}
           </Tree>

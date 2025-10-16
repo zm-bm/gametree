@@ -2,18 +2,20 @@ import React, { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { HierarchyPointNode } from "@visx/hierarchy/lib/types";
 import { IconType } from "react-icons";
-import { FaBookmark, FaBullseye, FaChevronRight, FaRobot } from "react-icons/fa";
+import { FaBookmark, FaBullseye, FaChevronRight } from "react-icons/fa";
 
 import { AppDispatch, RootState } from "@/store";
 import { TreeNodeData } from "@/shared/types";
-import { tree } from "@/store/slices";
+import { nav, tree } from "@/store/slices";
 import { selectTreeSource } from "@/store/selectors";
+import { cn } from "@/shared/lib/cn";
 
 interface ButtonConfig {
   key: string;
   icon: IconType;
   onClick: (e: React.MouseEvent) => void;
   rotate?: number;
+  active?: boolean;
 }
 
 interface Props {
@@ -37,16 +39,18 @@ export const TreeNodeButtons = ({
 
   const buttonConfigs: ButtonConfig[] = useMemo(() => [
     { 
-      key: 'collapse', 
+      key: 'collapse/expand',
       icon: FaChevronRight, 
       onClick: () => {
         if (!node.data.explored) {
-          console.log('Loading children for', node.data.id);
+          dispatch(nav.actions.navigateToId(node.data.id));
         } else {
           dispatch(tree.actions.setNodeCollapsed({ nodeId: node.data.id, source, value: !collapsed }))
         }
       },
-      rotate: (collapsed || node.data.children.length === 0) ? 0 : 90 
+      rotate: (node.data.collapsed || (node.data.children.length === 0 && !node.data.loading))
+        ? 0 : 90,
+      active: node.data.collapsed,
     },
     { 
       key: 'isolate',  
@@ -121,7 +125,10 @@ export const TreeNodeButtons = ({
               height={drawerConfig.buttonSize}
               rx={4} ry={4}
               fill="transparent" 
-              className="group-hover:fill-lightmode-900/10 dark:group-hover:fill-darkmode-100/10"
+              className={cn(
+                "group-hover:fill-lightmode-900/10 dark:group-hover:fill-darkmode-100/10",
+                button.active && "fill-lightmode-900/15 dark:fill-darkmode-100/15",
+              )}
             />
             
             <g transform={`translate(${-drawerConfig.buttonSize/4},${-drawerConfig.buttonSize/4})`}>

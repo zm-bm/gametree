@@ -86,10 +86,11 @@ export const TreeLink = ({
   }, [nodeRadius, minimap, link]);
 
   const linkFill = useMemo(() => {
+    if (link.source.data.collapsed) return COLORS.placeholder;
     const { white, draws, black } = link.target.data;
     const games = white + draws + black;
     return (games === 0) ? COLORS.draw : colorScale((white - black) / games);
-  }, [link.target.data]);
+  }, [link.source.data, link.target.data]);
 
   return (
     <AnimatedPath

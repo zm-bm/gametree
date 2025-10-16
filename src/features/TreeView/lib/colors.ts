@@ -22,4 +22,5 @@ export const COLORS = {
   losing: COLOR_RANGE.at(Math.floor(COLOR_RANGE.length / 4)),
   nearlose: COLOR_RANGE.at(Math.floor(COLOR_RANGE.length / 8)),
   lose: COLOR_RANGE.at(0),
+  placeholder: '#a1a1aa', // zinc-400
 };
