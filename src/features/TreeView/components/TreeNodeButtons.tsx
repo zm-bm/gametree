@@ -48,7 +48,8 @@ export const TreeNodeButtons = ({
           dispatch(tree.actions.setNodeCollapsed({ nodeId: node.data.id, source, value: !collapsed }))
         }
       },
-      rotate: (collapsed || node.data.children.length === 0) ? 0 : 90,
+      rotate: (node.data.collapsed || (node.data.children.length === 0 && !node.data.loading))
+        ? 0 : 90,
       active: node.data.collapsed,
     },
     { 
