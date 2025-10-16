@@ -3,7 +3,6 @@ import { HierarchyPointNode } from "d3-hierarchy";
 import { useSpring, to } from "react-spring";
 
 import { TreeNodeData } from "@/shared/types";
-import { getPlaceholderId } from "@/shared/lib/id";
 
 type XY = { x: number; y: number };
 type XYMap = Map<string, XY>;
@@ -32,12 +31,6 @@ export function useAnimatedTreeLayout(
     (nodeId: string): XY | undefined => {
       const node = nodes.find((n) => n.data.id === nodeId);
       if (!node?.parent) return undefined;
-
-      // Check if expanding from placeholder (sibling position)
-      const placeholderId = getPlaceholderId(node.parent.data.id);
-      if (prevPositionsRef.current.has(placeholderId)) {
-        return prevPositionsRef.current.get(placeholderId);
-      }
 
       // Default to parent position
       return (

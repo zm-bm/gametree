@@ -39,7 +39,7 @@ const getNavTarget = (action: UnknownAction, state: RootState) => {
       const children = currentNode?.children;
       if (!children?.length) return undefined;
       
-      const exploredChild = children.find(child => child.data.explored);
+      const exploredChild = children.find(child => child.data.childrenLoaded);
       const middleChild = children.length % 2
         ? children[Math.floor(children.length / 2)]
         : children[Math.floor(children.length / 2 - 1)];
