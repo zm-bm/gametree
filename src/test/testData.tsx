@@ -1,8 +1,9 @@
 import { Chess } from "chess.js";
-import { LichessGame, LcOpeningData, TreeNodeData } from "../shared/types";
-import { serializeMove } from "../lib/chess";
+import { LcGame, LcOpeningData, TreeNodeData } from "../shared/types";
+import { serializeMove } from "../shared/lib/chess";
 
-const topGame: LichessGame = {
+
+const topGame: LcGame = {
   uci: 'd2d4',
   id: 'QR5UbqUY',
   winner: null,
@@ -46,49 +47,55 @@ export const openings: LcOpeningData = {
 
 export const treeNode: TreeNodeData = {
   id: '',
-  attributes: {
-    white: 10,
-    draws: 20,
-    black: 30,
-    topGames: [topGame],
-    opening: null,
-    averageRating: null,
-    move: null
-  },
+  childrenLoaded: true,
+  collapsed: false,
+  loading: false,
+  white: 10,
+  draws: 20,
+  black: 30,
+  topGames: [topGame],
+  opening: null,
+  averageRating: undefined,
+  move: null,
+  childCount: 2,
   children: [
     {
       id: 'd2d4',
-      attributes: {
-        white: 4,
-        draws: 5,
-        black: 6,
-        topGames: null,
-        opening: {
-          eco: 'A40',
-          name: 'Queen\'s Pawn Game',
-          uci: 'd2d4'
-        },
-        averageRating: 2414,
-        move: serializeMove(new Chess().move('d2d4')),
+      childrenLoaded: false,
+      collapsed: false,
+      loading: false,
+      white: 4,
+      draws: 5,
+      black: 6,
+      topGames: [],
+      opening: {
+        eco: 'A40',
+        name: 'Queen\'s Pawn Game',
+        uci: 'd2d4'
       },
-      children: []
+      averageRating: 2414,
+      move: serializeMove(new Chess().move('d2d4')),
+      children: [],
+      childCount: 0,
     },
     {
       id: 'e2e4',
-      attributes: {
-        white: 1,
-        draws: 2,
-        black: 3,
-        topGames: null,
-        opening: {
-          eco: 'B00',
-          name: 'King\'s Pawn Game',
-          uci: 'e2e4'
-        },
-        averageRating: 2399,
-        move: serializeMove(new Chess().move('e2e4')),
+      childrenLoaded: false,
+      collapsed: false,
+      loading: false,
+      white: 1,
+      draws: 2,
+      black: 3,
+      topGames: [],
+      opening: {
+        eco: 'B00',
+        name: 'King\'s Pawn Game',
+        uci: 'e2e4'
       },
-      children: []
+      averageRating: 2399,
+      move: serializeMove(new Chess().move('e2e4')),
+      children: [],
+      childCount: 0,
     },
   ]
 }

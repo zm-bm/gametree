@@ -66,7 +66,7 @@ export const TreeTooltipContents = ({ data }: Props) => {
           )}
           
           {/* Average Rating */}
-          {data.rating > 0 && (
+          {data.rating && data.rating > 0 && (
             <div className={cn(TOOLTIP.card)}>
               <div className={TOOLTIP.label}>Avg. Rating</div>
               <div className={TOOLTIP.value}>{data.rating} Elo</div>

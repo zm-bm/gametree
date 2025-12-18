@@ -1,7 +1,7 @@
 import { Chess, DEFAULT_POSITION } from "chess.js";
 
 import { NormalNodeData, NormalTree, LcMoveData, Id, LcOpeningData } from "@/shared/types";
-import { getECO, serializeMove } from "./chess";
+import { serializeMove } from "./chess";
 import { getChildId, getMoveFromId, getParentId } from "./id";
 
 export function buildNodes(

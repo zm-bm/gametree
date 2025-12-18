@@ -32,7 +32,7 @@ export const PromotionPiece = ({
   const rank = (orientation === sideToMove) ? targetRank : 7 - targetRank;
   const file = (orientation === 'white') ? targetFile : 7 - targetFile;
 
-  const onClick: React.MouseEventHandler<HTMLDivElement> = useCallback(async (e) => {
+  const onClick: React.MouseEventHandler<HTMLDivElement> = useCallback(async () => {
     if (!target) return;
     try {
       const chess = new Chess(fen);

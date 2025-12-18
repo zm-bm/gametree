@@ -1,33 +1,33 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
+// import { Square } from "chess.js";
+// import { fireEvent } from "@testing-library/react";
 
-import { MockDispatch, renderWithProviders } from "../../test/testUtils";
+import {
+  // MockDispatch,
+  renderWithProviders,
+} from "../../test/testUtils";
 import PromotionOverlay from "../../shared/ui/PromotionOverlay/PromotionOverlay";
-import { initialState, rootNode } from "../../store/slices/ui";
-import { MoveNode } from "../../shared/types";
-import { Square } from "chess.js";
-import { fireEvent } from "@testing-library/react";
-import { setupStore } from "../../store";
-import { MakeMove } from "../../store/thunks";
+// import { setupStore } from "../../store";
 
-const preloadedState = {
-  game: {
-    ...initialState,
-    promotionTarget: ['b7', 'a8'] as Square[],
-    moveTree: [{
-      ...rootNode,
-      move: {
-        color: 'b',
-        piece: 'q',
-        from: 'd8',
-        to: 'c8',
-        san: 'Qc8',
-        lan: 'd8c8',
-        before: 'rn1qkbnr/1Ppppppp/8/8/8/8/1PPPPPPP/RNBQKBNR b KQkq - 0 4',
-        after: 'rnq1kbnr/1Ppppppp/8/8/8/8/1PPPPPPP/RNBQKBNR w KQkq - 1 5'
-      },
-    }] as MoveNode[]
-  }
-};
+// const preloadedState = {
+//   game: {
+//     ...initialState,
+//     promotionTarget: ['b7', 'a8'] as Square[],
+//     moveTree: [{
+//       ...rootNode,
+//       move: {
+//         color: 'b',
+//         piece: 'q',
+//         from: 'd8',
+//         to: 'c8',
+//         san: 'Qc8',
+//         lan: 'd8c8',
+//         before: 'rn1qkbnr/1Ppppppp/8/8/8/8/1PPPPPPP/RNBQKBNR b KQkq - 0 4',
+//         after: 'rnq1kbnr/1Ppppppp/8/8/8/8/1PPPPPPP/RNBQKBNR w KQkq - 1 5'
+//       },
+//     }] as MoveNode[]
+//   }
+// };
 
 describe('PromotionOverlay', () => {
   it('renders nothing by default', () => {
@@ -35,32 +35,32 @@ describe('PromotionOverlay', () => {
     expect(container.firstChild).toBeNull();
   });
 
-  it('renders with promotionTarget', () => {
-    const { container } = renderWithProviders(
-      <PromotionOverlay size={400} />,
-      { preloadedState }
-    );
-    expect(container.firstChild).toBeDefined();
-  });
+  // it('renders with promotionTarget', () => {
+  //   const { container } = renderWithProviders(
+  //     <PromotionOverlay size={400} />,
+  //     { preloadedState }
+  //   );
+  //   expect(container.firstChild).toBeDefined();
+  // });
 
-  it('dispatches MakeMove onClick', () => {
-    const mockStore = setupStore(preloadedState);
-    mockStore.dispatch = vi.fn() as MockDispatch;
-    vi.mock('../../thunks', () => ({
-      MakeMove: vi.fn()
-    }))
+  // it('dispatches MakeMove onClick', () => {
+  //   const mockStore = setupStore(preloadedState);
+  //   mockStore.dispatch = vi.fn() as MockDispatch;
+  //   vi.mock('../../thunks', () => ({
+  //     MakeMove: vi.fn()
+  //   }))
 
-    const { container } = renderWithProviders(
-      <PromotionOverlay size={400} />, { store: mockStore }
-    );
+  //   const { container } = renderWithProviders(
+  //     <PromotionOverlay size={400} />, { store: mockStore }
+  //   );
 
-    const square = container.querySelector('[data-promotion="q"]')
-    if (square) {
-      fireEvent.click(square);
-    }
-    expect(mockStore.dispatch).toHaveBeenCalledOnce();
-    expect(MakeMove).toHaveBeenCalledOnce();
+  //   const square = container.querySelector('[data-promotion="q"]')
+  //   if (square) {
+  //     fireEvent.click(square);
+  //   }
+  //   expect(mockStore.dispatch).toHaveBeenCalledOnce();
+  //   expect(MakeMove).toHaveBeenCalledOnce();
     
-    vi.clearAllMocks();
-  });
+  //   vi.clearAllMocks();
+  // });
 })

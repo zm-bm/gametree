@@ -1,5 +1,5 @@
-import EngineOutputDisplay from "./EngineOutputDisplay";
-import EngineControls from "./EngineControls";
+// import EngineOutputDisplay from "./EngineOutputDisplay";
+// import EngineControls from "./EngineControls";
 
 const EngineView = ({ className }: { className?: string }) => {
   return (
