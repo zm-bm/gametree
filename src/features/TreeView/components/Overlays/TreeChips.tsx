@@ -3,7 +3,11 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { selectTreeFrequencyMin, selectTreeSource } from "@/store/selectors";
 
-export const TreeChips = () => {
+interface Props {
+  openingsError?: boolean;
+}
+
+export const TreeChips = ({ openingsError = false }: Props) => {
   const source = useSelector((s: RootState) => selectTreeSource(s));
   const frequencyMin = useSelector((s: RootState) => selectTreeFrequencyMin(s));
 
@@ -15,6 +19,11 @@ export const TreeChips = () => {
       <div className="treeview-card select-none">
         Moves {`≥${frequencyMin}`}%
       </div>
+      {openingsError && (
+        <div className="treeview-card select-none border border-red-500/40 text-red-300">
+          Openings unavailable
+        </div>
+      )}
     </div>
   );
 };
