@@ -19,7 +19,7 @@ export const Tree = () => {
   const tree = useSelector((state: RootState) => selectTree(state));
 
   const { spring, updateSpring, handleZoom } = useTreeNavigation({ zoom, transformRef, width, height });
-  const { isError } = openingsApi.useGetNodesQuery({ nodeId: currentNodeId, source });
+  const { isError, error } = openingsApi.useGetNodesQuery({ nodeId: currentNodeId, source });
 
   // TODO: add spring to zoom context -> update spring on wheel events
   const onWheel = useCallback(() => setTimeout(updateSpring, 20), [updateSpring]);
@@ -48,7 +48,7 @@ export const Tree = () => {
 
       {/* top left overlays */}
       <div className="absolute top-2 left-2">
-        <TreeChips openingsError={isError} />
+        <TreeChips openingsError={isError} openingsErrorData={error} />
       </div>
 
       {/* top right overlays */}
