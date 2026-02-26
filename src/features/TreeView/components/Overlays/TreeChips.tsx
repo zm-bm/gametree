@@ -6,58 +6,89 @@ import { RootState } from "@/store";
 import { selectTreeFrequencyMin, selectTreeSource } from "@/store/selectors";
 
 interface Props {
+  openingsLoading?: boolean;
   openingsError?: boolean;
   openingsErrorData?: FetchBaseQueryError | SerializedError;
+  onRetry?: () => void;
 }
 
-const getOpeningsErrorLabel = (error?: FetchBaseQueryError | SerializedError): string => {
-  if (!error) return "Openings unavailable";
+type HeaderStatus = "ready" | "loading" | "error";
 
-  if ("status" in error) {
-    const { status } = error;
-
-    if (typeof status === "number") {
-      if (status === 401) return "Openings: Unauthorized";
-      if (status === 403) return "Openings: Forbidden";
-      if (status === 404) return "Openings: Not found";
-      if (status === 429) return "Openings: Rate limited";
-      if (status >= 500) return "Openings: Server error";
-      return `Openings: HTTP ${status}`;
-    }
-
-    if (status === "FETCH_ERROR") return "Openings: Network error";
-    if (status === "TIMEOUT_ERROR") return "Openings: Request timeout";
-    if (status === "PARSING_ERROR") {
-      const originalStatus = error.originalStatus;
-      if (originalStatus === 429) return "Openings: Rate limited";
-      if (originalStatus === 401) return "Openings: Unauthorized";
-      if (originalStatus === 403) return "Openings: Forbidden";
-      if (originalStatus && originalStatus >= 500) return "Openings: Server error";
-      return "Openings: Invalid response";
-    }
-    if (status === "CUSTOM_ERROR") return "Openings unavailable";
-  }
-
-  return "Openings unavailable";
+const getHttpStatus = (error?: FetchBaseQueryError | SerializedError): number | null => {
+  if (!error || !("status" in error)) return null;
+  if (typeof error.status === "number") return error.status;
+  if (error.status === "PARSING_ERROR") return error.originalStatus ?? null;
+  return null;
 };
 
-export const TreeChips = ({ openingsError = false, openingsErrorData }: Props) => {
+const resolveStatus = (
+  isLoading: boolean,
+  error?: FetchBaseQueryError | SerializedError
+): HeaderStatus => {
+  if (isLoading) return "loading";
+  if (!error || !("status" in error)) return "ready";
+  return "error";
+};
+
+const STATUS_TONE_CLASS: Record<HeaderStatus, string> = {
+  ready: "treeview-tone-success",
+  loading: "treeview-tone-info",
+  error: "treeview-tone-error",
+};
+
+const CHIP_BASE_CLASS = "treeview-card px-1.5 py-0.5 cursor-default text-center";
+
+const formatErrorLabel = (error?: FetchBaseQueryError | SerializedError): string => {
+  const code = getHttpStatus(error);
+
+  if (code === 429) return "rate limited (429)";
+  if (code === 401) return "request unauthorized (401)";
+  if (code === 403) return "request forbidden (403)";
+  if (code === 404) return "resource not found (404)";
+  if (code !== null && code >= 500) return `server error (${code})`;
+  if (code !== null) return `request failed (${code})`;
+
+  if (error && "status" in error) {
+    if (error.status === "TIMEOUT_ERROR") return "request timed out";
+    if (error.status === "PARSING_ERROR") return "invalid response format";
+    if (error.status === "FETCH_ERROR") return "request failed";
+  }
+
+  return "request failed";
+};
+
+export const TreeChips = ({
+  openingsLoading = false,
+  openingsError = false,
+  openingsErrorData,
+  onRetry,
+}: Props) => {
   const source = useSelector((s: RootState) => selectTreeSource(s));
   const frequencyMin = useSelector((s: RootState) => selectTreeFrequencyMin(s));
-  const openingsErrorLabel = getOpeningsErrorLabel(openingsErrorData);
+
+  const effectiveError = openingsError ? openingsErrorData : undefined;
+  const status = resolveStatus(openingsLoading, effectiveError);
+  const statusToneClass = STATUS_TONE_CLASS[status];
+  const canRetry = Boolean(onRetry) && status === "error";
 
   return (
-    <div className="flex flex-row gap-2 text-xs *:px-1.5 *:py-0.5">
-      <div className="treeview-card select-none">
-        Games: {source === 'lichess' ? 'Lichess' : 'Masters'}
+    <div className="flex flex-row items-center gap-2 text-xs">
+      <div className={`${CHIP_BASE_CLASS} interactive-treeview`}>{source} games</div>
+      <div className={`${CHIP_BASE_CLASS} interactive-treeview`}>moves ≥ {frequencyMin}%</div>
+      <div
+        className={`${CHIP_BASE_CLASS} ${statusToneClass} interactive-treeview`}
+      >
+        {(status === "ready" || status === "loading") ? status : formatErrorLabel(effectiveError)}
       </div>
-      <div className="treeview-card select-none">
-        Moves {`≥${frequencyMin}`}%
-      </div>
-      {openingsError && (
-        <div className="treeview-card select-none border border-red-500/40 text-red-300">
-          {openingsErrorLabel}
-        </div>
+      {canRetry && (
+        <button
+          type="button"
+          className={`${CHIP_BASE_CLASS} leading-none interactive-treeview`}
+          onClick={onRetry}
+          aria-label="Retry openings request"
+        >
+          ↻
+        </button>
       )}
     </div>
   );
