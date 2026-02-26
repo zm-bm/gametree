@@ -41,17 +41,17 @@ const CHIP_BASE_CLASS = "treeview-card px-1.5 py-0.5 cursor-default text-center"
 const formatErrorLabel = (error?: FetchBaseQueryError | SerializedError): string => {
   const code = getHttpStatus(error);
 
-  if (code === 429) return "rate limited (429)";
-  if (code === 401) return "request unauthorized (401)";
-  if (code === 403) return "request forbidden (403)";
-  if (code === 404) return "resource not found (404)";
-  if (code !== null && code >= 500) return `server error (${code})`;
-  if (code !== null) return `request failed (${code})`;
+  if (code === 429) return "Rate limited (429)";
+  if (code === 401) return "Request unauthorized (401)";
+  if (code === 403) return "Request forbidden (403)";
+  if (code === 404) return "Resource not found (404)";
+  if (code !== null && code >= 500) return `Server error (${code})`;
+  if (code !== null) return `Request failed (${code})`;
 
   if (error && "status" in error) {
-    if (error.status === "TIMEOUT_ERROR") return "request timed out";
-    if (error.status === "PARSING_ERROR") return "invalid response format";
-    if (error.status === "FETCH_ERROR") return "request failed";
+    if (error.status === "TIMEOUT_ERROR") return "Request timed out";
+    if (error.status === "PARSING_ERROR") return "Invalid response format";
+    if (error.status === "FETCH_ERROR") return "Request failed";
   }
 
   return "request failed";
@@ -73,8 +73,8 @@ export const TreeChips = ({
 
   return (
     <div className="flex flex-row items-center gap-2 text-xs">
-      <div className={`${CHIP_BASE_CLASS} interactive-treeview`}>{source} games</div>
-      <div className={`${CHIP_BASE_CLASS} interactive-treeview`}>moves ≥ {frequencyMin}%</div>
+      <div className={`${CHIP_BASE_CLASS} interactive-treeview`}>{source.charAt(0).toUpperCase() + source.slice(1)} games</div>
+      <div className={`${CHIP_BASE_CLASS} interactive-treeview`}>Moves ≥ {frequencyMin}%</div>
       <div
         className={`${CHIP_BASE_CLASS} ${statusToneClass} interactive-treeview`}
       >
