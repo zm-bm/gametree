@@ -8,7 +8,7 @@ import { TreeContainer } from './TreeContainer';
 import { SVGDefs } from './SVGDefs';
 import { TreeGrid } from './TreeGrid';
 import { useTreeNavigation } from '../hooks';
-import { TreeZoomControls, TreeLegend, TreeDPad, TreeChips, TreeMinimap } from './Overlays';
+import { TreeZoomControls, TreeLegend, TreeDPad, TreeChips, TreeMinimap, TreeErrorOverlays } from './Overlays';
 import { TreeDimensionsContext, ZoomContext } from "../context";
 
 export const Tree = () => {
@@ -21,11 +21,11 @@ export const Tree = () => {
   const { spring, updateSpring, handleZoom } = useTreeNavigation({ zoom, transformRef, width, height });
   const {
     isError,
-    isLoading,
     isFetching,
     error,
     refetch,
   } = openingsApi.useGetNodesQuery({ nodeId: currentNodeId, source });
+  const hasTree = Boolean(tree);
 
   // TODO: add spring to zoom context -> update spring on wheel events
   const onWheel = useCallback(() => setTimeout(updateSpring, 20), [updateSpring]);
@@ -52,14 +52,17 @@ export const Tree = () => {
         </g>
       </svg>
 
+      <TreeErrorOverlays
+        hasTree={hasTree}
+        isError={isError}
+        isFetching={isFetching}
+        error={error}
+        onRetry={() => void refetch()}
+      />
+
       {/* top left overlays */}
       <div className="absolute top-2 left-2">
-        <TreeChips
-          openingsLoading={isLoading || isFetching}
-          openingsError={isError}
-          openingsErrorData={error}
-          onRetry={refetch}
-        />
+        <TreeChips />
       </div>
 
       {/* top right overlays */}

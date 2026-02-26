@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery, FetchBaseQueryError } from '@reduxjs/toolkit/query/react'
+import { SerializedError } from '@reduxjs/toolkit';
 
 import { LcOpeningData, TreeSource } from "../shared/types";
 
@@ -12,11 +13,19 @@ export interface GetOpeningsResponse {
   masters?: LcOpeningData,
 };
 
+export type OpeningsQueryError = FetchBaseQueryError | SerializedError;
+export type OpeningsDataResult = { data: LcOpeningData } | { error: FetchBaseQueryError };
+
 type OpeningsQueryRunner = (
   args: { url: string; responseHandler: (response: Response) => Promise<unknown> }
 ) => Promise<{ data?: unknown; error?: FetchBaseQueryError }>;
 
-type OpeningDataResult = { data: LcOpeningData } | { error: FetchBaseQueryError };
+export const getOpeningsHttpStatus = (error?: OpeningsQueryError): number | null => {
+  if (!error || !("status" in error)) return null;
+  if (typeof error.status === "number") return error.status;
+  if (error.status === "PARSING_ERROR") return error.originalStatus ?? null;
+  return null;
+};
 
 function buildOpeningsQuery(args: GetOpeningsArgs) {
   const { nodeId, source } = args;
@@ -57,7 +66,7 @@ const createInvalidFormatError = (data: unknown): FetchBaseQueryError => ({
 const fetchOpeningData = async (
   runQuery: OpeningsQueryRunner,
   requestArgs: GetOpeningsArgs
-): Promise<OpeningDataResult> => {
+): Promise<OpeningsDataResult> => {
   const query = buildOpeningsQuery(requestArgs);
   const result = await runQuery({ url: query, responseHandler: parseOpeningsResponse });
 
