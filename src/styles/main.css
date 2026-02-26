@@ -75,8 +75,7 @@
 
     .sidebar-card {
         @apply rounded-lg;
-        @apply ring-1 ring-lightmode-950/60 dark:ring-darkmode-100/20;
-        @apply border border-white/10 dark:border-black/10;
+        @apply border border-lightmode-950/60 dark:border-darkmode-100/20;
         @apply bg-lightmode-600/5 dark:bg-darkmode-600/5;
         @apply shadow-[0_6px_18px_rgba(0,0,0,0.25)];
     }
@@ -84,10 +83,29 @@
     .treeview-card {
         @apply rounded-md overflow-hidden backdrop-blur-sm;
         @apply text-lightmode-800 dark:text-darkmode-200;
-        @apply ring-1 ring-lightmode-950/40 dark:ring-darkmode-100/20;
-        @apply border border-white dark:border-black/10;
+        @apply border border-lightmode-950/40 dark:border-darkmode-100/20;
         @apply bg-lightmode-50/80 dark:bg-darkmode-900/80; 
         @apply shadow-[0_4px_12px_rgba(0,0,0,0.2)];
+    }
+
+    .treeview-tone-success {
+        @apply border-green-600/50 text-green-600;
+        @apply dark:border-green-500/40 dark:text-green-300;
+    }
+
+    .treeview-tone-info {
+        @apply border-sky-600/50 text-sky-600;
+        @apply dark:border-sky-500/40 dark:text-sky-300;
+    }
+
+    .treeview-tone-warning {
+        @apply border-amber-700/50 text-amber-600;
+        @apply dark:border-amber-500/40 dark:text-amber-300;
+    }
+
+    .treeview-tone-error {
+        @apply border-red-700/50 text-red-600;
+        @apply dark:border-red-500/40 dark:text-red-300;
     }
 
     /* dividers */
