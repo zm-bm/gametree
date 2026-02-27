@@ -1,10 +1,10 @@
 import React, { useCallback, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { HierarchyPointNode } from "@visx/hierarchy/lib/types";
 import { IconType } from "react-icons";
 import { FaBookmark, FaBullseye, FaChevronRight } from "react-icons/fa";
 
-import { AppDispatch, RootState } from "@/store";
+import { RootState, useAppDispatch } from "@/store";
 import { TreeNodeData } from "@/shared/types";
 import { nav, tree } from "@/store/slices";
 import { selectTreeSource } from "@/store/selectors";
@@ -30,7 +30,7 @@ export const TreeNodeButtons = ({
   onMouseLeave,
 }: Props) => {
   const { collapsed } = node.data;
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const source = useSelector((s: RootState) => selectTreeSource(s))
 
   const stopPropagation = useCallback((e: React.MouseEvent) => {

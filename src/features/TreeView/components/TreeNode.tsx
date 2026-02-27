@@ -1,5 +1,5 @@
 import { useCallback, useContext, useMemo, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { DEFAULT_POSITION } from "chess.js";
 import { Group } from "@visx/group";
 import { HierarchyPointNode } from "@visx/hierarchy/lib/types";
@@ -7,7 +7,7 @@ import { animated } from "react-spring";
 import { FluidValue } from '@react-spring/shared';
 
 import { cn } from "@/shared/lib/cn";
-import { RootState, AppDispatch } from "@/store";
+import { RootState, useAppDispatch } from "@/store";
 import { selectCurrentId, selectTreeSource } from "@/store/selectors";
 import { nav, tree } from "@/store/slices";
 import { TreeNodeData } from "@/shared/types";
@@ -34,7 +34,7 @@ export const TreeNode = ({
   const { id, loading } = node.data;
   const isPlaceholder = node.parent?.data.collapsed ?? false;
 
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const { fontSize, nodeRadius } = useContext(TreeDimensionsContext);
   const currentNodeId = useSelector((s: RootState) => selectCurrentId(s));
   const source = useSelector((s: RootState) => selectTreeSource(s))

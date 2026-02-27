@@ -1,16 +1,16 @@
 import { useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 import { ui } from "@/store/slices";
 import { selectTreeFrequencyMin, selectTreeSource } from "@/store/selectors";
-import { RootState } from "@/store";
+import { RootState, useAppDispatch } from "@/store";
 import { cn } from "@/shared/lib/cn";
 
 const dataSourceLabel = 'flex gap-2 p-1 rounded text-sm font-medium cursor-pointer interactive-sidebar';
 const radioInput = 'accent-sky-500 dark:accent-sky-400 cursor-pointer';
 
 const TreeOptions = ({ className }: { className?: string }) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const source = useSelector((s: RootState) => selectTreeSource(s));
   const minFrequency = useSelector((state: RootState) => selectTreeFrequencyMin(state));
   const preventDefault = useCallback((e: React.KeyboardEvent) => e.preventDefault(), []);

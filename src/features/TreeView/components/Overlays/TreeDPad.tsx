@@ -1,9 +1,9 @@
 import { useCallback, useState } from 'react';
 import { BiCollapse, BiExpand } from 'react-icons/bi'
-import { useDispatch } from 'react-redux';
 
 import { nav } from '@/store/slices';
 import { cn } from '@/shared/lib/cn';
+import { useAppDispatch } from '@/store';
 
 interface TreeDPadProps {
   label: string;
@@ -38,7 +38,7 @@ const DPAD_STYLES = {
 };
 
 export const TreeDPad = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [isCollapsed, setIsCollapsed] = useState(localStorage.gtNavCollapsed === '1');
 
   const toggleCollapsed = useCallback(() => {

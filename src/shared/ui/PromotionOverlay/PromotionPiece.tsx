@@ -1,10 +1,10 @@
 import { useCallback, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Chess, PieceSymbol } from "chess.js";
 import { Color } from "chessground/types";
 
 
-import { AppDispatch, RootState } from "@/store";
+import { RootState, useAppDispatch } from "@/store";
 import { nav } from "@/store/slices";
 import { selectBoardPromotionTarget, selectBoardFen } from "@/store/selectors";
 import { serializeMove } from "@/shared/lib/chess";
@@ -24,7 +24,7 @@ export const PromotionPiece = ({
   orientation,
   targetRank,
 }: PromotionPieceProps) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const fen = useSelector((s: RootState) => selectBoardFen(s));
   const target = useSelector((s: RootState) => selectBoardPromotionTarget(s));
   const targetFile = useMemo(() => target ? target[1].charCodeAt(0) - 'a'.charCodeAt(0) : 0, [target]);

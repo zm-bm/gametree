@@ -1,17 +1,8 @@
 # Gametree
 
-A tool designed to help chess players visualize and analyze chess games / openings
-through an interactive tree.
+visualize, explore, and learn about the game tree of chess.
 
-![Screenshot from 2024-07-02 14-10-53](https://github.com/evanderh/gametree/assets/3112477/3a6da338-0ec5-4a5a-a59f-08b523753388)
-
-[demo](https://www.gametree.dev)
-
-## Features
-
-- Visualize and navigate through the chess game tree.
-- View frequency and win rates of different openings in Master's and Lichess games.
-- Evaluate positions / moves with Stockfish 16.
+[demo](https://gametree.zmbm.dev)
 
 ## Usage
 
@@ -31,9 +22,7 @@ npm run build
 ## Roadmap
 
 - treeview
-    - collapsible tree nodes
-        - fix panning when collapsing nodes
-        - decide how to handle current node on collapse
+    - fix panning
     - fix sticky node buttons bug
     - isolate button
     - tree colors respective to orientation
@@ -47,8 +36,7 @@ npm run build
     - openings view
     - bookmarks view
 
-- code
-    - useDispacth<Appdisatch> -> useAppDispatch
+- other
     - code formatter + pre-commit
     - fix tests
 

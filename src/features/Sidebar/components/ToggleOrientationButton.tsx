@@ -1,12 +1,11 @@
 import { useCallback } from "react";
 import { IoMdSync } from "react-icons/io";
-import { useDispatch } from "react-redux";
 
-import { AppDispatch } from "@/store";
+import { useAppDispatch } from "@/store";
 import { ui } from "@/store/slices";
 
 const ToggleOrientationButton = () => {
-  const dispatch = useDispatch<AppDispatch>()
+  const dispatch = useAppDispatch()
   const toggle = useCallback(() => dispatch(ui.actions.toggleOrientation()), [dispatch])
 
   return (

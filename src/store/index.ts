@@ -1,10 +1,11 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
+import { useDispatch } from 'react-redux';
 
 import { engine, ui, tree, nav } from './slices'
 import { openingsApi } from './openingsApi';
 import { listenerMiddleware } from './listener';
-import { initializeEngine } from '../worker';
+import { initializeEngine } from '@/worker';
 
 const rootReducer = combineReducers({
   engine: engine.reducer,
@@ -33,6 +34,8 @@ initializeEngine();
 export type RootState = ReturnType<typeof rootReducer>;
 export type AppStore = ReturnType<typeof setupStore>;
 export type AppDispatch = AppStore['dispatch'];
+
+export const useAppDispatch = () => useDispatch<AppDispatch>();
 
 import './listeners';
 

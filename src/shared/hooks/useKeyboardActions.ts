@@ -1,14 +1,13 @@
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
 
-import { AppDispatch } from "@/store";
+import { useAppDispatch } from "@/store";
 import { nav } from "@/store/slices";
 
 let prev = 0;
 const THROTTLE_MS = 333;
 
 export const useKeyboardActions = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
