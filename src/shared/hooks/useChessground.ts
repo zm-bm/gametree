@@ -1,10 +1,10 @@
 import { useMemo, useCallback } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { Chess, Square, SQUARES } from "chess.js";
 import { Color, Key } from 'chessground/types';
 import { Config } from "chessground/config";
 
-import { AppDispatch, RootState } from "@/store";
+import { RootState, useAppDispatch } from "@/store";
 import { nav, ui } from "@/store/slices";
 import {
   selectBoardOrientation, selectBoardFen, selectCurrentMove, selectEngineOutput
@@ -52,7 +52,7 @@ export function useChessState(fen: string) {
 }
 
 export function useChessgroundConfig(): Config {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const orientation = useSelector((s: RootState) => selectBoardOrientation(s));
   const fen = useSelector((s: RootState) => selectBoardFen(s));
   const engineOutput = useSelector((s: RootState) => selectEngineOutput(s));

@@ -1,13 +1,13 @@
 import { useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { IoIosPause, IoIosPlay } from "react-icons/io";
 
-import { AppDispatch, RootState } from '../../../../store';
-import { selectEngineHash, selectEngineRunning, selectEngineThreads } from "../../../../store/selectors";
-import { ui } from "../../../../store/slices";
+import { RootState, useAppDispatch } from '@/store';
+import { selectEngineHash, selectEngineRunning, selectEngineThreads } from "@/store/selectors";
+import { ui } from "@/store/slices";
 
 const EngineControls = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const hash = useSelector((s: RootState) => selectEngineHash(s));
   const threads = useSelector((s: RootState) => selectEngineThreads(s));
   const running = useSelector((s: RootState) => selectEngineRunning(s));

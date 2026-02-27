@@ -1,8 +1,8 @@
 import { useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Chess } from "chess.js";
 
-import { AppDispatch, RootState } from '@/store';
+import { RootState, useAppDispatch } from '@/store';
 import { ui } from "@/store/slices";
 import { EngineOutput } from "@/shared/types";
 import {
@@ -47,7 +47,7 @@ const formatScore = (
 };
 
 const EngineOutputDisplay = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
   const engineOutput = useSelector((s: RootState) => selectEngineOutput(s));
   const fen = useSelector((s: RootState) => selectBoardFen(s));
