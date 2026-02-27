@@ -32,7 +32,6 @@ npm run build
 
 - treeview
     - collapsible tree nodes
-        - fix arrow navigation for collapsed nodes
         - fix panning when collapsing nodes
         - decide how to handle current node on collapse
     - fix sticky node buttons bug
@@ -52,7 +51,6 @@ npm run build
     - useDispacth<Appdisatch> -> useAppDispatch
     - code formatter + pre-commit
     - fix tests
-    - ci/cd deploy
 
 ## Acknowledgments
 
