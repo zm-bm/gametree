@@ -22,7 +22,6 @@ npm run build
 ## Roadmap
 
 - treeview
-    - fix panning
     - fix sticky node buttons bug
     - isolate button
     - tree colors respective to orientation
