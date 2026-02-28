@@ -66,6 +66,7 @@ npm run build
     - bookmarks view (global list + navigation + delete)
 
 - other
+    - better move sounds
     - code formatter + pre-commit
     - fix tests
 

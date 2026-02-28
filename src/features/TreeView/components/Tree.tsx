@@ -8,7 +8,7 @@ import { TreeContainer } from './TreeContainer';
 import { SVGDefs } from './SVGDefs';
 import { TreeGrid } from './TreeGrid';
 import { useTreeNavigation } from '../hooks';
-import { TreeZoomControls, TreeLegend, TreeDPad, TreeMinimap, TreeErrorOverlays, TreeOptionsOverlay } from './Overlays';
+import { TreeZoomControls, TreeLegend, TreeDPad, TreeMinimap, TreeErrorOverlays, TreeOptionsOverlay, TreeHotkeys } from './Overlays';
 import { TreeDimensionsContext, ZoomContext } from "../context";
 
 export const Tree = () => {
@@ -66,8 +66,9 @@ export const Tree = () => {
       </div>
 
       {/* top right overlays */}
-      <div className="absolute top-2 right-2">
+      <div className="absolute top-2 right-2 flex flex-col items-end space-y-2">
         <TreeLegend />
+        <TreeHotkeys />
       </div>
 
       {/* bottom left overlays */}

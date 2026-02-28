@@ -1,41 +1,28 @@
 import ChessBoard from './components/ChessBoard'
 import EngineView from './components/EngineView'
 import Fen from './components/Fen';
-import { CollapsibleCard } from '@/shared/ui/CollapsibleCard';
+import { SidebarCard } from './components/SidebarCard';
 
 const Sidebar = () => {
   return (
     <div className="flex-1 flex flex-col space-y-5 h-full">
       <ChessBoard className="sidebar-card" />
 
-      <CollapsibleCard 
-        header={<span className="font-semibold tracking-tight">Opening</span>}
-        className="sidebar-card"
-      >
-        <div className="sidebar-divider">
-          <span className="text-sm text-gray-500 italic">
-            Opening view coming soon!
-          </span>
-        </div>
-      </CollapsibleCard>
+      <SidebarCard title="Opening">
+        <span className="text-sm text-gray-500 italic">
+          Opening view coming soon!
+        </span>
+      </SidebarCard>
 
-      <CollapsibleCard 
-        header={<span className="font-semibold tracking-tight">Engine</span>}
-        className="sidebar-card"
-      >
-        <EngineView className="sidebar-divider" />
-      </CollapsibleCard>
+      <SidebarCard title="Engine">
+        <EngineView />
+      </SidebarCard>
 
-      <CollapsibleCard
-        header={<span className="font-semibold tracking-tight">Bookmarks</span>}
-        className="sidebar-card"
-      >
-        <div className="sidebar-divider">
-          <span className="text-sm text-gray-500 italic">
-            Bookmarks view coming soon!
-          </span>
-        </div>
-      </CollapsibleCard>
+      <SidebarCard title="Bookmarks">
+        <span className="text-sm text-gray-500 italic">
+          Bookmarks view coming soon!
+        </span>
+      </SidebarCard>
 
       <div className="sidebar-card">
         <Fen />

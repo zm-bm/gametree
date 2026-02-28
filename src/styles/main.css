@@ -88,6 +88,28 @@
         @apply shadow-[0_4px_12px_rgba(0,0,0,0.2)];
     }
 
+    /* dividers */
+
+    .sidebar-divider {
+        @apply flex flex-col *:p-4;
+        @apply divide-y divide-white/10 dark:divide-darkmode-100/20;
+    }
+
+    .sidebar-divider > :first-child {
+        @apply border-t border-white/10 dark:border-darkmode-100/20;
+    }
+
+    .treeview-divider {
+        @apply flex flex-col *:p-3;
+        @apply divide-y divide-lightmode-900/10 dark:divide-darkmode-100/20;
+    }
+
+    .treeview-divider > :first-child {
+        @apply border-t border-lightmode-900/10 dark:border-darkmode-100/20;
+    }
+
+    /* tones */
+
     .treeview-tone-success {
         @apply border-green-600/50 text-green-600;
         @apply dark:border-green-500/40 dark:text-green-300;
@@ -106,19 +128,5 @@
     .treeview-tone-error {
         @apply border-red-700/50 text-red-600;
         @apply dark:border-red-500/40 dark:text-red-300;
-    }
-
-    /* dividers */
-
-    .sidebar-divider {
-        @apply flex flex-col *:p-4;
-        @apply divide-y divide-white/10 dark:divide-darkmode-100/20;
-        @apply border-t border-white/10 dark:border-darkmode-100/20;
-    }
-
-    .treeview-divider {
-        @apply flex flex-col *:p-3;
-        @apply divide-y divide-lightmode-900/20 dark:divide-darkmode-100/20;
-        @apply border-t border-lightmode-900/20 dark:border-darkmode-100/20;
     }
 }
