@@ -67,7 +67,7 @@ const TreeLegendBase = () => {
   }), [isCollapsed]);
 
   return (
-    <div className="treeview-card min-w-[12rem] select-none">
+    <div className="treeview-card min-w-[14rem] select-none">
       {/* Collapsible header */}
       <div
         className="px-3 py-2 flex justify-between items-center cursor-pointer interactive-treeview"

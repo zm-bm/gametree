@@ -1,8 +1,7 @@
 import ChessBoard from './components/ChessBoard'
 import EngineView from './components/EngineView'
-import TreeOptions from './components/TreeOptions';
 import Fen from './components/Fen';
-import { CollapsibleCard } from './components/CollapsibleCard';
+import { CollapsibleCard } from '@/shared/ui/CollapsibleCard';
 
 const Sidebar = () => {
   return (
@@ -10,10 +9,14 @@ const Sidebar = () => {
       <ChessBoard className="sidebar-card" />
 
       <CollapsibleCard 
-        header={<span className="font-semibold tracking-tight">Tree Options</span>}
+        header={<span className="font-semibold tracking-tight">Opening</span>}
         className="sidebar-card"
       >
-        <TreeOptions className="sidebar-divider" />
+        <div className="sidebar-divider">
+          <span className="text-sm text-gray-500 italic">
+            Opening view coming soon!
+          </span>
+        </div>
       </CollapsibleCard>
 
       <CollapsibleCard 
@@ -23,13 +26,13 @@ const Sidebar = () => {
         <EngineView className="sidebar-divider" />
       </CollapsibleCard>
 
-      <CollapsibleCard 
-        header={<span className="font-semibold tracking-tight">Opening</span>}
+      <CollapsibleCard
+        header={<span className="font-semibold tracking-tight">Bookmarks</span>}
         className="sidebar-card"
       >
         <div className="sidebar-divider">
           <span className="text-sm text-gray-500 italic">
-            Opening book view coming soon!
+            Bookmarks view coming soon!
           </span>
         </div>
       </CollapsibleCard>
