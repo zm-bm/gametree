@@ -22,18 +22,48 @@ npm run build
 ## Roadmap
 
 - treeview
-    - fix sticky node buttons bug
-    - isolate button
-    - tree colors respective to orientation
-    - better child selection (remember last)
+    - tree options
+        - move tree options from sidepane into a collapsible tree overlay near the tree canvas
+        - add tree option to color edges/win% as either:
+            - relative to parent branch
+            - absolute against 50/50 baseline
+        - edge color perspective follows board orientation (white/black)
+        - add 'top n moves' option to limit number of child nodes shown per parent
+    - focus mode / compare mode
+        - add `Focus` vs `Compare` mode radio buttons in tree options
+        - show `bookmark` button in both modes
+        - replace `isolate` button with `copy line` button (useful in both Focus and Compare)
+        - hide node-level `expand/collapse` in Focus mode (focus state is auto-managed)
+        - show node-level `expand/collapse` in Compare mode
+        - keep per-mode tree state separate:
+            - Compare mode preserves manual expand/collapse state across mode switches
+            - Focus mode expansion is derived/ephemeral and should not overwrite Compare state
+        - focus mode rendering: emphasize current path + siblings along the current path + immediate candidate moves from current node
+        - compare mode rendering: allow arbitrary branch expansion depth
+        - camera behavior:
+            - manual panning remains enabled in both modes
+            - do not snap back to current node after manual panning unless user explicitly navigates
+            - on mode switch, zoom/pan to current node
+        - copy line behavior:
+            - action is based on the clicked node
+            - add tree option for copy format: `FEN`, `PGN` (line up to node), `UCI position` command
+    - bug: node buttons can be sticky and fail to disappear until next hover
+    - hotkeys + hotkey help
+        - add hotkeys for:
+            - tree navigation (up/down/left/right or vim keys)
+            - expand/collapse node (space)
+            - mode switching (F for focus, C for compare)
+            - copy line (Y for yank)
+        - add a hotkeys help overlay entry point near or below the legend
+    - when descending into a variation, remember the child index at each level so that when the user later ascends back up to that level, they can easily re-descend into the same variation without having to manually find and click it again
     - fix zoom calc to zoom on screen center
     - collapsable minimap
-    - minimap clips corner of Treeview
+    - bug: bottom right overlay wrapper clips corner of Treeview
 
 - sidepane
-    - engine view
-    - openings view
-    - bookmarks view
+    - opening metadata view (ECO, name, win probabilities)
+    - engine evaluation view (eval bar + graph + PV + controls)
+    - bookmarks view (global list + navigation + delete)
 
 - other
     - code formatter + pre-commit
