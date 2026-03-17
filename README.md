@@ -27,7 +27,6 @@ npm run build
         - add tree option to color edges/win% as either:
             - relative to parent branch
             - absolute against 50/50 baseline
-        - edge color perspective follows board orientation (white/black)
         - add 'top n moves' option to limit number of child nodes shown per parent
     - focus mode / compare mode
         - add `Focus` vs `Compare` mode radio buttons in tree options
@@ -47,6 +46,7 @@ npm run build
         - copy line behavior:
             - action is based on the clicked node
             - add tree option for copy format: `FEN`, `PGN` (line up to node), `UCI position` command
+    - update edge color perspective to follow board orientation (white/black)
     - bug: node buttons can be sticky and fail to disappear until next hover
     - hotkeys + hotkey help
         - add hotkeys for:
@@ -54,7 +54,7 @@ npm run build
             - expand/collapse node (space)
             - mode switching (F for focus, C for compare)
             - copy line (Y for yank)
-        - add a hotkeys help overlay entry point near or below the legend
+        - update hotkeys help overlay to show available hotkeys and their descriptions
     - when descending into a variation, remember the child index at each level so that when the user later ascends back up to that level, they can easily re-descend into the same variation without having to manually find and click it again
     - fix zoom calc to zoom on screen center
     - collapsable minimap
