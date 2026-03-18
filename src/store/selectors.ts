@@ -12,7 +12,7 @@ export const selectBoardFen = (s: RootState) => selectUI(s).boardFen;
 export const selectBoardOrientation = (s: RootState) => selectUI(s).boardOrientation;
 export const selectBoardPromotionTarget = (s: RootState) => selectUI(s).boardPromotionTarget;
 export const selectTreeSource = (s: RootState) => selectUI(s).treeSource;
-export const selectTreeMinMoveFrequency = (s: RootState) => selectUI(s).treeMinMoveFrequency;
+export const selectTreeMinFrequencyPct = (s: RootState) => selectUI(s).treeMinFrequencyPct;
 export const selectTreeMoveLimit = (s: RootState) => selectUI(s).treeMoveLimit;
 export const selectTreeWinRateComparison = (s: RootState) => selectUI(s).treeWinRateComparison;
 export const selectEngineRunning = (s: RootState) => selectUI(s).engineRunning;
@@ -30,10 +30,10 @@ export const selectEngineData = (s: RootState) => s.engine;
 export const selectEngineOutput = (s: RootState) => selectEngineData(s).output;
 
 export const selectTreeRoot = createSelector(
-  [selectTreeNodeMap, selectTreeMinMoveFrequency, selectTreeSource],
-  (nodes, minMoveFrequency, source) => {
+  [selectTreeNodeMap, selectTreeMinFrequencyPct, selectTreeSource],
+  (nodes, minFrequencyPct, source) => {
     const rootId = '';
-    return buildTree(nodes, rootId, minMoveFrequency, source);
+    return buildTree(nodes, rootId, minFrequencyPct, source);
   }
 );
 

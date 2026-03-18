@@ -16,7 +16,7 @@ const ui = createSlice({
     boardPromotionTarget: null as Square[] | null,
     // tree state
     treeSource: 'otb' as TreeSource,
-    treeMinMoveFrequency: 2 as number,
+    treeMinFrequencyPct: 2 as number,
     treeMoveLimit: 0 as number,
     treeWinRateComparison: 'position' as TreeWinRateComparison,
     // engine state / options
@@ -33,7 +33,7 @@ const ui = createSlice({
     toggleOrientation(state) { state.boardOrientation = state.boardOrientation === 'white' ? 'black' : 'white'; },
     setPromotionTarget(state, action: PA<Square[] | null>) { state.boardPromotionTarget = action.payload; },
     setTreeSource(state, action: PA<TreeSource>) { state.treeSource = action.payload; },
-    setTreeMinMoveFrequency(state, action: PA<number>) { state.treeMinMoveFrequency = action.payload; },
+    setTreeMinFrequencyPct(state, action: PA<number>) { state.treeMinFrequencyPct = action.payload; },
     setTreeMoveLimit(state, action: PA<number>) { state.treeMoveLimit = action.payload; },
     setTreeWinRateComparison(state, action: PA<TreeWinRateComparison>) { state.treeWinRateComparison = action.payload; },
     toggleEngine(state) { state.engineRunning = !state.engineRunning; },
