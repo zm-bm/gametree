@@ -1,8 +1,8 @@
 import { isRejectedWithValue } from "@reduxjs/toolkit";
 import { DEFAULT_POSITION } from "chess.js";
 
-import { createSkeletonGateRegistry, gateKey } from "@/shared/lib/skeletonGate";
-import { selectCurrentId, selectTreeSource } from "@/store/selectors";
+import { createSkeletonGateRegistry } from "@/shared/lib/skeletonGate";
+import { selectCurrentId } from "@/store/selectors";
 import { startAppListening } from "../listener";
 import { openingsApi } from "../openingsApi";
 import { tree, ui } from "../slices";
@@ -16,17 +16,17 @@ const gates = createSkeletonGateRegistry({
 startAppListening({
   matcher: openingsApi.endpoints.getNodes.matchPending,
   effect: async (action, api) => {
-    const { nodeId, source } = action.meta.arg.originalArgs;
-    const key = gateKey(nodeId, source);
+    const { nodeId } = action.meta.arg.originalArgs;
+    const gateKey = nodeId;
     const state = api.getState();
-    const nodes = state.tree[source === 'online' ? 'onlineNodes' : 'otbNodes'];
+    const nodes = state.tree.nodes;
 
     // If the node is already loaded, do nothing
     if (nodes[nodeId] && nodes[nodeId]?.children?.length > 0) return;
 
     // Start the gate to show the loading state if the request takes too long
-    gates.ensure(key).start(() => {
-      api.dispatch(tree.actions.setNodeLoading({ nodeId, source, value: true }));
+    gates.ensure(gateKey).start(() => {
+      api.dispatch(tree.actions.setNodeLoading({ nodeId, value: true }));
     });
   },
 });
@@ -35,20 +35,18 @@ startAppListening({
 startAppListening({
   matcher: openingsApi.endpoints.getNodes.matchFulfilled,
   effect: async (action, api) => {
-    const { nodeId, source } = action.meta.arg.originalArgs;
-    const key = gateKey(nodeId, source);
+    const { nodeId } = action.meta.arg.originalArgs;
+    const gateKey = nodeId;
     const state = api.getState();
-    const nodes = state.tree[source === 'online' ? 'onlineNodes' : 'otbNodes'];
+    const nodes = state.tree.nodes;
 
     // If the node is already loaded, do nothing
     if (nodes[nodeId] && nodes[nodeId]?.children?.length > 0) return;
 
     // Resolve the gate to add the nodes to the tree and hide the loading state
-    gates.ensure(key).resolve(() => {
-      api.dispatch(tree.actions.setNodeLoading({ nodeId, source, value: false }));
-      const { otb, online } = action.payload;
-      if (!otb || !online) return;
-      api.dispatch(tree.actions.addNodes({ nodeId, otb, online }));
+    gates.ensure(gateKey).resolve(() => {
+      api.dispatch(tree.actions.setNodeLoading({ nodeId, value: false }));
+      api.dispatch(tree.actions.addNodes({ nodeId, openingData: action.payload }));
     });
   },
 });
@@ -57,15 +55,15 @@ startAppListening({
 startAppListening({
   matcher: openingsApi.endpoints.getNodes.matchRejected,
   effect: async (action, api) => {
-    const { nodeId, source } = action.meta.arg.originalArgs;
-    const key = gateKey(nodeId, source);
+    const { nodeId } = action.meta.arg.originalArgs;
+    const gateKey = nodeId;
 
     // Only handle rejections with value (i.e., actual errors)
     if (!isRejectedWithValue(action)) return;
 
     // Resolve the gate to hide the loading state
-    gates.ensure(key).resolve(() => {
-      api.dispatch(tree.actions.setNodeLoading({ nodeId, source, value: false }));
+    gates.ensure(gateKey).resolve(() => {
+      api.dispatch(tree.actions.setNodeLoading({ nodeId, value: false }));
     });
   },
 });
@@ -75,11 +73,10 @@ startAppListening({
   actionCreator: tree.actions.setNodeCollapsed,
   effect: async (action, api) => {
     const { dispatch, getState } = api;
-    const { nodeId, source, value } = action.payload;
+    const { nodeId, value } = action.payload;
     if (!value) return;
 
     const state = getState();
-    if (source !== selectTreeSource(state)) return;
 
     const currentId = selectCurrentId(state);
     if (!currentId || currentId === nodeId) return;
@@ -87,7 +84,7 @@ startAppListening({
     const isHiddenByCollapse = currentId.startsWith(`${nodeId},`);
     if (!isHiddenByCollapse) return;
 
-    const nodes = source === 'online' ? state.tree.onlineNodes : state.tree.otbNodes;
+    const nodes = state.tree.nodes;
     const fen = nodes[nodeId]?.move?.after || DEFAULT_POSITION;
     dispatch(ui.actions.setFen(fen));
     dispatch(ui.actions.setCurrent(nodeId));

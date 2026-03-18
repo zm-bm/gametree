@@ -20,26 +20,18 @@ export const selectEngineDepth = (s: RootState) => selectUI(s).engineDepth;
 export const selectEngineTime = (s: RootState) => selectUI(s).engineTime
 
 // Tree data selectors
-export const selectTreeData = (s: RootState) => s.tree;
-export const selectOtbNodes = (s: RootState) => selectTreeData(s).otbNodes;
-export const selectOnlineNodes = (s: RootState) => selectTreeData(s).onlineNodes;
+export const selectTreeState = (s: RootState) => s.tree;
+export const selectTreeNodeMap = (s: RootState) => selectTreeState(s).nodes;
 
 // Engine data selectors
 export const selectEngineData = (s: RootState) => s.engine;
 export const selectEngineOutput = (s: RootState) => selectEngineData(s).output;
 
-export const selectTreeDataNodes = createSelector(
-  [selectOtbNodes, selectOnlineNodes, selectTreeSource],
-  (otbNodes, onlineNodes, source) => {
-    return source === 'online' ? onlineNodes : otbNodes;
-  }
-)
-
 export const selectTreeRoot = createSelector(
-  [selectTreeDataNodes, selectTreeFrequencyMin],
-  (nodes, frequencyMin) => {
+  [selectTreeNodeMap, selectTreeFrequencyMin, selectTreeSource],
+  (nodes, frequencyMin, source) => {
     const rootId = '';
-    return buildTree(nodes, rootId, frequencyMin);
+    return buildTree(nodes, rootId, frequencyMin, source);
   }
 );
 
@@ -59,14 +51,11 @@ export const selectCurrentNode = createSelector(
 );
 
 export const selectCurrentNodeData = createSelector(
-  [selectTreeDataNodes, selectCurrentId],
+  [selectTreeNodeMap, selectCurrentId],
   (nodes, nodeId) => nodes[nodeId] || null
 );
 
-export const selectCurrentMove = createSelector(
-  [selectCurrentNodeData],
-  (node) => node?.move || null
-);
+export const selectCurrentMove = (s: RootState) => selectCurrentNodeData(s)?.move || null;
 
 export const selectSideToMove = createSelector(
   [selectBoardFen],

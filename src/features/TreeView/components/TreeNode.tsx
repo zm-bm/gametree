@@ -8,7 +8,7 @@ import { FluidValue } from '@react-spring/shared';
 
 import { cn } from "@/shared/lib/cn";
 import { RootState, useAppDispatch } from "@/store";
-import { selectCurrentId, selectTreeSource } from "@/store/selectors";
+import { selectCurrentId } from "@/store/selectors";
 import { nav, tree } from "@/store/slices";
 import { TreeNodeData } from "@/shared/types";
 import { TreeDimensionsContext } from "../context/TreeDimensionsContext";
@@ -37,7 +37,6 @@ export const TreeNode = ({
   const dispatch = useAppDispatch();
   const { fontSize, nodeRadius } = useContext(TreeDimensionsContext);
   const currentNodeId = useSelector((s: RootState) => selectCurrentId(s));
-  const source = useSelector((s: RootState) => selectTreeSource(s))
   const [hovered, setHovered] = useState(false);
   
   const nodeProps = useMemo(() => {
@@ -51,14 +50,14 @@ export const TreeNode = ({
           dispatch(nav.actions.navigateToId(node.data.id));
         } else {
           // Expand the parent node
-          dispatch(tree.actions.setNodeCollapsed({ nodeId: node.parent?.data.id || '', source, value: false }));
+          dispatch(tree.actions.setNodeCollapsed({ nodeId: node.parent?.data.id || '', value: false }));
         }
       },
       'data-fen': node.data.move?.after || DEFAULT_POSITION,
       'data-move': node.data.move?.lan || '',
       'data-id': node.data.id,
     };
-  }, [node, minimap, isPlaceholder, source, dispatch]);
+  }, [node, minimap, isPlaceholder, dispatch]);
 
   const rectProps = useMemo(() => ({
     x: -nodeRadius,

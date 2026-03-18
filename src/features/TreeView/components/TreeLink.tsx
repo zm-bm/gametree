@@ -5,7 +5,6 @@ import { FluidValue } from '@react-spring/shared';
 
 import { cn } from "@/shared/lib/cn";
 import { TreeNodeData } from "@/shared/types";
-import { gameCount } from "@/shared/lib/treeTransform";
 import { TreeDimensionsContext } from "../context/TreeDimensionsContext";
 import { COLORS, colorScale } from "../lib/colors";
 
@@ -50,8 +49,8 @@ function getTreeLinkFrequency(
   source: TreeNodeData,
   target: TreeNodeData,
 ): number {
-  const sourceGames = gameCount(source);
-  const targetGames = gameCount(target);
+  const sourceGames = source.total;
+  const targetGames = target.total;
   return sourceGames ? (targetGames / sourceGames) : 0;
 }
 

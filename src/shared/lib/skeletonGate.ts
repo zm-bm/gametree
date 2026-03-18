@@ -1,5 +1,3 @@
-import { Id, TreeSource } from "../types";
-
 type GateState = 'idle' | 'scheduled' | 'shown';
 
 type Gate= {
@@ -21,8 +19,6 @@ interface GateRegistryOpts {
   minVisibleMs?: number;  // minimum time to stay visible
   now?: () => number;
 }
-
-export const gateKey = (nodeId: Id, source: TreeSource) => `${source}:${nodeId}`;
 
 export function createSkeletonGateRegistry(opts: GateRegistryOpts = {}) {
   const showAfter = opts.showAfterMs ?? 150;

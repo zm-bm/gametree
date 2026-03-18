@@ -18,29 +18,34 @@ export type Id = string;
 export type MovePath = Move[];
 export type TreeSource = 'otb' | 'online';
 
-export type LcOpening = {
+export type OpeningBookEntry = {
   eco: string;
   name: string;
   uci: string;
 };
 
-export type LcMoveData = {
-  uci: string;
+export type SourceStats = {
   white: number;
   draws: number;
   black: number;
   total: number;
 };
 
-export type LcOpeningData = {
-  source: TreeSource;
-  play: string[];
-  white: number;
-  draws: number;
-  black: number;
+export type OpeningMove = {
+  uci: string;
+  otb: SourceStats;
+  online: SourceStats;
   total: number;
-  moves: LcMoveData[];
 };
+
+export type OpeningTotals = {
+  play: string[];
+  otb: SourceStats;
+  online: SourceStats;
+  moves: OpeningMove[];
+};
+
+export type NodeStats = Record<TreeSource, SourceStats>;
 
 type NodeData = {
   id: Id;
@@ -48,9 +53,7 @@ type NodeData = {
   collapsed: boolean;
   loading: boolean;
   move: Move | null;
-  white: number;
-  draws: number;
-  black: number;
+  stats: NodeStats;
 };
 
 export type NormalNodeData = NodeData & {
@@ -59,7 +62,9 @@ export type NormalNodeData = NodeData & {
 
 export type NormalTree = Record<Id, NormalNodeData>;
 
-export type TreeNodeData = NodeData & {
+type TreeNodeStats = SourceStats;
+
+export type TreeNodeData = NodeData & TreeNodeStats & {
   children: TreeNodeData[];
   childCount: number;
 };

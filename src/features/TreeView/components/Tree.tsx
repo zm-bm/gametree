@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 
 import { RootState } from '@/store';
 import { openingsApi } from '@/store/openingsApi';
-import { selectCurrentId, selectTree, selectTreeSource } from '@/store/selectors';
+import { selectCurrentId, selectTree } from '@/store/selectors';
 import { TreeContainer } from './TreeContainer';
 import { SVGDefs } from './SVGDefs';
 import { TreeGrid } from './TreeGrid';
@@ -15,7 +15,6 @@ export const Tree = () => {
   const { height, width } = useContext(TreeDimensionsContext);
   const { zoom, transformRef } = useContext(ZoomContext);
   const currentNodeId = useSelector((state: RootState) => selectCurrentId(state))
-  const source = useSelector((state: RootState) => selectTreeSource(state));
   const tree = useSelector((state: RootState) => selectTree(state));
 
   const { spring, updateSpring, handleZoom } = useTreeNavigation({ zoom, transformRef, width, height });
@@ -24,7 +23,7 @@ export const Tree = () => {
     isFetching,
     error,
     refetch,
-  } = openingsApi.useGetNodesQuery({ nodeId: currentNodeId, source });
+  } = openingsApi.useGetNodesQuery({ nodeId: currentNodeId });
   const hasTree = Boolean(tree);
 
   // TODO: add spring to zoom context -> update spring on wheel events
