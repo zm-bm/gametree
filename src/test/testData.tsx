@@ -1,29 +1,54 @@
 import { Chess } from "chess.js";
-import { LcOpeningData, TreeNodeData } from "../shared/types";
+import { OpeningTotals, TreeNodeData } from "../shared/types";
 import { serializeMove } from "../shared/lib/chess";
 
 
-export const openings: LcOpeningData = {
-  source: 'otb',
+export const openings: OpeningTotals = {
   play: [],
-  white: 10,
-  draws: 20,
-  black: 30,
-  total: 60,
+  otb: {
+    white: 10,
+    draws: 20,
+    black: 30,
+    total: 60,
+  },
+  online: {
+    white: 5,
+    draws: 10,
+    black: 15,
+    total: 30,
+  },
   moves: [
     {
       uci: 'e2e4',
-      white: 1,
-      draws: 2,
-      black: 3,
-      total: 6,
+      otb: {
+        white: 1,
+        draws: 2,
+        black: 3,
+        total: 6,
+      },
+      online: {
+        white: 0,
+        draws: 1,
+        black: 2,
+        total: 3,
+      },
+      total: 9,
     },
     {
       uci: 'd2d4',
-      white: 4,
-      draws: 5,
-      black: 6,
-      total: 15,
+      otb: {
+        white: 4,
+        draws: 5,
+        black: 6,
+        total: 15,
+      },
+      online: {
+        white: 2,
+        draws: 3,
+        black: 1,
+        total: 6,
+      },
+      total: 21,
     },
   ]
 };
@@ -33,9 +58,14 @@ export const treeNode: TreeNodeData = {
   childrenLoaded: true,
   collapsed: false,
   loading: false,
+  stats: {
+    otb: { white: 10, draws: 20, black: 30, total: 60 },
+    online: { white: 5, draws: 10, black: 15, total: 30 },
+  },
   white: 10,
   draws: 20,
   black: 30,
+  total: 60,
   move: null,
   childCount: 2,
   children: [
@@ -44,9 +74,14 @@ export const treeNode: TreeNodeData = {
       childrenLoaded: false,
       collapsed: false,
       loading: false,
+      stats: {
+        otb: { white: 4, draws: 5, black: 6, total: 15 },
+        online: { white: 2, draws: 3, black: 1, total: 6 },
+      },
       white: 4,
       draws: 5,
       black: 6,
+      total: 15,
       move: serializeMove(new Chess().move('d4')),
       children: [],
       childCount: 0,
@@ -56,9 +91,14 @@ export const treeNode: TreeNodeData = {
       childrenLoaded: false,
       collapsed: false,
       loading: false,
+      stats: {
+        otb: { white: 1, draws: 2, black: 3, total: 6 },
+        online: { white: 0, draws: 1, black: 2, total: 3 },
+      },
       white: 1,
       draws: 2,
       black: 3,
+      total: 6,
       move: serializeMove(new Chess().move('e4')),
       children: [],
       childCount: 0,

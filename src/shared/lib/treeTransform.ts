@@ -1,9 +1,7 @@
-import { Id, NormalNodeData, NormalTree, TreeNodeData } from "@/shared/types";
+import { Id, NormalNodeData, NormalTree, TreeNodeData, TreeSource } from "@/shared/types";
 
-// return total games for a node
-export function gameCount(node: TreeNodeData | NormalNodeData) {
-  const { white, draws, black } = node;
-  return black + draws + white;
+function sourceGameCount(node: NormalNodeData, source: TreeSource) {
+  return node.stats[source].total;
 }
 
 // return tree nodes with most frequent moves in the middle
@@ -12,7 +10,7 @@ function orderTreeNodes(nodes: TreeNodeData[]) {
   let start = 0;
   let end = nodes.length - 1;
 
-  nodes.sort((a, b) => gameCount(a) - gameCount(b));
+  nodes.sort((a, b) => a.total - b.total);
   for (let i = 0; i < nodes.length; i++) {
     if (i % 2 === 0) {
       result[end--] = nodes[i];
@@ -28,13 +26,16 @@ function filterTreeNodes(
   nodes: NormalTree,
   id: Id,
   frequencyMin:number,
-  parentGames: number
+  parentGames: number,
+  source: TreeSource,
 ) {
   const node = nodes[id];
   if (!node) return false;
   if (node.childrenLoaded) return true;
 
-  const frequency = gameCount(node) / parentGames * 100;
+  if (parentGames <= 0) return false;
+
+  const frequency = sourceGameCount(node, source) / parentGames * 100;
   return frequency >= frequencyMin;
 }
 
@@ -43,20 +44,23 @@ export function buildTree(
   nodes: NormalTree,
   id: Id,
   frequencyMin: number,
+  source: TreeSource,
 ): TreeNodeData | null {
   const node = nodes[id];
   if (!node) return null;
 
-  const numGames = gameCount(node);
+  const selectedStats = node.stats[source];
+  const numGames = selectedStats.total;
   let children = node.children.map(childId => {
-    return filterTreeNodes(nodes, childId, frequencyMin, numGames)
-      ? buildTree(nodes, childId, frequencyMin)
+    return filterTreeNodes(nodes, childId, frequencyMin, numGames, source)
+      ? buildTree(nodes, childId, frequencyMin, source)
       : null;
   }).filter(Boolean) as TreeNodeData[];
   children = orderTreeNodes(children);
 
   return {
     ...node,
+    ...selectedStats,
     children: node.collapsed ? [] : children,
     childCount: children.length,
   };

@@ -1,20 +1,28 @@
 import { Chess, DEFAULT_POSITION, Square } from "chess.js";
 
-import { NormalNodeData, NormalTree, LcMoveData, Id, LcOpeningData } from "@/shared/types";
+import { OpeningMove, OpeningTotals, NodeStats, NormalNodeData, NormalTree, Id, SourceStats } from "@/shared/types";
 import { serializeMove } from "./chess";
 import { getChildId, getMoveFromId, getParentId } from "./id";
+
+const mapNodeStats = (input: { otb: SourceStats; online: SourceStats }): NodeStats => ({
+  otb: input.otb,
+  online: input.online,
+});
 
 export function buildNodes(
   nodes: NormalTree,
   nodeId: Id,
-  openingData: LcOpeningData,
+  openingData: OpeningTotals,
 ) {
+  const rootStats = mapNodeStats(openingData);
+
   let node = nodes[nodeId];
 
   if (node) {
     node = {
       ...node,
       childrenLoaded: true,
+      stats: rootStats,
     };
   } else {
     node = {
@@ -23,9 +31,7 @@ export function buildNodes(
       collapsed: false,
       loading: false,
       move: getMoveFromId(nodeId),
-      white: openingData.white,
-      draws: openingData.draws,
-      black: openingData.black,
+      stats: rootStats,
       children: [],
     };
   }
@@ -40,7 +46,7 @@ export function buildNodes(
 export function buildChildNodes(
   nodes: NormalTree,
   parentNode: NormalNodeData,
-  moveDataArray: LcMoveData[],
+  moveDataArray: OpeningMove[],
 ) {
   const children: NormalNodeData[] = [];
   const chess = new Chess(parentNode?.move?.after || DEFAULT_POSITION);
@@ -53,18 +59,24 @@ export function buildChildNodes(
     const childMove = serializeMove(chess.move({ from, to, promotion }));
     chess.undo();
     const childId = getChildId(parentNode.id, childMove);
-    
-    if (nodes[childId]) continue;
-    
+
+    const existingNode = nodes[childId];
+    if (existingNode) {
+      children.push({
+        ...existingNode,
+        move: existingNode.move || childMove,
+        stats: mapNodeStats(moveData),
+      });
+      continue;
+    }
+
     children.push({
       id: childId,
       childrenLoaded: false,
       collapsed: false,
       loading: false,
       move: childMove,
-      white: moveData.white,
-      draws: moveData.draws,
-      black: moveData.black,
+      stats: mapNodeStats(moveData),
       children: [],
     });
   }
@@ -72,7 +84,7 @@ export function buildChildNodes(
   return children;
 }
 
-export const addNodesToTree = (nodes: NormalTree, nodeId: Id, openingData: LcOpeningData) => {
+export const addNodesToTree = (nodes: NormalTree, nodeId: Id, openingData: OpeningTotals) => {
   // Build and add new nodes to tree
   const newNodes = buildNodes(nodes, nodeId, openingData);
   for (const node of newNodes) {

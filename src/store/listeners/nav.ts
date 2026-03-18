@@ -4,21 +4,20 @@ import { DEFAULT_POSITION } from "chess.js";
 import { RootState } from "@/store";
 import { startAppListening } from "@/store/listener";
 import { nav, tree, ui } from "@/store/slices";
-import { selectCurrentId, selectCurrentNode, selectCurrentNodeData, selectTreeDataNodes, selectTreeSource } from "@/store/selectors";
+import { selectCurrentId, selectCurrentNode, selectCurrentNodeData, selectTreeNodeMap } from "@/store/selectors";
 import { getChildId } from "@/shared/lib/id";
-import { Id, Move, TreeSource } from "@/shared/types";
+import { Id, Move } from "@/shared/types";
 
 type NavResult =
   | { id: Id; fen: string }
-  | { expandId: Id; source: TreeSource };
+  | { expandId: Id };
 
 // Determine the target position and node based on the navigation action and current state
 const getNavTarget = (action: UnknownAction, state: RootState): NavResult | undefined => {
   const currentId = selectCurrentId(state);
   const currentNode = selectCurrentNode(state);
   const currentNodeData = selectCurrentNodeData(state);
-  const nodes = selectTreeDataNodes(state);
-  const source = selectTreeSource(state);
+  const nodes = selectTreeNodeMap(state);
   const actionType = action.type;
 
   switch (actionType) {
@@ -52,7 +51,7 @@ const getNavTarget = (action: UnknownAction, state: RootState): NavResult | unde
         currentNodeData.childrenLoaded &&
         currentNodeData.children.length > 0
       ) {
-        return { expandId: currentNodeData.id, source };
+        return { expandId: currentNodeData.id };
       }
 
       // Otherwise, navigate to the first child node (preferably one that has loaded its own children)
@@ -113,7 +112,7 @@ startAppListening({
 
     if (target !== undefined) {
       if ("expandId" in target) {
-        dispatch(tree.actions.setNodeCollapsed({ nodeId: target.expandId, source: target.source, value: false }));
+        dispatch(tree.actions.setNodeCollapsed({ nodeId: target.expandId, value: false }));
         return;
       }
 

@@ -6,14 +6,13 @@ import { HierarchyPointNode } from '@visx/hierarchy/lib/types';
 import { useAppDispatch } from '@/store';
 import { ui } from '@/store/slices';
 import { NodeTooltipData, TreeNodeData } from '@/shared/types';
-import { gameCount } from '@/shared/lib/treeTransform';
 
 export const getToolTipData = (node: HierarchyPointNode<TreeNodeData>): NodeTooltipData => {
   return {
     white: node.data.white,
     draws: node.data.draws,
     black: node.data.black,
-    parent: node.parent ? gameCount(node.parent.data) : 0,
+    parent: node.parent ? node.parent.data.total : 0,
   };
 };
 
