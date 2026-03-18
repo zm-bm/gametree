@@ -13,6 +13,8 @@ export const selectBoardOrientation = (s: RootState) => selectUI(s).boardOrienta
 export const selectBoardPromotionTarget = (s: RootState) => selectUI(s).boardPromotionTarget;
 export const selectTreeSource = (s: RootState) => selectUI(s).treeSource;
 export const selectTreeFrequencyMin = (s: RootState) => selectUI(s).treeFrequencyMin;
+export const selectTreeTopMoves = (s: RootState) => selectUI(s).treeTopMoves;
+export const selectTreeWinRateScale = (s: RootState) => selectUI(s).treeWinRateScale;
 export const selectEngineRunning = (s: RootState) => selectUI(s).engineRunning;
 export const selectEngineHash = (s: RootState) => selectUI(s).engineHash;
 export const selectEngineThreads = (s: RootState) => selectUI(s).engineThreads;

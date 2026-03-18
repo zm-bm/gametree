@@ -23,7 +23,6 @@ npm run build
 
 - treeview
     - tree options
-        - move tree options from sidepane into a collapsible tree overlay near the tree canvas
         - add tree option to color edges/win% as either:
             - relative to parent branch
             - absolute against 50/50 baseline

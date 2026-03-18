@@ -2,7 +2,12 @@ import { useCallback } from "react";
 import { useSelector } from "react-redux";
 
 import { RootState, useAppDispatch } from "@/store";
-import { selectTreeFrequencyMin, selectTreeSource } from "@/store/selectors";
+import {
+  selectTreeFrequencyMin,
+  selectTreeSource,
+  selectTreeTopMoves,
+  selectTreeWinRateScale,
+} from "@/store/selectors";
 import { ui } from "@/store/slices";
 import { cn } from "@/shared/lib/cn";
 import { TreeOverlayCard } from "./TreeOverlayCard";
@@ -17,6 +22,8 @@ export const TreeOptionsOverlay = () => {
   const dispatch = useAppDispatch();
   const source = useSelector((s: RootState) => selectTreeSource(s));
   const minFrequency = useSelector((s: RootState) => selectTreeFrequencyMin(s));
+  const topMoves = useSelector((s: RootState) => selectTreeTopMoves(s));
+  const winRateScale = useSelector((s: RootState) => selectTreeWinRateScale(s));
 
   const preventDefault = useCallback((e: React.KeyboardEvent) => e.preventDefault(), []);
 
@@ -32,10 +39,25 @@ export const TreeOptionsOverlay = () => {
     dispatch(ui.actions.setTreeFrequencyMin(parseFloat(e.target.value)));
   }, [dispatch]);
 
+  const setTopMoves = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const parsed = parseInt(value, 10);
+    dispatch(ui.actions.setTreeTopMoves(Number.isNaN(parsed) ? 0 : Math.max(0, parsed)));
+  }, [dispatch]);
+
+  const setWinRateScaleRelative = useCallback(() => {
+    dispatch(ui.actions.setTreeWinRateScale("relative"));
+  }, [dispatch]);
+
+  const setWinRateScaleAbsolute = useCallback(() => {
+    dispatch(ui.actions.setTreeWinRateScale("absolute"));
+  }, [dispatch]);
+
   return (
     <TreeOverlayCard
       title="Tree Options"
       persistKey="gtTreeOptionsCollapsed"
+      maxHeight="max-h-120"
     >
       <div>
         <div className={sectionLabel}>Data Source</div>
@@ -93,6 +115,50 @@ export const TreeOptionsOverlay = () => {
           </span>
           <span>20%</span>
         </div>
+      </div>
+
+      <div>
+        <div className={sectionLabel}>Top N Moves</div>
+        <input
+          type="number"
+          min={0}
+          step={1}
+          value={topMoves}
+          onChange={setTopMoves}
+          className={cn([
+            "w-full px-2 py-1 rounded-md text-sm",
+            "bg-lightmode-100 dark:bg-darkmode-700",
+            "text-lightmode-900 dark:text-darkmode-100",
+            "ring-1 ring-lightmode-500/20 dark:ring-darkmode-200/20",
+          ])}
+        />
+        <div className={cn("mt-1", scaleLabel)}>0 = show all moves</div>
+      </div>
+
+      <div>
+        <div className={sectionLabel}>Win % Scale</div>
+        <label className={cn(dataSourceLabel, winRateScale === "relative" && dataSourceActive)}>
+          <input
+            type="radio"
+            name="win-rate-scale"
+            className={cn(radioInput)}
+            checked={winRateScale === "relative"}
+            onKeyDown={preventDefault}
+            onChange={setWinRateScaleRelative}
+          />
+          <span>Relative to parent branch</span>
+        </label>
+        <label className={cn(dataSourceLabel, winRateScale === "absolute" && dataSourceActive)}>
+          <input
+            type="radio"
+            name="win-rate-scale"
+            className={cn(radioInput)}
+            checked={winRateScale === "absolute"}
+            onKeyDown={preventDefault}
+            onChange={setWinRateScaleAbsolute}
+          />
+          <span>Absolute vs 50/50 baseline</span>
+        </label>
       </div>
     </TreeOverlayCard>
   );

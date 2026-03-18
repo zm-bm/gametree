@@ -2,7 +2,7 @@ import { PayloadAction as PA, createSlice } from '@reduxjs/toolkit';
 import { Color } from 'chessground/types';
 import { DEFAULT_POSITION, Square } from 'chess.js';
 
-import { TreeSource, Id } from "@/shared/types";
+import { TreeSource, TreeWinRateScale, Id } from "@/shared/types";
 
 const ui = createSlice({
   name: 'ui',
@@ -17,6 +17,8 @@ const ui = createSlice({
     // tree state
     treeSource: 'otb' as TreeSource,
     treeFrequencyMin: 2 as number,
+    treeTopMoves: 0 as number,
+    treeWinRateScale: 'relative' as TreeWinRateScale,
     // engine state / options
     engineRunning: false as boolean,
     engineHash: 16 as number,
@@ -32,6 +34,8 @@ const ui = createSlice({
     setPromotionTarget(state, action: PA<Square[] | null>) { state.boardPromotionTarget = action.payload; },
     setTreeSource(state, action: PA<TreeSource>) { state.treeSource = action.payload; },
     setTreeFrequencyMin(state, action: PA<number>) { state.treeFrequencyMin = action.payload; },
+    setTreeTopMoves(state, action: PA<number>) { state.treeTopMoves = action.payload; },
+    setTreeWinRateScale(state, action: PA<TreeWinRateScale>) { state.treeWinRateScale = action.payload; },
     toggleEngine(state) { state.engineRunning = !state.engineRunning; },
     setEngineHash(state, action: PA<number>) { state.engineHash = action.payload; },
     setEngineThreads(state, action: PA<number>) { state.engineThreads = action.payload; },
