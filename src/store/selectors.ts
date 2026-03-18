@@ -21,17 +21,17 @@ export const selectEngineTime = (s: RootState) => selectUI(s).engineTime
 
 // Tree data selectors
 export const selectTreeData = (s: RootState) => s.tree;
-export const selectLichessNodes = (s: RootState) => selectTreeData(s).lichessNodes;
-export const selectMastersNodes = (s: RootState) => selectTreeData(s).mastersNodes;
+export const selectOtbNodes = (s: RootState) => selectTreeData(s).otbNodes;
+export const selectOnlineNodes = (s: RootState) => selectTreeData(s).onlineNodes;
 
 // Engine data selectors
 export const selectEngineData = (s: RootState) => s.engine;
 export const selectEngineOutput = (s: RootState) => selectEngineData(s).output;
 
 export const selectTreeDataNodes = createSelector(
-  [selectLichessNodes, selectMastersNodes, selectTreeSource],
-  (lichessNodes, mastersNodes, source) => {
-    return source === 'lichess' ? lichessNodes : mastersNodes;
+  [selectOtbNodes, selectOnlineNodes, selectTreeSource],
+  (otbNodes, onlineNodes, source) => {
+    return source === 'online' ? onlineNodes : otbNodes;
   }
 )
 

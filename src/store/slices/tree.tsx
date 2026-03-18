@@ -5,8 +5,8 @@ import { addNodesToTree } from "@/shared/lib/treeState";
 
 interface AddNodes {
   nodeId: Id,
-  lichess: LcOpeningData,
-  masters: LcOpeningData,
+  otb: LcOpeningData,
+  online: LcOpeningData,
 };
 
 interface SetNodeBoolean {
@@ -16,25 +16,25 @@ interface SetNodeBoolean {
 };
 
 const selectNodes = (state: TreeState, source: TreeSource): NormalTree => {
-  return source === 'lichess' ? state.lichessNodes : state.mastersNodes;
+  return source === 'online' ? state.onlineNodes : state.otbNodes;
 };
 
 interface TreeState {
-  lichessNodes: NormalTree;
-  mastersNodes: NormalTree;
+  otbNodes: NormalTree;
+  onlineNodes: NormalTree;
 }
 
 const tree = createSlice({
   name: 'tree',
   initialState: {
-    lichessNodes: {} as NormalTree,
-    mastersNodes: {} as NormalTree,
+    otbNodes: {} as NormalTree,
+    onlineNodes: {} as NormalTree,
   },
   reducers: {
     addNodes(state, action: PayloadAction<AddNodes>) {
-      const { nodeId, lichess, masters } = action.payload;
-      addNodesToTree(state.lichessNodes, nodeId, lichess);
-      addNodesToTree(state.mastersNodes, nodeId, masters);
+      const { nodeId, otb, online } = action.payload;
+      addNodesToTree(state.otbNodes, nodeId, otb);
+      addNodesToTree(state.onlineNodes, nodeId, online);
     },
 
     setNodeLoading(state, action: PayloadAction<SetNodeBoolean>) {

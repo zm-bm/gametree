@@ -15,7 +15,7 @@ const ui = createSlice({
     boardOrientation: 'white' as Color,
     boardPromotionTarget: null as Square[] | null,
     // tree state
-    treeSource: 'lichess' as TreeSource,
+    treeSource: 'otb' as TreeSource,
     treeFrequencyMin: 2 as number,
     // engine state / options
     engineRunning: false as boolean,

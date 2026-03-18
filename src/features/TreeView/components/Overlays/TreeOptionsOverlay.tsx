@@ -20,12 +20,12 @@ export const TreeOptionsOverlay = () => {
 
   const preventDefault = useCallback((e: React.KeyboardEvent) => e.preventDefault(), []);
 
-  const selectLichess = useCallback(() => {
-    dispatch(ui.actions.setTreeSource("lichess"));
+  const selectOtb = useCallback(() => {
+    dispatch(ui.actions.setTreeSource("otb"));
   }, [dispatch]);
 
-  const selectMasters = useCallback(() => {
-    dispatch(ui.actions.setTreeSource("masters"));
+  const selectOnline = useCallback(() => {
+    dispatch(ui.actions.setTreeSource("online"));
   }, [dispatch]);
 
   const setFrequency = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,27 +39,27 @@ export const TreeOptionsOverlay = () => {
     >
       <div>
         <div className={sectionLabel}>Data Source</div>
-        <label className={cn(dataSourceLabel, source === "masters" && dataSourceActive)}>
+        <label className={cn(dataSourceLabel, source === "otb" && dataSourceActive)}>
           <input
             type="radio"
             name="src"
             className={cn(radioInput)}
-            checked={source === "masters"}
+            checked={source === "otb"}
             onKeyDown={preventDefault}
-            onChange={selectMasters}
+            onChange={selectOtb}
           />
-          <span>Masters games</span>
+          <span>OTB (masters)</span>
         </label>
-        <label className={cn(dataSourceLabel, source === "lichess" && dataSourceActive)}>
+        <label className={cn(dataSourceLabel, source === "online" && dataSourceActive)}>
           <input
             type="radio"
             name="src"
             className={cn(radioInput)}
-            checked={source === "lichess"}
+            checked={source === "online"}
             onKeyDown={preventDefault}
-            onChange={selectLichess}
+            onChange={selectOnline}
           />
-          <span>Lichess games</span>
+          <span>Online games</span>
         </label>
       </div>
 

@@ -1,46 +1,29 @@
 import { Chess } from "chess.js";
-import { LcGame, LcOpeningData, TreeNodeData } from "../shared/types";
+import { LcOpeningData, TreeNodeData } from "../shared/types";
 import { serializeMove } from "../shared/lib/chess";
 
 
-const topGame: LcGame = {
-  uci: 'd2d4',
-  id: 'QR5UbqUY',
-  winner: null,
-  black: {
-    name: 'Caruana, F.',
-    rating: 2818
-  },
-  white: {
-    name: 'Carlsen, M.',
-    rating: 2882
-  },
-  year: 2019,
-  month: '2019-08'
-}
-
 export const openings: LcOpeningData = {
+  source: 'otb',
+  play: [],
   white: 10,
   draws: 20,
   black: 30,
-  opening: null,
-  topGames: [topGame],
+  total: 60,
   moves: [
     {
       uci: 'e2e4',
-      san: 'e4',
-      averageRating: 2399,
       white: 1,
       draws: 2,
       black: 3,
+      total: 6,
     },
     {
       uci: 'd2d4',
-      san: 'd4',
-      averageRating: 2414,
       white: 4,
       draws: 5,
       black: 6,
+      total: 15,
     },
   ]
 };
@@ -53,9 +36,6 @@ export const treeNode: TreeNodeData = {
   white: 10,
   draws: 20,
   black: 30,
-  topGames: [topGame],
-  opening: null,
-  averageRating: undefined,
   move: null,
   childCount: 2,
   children: [
@@ -67,14 +47,7 @@ export const treeNode: TreeNodeData = {
       white: 4,
       draws: 5,
       black: 6,
-      topGames: [],
-      opening: {
-        eco: 'A40',
-        name: 'Queen\'s Pawn Game',
-        uci: 'd2d4'
-      },
-      averageRating: 2414,
-      move: serializeMove(new Chess().move('d2d4')),
+      move: serializeMove(new Chess().move('d4')),
       children: [],
       childCount: 0,
     },
@@ -86,14 +59,7 @@ export const treeNode: TreeNodeData = {
       white: 1,
       draws: 2,
       black: 3,
-      topGames: [],
-      opening: {
-        eco: 'B00',
-        name: 'King\'s Pawn Game',
-        uci: 'e2e4'
-      },
-      averageRating: 2399,
-      move: serializeMove(new Chess().move('e2e4')),
+      move: serializeMove(new Chess().move('e4')),
       children: [],
       childCount: 0,
     },
