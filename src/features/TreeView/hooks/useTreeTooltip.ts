@@ -14,9 +14,6 @@ export const getToolTipData = (node: HierarchyPointNode<TreeNodeData>): NodeTool
     draws: node.data.draws,
     black: node.data.black,
     parent: node.parent ? gameCount(node.parent.data) : 0,
-    rating: node.data.averageRating,
-    eco: node.data.opening?.eco,
-    name: node.data.opening?.name,
   };
 };
 

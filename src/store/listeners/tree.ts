@@ -19,7 +19,7 @@ startAppListening({
     const { nodeId, source } = action.meta.arg.originalArgs;
     const key = gateKey(nodeId, source);
     const state = api.getState();
-    const nodes = state.tree[source === 'lichess' ? 'lichessNodes' : 'mastersNodes'];
+    const nodes = state.tree[source === 'online' ? 'onlineNodes' : 'otbNodes'];
 
     // If the node is already loaded, do nothing
     if (nodes[nodeId] && nodes[nodeId]?.children?.length > 0) return;
@@ -38,7 +38,7 @@ startAppListening({
     const { nodeId, source } = action.meta.arg.originalArgs;
     const key = gateKey(nodeId, source);
     const state = api.getState();
-    const nodes = state.tree[source === 'lichess' ? 'lichessNodes' : 'mastersNodes'];
+    const nodes = state.tree[source === 'online' ? 'onlineNodes' : 'otbNodes'];
 
     // If the node is already loaded, do nothing
     if (nodes[nodeId] && nodes[nodeId]?.children?.length > 0) return;
@@ -46,9 +46,9 @@ startAppListening({
     // Resolve the gate to add the nodes to the tree and hide the loading state
     gates.ensure(key).resolve(() => {
       api.dispatch(tree.actions.setNodeLoading({ nodeId, source, value: false }));
-      const { lichess, masters } = action.payload;
-      if (!lichess || !masters) return;
-      api.dispatch(tree.actions.addNodes({ nodeId, lichess, masters }));
+      const { otb, online } = action.payload;
+      if (!otb || !online) return;
+      api.dispatch(tree.actions.addNodes({ nodeId, otb, online }));
     });
   },
 });
@@ -87,7 +87,7 @@ startAppListening({
     const isHiddenByCollapse = currentId.startsWith(`${nodeId},`);
     if (!isHiddenByCollapse) return;
 
-    const nodes = source === 'lichess' ? state.tree.lichessNodes : state.tree.mastersNodes;
+    const nodes = source === 'online' ? state.tree.onlineNodes : state.tree.otbNodes;
     const fen = nodes[nodeId]?.move?.after || DEFAULT_POSITION;
     dispatch(ui.actions.setFen(fen));
     dispatch(ui.actions.setCurrent(nodeId));

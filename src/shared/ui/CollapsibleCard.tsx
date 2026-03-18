@@ -9,22 +9,42 @@ interface CollapsibleCardProps {
   maxHeight?: string; // e.g. "max-h-60"
   duration?: number; // ms
   className?: string;
+  headerClassName?: string;
+  contentClassName?: string;
+  persistKey?: string;
 }
 
 export const CollapsibleCard = ({
   header,
-  collapsed = false,
+  collapsed,
   onToggle,
   children,
   maxHeight = "max-h-60",
   duration = 300,
   className,
+  headerClassName,
+  contentClassName,
+  persistKey,
 }: CollapsibleCardProps) => {
-  const [isCollapsed, setIsCollapsed] = useState(collapsed);
-  const [showContent, setShowContent] = useState(!collapsed);
+  const defaultCollapsed = collapsed ?? false;
+
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    if (!persistKey) return defaultCollapsed;
+
+    try {
+      const persisted = localStorage.getItem(persistKey);
+      if (persisted === null) return defaultCollapsed;
+      return persisted === "1";
+    } catch {
+      return defaultCollapsed;
+    }
+  });
+  const [showContent, setShowContent] = useState(!isCollapsed);
 
   useEffect(() => {
-    setIsCollapsed(collapsed);
+    if (collapsed !== undefined) {
+      setIsCollapsed(collapsed);
+    }
   }, [collapsed]);
 
   useEffect(() => {
@@ -44,15 +64,25 @@ export const CollapsibleCard = ({
   const handleToggle = () => {
     setIsCollapsed((prev) => {
       const next = !prev;
+      if (persistKey) {
+        try {
+          localStorage.setItem(persistKey, next ? "1" : "");
+        } catch {
+          // no-op
+        }
+      }
       onToggle?.(next);
       return next;
     });
   };
 
+  const baseHeaderClassName = "w-full flex items-center justify-between gap-2 text-sm cursor-pointer select-none";
+  const appliedHeaderClassName = headerClassName ?? "p-3 interactive-sidebar";
+
   return (
     <div className={cn("flex flex-col", className)}>
       <div
-        className="w-full flex items-center justify-between p-3 gap-2 text-sm cursor-pointer select-none interactive-sidebar"
+        className={cn(baseHeaderClassName, appliedHeaderClassName)}
         onClick={handleToggle}
       >
         <div>{header}</div>
@@ -66,7 +96,8 @@ export const CollapsibleCard = ({
       <div
         className={cn(
           "transition-all ease-in-out overflow-hidden",
-          isCollapsed ? "max-h-0 opacity-0" : `${maxHeight} opacity-100`
+          isCollapsed ? "max-h-0 opacity-0" : `${maxHeight} opacity-100`,
+          contentClassName,
         )}
         style={{ transitionDuration: `${duration}ms` }}
       >

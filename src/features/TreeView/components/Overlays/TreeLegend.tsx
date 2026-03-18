@@ -1,6 +1,7 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React from "react";
 import { cn } from "@/shared/lib/cn";
-import { colorScale } from "../../lib/colors";
+import { colorScale } from "@/features/TreeView/lib/colors";
+import { TreeOverlayCard } from "./TreeOverlayCard";
 
 const LEGEND_STYLES = {
   colorValues: [0.5, 0.2, 0.0, -0.2, -0.5],
@@ -55,43 +56,18 @@ const WidthRamp = React.memo(() => (
 ));
 
 const TreeLegendBase = () => {
-  const [isCollapsed, setIsCollapsed] = useState<boolean>(localStorage.gtLegendCollapsed === '1');
-
-  const toggleCollapsed = useCallback(() => {
-    localStorage.gtLegendCollapsed = isCollapsed ? '' : '1';
-    setIsCollapsed(prev => !prev);
-  }, [isCollapsed]);
-
-  const arrowStyle = useMemo(() => ({
-    transform: isCollapsed ? 'rotate(180deg)' : 'rotate(0deg)',
-  }), [isCollapsed]);
-
   return (
-    <div className="treeview-card min-w-[12rem] select-none">
-      {/* Collapsible header */}
-      <div
-        className="px-3 py-2 flex justify-between items-center cursor-pointer interactive-treeview"
-        onClick={toggleCollapsed}
-      >
-        <div className="text-sm font-bold">Legend</div>
-        <div className="text-sm transition-transform duration-300" style={arrowStyle}>▲</div>
+    <TreeOverlayCard
+      title="Legend"
+      persistKey="gtLegendCollapsed"
+    >
+      <div>
+        <ColorRamp />
       </div>
-
-      {/* Animated collapsible content */}
-      <div
-        className={cn(
-          "treeview-divider transition-all duration-300 ease-in-out overflow-hidden",
-          isCollapsed ? "max-h-0 opacity-0" : "max-h-60 opacity-100"
-        )}
-      >
-        <div>
-          <ColorRamp />
-        </div>
-        <div>
-          <WidthRamp />
-        </div>
+      <div>
+        <WidthRamp />
       </div>
-    </div>
+    </TreeOverlayCard>
   );
 };
 

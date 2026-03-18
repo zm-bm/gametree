@@ -1,4 +1,4 @@
-import { Chess, DEFAULT_POSITION } from "chess.js";
+import { Chess, DEFAULT_POSITION, Square } from "chess.js";
 
 import { NormalNodeData, NormalTree, LcMoveData, Id, LcOpeningData } from "@/shared/types";
 import { serializeMove } from "./chess";
@@ -15,8 +15,6 @@ export function buildNodes(
     node = {
       ...node,
       childrenLoaded: true,
-      topGames: openingData.topGames,
-      opening: openingData.opening,
     };
   } else {
     node = {
@@ -28,8 +26,6 @@ export function buildNodes(
       white: openingData.white,
       draws: openingData.draws,
       black: openingData.black,
-      topGames: openingData.topGames,
-      opening: openingData.opening,
       children: [],
     };
   }
@@ -50,7 +46,11 @@ export function buildChildNodes(
   const chess = new Chess(parentNode?.move?.after || DEFAULT_POSITION);
 
   for (const moveData of moveDataArray) {
-    const childMove = serializeMove(chess.move(moveData.san));
+    const { uci } = moveData;
+    const from = uci.slice(0, 2) as Square;
+    const to = uci.slice(2, 4) as Square;
+    const promotion = uci.length > 4 ? uci.slice(4) : undefined;
+    const childMove = serializeMove(chess.move({ from, to, promotion }));
     chess.undo();
     const childId = getChildId(parentNode.id, childMove);
     
@@ -65,10 +65,6 @@ export function buildChildNodes(
       white: moveData.white,
       draws: moveData.draws,
       black: moveData.black,
-      averageRating: moveData.averageRating,
-      topGames: [],
-      // opening: getECO(childPath),
-      opening: null,
       children: [],
     });
   }

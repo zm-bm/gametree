@@ -16,7 +16,7 @@ export type Move = {
 
 export type Id = string;
 export type MovePath = Move[];
-export type TreeSource = 'masters' | 'lichess';
+export type TreeSource = 'otb' | 'online';
 
 export type LcOpening = {
   eco: string;
@@ -24,38 +24,21 @@ export type LcOpening = {
   uci: string;
 };
 
-type LcPlayer = {
-  name: string | null;
-  rating: number | null;
-};
-
-type LcWinner = "black" | "white" | null;
-
-type LcGame = {
-  id: string;
-  uci: string;
-  winner: LcWinner;
-  white: LcPlayer;
-  black: LcPlayer;
-  year: number;
-  month: string;
-};
-
 export type LcMoveData = {
   uci: string;
-  san: string;
   white: number;
   draws: number;
   black: number;
-  averageRating: number;
+  total: number;
 };
 
 export type LcOpeningData = {
+  source: TreeSource;
+  play: string[];
   white: number;
   draws: number;
   black: number;
-  topGames: LcGame[];
-  opening: LcOpening | null;
+  total: number;
   moves: LcMoveData[];
 };
 
@@ -68,9 +51,6 @@ type NodeData = {
   white: number;
   draws: number;
   black: number;
-  averageRating?: number;
-  topGames: LcGame[];
-  opening: LcOpening | null;
 };
 
 export type NormalNodeData = NodeData & {
