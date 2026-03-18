@@ -3,10 +3,10 @@ import { useSelector } from "react-redux";
 
 import { RootState, useAppDispatch } from "@/store";
 import {
-  selectTreeFrequencyMin,
+  selectTreeMinMoveFrequency,
+  selectTreeMoveLimit,
   selectTreeSource,
-  selectTreeTopMoves,
-  selectTreeWinRateScale,
+  selectTreeWinRateComparison,
 } from "@/store/selectors";
 import { ui } from "@/store/slices";
 import { cn } from "@/shared/lib/cn";
@@ -21,9 +21,9 @@ const scaleLabel = "text-xs text-lightmode-500 dark:text-darkmode-400";
 export const TreeOptionsOverlay = () => {
   const dispatch = useAppDispatch();
   const source = useSelector((s: RootState) => selectTreeSource(s));
-  const minFrequency = useSelector((s: RootState) => selectTreeFrequencyMin(s));
-  const topMoves = useSelector((s: RootState) => selectTreeTopMoves(s));
-  const winRateScale = useSelector((s: RootState) => selectTreeWinRateScale(s));
+  const minMoveFrequency = useSelector((s: RootState) => selectTreeMinMoveFrequency(s));
+  const moveLimit = useSelector((s: RootState) => selectTreeMoveLimit(s));
+  const winRateComparison = useSelector((s: RootState) => selectTreeWinRateComparison(s));
 
   const preventDefault = useCallback((e: React.KeyboardEvent) => e.preventDefault(), []);
 
@@ -35,22 +35,22 @@ export const TreeOptionsOverlay = () => {
     dispatch(ui.actions.setTreeSource("online"));
   }, [dispatch]);
 
-  const setFrequency = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch(ui.actions.setTreeFrequencyMin(parseFloat(e.target.value)));
+  const setMinMoveFrequency = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    dispatch(ui.actions.setTreeMinMoveFrequency(parseFloat(e.target.value)));
   }, [dispatch]);
 
-  const setTopMoves = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  const setMoveLimit = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     const parsed = parseInt(value, 10);
-    dispatch(ui.actions.setTreeTopMoves(Number.isNaN(parsed) ? 0 : Math.max(0, parsed)));
+    dispatch(ui.actions.setTreeMoveLimit(Number.isNaN(parsed) ? 0 : Math.max(0, parsed)));
   }, [dispatch]);
 
-  const setWinRateScaleRelative = useCallback(() => {
-    dispatch(ui.actions.setTreeWinRateScale("relative"));
+  const setWinRateComparisonPosition = useCallback(() => {
+    dispatch(ui.actions.setTreeWinRateComparison("position"));
   }, [dispatch]);
 
-  const setWinRateScaleAbsolute = useCallback(() => {
-    dispatch(ui.actions.setTreeWinRateScale("absolute"));
+  const setWinRateComparisonBaseline = useCallback(() => {
+    dispatch(ui.actions.setTreeWinRateComparison("baseline"));
   }, [dispatch]);
 
   return (
@@ -86,14 +86,14 @@ export const TreeOptionsOverlay = () => {
       </div>
 
       <div>
-        <div className={sectionLabel}>Move Frequency Filter</div>
+        <div className={sectionLabel}>Min Move Frequency</div>
         <input
           type="range"
           min={0}
           max={20}
           step={0.1}
-          value={minFrequency}
-          onChange={setFrequency}
+          value={minMoveFrequency}
+          onChange={setMinMoveFrequency}
           onKeyDown={preventDefault}
           className={cn([
             "w-full appearance-none h-1.5 rounded-full cursor-pointer",
@@ -111,20 +111,20 @@ export const TreeOptionsOverlay = () => {
             "dark:from-darkmode-700 dark:to-darkmode-800",
             "ring-1 ring-lightmode-500/25 dark:ring-sky-600/20",
           ])}>
-            {minFrequency}%
+            {minMoveFrequency}%
           </span>
           <span>20%</span>
         </div>
       </div>
 
       <div>
-        <div className={sectionLabel}>Top N Moves</div>
+        <div className={sectionLabel}>Move Limit</div>
         <input
           type="number"
           min={0}
           step={1}
-          value={topMoves}
-          onChange={setTopMoves}
+          value={moveLimit}
+          onChange={setMoveLimit}
           className={cn([
             "w-full px-2 py-1 rounded-md text-sm",
             "bg-lightmode-100 dark:bg-darkmode-700",
@@ -136,28 +136,28 @@ export const TreeOptionsOverlay = () => {
       </div>
 
       <div>
-        <div className={sectionLabel}>Win % Scale</div>
-        <label className={cn(dataSourceLabel, winRateScale === "relative" && dataSourceActive)}>
+        <div className={sectionLabel}>Win Rate Comparison</div>
+        <label className={cn(dataSourceLabel, winRateComparison === "position" && dataSourceActive)}>
           <input
             type="radio"
-            name="win-rate-scale"
+            name="win-rate-comparison"
             className={cn(radioInput)}
-            checked={winRateScale === "relative"}
+            checked={winRateComparison === "position"}
             onKeyDown={preventDefault}
-            onChange={setWinRateScaleRelative}
+            onChange={setWinRateComparisonPosition}
           />
-          <span>Relative to parent branch</span>
+          <span>Position based</span>
         </label>
-        <label className={cn(dataSourceLabel, winRateScale === "absolute" && dataSourceActive)}>
+        <label className={cn(dataSourceLabel, winRateComparison === "baseline" && dataSourceActive)}>
           <input
             type="radio"
-            name="win-rate-scale"
+            name="win-rate-comparison"
             className={cn(radioInput)}
-            checked={winRateScale === "absolute"}
+            checked={winRateComparison === "baseline"}
             onKeyDown={preventDefault}
-            onChange={setWinRateScaleAbsolute}
+            onChange={setWinRateComparisonBaseline}
           />
-          <span>Absolute vs 50/50 baseline</span>
+          <span>50/50 baseline</span>
         </label>
       </div>
     </TreeOverlayCard>

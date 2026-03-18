@@ -2,7 +2,7 @@ import { PayloadAction as PA, createSlice } from '@reduxjs/toolkit';
 import { Color } from 'chessground/types';
 import { DEFAULT_POSITION, Square } from 'chess.js';
 
-import { TreeSource, TreeWinRateScale, Id } from "@/shared/types";
+import { TreeSource, TreeWinRateComparison, Id } from "@/shared/types";
 
 const ui = createSlice({
   name: 'ui',
@@ -16,9 +16,9 @@ const ui = createSlice({
     boardPromotionTarget: null as Square[] | null,
     // tree state
     treeSource: 'otb' as TreeSource,
-    treeFrequencyMin: 2 as number,
-    treeTopMoves: 0 as number,
-    treeWinRateScale: 'relative' as TreeWinRateScale,
+    treeMinMoveFrequency: 2 as number,
+    treeMoveLimit: 0 as number,
+    treeWinRateComparison: 'position' as TreeWinRateComparison,
     // engine state / options
     engineRunning: false as boolean,
     engineHash: 16 as number,
@@ -33,9 +33,9 @@ const ui = createSlice({
     toggleOrientation(state) { state.boardOrientation = state.boardOrientation === 'white' ? 'black' : 'white'; },
     setPromotionTarget(state, action: PA<Square[] | null>) { state.boardPromotionTarget = action.payload; },
     setTreeSource(state, action: PA<TreeSource>) { state.treeSource = action.payload; },
-    setTreeFrequencyMin(state, action: PA<number>) { state.treeFrequencyMin = action.payload; },
-    setTreeTopMoves(state, action: PA<number>) { state.treeTopMoves = action.payload; },
-    setTreeWinRateScale(state, action: PA<TreeWinRateScale>) { state.treeWinRateScale = action.payload; },
+    setTreeMinMoveFrequency(state, action: PA<number>) { state.treeMinMoveFrequency = action.payload; },
+    setTreeMoveLimit(state, action: PA<number>) { state.treeMoveLimit = action.payload; },
+    setTreeWinRateComparison(state, action: PA<TreeWinRateComparison>) { state.treeWinRateComparison = action.payload; },
     toggleEngine(state) { state.engineRunning = !state.engineRunning; },
     setEngineHash(state, action: PA<number>) { state.engineHash = action.payload; },
     setEngineThreads(state, action: PA<number>) { state.engineThreads = action.payload; },
