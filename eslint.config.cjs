@@ -39,7 +39,7 @@ module.exports = defineConfig([{
     )),
 
     plugins: {
-        "react-refresh": reactRefresh,
+        "react-refresh": reactRefresh.reactRefresh.plugin,
     },
 
     rules: {
