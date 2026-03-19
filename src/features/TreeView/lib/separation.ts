@@ -1,8 +1,8 @@
 import { HierarchyPointNode } from '@visx/hierarchy/lib/types';
 
-import { TreeNodeData } from '@/shared/types';
+import { TreeViewNode } from '@/shared/types';
 
 export const separation = (
-  a: HierarchyPointNode<TreeNodeData>,
-  b: HierarchyPointNode<TreeNodeData>
+  a: HierarchyPointNode<TreeViewNode>,
+  b: HierarchyPointNode<TreeViewNode>
 ) => (a.parent === b.parent) ? 1 : 1.2;

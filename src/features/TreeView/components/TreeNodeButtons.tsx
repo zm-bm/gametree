@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 
 import { RootState, useAppDispatch } from "@/store";
 import { selectTreeMode } from "@/store/selectors";
-import { TreeNodeData } from "@/shared/types";
+import { TreeViewNode } from "@/shared/types";
 import { nav, tree } from "@/store/slices";
 import { cn } from "@/shared/lib/cn";
 
@@ -19,7 +19,7 @@ interface ButtonConfig {
 }
 
 interface Props {
-  node: HierarchyPointNode<TreeNodeData>;
+  node: HierarchyPointNode<TreeViewNode>;
   nodeRadius: number;
   onMouseLeave: () => void;
 }

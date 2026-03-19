@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 import { cn } from "@/shared/lib/cn";
 import { RootState } from "@/store";
 import { selectBoardOrientation, selectTreeWinRateComparison } from "@/store/selectors";
-import { TreeNodeData, getNodeWinScore, getTreeLinkFrequency } from "@/shared/types";
+import { TreeViewNode, getNodeWinScore, getTreeLinkFrequency } from "@/shared/types";
 import { TreeDimensionsContext } from "../context/TreeDimensionsContext";
 import { COLORS, colorScale } from "../lib/colors";
 
@@ -47,7 +47,7 @@ function getTreeLinkWidth(
 }
 
 interface Props {
-  link: HierarchyPointLink<TreeNodeData>;
+  link: HierarchyPointLink<TreeViewNode>;
   sourceX: FluidValue<number>;
   sourceY: FluidValue<number>;
   targetX: FluidValue<number>;

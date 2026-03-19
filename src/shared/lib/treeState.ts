@@ -1,11 +1,11 @@
 import { Chess, DEFAULT_POSITION, Square } from "chess.js";
 
-import { OpeningMove, OpeningTotals, NormalNodeData, NormalTree, Id, toNodeStats } from "@/shared/types";
+import { OpeningMove, OpeningTotals, TreeStoreNode, TreeStore, Id, toNodeStats } from "@/shared/types";
 import { serializeMove } from "./chess";
 import { getChildId, getMoveFromId, getParentId } from "./id";
 
 export function buildNodes(
-  nodes: NormalTree,
+  nodes: TreeStore,
   nodeId: Id,
   openingData: OpeningTotals,
 ) {
@@ -39,11 +39,11 @@ export function buildNodes(
 }
 
 export function buildChildNodes(
-  nodes: NormalTree,
-  parentNode: NormalNodeData,
+  nodes: TreeStore,
+  parentNode: TreeStoreNode,
   moveDataArray: OpeningMove[],
 ) {
-  const children: NormalNodeData[] = [];
+  const children: TreeStoreNode[] = [];
   const chess = new Chess(parentNode?.move?.after || DEFAULT_POSITION);
 
   for (const moveData of moveDataArray) {
@@ -79,7 +79,7 @@ export function buildChildNodes(
   return children;
 }
 
-export const addNodesToTree = (nodes: NormalTree, nodeId: Id, openingData: OpeningTotals) => {
+export const addNodesToTree = (nodes: TreeStore, nodeId: Id, openingData: OpeningTotals) => {
   // Build and add new nodes to tree
   const newNodes = buildNodes(nodes, nodeId, openingData);
   for (const node of newNodes) {

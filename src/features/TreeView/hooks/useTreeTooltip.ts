@@ -5,9 +5,9 @@ import { HierarchyPointNode } from '@visx/hierarchy/lib/types';
 
 import { useAppDispatch } from '@/store';
 import { ui } from '@/store/slices';
-import { NodeTooltipData, TreeNodeData } from '@/shared/types';
+import { NodeTooltipData, TreeViewNode } from '@/shared/types';
 
-export const getToolTipData = (node: HierarchyPointNode<TreeNodeData>): NodeTooltipData => {
+export const getToolTipData = (node: HierarchyPointNode<TreeViewNode>): NodeTooltipData => {
   return {
     white: node.data.white,
     draws: node.data.draws,

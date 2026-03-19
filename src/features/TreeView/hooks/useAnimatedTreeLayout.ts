@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 import { HierarchyPointNode } from "d3-hierarchy";
 import { useSpring, to } from "react-spring";
 
-import { TreeNodeData } from "@/shared/types";
+import { TreeViewNode } from "@/shared/types";
 
 type XY = { x: number; y: number };
 type XYMap = Map<string, XY>;
@@ -10,7 +10,7 @@ type XYMap = Map<string, XY>;
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
 export function useAnimatedTreeLayout(
-  nodes: HierarchyPointNode<TreeNodeData>[],
+  nodes: HierarchyPointNode<TreeViewNode>[],
   minimap: boolean
 ) {
   const prevPositionsRef = useRef<XYMap>(new Map());

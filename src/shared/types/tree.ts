@@ -7,7 +7,7 @@ export type TreeWinRateComparison = "relative" | "absolute";
 
 export type NodeStats = Record<TreeSource, SourceStats>;
 
-type NodeData = {
+type BaseTreeNode = {
   id: Id;
   childrenLoaded: boolean;
   collapsed: boolean;
@@ -16,20 +16,20 @@ type NodeData = {
   stats: NodeStats;
 };
 
-export type NormalNodeData = NodeData & {
+export type TreeStoreNode = BaseTreeNode & {
   children: string[];
 };
 
-export type NormalTree = Record<Id, NormalNodeData>;
+export type TreeStore = Record<Id, TreeStoreNode>;
 
 type TreeNodeStats = SourceStats;
 
-export type TreeNodeData = NodeData & TreeNodeStats & {
-  children: TreeNodeData[];
+export type TreeViewNode = BaseTreeNode & TreeNodeStats & {
+  children: TreeViewNode[];
   childCount: number;
 };
 
-export type Tree = Record<Id, TreeNodeData>;
+export type TreeView = Record<Id, TreeViewNode>;
 
 export function toNodeStats(input: { otb: SourceStats; online: SourceStats }): NodeStats {
   return {
@@ -38,7 +38,7 @@ export function toNodeStats(input: { otb: SourceStats; online: SourceStats }): N
   };
 }
 
-export function sourceGameCount(node: NormalNodeData, source: TreeSource) {
+export function sourceGameCount(node: TreeStoreNode, source: TreeSource) {
   return node.stats[source].total;
 }
 
@@ -68,7 +68,7 @@ export function getNextPathChildId(parentId: Id, currentId: Id) {
   return parentId ? `${parentId},${nextSegment}` : nextSegment;
 }
 
-export function findNearestExistingAncestorId(nodes: NormalTree, nodeId: Id): Id | null {
+export function findNearestExistingAncestorId(nodes: TreeStore, nodeId: Id): Id | null {
   let cursor: Id | null = nodeId;
 
   while (cursor !== null) {
@@ -82,11 +82,11 @@ export function findNearestExistingAncestorId(nodes: NormalTree, nodeId: Id): Id
   return null;
 }
 
-export function getNodeFen(nodes: NormalTree, id: Id, fallbackFen: string): string {
-  return nodes[id]?.move?.after || fallbackFen;
+export function getNodeFen(nodes: TreeStore, nodeId: Id, fallbackFen: string): string {
+  return nodes[nodeId]?.move?.after || fallbackFen;
 }
 
-export function pickPreferredNodeId(nodeIds: Id[], nodes: NormalTree): Id | undefined {
+export function pickPreferredNodeId(nodeIds: Id[], nodes: TreeStore): Id | undefined {
   if (!nodeIds.length) return undefined;
 
   const exploredNodeId = nodeIds.find((nodeId) => nodes[nodeId]?.childrenLoaded);
@@ -103,16 +103,16 @@ export function getParentPathId(nodeId: Id): Id | null {
   return nodeId.slice(0, lastComma);
 }
 
-export function getSiblingNodeIds(nodes: NormalTree, currentId: Id): Id[] {
+export function getSiblingNodeIds(nodes: TreeStore, currentId: Id): Id[] {
   const parentId = getParentPathId(currentId);
   if (parentId === null || parentId === currentId) return [];
   return nodes[parentId]?.children || [];
 }
 
-export function getTreeLinkFrequency(source: TreeNodeData, target: TreeNodeData): number {
+export function getTreeLinkFrequency(source: TreeViewNode, target: TreeViewNode): number {
   return source.total ? target.total / source.total : 0;
 }
 
-export function getNodeWinScore(node: TreeNodeData): number {
+export function getNodeWinScore(node: TreeViewNode): number {
   return node.total > 0 ? (node.white - node.black) / node.total : 0;
 }

@@ -1,6 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
-import { OpeningTotals, Id, NormalTree } from "@/shared/types";
+import { OpeningTotals, Id, TreeStore } from "@/shared/types";
 import { addNodesToTree } from "@/shared/lib/treeState";
 
 interface AddNodes {
@@ -16,7 +16,7 @@ interface SetNodeBoolean {
 const tree = createSlice({
   name: 'tree',
   initialState: {
-    nodes: {} as NormalTree,
+    nodes: {} as TreeStore,
   },
   reducers: {
     addNodes(state, action: PayloadAction<AddNodes>) {

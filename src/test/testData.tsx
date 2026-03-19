@@ -1,5 +1,5 @@
 import { Chess } from "chess.js";
-import { OpeningTotals, TreeNodeData } from "../shared/types";
+import { OpeningTotals, TreeViewNode } from "../shared/types";
 import { serializeMove } from "../shared/lib/chess";
 
 
@@ -53,7 +53,7 @@ export const openings: OpeningTotals = {
   ]
 };
 
-export const treeNode: TreeNodeData = {
+export const treeNode: TreeViewNode = {
   id: '',
   childrenLoaded: true,
   collapsed: false,

@@ -2,9 +2,9 @@ import { Id } from "./chess";
 import {
   getNextPathChildId,
   getPathIds,
-  NormalTree,
+  TreeStore,
   TreeMode,
-  TreeNodeData,
+  TreeViewNode,
   TreeSource,
   sourceGameCount,
 } from "./tree";
@@ -15,7 +15,7 @@ import {
  * When required ids are provided (focus path), those children are preserved
  * even if they would otherwise be pruned by the move limit.
  */
-export function limitTreeNodes(nodes: TreeNodeData[], moveLimit: number, requiredIds: Set<Id> = new Set()) {
+export function limitTreeNodes(nodes: TreeViewNode[], moveLimit: number, requiredIds: Set<Id> = new Set()) {
   if (moveLimit <= 0) return nodes;
 
   const maxMoves = Math.floor(moveLimit);
@@ -37,8 +37,8 @@ export function limitTreeNodes(nodes: TreeNodeData[], moveLimit: number, require
 /**
  * Arrange children so highest-frequency moves end up near the visual center.
  */
-export function orderTreeNodes(nodes: TreeNodeData[]) {
-  const orderedNodes: TreeNodeData[] = [];
+export function orderTreeNodes(nodes: TreeViewNode[]) {
+  const orderedNodes: TreeViewNode[] = [];
   let start = 0;
   let end = nodes.length - 1;
 
@@ -59,13 +59,13 @@ export function orderTreeNodes(nodes: TreeNodeData[]) {
  * Already-loaded nodes are always included so explored branches remain visible.
  */
 export function filterTreeNodes(
-  nodes: NormalTree,
-  id: Id,
+  nodes: TreeStore,
+  nodeId: Id,
   frequencyMin: number,
   parentGames: number,
   source: TreeSource,
 ) {
-  const node = nodes[id];
+  const node = nodes[nodeId];
   if (!node) return false;
   if (node.childrenLoaded) return true;
 
@@ -78,8 +78,8 @@ export function filterTreeNodes(
 /**
  * Build a non-recursive node used for one-ply leaf rendering.
  */
-export function buildShallowNode(nodes: NormalTree, id: Id, source: TreeSource): TreeNodeData | null {
-  const node = nodes[id];
+export function buildShallowNode(nodes: TreeStore, nodeId: Id, source: TreeSource): TreeViewNode | null {
+  const node = nodes[nodeId];
   if (!node) return null;
 
   const selectedStats = node.stats[source];
@@ -97,13 +97,13 @@ export function buildShallowNode(nodes: NormalTree, id: Id, source: TreeSource):
  * and visual ordering.
  */
 function buildCompareBranchChildren(
-  nodes: NormalTree,
-  id: Id,
+  nodes: TreeStore,
+  nodeId: Id,
   frequencyMin: number,
   moveLimit: number,
   source: TreeSource,
-): TreeNodeData[] {
-  const node = nodes[id];
+): TreeViewNode[] {
+  const node = nodes[nodeId];
   if (!node) return [];
 
   const parentGames = node.stats[source].total;
@@ -113,23 +113,23 @@ function buildCompareBranchChildren(
         ? buildCompareBranch(nodes, childId, frequencyMin, moveLimit, source)
         : null;
     })
-    .filter(Boolean) as TreeNodeData[];
+    .filter(Boolean) as TreeViewNode[];
 
   return orderTreeNodes(limitTreeNodes(children, moveLimit));
 }
 
 export function buildCompareBranch(
-  nodes: NormalTree,
-  id: Id,
+  nodes: TreeStore,
+  nodeId: Id,
   frequencyMin: number,
   moveLimit: number,
   source: TreeSource,
-): TreeNodeData | null {
-  const node = nodes[id];
+): TreeViewNode | null {
+  const node = nodes[nodeId];
   if (!node) return null;
 
   const selectedStats = node.stats[source];
-  const children = buildCompareBranchChildren(nodes, id, frequencyMin, moveLimit, source);
+  const children = buildCompareBranchChildren(nodes, nodeId, frequencyMin, moveLimit, source);
 
   return {
     ...node,
@@ -145,8 +145,8 @@ export function buildCompareBranch(
  * Recurses only on the active path and keeps off-path children shallow.
  */
 function buildFocusBranchChild(
-  nodes: NormalTree,
-  parentId: Id,
+  nodes: TreeStore,
+  parentNodeId: Id,
   childId: Id,
   frequencyMin: number,
   moveLimit: number,
@@ -155,13 +155,13 @@ function buildFocusBranchChild(
   currentPathIds: Set<Id>,
   parentGames: number,
   nextPathChildId: Id | null,
-): TreeNodeData | null {
+): TreeViewNode | null {
   const isPathChild = childId === nextPathChildId || currentPathIds.has(childId);
   const shouldInclude = isPathChild || filterTreeNodes(nodes, childId, frequencyMin, parentGames, source);
   if (!shouldInclude) return null;
 
   // At the current node, render only one ply of children to keep focus mode compact.
-  if (parentId === currentId) {
+  if (parentNodeId === currentId) {
     return buildShallowNode(nodes, childId, source);
   }
 
@@ -180,18 +180,18 @@ function buildFocusBranchChild(
  * due to partial loading, and protects that path child from move-limit pruning.
  */
 function buildFocusBranchChildren(
-  nodes: NormalTree,
-  id: Id,
+  nodes: TreeStore,
+  nodeId: Id,
   frequencyMin: number,
   moveLimit: number,
   source: TreeSource,
   currentId: Id,
   currentPathIds: Set<Id>,
-): TreeNodeData[] {
-  const node = nodes[id];
-  if (!node || !currentPathIds.has(id)) return [];
+): TreeViewNode[] {
+  const node = nodes[nodeId];
+  if (!node || !currentPathIds.has(nodeId)) return [];
 
-  const nextPathChildId = getNextPathChildId(id, currentId);
+  const nextPathChildId = getNextPathChildId(nodeId, currentId);
 
   // Include all loaded children plus the next path child to prevent path drop-off
   // when parent/child segments load asynchronously.
@@ -210,7 +210,7 @@ function buildFocusBranchChildren(
   const children = [...candidateChildIds]
     .map((childId) => buildFocusBranchChild(
       nodes,
-      id,
+      nodeId,
       childId,
       frequencyMin,
       moveLimit,
@@ -220,25 +220,25 @@ function buildFocusBranchChildren(
       parentGames,
       nextPathChildId,
     ))
-    .filter(Boolean) as TreeNodeData[];
+    .filter(Boolean) as TreeViewNode[];
 
   return orderTreeNodes(limitTreeNodes(children, moveLimit, requiredChildIds));
 }
 
 export function buildFocusBranch(
-  nodes: NormalTree,
-  id: Id,
+  nodes: TreeStore,
+  nodeId: Id,
   frequencyMin: number,
   moveLimit: number,
   source: TreeSource,
   currentId: Id,
   currentPathIds: Set<Id>,
-): TreeNodeData | null {
-  const node = nodes[id];
+): TreeViewNode | null {
+  const node = nodes[nodeId];
   if (!node) return null;
 
   const selectedStats = node.stats[source];
-  const children = buildFocusBranchChildren(nodes, id, frequencyMin, moveLimit, source, currentId, currentPathIds);
+  const children = buildFocusBranchChildren(nodes, nodeId, frequencyMin, moveLimit, source, currentId, currentPathIds);
 
   return {
     ...node,
@@ -256,18 +256,18 @@ export function buildFocusBranch(
  * only when needed.
  */
 export function treeBuild(
-  nodes: NormalTree,
-  id: Id,
+  nodes: TreeStore,
+  nodeId: Id,
   frequencyMin: number,
   moveLimit: number,
   source: TreeSource,
   mode: TreeMode,
   currentId: Id,
-): TreeNodeData | null {
+): TreeViewNode | null {
   if (mode === "focus") {
     const currentPathIds = getPathIds(currentId);
-    return buildFocusBranch(nodes, id, frequencyMin, moveLimit, source, currentId, currentPathIds);
+    return buildFocusBranch(nodes, nodeId, frequencyMin, moveLimit, source, currentId, currentPathIds);
   }
 
-  return buildCompareBranch(nodes, id, frequencyMin, moveLimit, source);
+  return buildCompareBranch(nodes, nodeId, frequencyMin, moveLimit, source);
 }

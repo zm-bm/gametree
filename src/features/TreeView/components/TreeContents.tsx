@@ -1,13 +1,13 @@
 import React, { useMemo } from "react";
 import { HierarchyPointNode } from "d3-hierarchy";
-import { TreeNodeData } from "@/shared/types";
+import { TreeViewNode } from "@/shared/types";
 
 import { TreeLink } from "./TreeLink";
 import { TreeNode } from './TreeNode';
 import { useAnimatedTreeLayout } from "../hooks";
 
 interface Props {
-  tree: HierarchyPointNode<TreeNodeData>,
+  tree: HierarchyPointNode<TreeViewNode>,
   minimap?: boolean,
 }
 

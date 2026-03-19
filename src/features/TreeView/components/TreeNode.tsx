@@ -10,7 +10,7 @@ import { cn } from "@/shared/lib/cn";
 import { RootState, useAppDispatch } from "@/store";
 import { selectCurrentVisibleId } from "@/store/selectors";
 import { nav, tree } from "@/store/slices";
-import { TreeNodeData } from "@/shared/types";
+import { TreeViewNode } from "@/shared/types";
 import { TreeDimensionsContext } from "../context/TreeDimensionsContext";
 import { TreeNodeText } from "./TreeNodeText";
 import { TreeNodeButtons } from "./TreeNodeButtons";
@@ -19,7 +19,7 @@ import { TreeNodeLoadingIndicator } from "./TreeNodeLoadingIndicator";
 const AnimatedGroup = animated(Group);
 
 interface Props {
-  node: HierarchyPointNode<TreeNodeData>;
+  node: HierarchyPointNode<TreeViewNode>;
   x: FluidValue<number>;
   y: FluidValue<number>;
   minimap?: boolean;
