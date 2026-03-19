@@ -8,7 +8,7 @@ import { FluidValue } from '@react-spring/shared';
 
 import { cn } from "@/shared/lib/cn";
 import { RootState, useAppDispatch } from "@/store";
-import { selectCurrentId } from "@/store/selectors";
+import { selectCurrentVisibleId } from "@/store/selectors";
 import { nav, tree } from "@/store/slices";
 import { TreeNodeData } from "@/shared/types";
 import { TreeDimensionsContext } from "../context/TreeDimensionsContext";
@@ -36,7 +36,7 @@ export const TreeNode = ({
 
   const dispatch = useAppDispatch();
   const { fontSize, nodeRadius } = useContext(TreeDimensionsContext);
-  const currentNodeId = useSelector((s: RootState) => selectCurrentId(s));
+  const currentNodeId = useSelector((s: RootState) => selectCurrentVisibleId(s));
   const [hovered, setHovered] = useState(false);
   
   const nodeProps = useMemo(() => {

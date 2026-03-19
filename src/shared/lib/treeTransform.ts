@@ -71,6 +71,19 @@ function getPathIds(currentId: Id) {
   return new Set(pathIds);
 }
 
+function getNextPathChildId(parentId: Id, currentId: Id) {
+  if (parentId === currentId) return null;
+
+  const prefix = parentId ? `${parentId},` : "";
+  if (!currentId.startsWith(prefix)) return null;
+
+  const remaining = currentId.slice(prefix.length);
+  if (!remaining) return null;
+
+  const nextSegment = remaining.split(",")[0];
+  return parentId ? `${parentId},${nextSegment}` : nextSegment;
+}
+
 function buildShallowNode(nodes: NormalTree, id: Id, source: TreeSource): TreeNodeData | null {
   const node = nodes[id];
   if (!node) return null;
@@ -130,14 +143,23 @@ function buildFocusTree(
   const selectedStats = node.stats[source];
   const numGames = selectedStats.total;
   const isPathNode = currentPathIds.has(id);
+  const nextPathChildId = getNextPathChildId(id, currentId);
 
   let children: TreeNodeData[] = [];
   if (isPathNode) {
-    const requiredChildIds = new Set(node.children.filter((childId) => currentPathIds.has(childId)));
+    const candidateChildIds = new Set(node.children);
+    if (nextPathChildId) {
+      candidateChildIds.add(nextPathChildId);
+    }
 
-    children = node.children
+    const requiredChildIds = new Set<Id>();
+    if (nextPathChildId) {
+      requiredChildIds.add(nextPathChildId);
+    }
+
+    children = [...candidateChildIds]
       .map((childId) => {
-        const isPathChild = currentPathIds.has(childId);
+        const isPathChild = childId === nextPathChildId || currentPathIds.has(childId);
         const shouldInclude = isPathChild || filterTreeNodes(nodes, childId, frequencyMin, numGames, source);
         if (!shouldInclude) return null;
 

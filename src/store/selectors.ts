@@ -62,7 +62,26 @@ export const selectTreeNodes = createSelector(
 
 export const selectCurrentNode = createSelector(
   [selectTreeNodes, selectCurrentId],
-  (nodes, nodeId) => nodes ? nodes.find(node => node.data.id === nodeId) : null,
+  (nodes, nodeId) => {
+    if (!nodes?.length) return null;
+
+    const exactMatch = nodes.find((node) => node.data.id === nodeId);
+    if (exactMatch) return exactMatch;
+
+    let ancestorId = nodeId;
+    while (ancestorId.includes(',')) {
+      ancestorId = ancestorId.slice(0, ancestorId.lastIndexOf(','));
+      const ancestorMatch = nodes.find((node) => node.data.id === ancestorId);
+      if (ancestorMatch) return ancestorMatch;
+    }
+
+    return nodes.find((node) => node.data.id === '') || null;
+  },
+);
+
+export const selectCurrentVisibleId = createSelector(
+  [selectCurrentNode, selectCurrentId],
+  (currentNode, currentId) => currentNode?.data.id || currentId,
 );
 
 export const selectCurrentNodeData = createSelector(
