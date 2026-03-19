@@ -22,11 +22,6 @@ npm run build
 ## Roadmap
 
 - treeview
-    - tree options
-        - add tree option to color edges/win% as either:
-            - relative to parent branch
-            - absolute against 50/50 baseline
-        - add 'top n moves' option to limit number of child nodes shown per parent
     - focus mode / compare mode
         - add `Focus` vs `Compare` mode radio buttons in tree options
         - show `bookmark` button in both modes
