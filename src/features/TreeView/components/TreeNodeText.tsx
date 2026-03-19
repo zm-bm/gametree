@@ -45,7 +45,6 @@ export const TreeNodeText  = ({ move, isPlaceholder, fontSize }: Props) => {
       fontWeight={600}
       fontSize={fontSize}
       textAnchor="middle"
-      dominantBaseline="text-top"
       style={textStyle}
     >
       {symbol && (
