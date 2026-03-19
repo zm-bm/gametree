@@ -4,6 +4,15 @@ function sourceGameCount(node: NormalNodeData, source: TreeSource) {
   return node.stats[source].total;
 }
 
+function limitTreeNodes(nodes: TreeNodeData[], moveLimit: number) {
+  if (moveLimit <= 0) return nodes;
+
+  const maxMoves = Math.floor(moveLimit);
+  return [...nodes]
+    .sort((a, b) => b.total - a.total)
+    .slice(0, maxMoves);
+}
+
 // return tree nodes with most frequent moves in the middle
 function orderTreeNodes(nodes: TreeNodeData[]) {
   const result = [];
@@ -44,6 +53,7 @@ export function buildTree(
   nodes: NormalTree,
   id: Id,
   frequencyMin: number,
+  moveLimit: number,
   source: TreeSource,
 ): TreeNodeData | null {
   const node = nodes[id];
@@ -53,9 +63,10 @@ export function buildTree(
   const numGames = selectedStats.total;
   let children = node.children.map(childId => {
     return filterTreeNodes(nodes, childId, frequencyMin, numGames, source)
-      ? buildTree(nodes, childId, frequencyMin, source)
+      ? buildTree(nodes, childId, frequencyMin, moveLimit, source)
       : null;
   }).filter(Boolean) as TreeNodeData[];
+  children = limitTreeNodes(children, moveLimit);
   children = orderTreeNodes(children);
 
   return {

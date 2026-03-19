@@ -30,10 +30,10 @@ export const selectEngineData = (s: RootState) => s.engine;
 export const selectEngineOutput = (s: RootState) => selectEngineData(s).output;
 
 export const selectTreeRoot = createSelector(
-  [selectTreeNodeMap, selectTreeMinFrequencyPct, selectTreeSource],
-  (nodes, minFrequencyPct, source) => {
+  [selectTreeNodeMap, selectTreeMinFrequencyPct, selectTreeMoveLimit, selectTreeSource],
+  (nodes, minFrequencyPct, moveLimit, source) => {
     const rootId = '';
-    return buildTree(nodes, rootId, minFrequencyPct, source);
+    return buildTree(nodes, rootId, minFrequencyPct, moveLimit, source);
   }
 );
 
