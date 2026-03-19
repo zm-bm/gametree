@@ -2,13 +2,14 @@ import { useCallback, useContext, useMemo } from "react";
 import { HierarchyPointLink } from "@visx/hierarchy/lib/types";
 import { animated, to } from "react-spring";
 import { FluidValue } from '@react-spring/shared';
+import { useSelector } from "react-redux";
 
 import { cn } from "@/shared/lib/cn";
+import { RootState } from "@/store";
+import { selectBoardOrientation, selectTreeWinRateComparison } from "@/store/selectors";
 import { TreeNodeData } from "@/shared/types";
 import { TreeDimensionsContext } from "../context/TreeDimensionsContext";
 import { COLORS, colorScale } from "../lib/colors";
-
-const AnimatedPath = animated.path;
 
 function buildTreeLinkPath(
   sourceX: number,
@@ -49,9 +50,11 @@ function getTreeLinkFrequency(
   source: TreeNodeData,
   target: TreeNodeData,
 ): number {
-  const sourceGames = source.total;
-  const targetGames = target.total;
-  return sourceGames ? (targetGames / sourceGames) : 0;
+  return source.total ? (target.total / source.total) : 0;
+}
+
+function getNodeWinScore(node: TreeNodeData): number {
+  return node.total > 0 ? (node.white - node.black) / node.total : 0;
 }
 
 interface Props {
@@ -72,6 +75,8 @@ export const TreeLink = ({
   minimap = false,
 }: Props) => {
   const { nodeRadius } = useContext(TreeDimensionsContext);
+  const winRateComparison = useSelector((s: RootState) => selectTreeWinRateComparison(s));
+  const boardOrientation = useSelector((s: RootState) => selectBoardOrientation(s));
   
   const pathGenerator = useCallback((
     sourceX: number, 
@@ -86,13 +91,20 @@ export const TreeLink = ({
 
   const linkFill = useMemo(() => {
     if (link.source.data.collapsed) return COLORS.placeholder;
-    const { white, draws, black } = link.target.data;
-    const games = white + draws + black;
-    return (games === 0) ? COLORS.draw : colorScale((white - black) / games);
-  }, [link.source.data, link.target.data]);
+
+    const orientationFactor = boardOrientation === 'white' ? 1 : -1;
+    const targetScore = getNodeWinScore(link.target.data) * orientationFactor;
+    if (winRateComparison === "absolute") {
+      return colorScale(targetScore);
+    }
+
+    const sourceScore = getNodeWinScore(link.source.data) * orientationFactor;
+    const relativeScore = (targetScore - sourceScore) / 2;
+    return colorScale(relativeScore);
+  }, [link.source.data, link.target.data, winRateComparison, boardOrientation]);
 
   return (
-    <AnimatedPath
+    <animated.path
       className={cn(
         'stroke-[0.75] stroke-lightmode-900/60 dark:stroke-white', {
         ['stroke-1']: minimap,

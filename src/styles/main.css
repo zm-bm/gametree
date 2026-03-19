@@ -48,6 +48,26 @@
     .interactive-sidebar { @apply hover:bg-lightmode-100/5 dark:hover:bg-darkmode-100/5; }
     .interactive-treeview { @apply hover:bg-lightmode-900/10 dark:hover:bg-darkmode-100/10; }
 
+    .tree-number-input {
+        @apply appearance-none rounded-md;
+        @apply bg-lightmode-300/65 dark:bg-darkmode-700;
+        @apply text-lightmode-900 dark:text-darkmode-100;
+        @apply ring-1 ring-lightmode-700/25 dark:ring-darkmode-100/20;
+        @apply shadow-[inset_0_1px_0_rgba(255,255,255,0.45)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.05)];
+        @apply focus:outline-none focus:ring-2 focus:ring-sky-500/45 dark:focus:ring-sky-400/35;
+        @apply transition-colors;
+    }
+
+    .tree-number-input::-webkit-outer-spin-button,
+    .tree-number-input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    .tree-number-input[type='number'] {
+        -moz-appearance: textfield;
+    }
+
     /* layout shells */
 
     .gt-sidebar {
