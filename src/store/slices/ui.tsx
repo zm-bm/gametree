@@ -18,7 +18,7 @@ const ui = createSlice({
     treeSource: 'otb' as TreeSource,
     treeMinFrequencyPct: 2 as number,
     treeMoveLimit: 0 as number,
-    treeWinRateComparison: 'position' as TreeWinRateComparison,
+    treeWinRateComparison: 'relative' as TreeWinRateComparison,
     // engine state / options
     engineRunning: false as boolean,
     engineHash: 16 as number,

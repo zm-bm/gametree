@@ -45,8 +45,8 @@ npm run build
         - copy line behavior:
             - action is based on the clicked node
             - add tree option for copy format: `FEN`, `PGN` (line up to node), `UCI position` command
-    - update edge color perspective to follow board orientation (white/black)
     - bug: node buttons can be sticky and fail to disappear until next hover
+    - tree node buttons should scale base on zoom level to maintain consistent physical size on screen
     - hotkeys + hotkey help
         - add hotkeys for:
             - tree navigation (up/down/left/right or vim keys)

@@ -48,12 +48,12 @@ export const TreeOptionsOverlay = () => {
     dispatch(ui.actions.setTreeMoveLimit(Number.isNaN(parsed) ? 0 : Math.max(0, parsed)));
   }, [dispatch]);
 
-  const setWinRateComparisonPosition = useCallback(() => {
-    dispatch(ui.actions.setTreeWinRateComparison("position"));
+  const setWinRateComparisonRelative = useCallback(() => {
+    dispatch(ui.actions.setTreeWinRateComparison("relative"));
   }, [dispatch]);
 
-  const setWinRateComparisonBaseline = useCallback(() => {
-    dispatch(ui.actions.setTreeWinRateComparison("baseline"));
+  const setWinRateComparisonAbsolute = useCallback(() => {
+    dispatch(ui.actions.setTreeWinRateComparison("absolute"));
   }, [dispatch]);
 
   return (
@@ -101,28 +101,31 @@ export const TreeOptionsOverlay = () => {
 
       <div>
         <div className={cn(sectionLabel, 'pb-1')}>Win Rate Comparison</div>
-        <label className={cn(dataSourceLabel, winRateComparison === "position" && dataSourceActive)}>
+        <label className={cn(dataSourceLabel, winRateComparison === "relative" && dataSourceActive)}>
           <input
             type="radio"
             name="win-rate-comparison"
             className={cn(radioInput)}
-            checked={winRateComparison === "position"}
+            checked={winRateComparison === "relative"}
             onKeyDown={preventDefault}
-            onChange={setWinRateComparisonPosition}
+            onChange={setWinRateComparisonRelative}
           />
-          <span>Position based</span>
+          <span>Relative</span>
         </label>
-        <label className={cn(dataSourceLabel, winRateComparison === "baseline" && dataSourceActive)}>
+        <label className={cn(dataSourceLabel, winRateComparison === "absolute" && dataSourceActive)}>
           <input
             type="radio"
             name="win-rate-comparison"
             className={cn(radioInput)}
-            checked={winRateComparison === "baseline"}
+            checked={winRateComparison === "absolute"}
             onKeyDown={preventDefault}
-            onChange={setWinRateComparisonBaseline}
+            onChange={setWinRateComparisonAbsolute}
           />
-          <span>50/50 baseline</span>
+          <span>Absolute</span>
         </label>
+        <div className={cn("mt-1", scaleLabel)}>
+          Edge color mode: Relative vs parent, Absolute vs 50/50.
+        </div>
       </div>
 
       <div>
