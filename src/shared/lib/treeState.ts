@@ -1,20 +1,15 @@
 import { Chess, DEFAULT_POSITION, Square } from "chess.js";
 
-import { OpeningMove, OpeningTotals, NodeStats, NormalNodeData, NormalTree, Id, SourceStats } from "@/shared/types";
+import { OpeningMove, OpeningTotals, NormalNodeData, NormalTree, Id, toNodeStats } from "@/shared/types";
 import { serializeMove } from "./chess";
 import { getChildId, getMoveFromId, getParentId } from "./id";
-
-const mapNodeStats = (input: { otb: SourceStats; online: SourceStats }): NodeStats => ({
-  otb: input.otb,
-  online: input.online,
-});
 
 export function buildNodes(
   nodes: NormalTree,
   nodeId: Id,
   openingData: OpeningTotals,
 ) {
-  const rootStats = mapNodeStats(openingData);
+  const rootStats = toNodeStats(openingData);
 
   let node = nodes[nodeId];
 
@@ -65,7 +60,7 @@ export function buildChildNodes(
       children.push({
         ...existingNode,
         move: existingNode.move || childMove,
-        stats: mapNodeStats(moveData),
+        stats: toNodeStats(moveData),
       });
       continue;
     }
@@ -76,7 +71,7 @@ export function buildChildNodes(
       collapsed: false,
       loading: false,
       move: childMove,
-      stats: mapNodeStats(moveData),
+      stats: toNodeStats(moveData),
       children: [],
     });
   }

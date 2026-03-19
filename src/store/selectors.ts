@@ -2,7 +2,7 @@ import { createSelector } from "@reduxjs/toolkit";
 import { hierarchy } from "@visx/hierarchy";
 
 import { RootState } from "@/store";
-import { buildTree } from "@/shared/lib/treeTransform";
+import { treeBuild } from "@/shared/types";
 
 // UI selectors
 export const selectUI = (s: RootState) => s.ui;
@@ -46,7 +46,7 @@ export const selectTreeRoot = createSelector(
   ],
   (nodes, minFrequencyPct, moveLimit, source, mode, currentId) => {
     const rootId = '';
-    return buildTree(nodes, rootId, minFrequencyPct, moveLimit, source, mode, currentId);
+    return treeBuild(nodes, rootId, minFrequencyPct, moveLimit, source, mode, currentId);
   }
 );
 

@@ -31,6 +31,13 @@ export type TreeNodeData = NodeData & TreeNodeStats & {
 
 export type Tree = Record<Id, TreeNodeData>;
 
+export function toNodeStats(input: { otb: SourceStats; online: SourceStats }): NodeStats {
+  return {
+    otb: input.otb,
+    online: input.online,
+  };
+}
+
 export function sourceGameCount(node: NormalNodeData, source: TreeSource) {
   return node.stats[source].total;
 }
@@ -73,4 +80,39 @@ export function findNearestExistingAncestorId(nodes: NormalTree, nodeId: Id): Id
   }
 
   return null;
+}
+
+export function getNodeFen(nodes: NormalTree, id: Id, fallbackFen: string): string {
+  return nodes[id]?.move?.after || fallbackFen;
+}
+
+export function pickPreferredNodeId(nodeIds: Id[], nodes: NormalTree): Id | undefined {
+  if (!nodeIds.length) return undefined;
+
+  const exploredNodeId = nodeIds.find((nodeId) => nodes[nodeId]?.childrenLoaded);
+  if (exploredNodeId) return exploredNodeId;
+
+  return nodeIds.length % 2
+    ? nodeIds[Math.floor(nodeIds.length / 2)]
+    : nodeIds[Math.floor(nodeIds.length / 2 - 1)];
+}
+
+export function getParentPathId(nodeId: Id): Id | null {
+  const lastComma = nodeId.lastIndexOf(",");
+  if (lastComma === -1) return nodeId ? "" : null;
+  return nodeId.slice(0, lastComma);
+}
+
+export function getSiblingNodeIds(nodes: NormalTree, currentId: Id): Id[] {
+  const parentId = getParentPathId(currentId);
+  if (parentId === null || parentId === currentId) return [];
+  return nodes[parentId]?.children || [];
+}
+
+export function getTreeLinkFrequency(source: TreeNodeData, target: TreeNodeData): number {
+  return source.total ? target.total / source.total : 0;
+}
+
+export function getNodeWinScore(node: TreeNodeData): number {
+  return node.total > 0 ? (node.white - node.black) / node.total : 0;
 }

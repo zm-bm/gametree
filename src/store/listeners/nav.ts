@@ -6,15 +6,11 @@ import { startAppListening } from "@/store/listener";
 import { nav, tree, ui } from "@/store/slices";
 import { selectCurrentId, selectCurrentNode, selectTreeMode, selectTreeNodeMap } from "@/store/selectors";
 import { getChildId, getParentId } from "@/shared/lib/id";
-import { Id, Move, NormalTree } from "@/shared/types";
+import { Id, Move, getNodeFen, getSiblingNodeIds, pickPreferredNodeId } from "@/shared/types";
 
 type NavResult =
   | { id: Id; fen: string }
   | { expandId: Id };
-
-const getNodeFen = (nodes: NormalTree, id: Id) => {
-  return nodes[id]?.move?.after || DEFAULT_POSITION;
-};
 
 // Determine the target position and node based on the navigation action and current state
 const getNavTarget = (action: UnknownAction, state: RootState): NavResult | undefined => {
@@ -38,7 +34,7 @@ const getNavTarget = (action: UnknownAction, state: RootState): NavResult | unde
       // Navigating to a specific ID should only update the position if that ID exists in the tree
       const id = action.payload as Id;
       if (!nodes[id]) return undefined;
-      const fen = getNodeFen(nodes, id);
+      const fen = getNodeFen(nodes, id, DEFAULT_POSITION);
       return { id, fen };
     }
     
@@ -46,7 +42,7 @@ const getNavTarget = (action: UnknownAction, state: RootState): NavResult | unde
       // Navigating up moves to the parent node if it exists
       const id = (currentNode?.parent?.data.id as Id | undefined) ?? getParentId(currentId);
       if (id === undefined || id === null || id === currentId || !nodes[id]) return undefined;
-      const fen = getNodeFen(nodes, id);
+      const fen = getNodeFen(nodes, id, DEFAULT_POSITION);
       return { id, fen };
     }
     
@@ -65,24 +61,17 @@ const getNavTarget = (action: UnknownAction, state: RootState): NavResult | unde
       let id: Id | undefined;
       const visibleChildren = currentNode?.children;
       if (visibleChildren?.length) {
-        const exploredChild = visibleChildren.find((child) => child.data.childrenLoaded);
-        const middleChild = visibleChildren.length % 2
-          ? visibleChildren[Math.floor(visibleChildren.length / 2)]
-          : visibleChildren[Math.floor(visibleChildren.length / 2 - 1)];
-        id = (exploredChild || middleChild)?.data.id;
+        const childIds = visibleChildren.map((child) => child.data.id);
+        id = pickPreferredNodeId(childIds, nodes);
       } else {
         const childIds = currentNodeData?.children || [];
         if (!childIds.length) return undefined;
 
-        const exploredChildId = childIds.find((childId) => nodes[childId]?.childrenLoaded);
-        const middleChildId = childIds.length % 2
-          ? childIds[Math.floor(childIds.length / 2)]
-          : childIds[Math.floor(childIds.length / 2 - 1)];
-        id = exploredChildId || middleChildId;
+        id = pickPreferredNodeId(childIds, nodes);
       }
 
       if (id === undefined || !nodes[id]) return undefined;
-      const fen = getNodeFen(nodes, id);
+      const fen = getNodeFen(nodes, id, DEFAULT_POSITION);
       return { id, fen };
     }
     
@@ -91,11 +80,7 @@ const getNavTarget = (action: UnknownAction, state: RootState): NavResult | unde
       // Navigating to the next/previous sibling moves to the adjacent node at the same level if it exists
       const siblings = currentNode?.parent?.children?.length
         ? currentNode.parent.children.map((sibling) => sibling.data.id)
-        : (() => {
-          const parentId = getParentId(currentId);
-          if (parentId === null || parentId === currentId) return [] as Id[];
-          return nodes[parentId]?.children || [];
-        })();
+        : getSiblingNodeIds(nodes, currentId);
 
       if (!siblings.length) return undefined;
 
@@ -109,7 +94,7 @@ const getNavTarget = (action: UnknownAction, state: RootState): NavResult | unde
       
       const id = siblings[siblingIndex];
       if (!nodes[id]) return undefined;
-      const fen = getNodeFen(nodes, id);
+      const fen = getNodeFen(nodes, id, DEFAULT_POSITION);
       return { id, fen };
     }
     

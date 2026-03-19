@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 import { cn } from "@/shared/lib/cn";
 import { RootState } from "@/store";
 import { selectBoardOrientation, selectTreeWinRateComparison } from "@/store/selectors";
-import { TreeNodeData } from "@/shared/types";
+import { TreeNodeData, getNodeWinScore, getTreeLinkFrequency } from "@/shared/types";
 import { TreeDimensionsContext } from "../context/TreeDimensionsContext";
 import { COLORS, colorScale } from "../lib/colors";
 
@@ -44,17 +44,6 @@ function getTreeLinkWidth(
   const maxWidth = nodeRadius * 2 - 8;
   const scaledWidth = (maxWidth - minWidth) * frequency + minWidth;
   return Math.min(scaledWidth, maxWidth);
-}
-
-function getTreeLinkFrequency(
-  source: TreeNodeData,
-  target: TreeNodeData,
-): number {
-  return source.total ? (target.total / source.total) : 0;
-}
-
-function getNodeWinScore(node: TreeNodeData): number {
-  return node.total > 0 ? (node.white - node.black) / node.total : 0;
 }
 
 interface Props {
