@@ -1,9 +1,8 @@
 import { isAnyOf, isRejectedWithValue } from "@reduxjs/toolkit";
 import { DEFAULT_POSITION } from "chess.js";
 
-import { RootState } from "@/store";
 import { createSkeletonGateRegistry } from "@/shared/lib/skeletonGate";
-import { getParentId } from "@/shared/lib/id";
+import { findNearestExistingAncestorId } from "@/shared/types";
 import { selectCurrentId, selectCurrentNodeData, selectCurrentVisibleId, selectTreeMode } from "@/store/selectors";
 import { startAppListening } from "../listener";
 import { getOpeningsHttpStatus, openingsApi } from "../openingsApi";
@@ -13,24 +12,6 @@ const gates = createSkeletonGateRegistry({
   showAfterMs: 150,
   minVisibleMs: 250,
 });
-
-const findNearestExistingAncestorId = (
-  nodes: RootState["tree"]["nodes"],
-  nodeId: string,
-) => {
-  let cursor: string | null = nodeId;
-
-  while (cursor !== null) {
-    if (nodes[cursor]) return cursor;
-    if (cursor === "") return null;
-
-    const parentId = getParentId(cursor);
-    if (parentId === null || parentId === cursor) return null;
-    cursor = parentId;
-  }
-
-  return null;
-};
 
 // Handle pending requests by starting the gate to show the loading state
 startAppListening({

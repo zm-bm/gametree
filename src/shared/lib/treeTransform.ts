@@ -1,8 +1,13 @@
-import { Id, NormalNodeData, NormalTree, TreeMode, TreeNodeData, TreeSource } from "@/shared/types";
-
-function sourceGameCount(node: NormalNodeData, source: TreeSource) {
-  return node.stats[source].total;
-}
+import {
+  Id,
+  NormalTree,
+  TreeMode,
+  TreeNodeData,
+  TreeSource,
+  getNextPathChildId,
+  getPathIds,
+  sourceGameCount,
+} from "@/shared/types";
 
 function limitTreeNodes(nodes: TreeNodeData[], moveLimit: number, requiredIds: Set<Id> = new Set()) {
   if (moveLimit <= 0) return nodes;
@@ -56,32 +61,6 @@ function filterTreeNodes(
 
   const frequency = sourceGameCount(node, source) / parentGames * 100;
   return frequency >= frequencyMin;
-}
-
-function getPathIds(currentId: Id) {
-  const pathIds: Id[] = [""];
-  const segments = currentId.split(",").filter(Boolean);
-
-  let cursor = "";
-  for (const segment of segments) {
-    cursor = cursor ? `${cursor},${segment}` : segment;
-    pathIds.push(cursor);
-  }
-
-  return new Set(pathIds);
-}
-
-function getNextPathChildId(parentId: Id, currentId: Id) {
-  if (parentId === currentId) return null;
-
-  const prefix = parentId ? `${parentId},` : "";
-  if (!currentId.startsWith(prefix)) return null;
-
-  const remaining = currentId.slice(prefix.length);
-  if (!remaining) return null;
-
-  const nextSegment = remaining.split(",")[0];
-  return parentId ? `${parentId},${nextSegment}` : nextSegment;
 }
 
 function buildShallowNode(nodes: NormalTree, id: Id, source: TreeSource): TreeNodeData | null {
