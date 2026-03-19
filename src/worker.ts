@@ -1,5 +1,5 @@
-import 'stockfish/src/stockfish-nnue-16.wasm?init';
-import Stockfish from 'stockfish/src/stockfish-nnue-16.js?worker'
+import 'stockfish/bin/stockfish-18-lite.wasm?init';
+import Stockfish from 'stockfish/bin/stockfish-18-lite.js?worker'
 
 import { store } from './store';
 import { engine } from './store/slices';
