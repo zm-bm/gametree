@@ -17,6 +17,7 @@ export type Move = {
 export type Id = string;
 export type MovePath = Move[];
 export type TreeSource = 'otb' | 'online';
+export type TreeMode = 'focus' | 'compare';
 export type TreeWinRateComparison = 'relative' | 'absolute';
 
 export type OpeningBookEntry = {

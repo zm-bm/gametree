@@ -11,6 +11,7 @@ export const selectHoverId = (s: RootState) => selectUI(s).hoverId;
 export const selectBoardFen = (s: RootState) => selectUI(s).boardFen;
 export const selectBoardOrientation = (s: RootState) => selectUI(s).boardOrientation;
 export const selectBoardPromotionTarget = (s: RootState) => selectUI(s).boardPromotionTarget;
+export const selectTreeMode = (s: RootState) => selectUI(s).treeMode;
 export const selectTreeSource = (s: RootState) => selectUI(s).treeSource;
 export const selectTreeMinFrequencyPct = (s: RootState) => selectUI(s).treeMinFrequencyPct;
 export const selectTreeMoveLimit = (s: RootState) => selectUI(s).treeMoveLimit;
