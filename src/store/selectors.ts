@@ -30,11 +30,23 @@ export const selectTreeNodeMap = (s: RootState) => selectTreeState(s).nodes;
 export const selectEngineData = (s: RootState) => s.engine;
 export const selectEngineOutput = (s: RootState) => selectEngineData(s).output;
 
+const selectFocusCurrentId = createSelector(
+  [selectTreeMode, selectCurrentId],
+  (mode, currentId) => mode === "focus" ? currentId : "",
+);
+
 export const selectTreeRoot = createSelector(
-  [selectTreeNodeMap, selectTreeMinFrequencyPct, selectTreeMoveLimit, selectTreeSource],
-  (nodes, minFrequencyPct, moveLimit, source) => {
+  [
+    selectTreeNodeMap,
+    selectTreeMinFrequencyPct,
+    selectTreeMoveLimit,
+    selectTreeSource,
+    selectTreeMode,
+    selectFocusCurrentId,
+  ],
+  (nodes, minFrequencyPct, moveLimit, source, mode, currentId) => {
     const rootId = '';
-    return buildTree(nodes, rootId, minFrequencyPct, moveLimit, source);
+    return buildTree(nodes, rootId, minFrequencyPct, moveLimit, source, mode, currentId);
   }
 );
 
