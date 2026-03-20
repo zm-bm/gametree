@@ -20,8 +20,8 @@ const AnimatedGroup = animated(Group);
 
 interface Props {
   node: HierarchyPointNode<TreeViewNode>;
-  x: FluidValue<number>;
-  y: FluidValue<number>;
+  x: FluidValue<number> | number;
+  y: FluidValue<number> | number;
   minimap?: boolean;
 }
 

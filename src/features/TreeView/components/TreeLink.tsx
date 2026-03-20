@@ -48,10 +48,10 @@ function getTreeLinkWidth(
 
 interface Props {
   link: HierarchyPointLink<TreeViewNode>;
-  sourceX: FluidValue<number>;
-  sourceY: FluidValue<number>;
-  targetX: FluidValue<number>;
-  targetY: FluidValue<number>;
+  sourceX: FluidValue<number> | number;
+  sourceY: FluidValue<number> | number;
+  targetX: FluidValue<number> | number;
+  targetY: FluidValue<number> | number;
   minimap?: boolean;
 };
 
