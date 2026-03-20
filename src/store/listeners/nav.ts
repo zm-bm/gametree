@@ -4,9 +4,9 @@ import { DEFAULT_POSITION } from "chess.js";
 import { RootState } from "@/store";
 import { startAppListening } from "@/store/listener";
 import { nav, tree, ui } from "@/store/slices";
-import { selectCurrentId, selectCurrentNode, selectCurrentNodeData, selectTreeNodeMap } from "@/store/selectors";
-import { getChildId } from "@/shared/lib/id";
-import { Id, Move } from "@/shared/types";
+import { selectCurrentId, selectCurrentNode, selectTreeMode, selectTreeNodeMap } from "@/store/selectors";
+import { getChildId, getParentId } from "@/shared/lib/id";
+import { Id, Move, getNodeFen, getSiblingNodeIds, pickPreferredNodeId } from "@/shared/types";
 
 type NavResult =
   | { id: Id; fen: string }
@@ -16,8 +16,9 @@ type NavResult =
 const getNavTarget = (action: UnknownAction, state: RootState): NavResult | undefined => {
   const currentId = selectCurrentId(state);
   const currentNode = selectCurrentNode(state);
-  const currentNodeData = selectCurrentNodeData(state);
+  const treeMode = selectTreeMode(state);
   const nodes = selectTreeNodeMap(state);
+  const currentNodeData = nodes[currentId] || null;
   const actionType = action.type;
 
   switch (actionType) {
@@ -32,21 +33,23 @@ const getNavTarget = (action: UnknownAction, state: RootState): NavResult | unde
     case nav.actions.navigateToId.type: {
       // Navigating to a specific ID should only update the position if that ID exists in the tree
       const id = action.payload as Id;
-      const fen = nodes[id]?.move?.after || DEFAULT_POSITION;
+      if (!nodes[id]) return undefined;
+      const fen = getNodeFen(nodes, id, DEFAULT_POSITION);
       return { id, fen };
     }
     
     case nav.actions.navigateUp.type: {
       // Navigating up moves to the parent node if it exists
-      const id = currentNode?.parent?.data.id as Id;
-      if (id === undefined) return undefined;
-      const fen = nodes[id]?.move?.after || DEFAULT_POSITION;
+      const id = (currentNode?.parent?.data.id as Id | undefined) ?? getParentId(currentId);
+      if (id === undefined || id === null || id === currentId || !nodes[id]) return undefined;
+      const fen = getNodeFen(nodes, id, DEFAULT_POSITION);
       return { id, fen };
     }
     
     case nav.actions.navigateDown.type: {
       // If the current node is collapsed and has loaded children, expand it instead of navigating
       if (
+        treeMode === "compare" &&
         currentNodeData?.collapsed &&
         currentNodeData.childrenLoaded &&
         currentNodeData.children.length > 0
@@ -55,28 +58,33 @@ const getNavTarget = (action: UnknownAction, state: RootState): NavResult | unde
       }
 
       // Otherwise, navigate to the first child node (preferably one that has loaded its own children)
-      const children = currentNode?.children;
-      if (!children?.length) return undefined;
-      
-      const exploredChild = children.find(child => child.data.childrenLoaded);
-      const middleChild = children.length % 2
-        ? children[Math.floor(children.length / 2)]
-        : children[Math.floor(children.length / 2 - 1)];
-      const child = exploredChild || middleChild;
+      let id: Id | undefined;
+      const visibleChildren = currentNode?.children;
+      if (visibleChildren?.length) {
+        const childIds = visibleChildren.map((child) => child.data.id);
+        id = pickPreferredNodeId(childIds, nodes);
+      } else {
+        const childIds = currentNodeData?.children || [];
+        if (!childIds.length) return undefined;
 
-      const id = child?.data.id;
-      if (id === undefined) return undefined;
-      const fen = nodes[id]?.move?.after || DEFAULT_POSITION;
+        id = pickPreferredNodeId(childIds, nodes);
+      }
+
+      if (id === undefined || !nodes[id]) return undefined;
+      const fen = getNodeFen(nodes, id, DEFAULT_POSITION);
       return { id, fen };
     }
     
     case nav.actions.navigateNextSibling.type:
     case nav.actions.navigatePrevSibling.type: {
       // Navigating to the next/previous sibling moves to the adjacent node at the same level if it exists
-      if (!currentNode?.parent?.children?.length) return undefined;
-      
-      const siblings = currentNode.parent.children;
-      const currentIndex = siblings.findIndex(sibling => sibling.data.id === currentNode.data.id);
+      const siblings = currentNode?.parent?.children?.length
+        ? currentNode.parent.children.map((sibling) => sibling.data.id)
+        : getSiblingNodeIds(nodes, currentId);
+
+      if (!siblings.length) return undefined;
+
+      const currentIndex = siblings.findIndex((siblingId) => siblingId === currentId);
       if (currentIndex === -1) return undefined;
       
       const isNext = actionType === nav.actions.navigateNextSibling.type;
@@ -84,8 +92,9 @@ const getNavTarget = (action: UnknownAction, state: RootState): NavResult | unde
       
       if (siblingIndex < 0 || siblingIndex >= siblings.length) return undefined;
       
-      const id = siblings[siblingIndex].data.id;
-      const fen = nodes[id]?.move?.after || DEFAULT_POSITION;
+      const id = siblings[siblingIndex];
+      if (!nodes[id]) return undefined;
+      const fen = getNodeFen(nodes, id, DEFAULT_POSITION);
       return { id, fen };
     }
     

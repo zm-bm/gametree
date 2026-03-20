@@ -4,7 +4,7 @@ import { ProvidedZoom, TransformMatrix } from '@visx/zoom/lib/types';
 import { HierarchyPointNode } from '@visx/hierarchy/lib/types';
 import { useSpring } from '@react-spring/web'
 
-import { TreeNodeData, ZoomState } from '@/shared/types';
+import { TreeViewNode, ZoomState } from '@/shared/types';
 import { RootState } from '@/store';
 import { selectCurrentId, selectCurrentNode } from '@/store/selectors';
 
@@ -53,7 +53,7 @@ export function useTreeNavigation({
   }, [spring, transformRef]);
 
   // Handler for panning to a specific node
-  const panToNode = useCallback((node: HierarchyPointNode<TreeNodeData>) => {
+  const panToNode = useCallback((node: HierarchyPointNode<TreeViewNode>) => {
     spring.start({
       ...transformRef.current,
       translateX: (-node.y * transformRef.current.scaleX) + (width / 3),
@@ -66,7 +66,7 @@ export function useTreeNavigation({
   // - same currentId but coords changed (layout/data update) => pan only if following
   useEffect(() => {
     if (currentNode) {
-      const pointNode = currentNode as HierarchyPointNode<TreeNodeData>;
+      const pointNode = currentNode as HierarchyPointNode<TreeViewNode>;
       const currentPos = {
         id: pointNode.data.id,
         x: pointNode.x,

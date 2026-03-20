@@ -2,7 +2,7 @@ import { createSelector } from "@reduxjs/toolkit";
 import { hierarchy } from "@visx/hierarchy";
 
 import { RootState } from "@/store";
-import { buildTree } from "@/shared/lib/treeTransform";
+import { treeBuild } from "@/shared/types";
 
 // UI selectors
 export const selectUI = (s: RootState) => s.ui;
@@ -11,6 +11,7 @@ export const selectHoverId = (s: RootState) => selectUI(s).hoverId;
 export const selectBoardFen = (s: RootState) => selectUI(s).boardFen;
 export const selectBoardOrientation = (s: RootState) => selectUI(s).boardOrientation;
 export const selectBoardPromotionTarget = (s: RootState) => selectUI(s).boardPromotionTarget;
+export const selectTreeMode = (s: RootState) => selectUI(s).treeMode;
 export const selectTreeSource = (s: RootState) => selectUI(s).treeSource;
 export const selectTreeMinFrequencyPct = (s: RootState) => selectUI(s).treeMinFrequencyPct;
 export const selectTreeMoveLimit = (s: RootState) => selectUI(s).treeMoveLimit;
@@ -29,11 +30,23 @@ export const selectTreeNodeMap = (s: RootState) => selectTreeState(s).nodes;
 export const selectEngineData = (s: RootState) => s.engine;
 export const selectEngineOutput = (s: RootState) => selectEngineData(s).output;
 
+const selectFocusCurrentId = createSelector(
+  [selectTreeMode, selectCurrentId],
+  (mode, currentId) => mode === "focus" ? currentId : "",
+);
+
 export const selectTreeRoot = createSelector(
-  [selectTreeNodeMap, selectTreeMinFrequencyPct, selectTreeMoveLimit, selectTreeSource],
-  (nodes, minFrequencyPct, moveLimit, source) => {
+  [
+    selectTreeNodeMap,
+    selectTreeMinFrequencyPct,
+    selectTreeMoveLimit,
+    selectTreeSource,
+    selectTreeMode,
+    selectFocusCurrentId,
+  ],
+  (nodes, minFrequencyPct, moveLimit, source, mode, currentId) => {
     const rootId = '';
-    return buildTree(nodes, rootId, minFrequencyPct, moveLimit, source);
+    return treeBuild(nodes, rootId, minFrequencyPct, moveLimit, source, mode, currentId);
   }
 );
 
@@ -49,7 +62,26 @@ export const selectTreeNodes = createSelector(
 
 export const selectCurrentNode = createSelector(
   [selectTreeNodes, selectCurrentId],
-  (nodes, nodeId) => nodes ? nodes.find(node => node.data.id === nodeId) : null,
+  (nodes, nodeId) => {
+    if (!nodes?.length) return null;
+
+    const exactMatch = nodes.find((node) => node.data.id === nodeId);
+    if (exactMatch) return exactMatch;
+
+    let ancestorId = nodeId;
+    while (ancestorId.includes(',')) {
+      ancestorId = ancestorId.slice(0, ancestorId.lastIndexOf(','));
+      const ancestorMatch = nodes.find((node) => node.data.id === ancestorId);
+      if (ancestorMatch) return ancestorMatch;
+    }
+
+    return nodes.find((node) => node.data.id === '') || null;
+  },
+);
+
+export const selectCurrentVisibleId = createSelector(
+  [selectCurrentNode, selectCurrentId],
+  (currentNode, currentId) => currentNode?.data.id || currentId,
 );
 
 export const selectCurrentNodeData = createSelector(

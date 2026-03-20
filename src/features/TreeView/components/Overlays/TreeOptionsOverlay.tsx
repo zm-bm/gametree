@@ -5,21 +5,23 @@ import { RootState, useAppDispatch } from "@/store";
 import {
   selectTreeMinFrequencyPct,
   selectTreeMoveLimit,
+  selectTreeMode,
   selectTreeSource,
   selectTreeWinRateComparison,
 } from "@/store/selectors";
 import { ui } from "@/store/slices";
 import { cn } from "@/shared/lib/cn";
+import { InfoTooltip } from "@/shared/ui/InfoTooltip";
 import { TreeOverlayCard } from "./TreeOverlayCard";
 
 const dataSourceLabel = "flex gap-2 p-1 rounded text-sm font-medium cursor-pointer interactive-treeview";
 const dataSourceActive = "bg-lightmode-900/10 dark:bg-darkmode-100/10";
 const radioInput = "accent-sky-500 dark:accent-sky-400 cursor-pointer";
 const sectionLabel = "text-sm font-semibold";
-const scaleLabel = "text-xs text-lightmode-500 dark:text-darkmode-400";
 
 export const TreeOptionsOverlay = () => {
   const dispatch = useAppDispatch();
+  const treeMode = useSelector((s: RootState) => selectTreeMode(s));
   const source = useSelector((s: RootState) => selectTreeSource(s));
   const minFrequencyPct = useSelector((s: RootState) => selectTreeMinFrequencyPct(s));
   const moveLimit = useSelector((s: RootState) => selectTreeMoveLimit(s));
@@ -27,6 +29,14 @@ export const TreeOptionsOverlay = () => {
   const moveLimitSliderMax = Math.max(20, moveLimit);
 
   const preventDefault = useCallback((e: React.KeyboardEvent) => e.preventDefault(), []);
+
+  const setTreeModeFocus = useCallback(() => {
+    dispatch(ui.actions.setTreeMode("focus"));
+  }, [dispatch]);
+
+  const setTreeModeCompare = useCallback(() => {
+    dispatch(ui.actions.setTreeMode("compare"));
+  }, [dispatch]);
 
   const selectOtb = useCallback(() => {
     dispatch(ui.actions.setTreeSource("otb"));
@@ -61,7 +71,40 @@ export const TreeOptionsOverlay = () => {
       title="Tree Options"
       persistKey="gtTreeOptionsCollapsed"
       maxHeight="max-h-[100rem]"
+      className="w-[16rem]"
     >
+      <div>
+        <div className={cn(sectionLabel, "pb-1 flex items-center gap-1")}>
+          <span>Tree Mode</span>
+          <InfoTooltip
+            ariaLabel="Tree mode help"
+            text="Focus follows the current line. Compare lets you expand branches freely."
+          />
+        </div>
+        <label className={cn(dataSourceLabel, treeMode === "focus" && dataSourceActive)}>
+          <input
+            type="radio"
+            name="tree-mode"
+            className={cn(radioInput)}
+            checked={treeMode === "focus"}
+            onKeyDown={preventDefault}
+            onChange={setTreeModeFocus}
+          />
+          <span>Focus</span>
+        </label>
+        <label className={cn(dataSourceLabel, treeMode === "compare" && dataSourceActive)}>
+          <input
+            type="radio"
+            name="tree-mode"
+            className={cn(radioInput)}
+            checked={treeMode === "compare"}
+            onKeyDown={preventDefault}
+            onChange={setTreeModeCompare}
+          />
+          <span>Compare</span>
+        </label>
+      </div>
+
       <div>
         <div className={cn(sectionLabel, 'pb-1')}>Data Source</div>
         <label className={cn(dataSourceLabel, source === "otb" && dataSourceActive)}>
@@ -100,7 +143,13 @@ export const TreeOptionsOverlay = () => {
       </div>
 
       <div>
-        <div className={cn(sectionLabel, 'pb-1')}>Win Rate Comparison</div>
+        <div className={cn(sectionLabel, "pb-1 flex items-center gap-1")}>
+          <span>Win Rate Comparison</span>
+          <InfoTooltip
+            ariaLabel="Win rate comparison help"
+            text="Relative compares each move against its parent. Absolute compares each move against a 50/50 baseline."
+          />
+        </div>
         <label className={cn(dataSourceLabel, winRateComparison === "relative" && dataSourceActive)}>
           <input
             type="radio"
@@ -123,14 +172,17 @@ export const TreeOptionsOverlay = () => {
           />
           <span>Absolute</span>
         </label>
-        <div className={cn("mt-1", scaleLabel)}>
-          Edge color mode: Relative vs parent, Absolute vs 50/50.
-        </div>
       </div>
 
       <div>
         <div className="flex items-center justify-between">
-          <div className={sectionLabel}>Min Frequency (%)</div>
+          <div className="flex items-center gap-1">
+            <div className={sectionLabel}>Min Frequency (%)</div>
+            <InfoTooltip
+              ariaLabel="Minimum frequency help"
+              text="Only moves above this play frequency are shown."
+            />
+          </div>
           <input
             type="number"
             min={0}
@@ -160,12 +212,17 @@ export const TreeOptionsOverlay = () => {
             "accent-sky-500",
           ])}
         />
-        <div className={cn("mt-1", scaleLabel)}>Show moves above this play frequency.</div>
       </div>
 
       <div>
         <div className="flex items-center justify-between">
-          <div className={sectionLabel}>Move Limit</div>
+          <div className="flex items-center gap-1">
+            <div className={sectionLabel}>Move Limit</div>
+            <InfoTooltip
+              ariaLabel="Move limit help"
+              text="Limits how many moves are shown per position. Set to 0 to show all moves."
+            />
+          </div>
           <input
             type="number"
             min={0}
@@ -194,7 +251,6 @@ export const TreeOptionsOverlay = () => {
             "accent-sky-500",
           ])}
         />
-        <div className={cn("mt-1", scaleLabel)}>Show up to this many moves per position (0 = all).</div>
       </div>
     </TreeOverlayCard>
   );

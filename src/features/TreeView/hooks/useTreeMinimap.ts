@@ -3,7 +3,7 @@ import { HierarchyPointNode } from "@visx/hierarchy/lib/types";
 import { TransformMatrix } from "@visx/zoom/lib/types";
 import { SpringRef } from "react-spring";
 
-import { TreeNodeData } from "@/shared/types";
+import { TreeViewNode } from "@/shared/types";
 
 const INITIAL_BOUNDS = {
   left: Infinity,
@@ -27,7 +27,7 @@ const getEventPoint = (event: MinimapEvent) => {
 
 interface Props {
   spring: SpringRef<TransformMatrix>,
-  nodes: HierarchyPointNode<TreeNodeData>[],
+  nodes: HierarchyPointNode<TreeViewNode>[],
   minimapWidth: number,
   minimapHeight: number,
   treeWidth: number,

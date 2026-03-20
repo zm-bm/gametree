@@ -1,13 +1,13 @@
 import React, { useMemo } from "react";
 import { HierarchyPointNode } from "d3-hierarchy";
-import { TreeNodeData } from "@/shared/types";
+import { TreeViewNode } from "@/shared/types";
 
 import { TreeLink } from "./TreeLink";
 import { TreeNode } from './TreeNode';
 import { useAnimatedTreeLayout } from "../hooks";
 
 interface Props {
-  tree: HierarchyPointNode<TreeNodeData>,
+  tree: HierarchyPointNode<TreeViewNode>,
   minimap?: boolean,
 }
 
@@ -17,7 +17,7 @@ const TreeContentsBase = ({
 }: Props) => {
   const links = useMemo(() => tree.links(), [tree]);
   const nodes = useMemo(() => tree.descendants(), [tree]);
-  const { ax, ay } = useAnimatedTreeLayout(nodes, minimap);
+  const { ax, ay } = useAnimatedTreeLayout(nodes);
 
   return (
     <>
@@ -25,10 +25,10 @@ const TreeContentsBase = ({
         <TreeLink
           key={`link-${link.source.data.id}-${link.target.data.id}`}
           link={link}
-          sourceX={ax(link.source.data.id)}
-          sourceY={ay(link.source.data.id)}
-          targetX={ax(link.target.data.id)}
-          targetY={ay(link.target.data.id)}
+          sourceX={minimap ? link.source.x : ax(link.source.data.id)}
+          sourceY={minimap ? link.source.y : ay(link.source.data.id)}
+          targetX={minimap ? link.target.x : ax(link.target.data.id)}
+          targetY={minimap ? link.target.y : ay(link.target.data.id)}
           minimap={minimap}
         />
       ))}
@@ -36,8 +36,8 @@ const TreeContentsBase = ({
         <TreeNode
           key={`node-${node.data.id}`}
           node={node}
-          x={ax(node.data.id)}
-          y={ay(node.data.id)}
+          x={minimap ? node.x : ax(node.data.id)}
+          y={minimap ? node.y : ay(node.data.id)}
           minimap={minimap}
         />
       ))}

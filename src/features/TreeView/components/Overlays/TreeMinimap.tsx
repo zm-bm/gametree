@@ -5,7 +5,7 @@ import { HierarchyNode, HierarchyPointNode } from "@visx/hierarchy/lib/types"
 import { Tree } from '@visx/hierarchy';
 import { Group } from '@visx/group'
 
-import { TreeNodeData } from "@/shared/types";
+import { TreeViewNode } from "@/shared/types";
 import { cn } from '@/shared/lib/cn';
 import { useTreeMinimap } from '../../hooks';
 import { ZoomContext, TreeDimensionsContext } from "../../context";
@@ -14,7 +14,7 @@ import { TreeContents } from '../TreeContents';
 import { separation } from '../../lib/separation';
 
 interface Props {
-  tree: HierarchyNode<TreeNodeData> | null,
+  tree: HierarchyNode<TreeViewNode> | null,
   spring: SpringRef<TransformMatrix>,
 };
 
@@ -23,7 +23,7 @@ export const TreeMinimap = ({ tree, spring }: Props) => {
   const { zoom: { transformMatrix, isDragging, setTransformMatrix, dragStart, dragEnd }} = useContext(ZoomContext);
 
   const minimapSize = useMemo(() => Math.round(Math.min(width, height) * 0.3), [width, height]);
-  const nodes = useMemo(() => tree ? tree.descendants() as HierarchyPointNode<TreeNodeData>[] : [], [tree]);
+  const nodes = useMemo(() => tree ? tree.descendants() as HierarchyPointNode<TreeViewNode>[] : [], [tree]);
 
   const { transform, viewport, centerViewport } = useTreeMinimap({
     spring,
@@ -75,7 +75,7 @@ export const TreeMinimap = ({ tree, spring }: Props) => {
       <SVGDefs />
       <g>
         { tree && transform &&
-          <Tree<TreeNodeData>
+          <Tree<TreeViewNode>
             root={tree}
             nodeSize={nodeSize}
             separation={separation}
