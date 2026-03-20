@@ -58,7 +58,11 @@ export const treeNode: TreeViewNode = {
   childrenLoaded: true,
   collapsed: false,
   loading: false,
-  stats: {
+  edgeStats: {
+    otb: { white: 10, draws: 20, black: 30, total: 60 },
+    online: { white: 5, draws: 10, black: 15, total: 30 },
+  },
+  positionStats: {
     otb: { white: 10, draws: 20, black: 30, total: 60 },
     online: { white: 5, draws: 10, black: 15, total: 30 },
   },
@@ -74,7 +78,11 @@ export const treeNode: TreeViewNode = {
       childrenLoaded: false,
       collapsed: false,
       loading: false,
-      stats: {
+      edgeStats: {
+        otb: { white: 4, draws: 5, black: 6, total: 15 },
+        online: { white: 2, draws: 3, black: 1, total: 6 },
+      },
+      positionStats: {
         otb: { white: 4, draws: 5, black: 6, total: 15 },
         online: { white: 2, draws: 3, black: 1, total: 6 },
       },
@@ -91,7 +99,11 @@ export const treeNode: TreeViewNode = {
       childrenLoaded: false,
       collapsed: false,
       loading: false,
-      stats: {
+      edgeStats: {
+        otb: { white: 1, draws: 2, black: 3, total: 6 },
+        online: { white: 0, draws: 1, black: 2, total: 3 },
+      },
+      positionStats: {
         otb: { white: 1, draws: 2, black: 3, total: 6 },
         online: { white: 0, draws: 1, black: 2, total: 3 },
       },

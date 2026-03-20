@@ -82,7 +82,7 @@ export function buildShallowNode(nodes: TreeStore, nodeId: Id, source: TreeSourc
   const node = nodes[nodeId];
   if (!node) return null;
 
-  const selectedStats = node.stats[source];
+  const selectedStats = node.edgeStats[source];
   return {
     ...node,
     ...selectedStats,
@@ -106,7 +106,7 @@ function buildCompareBranchChildren(
   const node = nodes[nodeId];
   if (!node) return [];
 
-  const parentGames = node.stats[source].total;
+  const parentGames = node.edgeStats[source].total;
   const children = node.children
     .map((childId) => {
       return filterTreeNodes(nodes, childId, frequencyMin, parentGames, source)
@@ -128,7 +128,7 @@ export function buildCompareBranch(
   const node = nodes[nodeId];
   if (!node) return null;
 
-  const selectedStats = node.stats[source];
+  const selectedStats = node.edgeStats[source];
   const children = buildCompareBranchChildren(nodes, nodeId, frequencyMin, moveLimit, source);
 
   return {
@@ -206,7 +206,7 @@ function buildFocusBranchChildren(
     requiredChildIds.add(nextPathChildId);
   }
 
-  const parentGames = node.stats[source].total;
+  const parentGames = node.edgeStats[source].total;
   const children = [...candidateChildIds]
     .map((childId) => buildFocusBranchChild(
       nodes,
@@ -237,7 +237,7 @@ export function buildFocusBranch(
   const node = nodes[nodeId];
   if (!node) return null;
 
-  const selectedStats = node.stats[source];
+  const selectedStats = node.edgeStats[source];
   const children = buildFocusBranchChildren(nodes, nodeId, frequencyMin, moveLimit, source, currentId, currentPathIds);
 
   return {

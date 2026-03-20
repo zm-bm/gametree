@@ -13,7 +13,8 @@ type BaseTreeNode = {
   collapsed: boolean;
   loading: boolean;
   move: Move | null;
-  stats: NodeStats;
+  edgeStats: NodeStats;
+  positionStats: NodeStats;
 };
 
 export type TreeStoreNode = BaseTreeNode & {
@@ -39,7 +40,7 @@ export function toNodeStats(input: { otb: SourceStats; online: SourceStats }): N
 }
 
 export function sourceGameCount(node: TreeStoreNode, source: TreeSource) {
-  return node.stats[source].total;
+  return node.edgeStats[source].total;
 }
 
 export function getPathIds(currentId: Id) {

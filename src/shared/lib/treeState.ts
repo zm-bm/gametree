@@ -9,15 +9,19 @@ export function buildNodes(
   nodeId: Id,
   openingData: OpeningTotals,
 ) {
-  const rootStats = toNodeStats(openingData);
+  const rootPositionStats = toNodeStats(openingData);
 
   let node = nodes[nodeId];
 
   if (node) {
+    const parentId = getParentId(nodeId);
+    const hasParentEdge = Boolean(parentId && nodes[parentId]?.children.includes(nodeId));
+
     node = {
       ...node,
       childrenLoaded: true,
-      stats: rootStats,
+      edgeStats: nodeId === "" || !hasParentEdge ? rootPositionStats : node.edgeStats,
+      positionStats: rootPositionStats,
     };
   } else {
     node = {
@@ -26,7 +30,8 @@ export function buildNodes(
       collapsed: false,
       loading: false,
       move: getMoveFromId(nodeId),
-      stats: rootStats,
+      edgeStats: rootPositionStats,
+      positionStats: rootPositionStats,
       children: [],
     };
   }
@@ -54,13 +59,15 @@ export function buildChildNodes(
     const childMove = serializeMove(chess.move({ from, to, promotion }));
     chess.undo();
     const childId = getChildId(parentNode.id, childMove);
+    const childEdgeStats = toNodeStats(moveData);
 
     const existingNode = nodes[childId];
     if (existingNode) {
       children.push({
         ...existingNode,
         move: existingNode.move || childMove,
-        stats: toNodeStats(moveData),
+        edgeStats: childEdgeStats,
+        positionStats: existingNode.childrenLoaded ? existingNode.positionStats : childEdgeStats,
       });
       continue;
     }
@@ -71,7 +78,8 @@ export function buildChildNodes(
       collapsed: false,
       loading: false,
       move: childMove,
-      stats: toNodeStats(moveData),
+      edgeStats: childEdgeStats,
+      positionStats: childEdgeStats,
       children: [],
     });
   }
