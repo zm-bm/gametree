@@ -1,6 +1,7 @@
 import ChessBoard from './components/ChessBoard'
 import EngineView from './components/EngineView'
 import Fen from './components/Fen';
+import OpeningView from './components/OpeningView';
 import { SidebarCard } from './components/SidebarCard';
 
 const Sidebar = () => {
@@ -9,9 +10,7 @@ const Sidebar = () => {
       <ChessBoard className="sidebar-card" />
 
       <SidebarCard title="Opening">
-        <span className="text-sm text-gray-500 italic">
-          Opening view coming soon!
-        </span>
+        <OpeningView />
       </SidebarCard>
 
       <SidebarCard title="Engine">
