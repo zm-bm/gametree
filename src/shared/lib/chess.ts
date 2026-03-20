@@ -1,7 +1,6 @@
 import { Move as ChessMove } from "chess.js";
 
-import { Move, MovePath, OpeningBookEntry } from "@/shared/types";
-import eco from './eco.json'
+import { Move } from "@/shared/types";
 
 export function serializeMove(move: ChessMove): Move {
   return {
@@ -16,19 +15,4 @@ export function serializeMove(move: ChessMove): Move {
     before: move.before,
     after: move.after,
   };
-}
-
-export const book = eco as OpeningBookEntry[];
-
-export function getECO(path: MovePath) {
-  if (path.length === 0) return null;
-
-  for (let i = path.length; i > 0; i--) {
-    const subPath = path.slice(0, i);
-    const uciString = subPath.map(move => move.lan).join(',');
-    const ecoEntry = book.find(entry => entry.uci === uciString);
-    if (ecoEntry) return ecoEntry;
-  }
-
-  return null;
 }
