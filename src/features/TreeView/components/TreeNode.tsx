@@ -1,4 +1,4 @@
-import { useCallback, useContext, useMemo, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { DEFAULT_POSITION } from "chess.js";
 import { Group } from "@visx/group";
@@ -6,15 +6,16 @@ import { HierarchyPointNode } from "@visx/hierarchy/lib/types";
 import { animated } from "react-spring";
 import { FluidValue } from '@react-spring/shared';
 
-import { cn } from "@/shared/lib/cn";
 import { RootState, useAppDispatch } from "@/store";
-import { selectCurrentVisibleId } from "@/store/selectors";
+import { selectBoardOrientation, selectCurrentVisibleId, selectTreeSource } from "@/store/selectors";
 import { nav, tree } from "@/store/slices";
-import { TreeViewNode } from "@/shared/types";
+import { TreeSource, TreeViewNode } from "@/shared/types";
 import { TreeDimensionsContext } from "../context/TreeDimensionsContext";
-import { TreeNodeText } from "./TreeNodeText";
 import { TreeNodeButtons } from "./TreeNodeButtons";
 import { TreeNodeLoadingIndicator } from "./TreeNodeLoadingIndicator";
+import { useMedia } from "@/shared/hooks";
+import { TreeNodeStatsLayer } from "./TreeNodeStatsLayer";
+import { buildTreeNodeOverlay, getTreeNodeStatColors } from "../lib/treeNodeOverlay";
 
 const AnimatedGroup = animated(Group);
 
@@ -37,7 +38,45 @@ export const TreeNode = ({
   const dispatch = useAppDispatch();
   const { fontSize, nodeRadius } = useContext(TreeDimensionsContext);
   const currentNodeId = useSelector((s: RootState) => selectCurrentVisibleId(s));
+  const source = useSelector((s: RootState) => selectTreeSource(s));
+  const boardOrientation = useSelector((s: RootState) => selectBoardOrientation(s));
   const [hovered, setHovered] = useState(false);
+  const prefersDark = useMedia("(prefers-color-scheme: dark)");
+  const [darkClassActive, setDarkClassActive] = useState(() =>
+    typeof document !== "undefined" && document.documentElement.classList.contains("dark"),
+  );
+
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+
+    const root = document.documentElement;
+    const sync = () => setDarkClassActive(root.classList.contains("dark"));
+
+    sync();
+    const observer = new MutationObserver(sync);
+    observer.observe(root, { attributes: true, attributeFilter: ["class"] });
+
+    return () => observer.disconnect();
+  }, []);
+
+  const isDarkMode = darkClassActive || prefersDark;
+
+  const statsOverlay = useMemo(() => {
+    return buildTreeNodeOverlay({
+      minimap,
+      isPlaceholder,
+      node,
+      source: source as TreeSource,
+      nodeRadius,
+      fontSize,
+      boardOrientation,
+      hovered,
+      currentNodeId,
+      id,
+    });
+  }, [minimap, isPlaceholder, node, source, nodeRadius, fontSize, boardOrientation, hovered, currentNodeId, id]);
+
+  const statColors = useMemo(() => getTreeNodeStatColors(isDarkMode), [isDarkMode]);
   
   const nodeProps = useMemo(() => {
     if (minimap) return {};
@@ -58,21 +97,6 @@ export const TreeNode = ({
       'data-id': node.data.id,
     };
   }, [node, minimap, isPlaceholder, dispatch]);
-
-  const rectProps = useMemo(() => ({
-    x: -nodeRadius,
-    y: -nodeRadius,
-    rx: 6,
-    ry: 6,
-    width: nodeRadius * 2,
-    height: nodeRadius * 2,
-    fill: currentNodeId === id ? 'url(#currentNodeGradient)' : 'url(#moveGradient)',
-    filter: currentNodeId === id ? 'url(#currentNodeFilter)' : 'url(#nodeFilter)',
-    className: cn('stroke-[0.75] stroke-lightmode-900/10 dark:stroke-darkmode-400/10', { 
-      ['stroke-1 stroke-lightmode-900/30 dark:stroke-darkmode-400/60']: minimap,
-      ['transition-all duration-200 hover:scale-110 hover:brightness-125']: !minimap,
-    }),
-  }), [nodeRadius, minimap, currentNodeId, id]);
 
   const handleMouseEnter = useCallback(() => setHovered(true), []);
   const handleMouseLeave = useCallback(() => setHovered(false), []);
@@ -113,19 +137,55 @@ export const TreeNode = ({
 
       {/* Move node*/}
       <g {...nodeProps}>
-        <rect {...rectProps} />
         {!minimap && (
-          <TreeNodeText
-            move={node.data.move}
-            isPlaceholder={isPlaceholder}
-            fontSize={fontSize}
+          <rect
+            x={statsOverlay?.hoverHitboxX ?? -nodeRadius}
+            y={statsOverlay?.hoverHitboxY ?? -nodeRadius}
+            width={statsOverlay?.hoverHitboxWidth ?? nodeRadius * 2}
+            height={statsOverlay?.hoverHitboxHeight ?? nodeRadius * 2}
+            fill="transparent"
+            style={{ pointerEvents: "all" }}
           />
+        )}
+
+        {!minimap && (
+          <>
+            {statsOverlay && (
+              <TreeNodeStatsLayer
+                statsOverlay={statsOverlay}
+                node={node}
+                nodeRadius={nodeRadius}
+                isDarkMode={isDarkMode}
+                currentNodeId={currentNodeId}
+                id={id}
+                hovered={hovered}
+                fontSize={fontSize}
+                statColors={statColors}
+              />
+            )}
+          </>
+        )}
+        {minimap && (
+          <g>
+            <rect
+              x={-nodeRadius}
+              y={-nodeRadius}
+              rx={3}
+              ry={3}
+              width={nodeRadius * 2}
+              height={nodeRadius * 2}
+              fill={currentNodeId === id ? "url(#currentNodeGradient)" : "url(#moveGradient)"}
+              stroke={currentNodeId === id ? "rgba(245,158,11,0.95)" : isDarkMode ? "rgba(255,255,255,0.3)" : "rgba(15,23,42,0.25)"}
+              strokeWidth={currentNodeId === id ? 1.4 : 0.8}
+              style={{ pointerEvents: "none" }}
+            />
+          </g>
         )}
         {loading && <TreeNodeLoadingIndicator radius={nodeRadius - 2} />}
       </g>
 
       {/* Collapsed nodes badge */}
-      {badgeProps && (
+      {!minimap && badgeProps && (
         <g
           transform={`translate(${badgeProps.badgeX},0)`}
           className="cursor-pointer select-none"
