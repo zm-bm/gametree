@@ -5,13 +5,13 @@ import { TreeDimensionsContext } from "./TreeDimensionsContext";
 
 const nodeScale = scaleLinear({
   domain: [360, 1440],
-  range: [10, 24],
+  range: [24, 44],
   clamp: true,
 });
 
 const fontScale = scaleLinear({
   domain: [360, 1440],
-  range: [8, 16],
+  range: [7, 13],
   clamp: true,
 });
 
@@ -29,8 +29,8 @@ export const TreeDimensionsProvider: React.FC<TreeDimensionsProviderProps> = ({
   const dimensions = useMemo(() => {
     const minDimension = Math.min(height, width);
     const r = nodeScale(minDimension);
-    const rowHeight = Math.round(r * 2.4);
-    const columnWidth = Math.round(r * 8);
+    const rowHeight = Math.round(r * 2.7);
+    const columnWidth = Math.round(r * 7);
 
     return {
       width,
