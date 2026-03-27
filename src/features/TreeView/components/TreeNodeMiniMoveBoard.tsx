@@ -1,19 +1,20 @@
 import { memo, useMemo } from "react";
+import { getChessgroundTheme } from "@/shared/ui/Board/chessgroundTheme";
 
 const FILES = "abcdefgh";
-const PIECE_GLYPHS: Record<string, string> = {
-  p: "♟",
-  n: "♞",
-  b: "♝",
-  r: "♜",
-  q: "♛",
-  k: "♚",
-  P: "♙",
-  N: "♘",
-  B: "♗",
-  R: "♖",
-  Q: "♕",
-  K: "♔",
+const PIECE_TO_SPRITE: Record<string, string> = {
+  P: "white-pawn",
+  N: "white-knight",
+  B: "white-bishop",
+  R: "white-rook",
+  Q: "white-queen",
+  K: "white-king",
+  p: "black-pawn",
+  n: "black-knight",
+  b: "black-bishop",
+  r: "black-rook",
+  q: "black-queen",
+  k: "black-king",
 };
 
 function parseFenPlacement(fen: string): Array<string | null> {
@@ -66,20 +67,20 @@ export const TreeNodeMiniMoveBoard = memo(({
   isDarkMode,
   isCurrent,
 }: TreeNodeMiniMoveBoardProps) => {
+  const theme = getChessgroundTheme();
   const squares = useMemo(() => parseFenPlacement(fen), [fen]);
   const fromIndex = useMemo(() => squareToIndex(from), [from]);
   const toIndex = useMemo(() => squareToIndex(to), [to]);
 
   const cellSize = size / 8;
   const cornerRadius = Math.max(0.75, size * 0.012);
-  const darkSquare = isDarkMode ? "#556171" : "#9aa6b4";
-  const lightSquare = isDarkMode ? "#b7c2cf" : "#d4dbe5";
+  const boardImageUrl = theme.boardImageUrl || "/board.svg";
   const boardStroke = isCurrent
     ? "rgba(245,158,11,0.95)"
     : isDarkMode
       ? "rgba(148,163,184,0.58)"
       : "rgba(71,85,105,0.42)";
-  const moveHighlight = isDarkMode ? "rgba(134,239,172,0.38)" : "rgba(34,197,94,0.28)";
+  const moveHighlight = theme.lastMoveHighlight || "rgba(155, 199, 0, 0.41)";
   const boardClipId = `tree-node-board-clip-${id.replace(/[^a-zA-Z0-9_-]/g, "_") || "root"}`;
 
   return (
@@ -91,37 +92,15 @@ export const TreeNodeMiniMoveBoard = memo(({
       </defs>
 
       <g clipPath={`url(#${boardClipId})`}>
-        {squares.map((piece, index) => {
-          const row = Math.floor(index / 8);
-          const col = index % 8;
-          const x = col * cellSize;
-          const y = row * cellSize;
-          const isDarkSquare = (row + col) % 2 === 1;
-          const fill = isDarkSquare ? darkSquare : lightSquare;
-
-          return (
-            <g key={index}>
-              <rect x={x} y={y} width={cellSize} height={cellSize} fill={fill} style={{ pointerEvents: "none" }} />
-              {piece && (
-                <text
-                  x={x + cellSize / 2}
-                  y={y + cellSize / 2}
-                  textAnchor="middle"
-                  dominantBaseline="central"
-                  style={{
-                    pointerEvents: "none",
-                    userSelect: "none",
-                    fontSize: Math.max(5, Math.round(cellSize * 0.78)),
-                    fontWeight: 600,
-                    fill: piece === piece.toUpperCase() ? "#f8fafc" : "#0f172a",
-                  }}
-                >
-                  {PIECE_GLYPHS[piece] || ""}
-                </text>
-              )}
-            </g>
-          );
-        })}
+        <image
+          href={boardImageUrl}
+          x={0}
+          y={0}
+          width={size}
+          height={size}
+          preserveAspectRatio="none"
+          style={{ pointerEvents: "none" }}
+        />
 
         {fromIndex !== null && (
           <rect
@@ -144,6 +123,31 @@ export const TreeNodeMiniMoveBoard = memo(({
             style={{ pointerEvents: "none" }}
           />
         )}
+
+        {squares.map((piece, index) => {
+          const row = Math.floor(index / 8);
+          const col = index % 8;
+          const x = col * cellSize;
+          const y = row * cellSize;
+          const spriteKey = piece ? PIECE_TO_SPRITE[piece] : undefined;
+          const spriteUrl = spriteKey ? theme.pieceSprites[spriteKey as keyof typeof theme.pieceSprites] : "";
+
+          return (
+            <g key={index}>
+              {piece && spriteUrl && (
+                <image
+                  href={spriteUrl}
+                  x={x}
+                  y={y}
+                  width={cellSize}
+                  height={cellSize}
+                  preserveAspectRatio="xMidYMid meet"
+                  style={{ pointerEvents: "none" }}
+                />
+              )}
+            </g>
+          );
+        })}
       </g>
 
       <rect
