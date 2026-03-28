@@ -22,27 +22,12 @@ npm run build
 ## Roadmap
 
 - treeview
-    - focus mode / compare mode
-        - add `Focus` vs `Compare` mode radio buttons in tree options
-        - show `bookmark` button in both modes
-        - replace `isolate` button with `copy line` button (useful in both Focus and Compare)
-        - hide node-level `expand/collapse` in Focus mode (focus state is auto-managed)
-        - show node-level `expand/collapse` in Compare mode
-        - keep per-mode tree state separate:
-            - Compare mode preserves manual expand/collapse state across mode switches
-            - Focus mode expansion is derived/ephemeral and should not overwrite Compare state
-        - focus mode rendering: emphasize current path + siblings along the current path + immediate candidate moves from current node
-        - compare mode rendering: allow arbitrary branch expansion depth
-        - camera behavior:
-            - manual panning remains enabled in both modes
-            - do not snap back to current node after manual panning unless user explicitly navigates
-            - on mode switch, zoom/pan to current node
-        - copy line behavior:
-            - action is based on the clicked node
-            - add tree option for copy format: `FEN`, `PGN` (line up to node), `UCI position` command
-    - navigation
-        - remember last visited child index at each level
-    - bug: node buttons can be sticky and fail to disappear until next hover
+    - feat(tree-buttons): pin/unpin button
+    - feat(tree-buttons): copy line button (FEN / PGN / UCI position?)
+    - fix(test): fix tests
+    - feat(nav-next-node): remember last visited child index 
+
+    - bug: node buttons sticky if mouse leaves through bridge div
     - tree node buttons should scale base on zoom level to maintain consistent physical size on screen
     - hotkeys + hotkey help
         - add hotkeys for:
@@ -72,4 +57,4 @@ npm run build
 - [chess.js](https://github.com/jhlywa/chess.js/tree/master) - Chess logic
 - [Stockfish](https://github.com/official-stockfish/Stockfish) - Chess engine
 - [Lichess](https://lichess.org/) - Openings data
-- [visx](https://airbnb.io/visx/) - React/D3 primatives
+- [visx](https://airbnb.io/visx/) - React/D3 primitives

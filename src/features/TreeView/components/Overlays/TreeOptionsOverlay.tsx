@@ -5,7 +5,6 @@ import { RootState, useAppDispatch } from "@/store";
 import {
   selectTreeMinFrequencyPct,
   selectTreeMoveLimit,
-  selectTreeMode,
   selectTreeSource,
   selectTreeWinRateComparison,
 } from "@/store/selectors";
@@ -21,7 +20,6 @@ const sectionLabel = "text-sm font-semibold";
 
 export const TreeOptionsOverlay = () => {
   const dispatch = useAppDispatch();
-  const treeMode = useSelector((s: RootState) => selectTreeMode(s));
   const source = useSelector((s: RootState) => selectTreeSource(s));
   const minFrequencyPct = useSelector((s: RootState) => selectTreeMinFrequencyPct(s));
   const moveLimit = useSelector((s: RootState) => selectTreeMoveLimit(s));
@@ -29,14 +27,6 @@ export const TreeOptionsOverlay = () => {
   const moveLimitSliderMax = Math.max(20, moveLimit);
 
   const preventDefault = useCallback((e: React.KeyboardEvent) => e.preventDefault(), []);
-
-  const setTreeModeFocus = useCallback(() => {
-    dispatch(ui.actions.setTreeMode("focus"));
-  }, [dispatch]);
-
-  const setTreeModeCompare = useCallback(() => {
-    dispatch(ui.actions.setTreeMode("compare"));
-  }, [dispatch]);
 
   const selectOtb = useCallback(() => {
     dispatch(ui.actions.setTreeSource("otb"));
@@ -73,38 +63,6 @@ export const TreeOptionsOverlay = () => {
       maxHeight="max-h-[100rem]"
       className="w-[16rem]"
     >
-      <div>
-        <div className={cn(sectionLabel, "pb-1 flex items-center gap-1")}>
-          <span>Tree Mode</span>
-          <InfoTooltip
-            ariaLabel="Tree mode help"
-            text="Focus follows the current line. Compare lets you expand branches freely."
-          />
-        </div>
-        <label className={cn(dataSourceLabel, treeMode === "focus" && dataSourceActive)}>
-          <input
-            type="radio"
-            name="tree-mode"
-            className={cn(radioInput)}
-            checked={treeMode === "focus"}
-            onKeyDown={preventDefault}
-            onChange={setTreeModeFocus}
-          />
-          <span>Focus</span>
-        </label>
-        <label className={cn(dataSourceLabel, treeMode === "compare" && dataSourceActive)}>
-          <input
-            type="radio"
-            name="tree-mode"
-            className={cn(radioInput)}
-            checked={treeMode === "compare"}
-            onKeyDown={preventDefault}
-            onChange={setTreeModeCompare}
-          />
-          <span>Compare</span>
-        </label>
-      </div>
-
       <div>
         <div className={cn(sectionLabel, 'pb-1')}>Data Source</div>
         <label className={cn(dataSourceLabel, source === "otb" && dataSourceActive)}>

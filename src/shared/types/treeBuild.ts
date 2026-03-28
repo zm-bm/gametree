@@ -3,7 +3,6 @@ import {
   getNextPathChildId,
   getPathIds,
   TreeStore,
-  TreeMode,
   TreeViewNode,
   TreeSource,
   sourceGameCount,
@@ -89,53 +88,6 @@ export function buildShallowNode(nodes: TreeStore, nodeId: Id, source: TreeSourc
     collapsed: false,
     children: [],
     childCount: 0,
-  };
-}
-
-/**
- * Build compare-mode children for a branch, applying threshold, move limit,
- * and visual ordering.
- */
-function buildCompareBranchChildren(
-  nodes: TreeStore,
-  nodeId: Id,
-  frequencyMin: number,
-  moveLimit: number,
-  source: TreeSource,
-): TreeViewNode[] {
-  const node = nodes[nodeId];
-  if (!node) return [];
-
-  const parentGames = node.edgeStats[source].total;
-  const children = node.children
-    .map((childId) => {
-      return filterTreeNodes(nodes, childId, frequencyMin, parentGames, source)
-        ? buildCompareBranch(nodes, childId, frequencyMin, moveLimit, source)
-        : null;
-    })
-    .filter(Boolean) as TreeViewNode[];
-
-  return orderTreeNodes(limitTreeNodes(children, moveLimit));
-}
-
-export function buildCompareBranch(
-  nodes: TreeStore,
-  nodeId: Id,
-  frequencyMin: number,
-  moveLimit: number,
-  source: TreeSource,
-): TreeViewNode | null {
-  const node = nodes[nodeId];
-  if (!node) return null;
-
-  const selectedStats = node.edgeStats[source];
-  const children = buildCompareBranchChildren(nodes, nodeId, frequencyMin, moveLimit, source);
-
-  return {
-    ...node,
-    ...selectedStats,
-    children: node.collapsed ? [] : children,
-    childCount: children.length,
   };
 }
 
@@ -251,9 +203,6 @@ export function buildFocusBranch(
 
 /**
  * Public tree builder used by selectors.
- *
- * Dispatches to compare/focus branch builders and computes focus path context
- * only when needed.
  */
 export function treeBuild(
   nodes: TreeStore,
@@ -261,13 +210,8 @@ export function treeBuild(
   frequencyMin: number,
   moveLimit: number,
   source: TreeSource,
-  mode: TreeMode,
   currentId: Id,
 ): TreeViewNode | null {
-  if (mode === "focus") {
-    const currentPathIds = getPathIds(currentId);
-    return buildFocusBranch(nodes, nodeId, frequencyMin, moveLimit, source, currentId, currentPathIds);
-  }
-
-  return buildCompareBranch(nodes, nodeId, frequencyMin, moveLimit, source);
+  const currentPathIds = getPathIds(currentId);
+  return buildFocusBranch(nodes, nodeId, frequencyMin, moveLimit, source, currentId, currentPathIds);
 }

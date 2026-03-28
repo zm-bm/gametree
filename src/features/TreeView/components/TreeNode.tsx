@@ -80,7 +80,6 @@ export const TreeNode = ({
       {/* Button drawer */}
       {!minimap && isNodeHovered && (
         <TreeNodeButtons
-          node={node}
           nodeRadius={nodeRadius}
           onMouseLeave={handleNodeMouseLeave}
         />

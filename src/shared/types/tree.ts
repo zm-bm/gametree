@@ -2,7 +2,6 @@ import { Id, Move } from "./chess";
 import { SourceStats } from "./openings";
 
 export type TreeSource = "otb" | "online";
-export type TreeMode = "focus" | "compare";
 export type TreeWinRateComparison = "relative" | "absolute";
 
 export type NodeStats = Record<TreeSource, SourceStats>;

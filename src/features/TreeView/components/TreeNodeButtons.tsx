@@ -1,13 +1,7 @@
 import React, { useCallback, useMemo } from "react";
-import { HierarchyPointNode } from "@visx/hierarchy/lib/types";
 import { IconType } from "react-icons";
-import { FaBookmark, FaBullseye, FaChevronRight } from "react-icons/fa";
-import { useSelector } from "react-redux";
+import { FaBookmark, FaBullseye } from "react-icons/fa";
 
-import { RootState, useAppDispatch } from "@/store";
-import { selectTreeMode } from "@/store/selectors";
-import { TreeViewNode } from "@/shared/types";
-import { nav, tree } from "@/store/slices";
 import { cn } from "@/shared/lib/cn";
 
 interface ButtonConfig {
@@ -19,45 +13,20 @@ interface ButtonConfig {
 }
 
 interface Props {
-  node: HierarchyPointNode<TreeViewNode>;
   nodeRadius: number;
   onMouseLeave: () => void;
 }
 
 export const TreeNodeButtons = ({
-  node,
   nodeRadius,
   onMouseLeave,
 }: Props) => {
-  const { collapsed } = node.data;
-  const dispatch = useAppDispatch();
-  const treeMode = useSelector((s: RootState) => selectTreeMode(s));
-
   const stopPropagation = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
   }, []);
 
   const buttonConfigs: ButtonConfig[] = useMemo(() => {
-    const configs: ButtonConfig[] = [];
-
-    if (treeMode === "compare") {
-      configs.push({
-        key: 'collapse/expand',
-        icon: FaChevronRight,
-        onClick: () => {
-          if (!node.data.childrenLoaded) {
-            dispatch(nav.actions.navigateToId(node.data.id));
-          } else {
-            dispatch(tree.actions.setNodeCollapsed({ nodeId: node.data.id, value: !collapsed }))
-          }
-        },
-        rotate: (node.data.collapsed || (node.data.children.length === 0 && !node.data.loading))
-          ? 0 : 90,
-        active: node.data.collapsed,
-      });
-    }
-
-    configs.push(
+    return [
       {
         key: 'isolate',
         icon: FaBullseye,
@@ -68,10 +37,8 @@ export const TreeNodeButtons = ({
         icon: FaBookmark,
         onClick: (e: React.MouseEvent) => { e.stopPropagation(); }
       },
-    );
-
-    return configs;
-  }, [collapsed, node, dispatch, treeMode]);
+    ];
+  }, []);
 
   const drawerConfig = useMemo(() => {
     const numIcons = buttonConfigs.length;
