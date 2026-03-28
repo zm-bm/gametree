@@ -22,26 +22,20 @@ npm run build
 ## Roadmap
 
 - treeview
-    - feat(tree-buttons): pin/unpin button
     - feat(tree-buttons): copy line button (FEN / PGN / UCI position?)
     - fix(test): fix tests
     - feat(nav-next-node): remember last visited child index 
     - fix(tree-buttons): node buttons sticky if mouse leaves through bridge div
     - feat(tree-buttons): buttons should scale based on zoom level to maintain consistent physical size on screen
-
-    - hotkeys + hotkey help
-        - add hotkeys for:
-            - tree navigation (up/down/left/right or vim keys)
-            - expand/collapse node (space)
-            - mode switching (F for focus, C for compare)
-            - copy line (Y for yank)
-        - update hotkeys help overlay to show available hotkeys and their descriptions
-    - when descending into a variation, remember the child index at each level so that when the user later ascends back up to that level, they can easily re-descend into the same variation without having to manually find and click it again
-    - fix zoom calc to zoom on screen center
-    - collapsable minimap
-    - bug: bottom right overlay wrapper clips corner of Treeview
+    - feat(hotkeys)
+        - vim keys for navigation
+        - space / shift+click to pin/unpin node
+    - fix(tree-zoom): smooth zoom, can be jumpy / jerky
+    - feat(tree-minimap): make collapsable
+    - fix(tree-minimap): tree interaction cut off by bottom right overlay wrapper
 
 - sidepane
+    - feat(sidepane): make resizable
     - opening metadata view (ECO, name, win probabilities)
     - engine evaluation view (eval bar + graph + PV + controls)
     - bookmarks view (global list + navigation + delete)
