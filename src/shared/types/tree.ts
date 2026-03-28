@@ -9,7 +9,6 @@ export type NodeStats = Record<TreeSource, SourceStats>;
 type BaseTreeNode = {
   id: Id;
   childrenLoaded: boolean;
-  collapsed: boolean;
   loading: boolean;
   move: Move | null;
   edgeStats: NodeStats;

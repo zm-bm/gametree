@@ -1,7 +1,12 @@
 import React, { useCallback, useMemo } from "react";
 import { IconType } from "react-icons";
-import { FaBookmark, FaBullseye } from "react-icons/fa";
+import { FaBookmark, FaBullseye  } from "react-icons/fa";
+import { FaThumbtack, FaThumbtackSlash } from "react-icons/fa6";
+import { useSelector } from "react-redux";
 
+import { RootState, useAppDispatch } from "@/store";
+import { selectPinnedNodes } from "@/store/selectors";
+import { tree } from "@/store/slices";
 import { cn } from "@/shared/lib/cn";
 
 interface ButtonConfig {
@@ -13,20 +18,35 @@ interface ButtonConfig {
 }
 
 interface Props {
+  nodeId: string;
   nodeRadius: number;
   onMouseLeave: () => void;
 }
 
 export const TreeNodeButtons = ({
+  nodeId,
   nodeRadius,
   onMouseLeave,
 }: Props) => {
+  const dispatch = useAppDispatch();
+  const pinnedNodes = useSelector((s: RootState) => selectPinnedNodes(s));
+  const isPinned = pinnedNodes.includes(nodeId);
+
   const stopPropagation = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
   }, []);
 
   const buttonConfigs: ButtonConfig[] = useMemo(() => {
     return [
+      {
+        key: 'pin',
+        icon: isPinned ? FaThumbtackSlash : FaThumbtack,
+        onClick: (e: React.MouseEvent) => {
+          e.stopPropagation();
+          dispatch(tree.actions.toggleNodePinned(nodeId));
+        },
+        active: isPinned,
+      },
       {
         key: 'isolate',
         icon: FaBullseye,
@@ -38,7 +58,7 @@ export const TreeNodeButtons = ({
         onClick: (e: React.MouseEvent) => { e.stopPropagation(); }
       },
     ];
-  }, []);
+  }, [dispatch, isPinned, nodeId]);
 
   const drawerConfig = useMemo(() => {
     const numIcons = buttonConfigs.length;

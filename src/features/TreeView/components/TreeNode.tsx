@@ -16,7 +16,6 @@ import { TreeNodeLoadingIndicator } from "./TreeNodeLoadingIndicator";
 import { TreeNodeMoveLabel } from "./TreeNodeMoveLabel";
 import { TreeNodeMoveFrequency } from "./TreeNodeMoveFrequency";
 import { TreeNodeWinFrequency } from "./TreeNodeWinFrequency";
-import { TreeNodeCollapsedBadge } from "./TreeNodeCollapsedBadge";
 
 const AnimatedGroup = animated(Group);
 
@@ -80,6 +79,7 @@ export const TreeNode = ({
       {/* Button drawer */}
       {!minimap && isNodeHovered && (
         <TreeNodeButtons
+          nodeId={id}
           nodeRadius={nodeRadius}
           onMouseLeave={handleNodeMouseLeave}
         />
@@ -168,9 +168,6 @@ export const TreeNode = ({
         )}
         {loading && <TreeNodeLoadingIndicator radius={nodeRadius - 2} />}
       </g>
-
-      {/* Collapsed-node badge (indicates hidden children count). */}
-      <TreeNodeCollapsedBadge node={node} nodeRadius={nodeRadius} minimap={minimap} />
     </AnimatedGroup>
   );
 };

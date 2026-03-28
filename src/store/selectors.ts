@@ -25,6 +25,7 @@ export const selectEngineTime = (s: RootState) => selectUI(s).engineTime
 // Tree data selectors
 export const selectTreeState = (s: RootState) => s.tree;
 export const selectTreeNodeMap = (s: RootState) => selectTreeState(s).nodes;
+export const selectPinnedNodes = (s: RootState) => selectTreeState(s).pinnedNodes;
 
 // Engine data selectors
 export const selectEngineData = (s: RootState) => s.engine;

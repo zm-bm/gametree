@@ -85,7 +85,6 @@ export function buildShallowNode(nodes: TreeStore, nodeId: Id, source: TreeSourc
   return {
     ...node,
     ...selectedStats,
-    collapsed: false,
     children: [],
     childCount: 0,
   };
@@ -195,7 +194,6 @@ export function buildFocusBranch(
   return {
     ...node,
     ...selectedStats,
-    collapsed: false,
     children,
     childCount: children.length,
   };
