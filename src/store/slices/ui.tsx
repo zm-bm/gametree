@@ -7,6 +7,8 @@ import { TreeMode, TreeSource, TreeWinRateComparison, Id } from "@/shared/types"
 const ui = createSlice({
   name: 'ui',
   initialState: {
+    // general UI state
+    isDarkMode: false as boolean,
     // tree id's
     currentId: '' as Id,
     hoverId: null as Id | null,
@@ -33,6 +35,7 @@ const ui = createSlice({
     setFen: (s, a: PA<string>) => { s.boardFen = a.payload; },
     toggleOrientation(state) { state.boardOrientation = state.boardOrientation === 'white' ? 'black' : 'white'; },
     setPromotionTarget(state, action: PA<Square[] | null>) { state.boardPromotionTarget = action.payload; },
+    setIsDarkMode(state, action: PA<boolean>) { state.isDarkMode = action.payload; },
     setTreeMode(state, action: PA<TreeMode>) { state.treeMode = action.payload; },
     setTreeSource(state, action: PA<TreeSource>) { state.treeSource = action.payload; },
     setTreeMinFrequencyPct(state, action: PA<number>) { state.treeMinFrequencyPct = action.payload; },

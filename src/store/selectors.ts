@@ -6,6 +6,7 @@ import { treeBuild } from "@/shared/types";
 
 // UI selectors
 export const selectUI = (s: RootState) => s.ui;
+export const selectIsDarkMode = (s: RootState) => selectUI(s).isDarkMode;
 export const selectCurrentId = (s: RootState) => selectUI(s).currentId;
 export const selectHoverId = (s: RootState) => selectUI(s).hoverId;
 export const selectBoardFen = (s: RootState) => selectUI(s).boardFen;
@@ -89,7 +90,13 @@ export const selectCurrentNodeData = createSelector(
   (nodes, nodeId) => nodes[nodeId] || null
 );
 
+export const selectHoverNodeData = createSelector(
+  [selectTreeNodeMap, selectHoverId],
+  (nodes, hoverId) => (hoverId ? nodes[hoverId] || null : null)
+);
+
 export const selectCurrentMove = (s: RootState) => selectCurrentNodeData(s)?.move || null;
+export const selectHoverMove = (s: RootState) => selectHoverNodeData(s)?.move || null;
 
 export const selectSideToMove = createSelector(
   [selectBoardFen],

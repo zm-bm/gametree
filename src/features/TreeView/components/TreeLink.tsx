@@ -25,8 +25,8 @@ function buildTreeLinkPath(
   const topVertical = targetX - width / 2;
   const bottomVertical = targetX + width / 2;
   const verticalOffset = nodeRadius * 2 / 3;
-  const sourceRightEdge = sourceY + nodeRadius - 1;
-  const targetLeftEdge = targetY - nodeRadius;
+  const sourceRightEdge = sourceY + nodeRadius;
+  const targetLeftEdge = targetY - nodeRadius + 1;
 
   const start = `M${sourceRightEdge},${sourceX - verticalOffset}`;
   const ctrl1 = `C${controlHorizontal},${sourceX} ${midHorizontal},${topVertical} ${targetLeftEdge},${topVertical}`;
