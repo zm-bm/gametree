@@ -71,9 +71,11 @@ export const TreeNode = ({
 
   const nodePalette = useMemo(() => getTreeNodePalette(isDarkMode), [isDarkMode]);
   const isPinned = pinnedNodes.includes(id);
-  const pinnedBadgeSize = Math.max(10, Math.round(nodeRectSize * 0.22));
-  const pinnedBadgeX = nodeRectSize / 2 - pinnedBadgeSize * 0.45;
-  const pinnedBadgeY = -nodeRectSize / 2 + pinnedBadgeSize * 0.45;
+  const pinnedBadgeSize = Math.max(8, Math.round(nodeRectSize * 0.18));
+  const pinnedBadgeRadius = Math.max(2, Math.round(pinnedBadgeSize * 0.28));
+  const pinnedIconSize = pinnedBadgeSize * 0.52;
+  const pinnedBadgeX = nodeRectSize / 2 - pinnedBadgeSize * 0.52;
+  const pinnedBadgeY = -nodeRectSize / 2 + pinnedBadgeSize * 0.52;
 
   return (
     <AnimatedGroup
@@ -129,20 +131,23 @@ export const TreeNode = ({
 
             {isPinned && (
               <g transform={`translate(${pinnedBadgeX}, ${pinnedBadgeY})`} style={{ pointerEvents: "none" }}>
-                <circle
-                  cx={0}
-                  cy={0}
-                  r={pinnedBadgeSize / 2}
-                  fill={isDarkMode ? "rgba(251,191,36,0.2)" : "rgba(245,158,11,0.16)"}
-                  stroke={isDarkMode ? "rgba(252,211,77,0.72)" : "rgba(217,119,6,0.58)"}
-                  strokeWidth={0.8}
+                <rect
+                  x={-pinnedBadgeSize / 2}
+                  y={-pinnedBadgeSize / 2}
+                  width={pinnedBadgeSize}
+                  height={pinnedBadgeSize}
+                  rx={pinnedBadgeRadius}
+                  ry={pinnedBadgeRadius}
+                  fill={isDarkMode ? "rgba(30,41,59,0.62)" : "rgba(203,213,225,0.72)"}
+                  stroke={isDarkMode ? "rgba(148,163,184,0.12)" : "rgba(71,85,105,0.16)"}
+                  strokeWidth={0.6}
                 />
-                <g transform={`translate(${-pinnedBadgeSize * 0.22}, ${-pinnedBadgeSize * 0.24})`}>
-                  <FaThumbtack
-                    size={pinnedBadgeSize * 0.48}
-                    className="text-amber-700 dark:text-amber-300"
-                  />
-                </g>
+                <FaThumbtack
+                  size={pinnedIconSize}
+                  className="text-amber-700 dark:text-amber-300"
+                  x={-pinnedIconSize / 2}
+                  y={-pinnedIconSize / 2}
+                />
               </g>
             )}
 
