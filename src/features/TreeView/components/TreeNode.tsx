@@ -5,9 +5,10 @@ import { Group } from "@visx/group";
 import { HierarchyPointNode } from "@visx/hierarchy/lib/types";
 import { animated } from "react-spring";
 import { FluidValue } from '@react-spring/shared';
+import { FaThumbtack } from "react-icons/fa6";
 
 import { RootState } from "@/store";
-import { selectBoardOrientation, selectCurrentVisibleId, selectIsDarkMode } from "@/store/selectors";
+import { selectBoardOrientation, selectCurrentVisibleId, selectIsDarkMode, selectPinnedNodes } from "@/store/selectors";
 import { TreeViewNode } from "@/shared/types";
 import { TreeDimensionsContext } from "../context/TreeDimensionsContext";
 import { useTreeNodeInteractions } from "../hooks/useTreeNodeInteractions";
@@ -60,6 +61,7 @@ export const TreeNode = ({
   const currentNodeId = useSelector((s: RootState) => selectCurrentVisibleId(s));
   const boardOrientation = useSelector((s: RootState) => selectBoardOrientation(s));
   const isDarkMode = useSelector((s: RootState) => selectIsDarkMode(s));
+  const pinnedNodes = useSelector((s: RootState) => selectPinnedNodes(s));
   const {
     isNodeHovered,
     handleNodeClick,
@@ -68,6 +70,10 @@ export const TreeNode = ({
   } = useTreeNodeInteractions({ node, minimap });
 
   const nodePalette = useMemo(() => getTreeNodePalette(isDarkMode), [isDarkMode]);
+  const isPinned = pinnedNodes.includes(id);
+  const pinnedBadgeSize = Math.max(10, Math.round(nodeRectSize * 0.22));
+  const pinnedBadgeX = nodeRectSize / 2 - pinnedBadgeSize * 0.45;
+  const pinnedBadgeY = -nodeRectSize / 2 + pinnedBadgeSize * 0.45;
 
   return (
     <AnimatedGroup
@@ -120,6 +126,25 @@ export const TreeNode = ({
               strokeWidth={currentNodeId === id ? 1.2 : 0.8}
               style={{ pointerEvents: "none" }}
             />
+
+            {isPinned && (
+              <g transform={`translate(${pinnedBadgeX}, ${pinnedBadgeY})`} style={{ pointerEvents: "none" }}>
+                <circle
+                  cx={0}
+                  cy={0}
+                  r={pinnedBadgeSize / 2}
+                  fill={isDarkMode ? "rgba(251,191,36,0.2)" : "rgba(245,158,11,0.16)"}
+                  stroke={isDarkMode ? "rgba(252,211,77,0.72)" : "rgba(217,119,6,0.58)"}
+                  strokeWidth={0.8}
+                />
+                <g transform={`translate(${-pinnedBadgeSize * 0.22}, ${-pinnedBadgeSize * 0.24})`}>
+                  <FaThumbtack
+                    size={pinnedBadgeSize * 0.48}
+                    className="text-amber-700 dark:text-amber-300"
+                  />
+                </g>
+              </g>
+            )}
 
             {/* Move frequency metadata pill (share among siblings). */}
             <TreeNodeMoveFrequency

@@ -15,6 +15,7 @@ interface ButtonConfig {
   onClick: (e: React.MouseEvent) => void;
   rotate?: number;
   active?: boolean;
+  iconClassName?: string;
 }
 
 interface Props {
@@ -46,16 +47,19 @@ export const TreeNodeButtons = ({
           dispatch(tree.actions.toggleNodePinned(nodeId));
         },
         active: isPinned,
+        iconClassName: isPinned ? "text-amber-600 dark:text-amber-300" : "text-slate-700 dark:text-slate-200",
       },
       {
         key: 'isolate',
         icon: FaBullseye,
-        onClick: (e: React.MouseEvent) => { e.stopPropagation(); }
+        onClick: (e: React.MouseEvent) => { e.stopPropagation(); },
+        iconClassName: "text-slate-700 dark:text-slate-200",
       },
       {
         key: 'bookmark',
         icon: FaBookmark,
-        onClick: (e: React.MouseEvent) => { e.stopPropagation(); }
+        onClick: (e: React.MouseEvent) => { e.stopPropagation(); },
+        iconClassName: "text-slate-700 dark:text-slate-200",
       },
     ];
   }, [dispatch, isPinned, nodeId]);
@@ -123,14 +127,19 @@ export const TreeNodeButtons = ({
               fill="transparent" 
               className={cn(
                 "group-hover:fill-lightmode-900/10 dark:group-hover:fill-darkmode-100/10",
-                button.active && "fill-lightmode-900/15 dark:fill-darkmode-100/15",
+                button.active && [
+                  "fill-amber-500/18 dark:fill-amber-300/16",
+                  "stroke-amber-600/50 dark:stroke-amber-200/45",
+                ],
               )}
+              stroke={button.active ? "currentColor" : "transparent"}
+              color={button.active ? "rgba(217,119,6,0.7)" : undefined}
             />
             
             <g transform={`translate(${-drawerConfig.buttonSize/4},${-drawerConfig.buttonSize/4})`}>
               <button.icon 
                 size={drawerConfig.buttonSize/2}
-                className="text-slate-700 dark:text-slate-200" 
+                className={button.iconClassName} 
               />
             </g>
           </g>
