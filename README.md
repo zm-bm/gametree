@@ -26,9 +26,9 @@ npm run build
     - feat(tree-buttons): copy line button (FEN / PGN / UCI position?)
     - fix(test): fix tests
     - feat(nav-next-node): remember last visited child index 
+    - fix(tree-buttons): node buttons sticky if mouse leaves through bridge div
+    - feat(tree-buttons): buttons should scale based on zoom level to maintain consistent physical size on screen
 
-    - bug: node buttons sticky if mouse leaves through bridge div
-    - tree node buttons should scale base on zoom level to maintain consistent physical size on screen
     - hotkeys + hotkey help
         - add hotkeys for:
             - tree navigation (up/down/left/right or vim keys)
