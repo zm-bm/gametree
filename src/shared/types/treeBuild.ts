@@ -8,6 +8,31 @@ import {
   sourceGameCount,
 } from "./tree";
 
+function getRequiredPinnedPathIds(pinnedNodes: Id[]) {
+  const pinnedPathIds = new Set<Id>();
+
+  for (const pinnedNodeId of pinnedNodes) {
+    for (const pathId of getPathIds(pinnedNodeId)) {
+      pinnedPathIds.add(pathId);
+    }
+  }
+
+  return pinnedPathIds;
+}
+
+function getPinnedChildIds(parentNodeId: Id, pinnedNodes: Id[]) {
+  const pinnedChildIds = new Set<Id>();
+
+  for (const pinnedNodeId of pinnedNodes) {
+    const pinnedChildId = getNextPathChildId(parentNodeId, pinnedNodeId);
+    if (pinnedChildId) {
+      pinnedChildIds.add(pinnedChildId);
+    }
+  }
+
+  return pinnedChildIds;
+}
+
 /**
  * Cap the number of children shown for a node.
  *
@@ -91,83 +116,99 @@ export function buildShallowNode(nodes: TreeStore, nodeId: Id, source: TreeSourc
 }
 
 /**
- * Build one focus-mode child.
+ * Build one visible child.
  *
- * Recurses only on the active path and keeps off-path children shallow.
+ * Recurses along the current path and any pinned paths, while keeping
+ * unrelated off-path children shallow.
  */
-function buildFocusBranchChild(
+function buildTreeBranchChild(
   nodes: TreeStore,
   parentNodeId: Id,
   childId: Id,
+  pinnedNodes: Id[],
   frequencyMin: number,
   moveLimit: number,
   source: TreeSource,
   currentId: Id,
   currentPathIds: Set<Id>,
+  pinnedPathIds: Set<Id>,
   parentGames: number,
   nextPathChildId: Id | null,
 ): TreeViewNode | null {
-  const isPathChild = childId === nextPathChildId || currentPathIds.has(childId);
-  const shouldInclude = isPathChild || filterTreeNodes(nodes, childId, frequencyMin, parentGames, source);
+  const isCurrentPathChild = childId === nextPathChildId || currentPathIds.has(childId);
+  const isPinnedPathChild = pinnedPathIds.has(childId);
+  const shouldInclude = isCurrentPathChild || isPinnedPathChild || filterTreeNodes(nodes, childId, frequencyMin, parentGames, source);
   if (!shouldInclude) return null;
 
-  // At the current node, render only one ply of children to keep focus mode compact.
-  if (parentNodeId === currentId) {
+  // At the current node, keep non-pinned siblings shallow to preserve the compact layout.
+  if (parentNodeId === currentId && !isPinnedPathChild) {
     return buildShallowNode(nodes, childId, source);
   }
 
-  // Continue recursion only along the path to the current position.
-  if (isPathChild) {
-    return buildFocusBranch(nodes, childId, frequencyMin, moveLimit, source, currentId, currentPathIds);
+  // Continue recursion only along the current path or a pinned branch.
+  if (isCurrentPathChild || isPinnedPathChild) {
+    return buildTreeBranch(nodes, childId, pinnedNodes, frequencyMin, moveLimit, source, currentId, currentPathIds, pinnedPathIds);
   }
 
   return buildShallowNode(nodes, childId, source);
 }
 
 /**
- * Build focus-mode children for a branch.
+ * Build visible children for a branch.
  *
- * Keeps the next path child visible even if it is missing from local children
- * due to partial loading, and protects that path child from move-limit pruning.
+ * Keeps the next current-path child and any pinned-path child visible even if
+ * they are missing from local children due to partial loading, and protects
+ * those required children from move-limit pruning.
  */
-function buildFocusBranchChildren(
+function buildTreeBranchChildren(
   nodes: TreeStore,
   nodeId: Id,
+  pinnedNodes: Id[],
   frequencyMin: number,
   moveLimit: number,
   source: TreeSource,
   currentId: Id,
   currentPathIds: Set<Id>,
+  pinnedPathIds: Set<Id>,
 ): TreeViewNode[] {
   const node = nodes[nodeId];
-  if (!node || !currentPathIds.has(nodeId)) return [];
+  if (!node || (!currentPathIds.has(nodeId) && !pinnedPathIds.has(nodeId))) return [];
 
   const nextPathChildId = getNextPathChildId(nodeId, currentId);
+  const pinnedChildIds = getPinnedChildIds(nodeId, pinnedNodes);
 
-  // Include all loaded children plus the next path child to prevent path drop-off
-  // when parent/child segments load asynchronously.
+  // Include all loaded children plus required path continuations to prevent
+  // branch drop-off when parent/child segments load asynchronously.
   const candidateChildIds = new Set(node.children);
   if (nextPathChildId) {
     candidateChildIds.add(nextPathChildId);
   }
+  for (const pinnedChildId of pinnedChildIds) {
+    candidateChildIds.add(pinnedChildId);
+  }
 
-  // Never prune the path continuation, even when moveLimit is tight.
+  // Never prune the current-path or pinned-path continuation, even when moveLimit is tight.
   const requiredChildIds = new Set<Id>();
   if (nextPathChildId) {
     requiredChildIds.add(nextPathChildId);
   }
+  for (const pinnedChildId of pinnedChildIds) {
+    requiredChildIds.add(pinnedChildId);
+  }
 
   const parentGames = node.edgeStats[source].total;
   const children = [...candidateChildIds]
-    .map((childId) => buildFocusBranchChild(
+    .map((childId) => buildTreeBranchChild(
       nodes,
       nodeId,
       childId,
+      pinnedNodes,
       frequencyMin,
       moveLimit,
       source,
       currentId,
       currentPathIds,
+      pinnedPathIds,
       parentGames,
       nextPathChildId,
     ))
@@ -176,20 +217,22 @@ function buildFocusBranchChildren(
   return orderTreeNodes(limitTreeNodes(children, moveLimit, requiredChildIds));
 }
 
-export function buildFocusBranch(
+export function buildTreeBranch(
   nodes: TreeStore,
   nodeId: Id,
+  pinnedNodes: Id[],
   frequencyMin: number,
   moveLimit: number,
   source: TreeSource,
   currentId: Id,
   currentPathIds: Set<Id>,
+  pinnedPathIds: Set<Id>,
 ): TreeViewNode | null {
   const node = nodes[nodeId];
   if (!node) return null;
 
   const selectedStats = node.edgeStats[source];
-  const children = buildFocusBranchChildren(nodes, nodeId, frequencyMin, moveLimit, source, currentId, currentPathIds);
+  const children = buildTreeBranchChildren(nodes, nodeId, pinnedNodes, frequencyMin, moveLimit, source, currentId, currentPathIds, pinnedPathIds);
 
   return {
     ...node,
@@ -205,11 +248,13 @@ export function buildFocusBranch(
 export function treeBuild(
   nodes: TreeStore,
   nodeId: Id,
+  pinnedNodes: Id[],
   frequencyMin: number,
   moveLimit: number,
   source: TreeSource,
   currentId: Id,
 ): TreeViewNode | null {
   const currentPathIds = getPathIds(currentId);
-  return buildFocusBranch(nodes, nodeId, frequencyMin, moveLimit, source, currentId, currentPathIds);
+  const pinnedPathIds = getRequiredPinnedPathIds(pinnedNodes);
+  return buildTreeBranch(nodes, nodeId, pinnedNodes, frequencyMin, moveLimit, source, currentId, currentPathIds, pinnedPathIds);
 }

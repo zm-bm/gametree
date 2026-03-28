@@ -34,14 +34,15 @@ export const selectEngineOutput = (s: RootState) => selectEngineData(s).output;
 export const selectTreeRoot = createSelector(
   [
     selectTreeNodeMap,
+    selectPinnedNodes,
     selectTreeMinFrequencyPct,
     selectTreeMoveLimit,
     selectTreeSource,
     selectCurrentId,
   ],
-  (nodes, minFrequencyPct, moveLimit, source, currentId) => {
+  (nodes, pinnedNodes, minFrequencyPct, moveLimit, source, currentId) => {
     const rootId = '';
-    return treeBuild(nodes, rootId, minFrequencyPct, moveLimit, source, currentId);
+    return treeBuild(nodes, rootId, pinnedNodes, minFrequencyPct, moveLimit, source, currentId);
   }
 );
 
