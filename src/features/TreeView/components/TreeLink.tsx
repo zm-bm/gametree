@@ -9,7 +9,7 @@ import { RootState } from "@/store";
 import { selectBoardOrientation, selectTreeWinRateComparison } from "@/store/selectors";
 import { TreeViewNode, getNodeWinScore, getTreeLinkFrequency } from "@/shared/types";
 import { TreeDimensionsContext } from "../context/TreeDimensionsContext";
-import { COLORS, colorScale } from "../lib/colors";
+import { colorScale } from "../lib/colors";
 
 function buildTreeLinkPath(
   sourceX: number,
@@ -26,7 +26,7 @@ function buildTreeLinkPath(
   const bottomVertical = targetX + width / 2;
   const verticalOffset = nodeRadius * 2 / 3;
   const sourceRightEdge = sourceY + nodeRadius - 1;
-  const targetLeftEdge = targetY - nodeRadius;
+  const targetLeftEdge = targetY - nodeRadius + 1;
 
   const start = `M${sourceRightEdge},${sourceX - verticalOffset}`;
   const ctrl1 = `C${controlHorizontal},${sourceX} ${midHorizontal},${topVertical} ${targetLeftEdge},${topVertical}`;
@@ -79,8 +79,6 @@ export const TreeLink = ({
   }, [nodeRadius, minimap, link]);
 
   const linkFill = useMemo(() => {
-    if (link.source.data.collapsed) return COLORS.placeholder;
-
     const orientationFactor = boardOrientation === 'white' ? 1 : -1;
     const targetScore = getNodeWinScore(link.target.data) * orientationFactor;
     if (winRateComparison === "absolute") {

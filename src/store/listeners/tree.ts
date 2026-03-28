@@ -3,7 +3,7 @@ import { DEFAULT_POSITION } from "chess.js";
 
 import { createSkeletonGateRegistry } from "@/shared/lib/skeletonGate";
 import { findNearestExistingAncestorId } from "@/shared/types";
-import { selectCurrentId, selectCurrentNodeData, selectCurrentVisibleId, selectTreeMode } from "@/store/selectors";
+import { selectCurrentId, selectCurrentNodeData, selectCurrentVisibleId } from "@/store/selectors";
 import { startAppListening } from "../listener";
 import { getOpeningsHttpStatus, openingsApi } from "../openingsApi";
 import { tree, ui } from "../slices";
@@ -72,7 +72,6 @@ startAppListening({
 // Clamp current node to the nearest visible ancestor after tree-shape changes (focus/compare, filters, source)
 startAppListening({
   matcher: isAnyOf(
-    ui.actions.setTreeMode,
     ui.actions.setTreeSource,
     ui.actions.setTreeMinFrequencyPct,
     ui.actions.setTreeMoveLimit,
@@ -124,30 +123,5 @@ startAppListening({
     const fen = nodes[clampedId]?.move?.after || DEFAULT_POSITION;
     dispatch(ui.actions.setFen(fen));
     dispatch(ui.actions.setCurrent(clampedId));
-  },
-});
-
-// Listen for node collapse actions and update the current position if the current node becomes hidden
-startAppListening({
-  actionCreator: tree.actions.setNodeCollapsed,
-  effect: async (action, api) => {
-    const { dispatch, getState } = api;
-    const { nodeId, value } = action.payload;
-    if (!value) return;
-
-    const state = getState();
-    const treeMode = selectTreeMode(state);
-    if (treeMode !== "compare") return;
-
-    const currentId = selectCurrentId(state);
-    if (!currentId || currentId === nodeId) return;
-
-    const isHiddenByCollapse = currentId.startsWith(`${nodeId},`);
-    if (!isHiddenByCollapse) return;
-
-    const nodes = state.tree.nodes;
-    const fen = nodes[nodeId]?.move?.after || DEFAULT_POSITION;
-    dispatch(ui.actions.setFen(fen));
-    dispatch(ui.actions.setCurrent(nodeId));
   },
 });

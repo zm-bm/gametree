@@ -7,29 +7,32 @@ import { Config } from "chessground/config";
 import { RootState, useAppDispatch } from "@/store";
 import { nav, ui } from "@/store/slices";
 import {
-  selectBoardOrientation, selectBoardFen, selectCurrentMove, selectEngineOutput
+  selectBoardOrientation,
+  selectBoardFen,
+  selectCurrentMove,
+  selectEngineOutput,
+  selectHoverMove,
 } from "@/store/selectors";
 import { serializeMove } from "@/shared/lib/chess";
 
 export function useBoardDisplay(fen: string) {
-  // const hoverNodeId = useSelector((s: RootState) => selectHoverId(s));
   const currentMove = useSelector((s: RootState) => selectCurrentMove(s));
+  const hoverMove = useSelector((s: RootState) => selectHoverMove(s));
 
   return useMemo(() => {
-    // const displayFen = hover ? hover.fen : fen;
-    const displayFen = fen;
-
-    // let displayMove: Square[] = [];
-    // if (hover) displayMove = [hover.move.slice(0, 2) as Square, hover.move.slice(2, 4) as Square];
-    // else if (currentMove) displayMove = [currentMove.from, currentMove.to];
-    const displayMove = currentMove ? [currentMove.from, currentMove.to] : [];
+    const displayFen = hoverMove?.after || fen;
+    const displayMove = hoverMove
+      ? [hoverMove.from, hoverMove.to]
+      : currentMove
+        ? [currentMove.from, currentMove.to]
+        : [];
 
     return {
       displayFen,
       displayMove,
       check: new Chess(displayFen).inCheck(),
     };
-  }, [fen, currentMove]);
+  }, [fen, currentMove, hoverMove]);
 }
 
 export function useChessState(fen: string) {
@@ -71,7 +74,7 @@ export function useChessgroundConfig(): Config {
     }];
   }, [engineOutput]);
 
-  const { turnColor, dests } = useChessState(fen);
+  const { turnColor, dests } = useChessState(displayFen);
 
   const moveCallback = useCallback((from: Key, to: Key) => {
     const chess = new Chess(fen);

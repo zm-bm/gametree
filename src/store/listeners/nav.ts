@@ -3,20 +3,17 @@ import { DEFAULT_POSITION } from "chess.js";
 
 import { RootState } from "@/store";
 import { startAppListening } from "@/store/listener";
-import { nav, tree, ui } from "@/store/slices";
-import { selectCurrentId, selectCurrentNode, selectTreeMode, selectTreeNodeMap } from "@/store/selectors";
+import { nav, ui } from "@/store/slices";
+import { selectCurrentId, selectCurrentNode, selectTreeNodeMap } from "@/store/selectors";
 import { getChildId, getParentId } from "@/shared/lib/id";
 import { Id, Move, getNodeFen, getSiblingNodeIds, pickPreferredNodeId } from "@/shared/types";
 
-type NavResult =
-  | { id: Id; fen: string }
-  | { expandId: Id };
+type NavResult = { id: Id; fen: string };
 
 // Determine the target position and node based on the navigation action and current state
 const getNavTarget = (action: UnknownAction, state: RootState): NavResult | undefined => {
   const currentId = selectCurrentId(state);
   const currentNode = selectCurrentNode(state);
-  const treeMode = selectTreeMode(state);
   const nodes = selectTreeNodeMap(state);
   const currentNodeData = nodes[currentId] || null;
   const actionType = action.type;
@@ -47,17 +44,7 @@ const getNavTarget = (action: UnknownAction, state: RootState): NavResult | unde
     }
     
     case nav.actions.navigateDown.type: {
-      // If the current node is collapsed and has loaded children, expand it instead of navigating
-      if (
-        treeMode === "compare" &&
-        currentNodeData?.collapsed &&
-        currentNodeData.childrenLoaded &&
-        currentNodeData.children.length > 0
-      ) {
-        return { expandId: currentNodeData.id };
-      }
-
-      // Otherwise, navigate to the first child node (preferably one that has loaded its own children)
+      // Navigate to the first child node (preferably one that has loaded its own children)
       let id: Id | undefined;
       const visibleChildren = currentNode?.children;
       if (visibleChildren?.length) {
@@ -120,11 +107,6 @@ startAppListening({
     const target = getNavTarget(action, state);
 
     if (target !== undefined) {
-      if ("expandId" in target) {
-        dispatch(tree.actions.setNodeCollapsed({ nodeId: target.expandId, value: false }));
-        return;
-      }
-
       dispatch(ui.actions.setFen(target.fen));
       dispatch(ui.actions.setCurrent(target.id));
     }

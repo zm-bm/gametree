@@ -2,11 +2,13 @@ import { PayloadAction as PA, createSlice } from '@reduxjs/toolkit';
 import { Color } from 'chessground/types';
 import { DEFAULT_POSITION, Square } from 'chess.js';
 
-import { TreeMode, TreeSource, TreeWinRateComparison, Id } from "@/shared/types";
+import { TreeSource, TreeWinRateComparison, Id } from "@/shared/types";
 
 const ui = createSlice({
   name: 'ui',
   initialState: {
+    // general UI state
+    isDarkMode: false as boolean,
     // tree id's
     currentId: '' as Id,
     hoverId: null as Id | null,
@@ -15,7 +17,6 @@ const ui = createSlice({
     boardOrientation: 'white' as Color,
     boardPromotionTarget: null as Square[] | null,
     // tree state
-    treeMode: 'focus' as TreeMode,
     treeSource: 'otb' as TreeSource,
     treeMinFrequencyPct: 2 as number,
     treeMoveLimit: 0 as number,
@@ -33,7 +34,7 @@ const ui = createSlice({
     setFen: (s, a: PA<string>) => { s.boardFen = a.payload; },
     toggleOrientation(state) { state.boardOrientation = state.boardOrientation === 'white' ? 'black' : 'white'; },
     setPromotionTarget(state, action: PA<Square[] | null>) { state.boardPromotionTarget = action.payload; },
-    setTreeMode(state, action: PA<TreeMode>) { state.treeMode = action.payload; },
+    setIsDarkMode(state, action: PA<boolean>) { state.isDarkMode = action.payload; },
     setTreeSource(state, action: PA<TreeSource>) { state.treeSource = action.payload; },
     setTreeMinFrequencyPct(state, action: PA<number>) { state.treeMinFrequencyPct = action.payload; },
     setTreeMoveLimit(state, action: PA<number>) { state.treeMoveLimit = action.payload; },

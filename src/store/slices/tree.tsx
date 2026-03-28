@@ -17,6 +17,7 @@ const tree = createSlice({
   name: 'tree',
   initialState: {
     nodes: {} as TreeStore,
+    pinnedNodes: [] as Id[],
   },
   reducers: {
     addNodes(state, action: PayloadAction<AddNodes>) {
@@ -31,11 +32,16 @@ const tree = createSlice({
       }
     },
 
-    setNodeCollapsed(state, action: PayloadAction<SetNodeBoolean>) {
-      const { nodeId, value } = action.payload;
-      if (nodeId !== null && state.nodes[nodeId]) {
-        state.nodes[nodeId].collapsed = value;
+    toggleNodePinned(state, action: PayloadAction<Id>) {
+      const nodeId = action.payload;
+      const pinnedIndex = state.pinnedNodes.indexOf(nodeId);
+
+      if (pinnedIndex === -1) {
+        state.pinnedNodes.push(nodeId);
+        return;
       }
+
+      state.pinnedNodes.splice(pinnedIndex, 1);
     },
   },
 });

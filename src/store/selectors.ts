@@ -6,12 +6,12 @@ import { treeBuild } from "@/shared/types";
 
 // UI selectors
 export const selectUI = (s: RootState) => s.ui;
+export const selectIsDarkMode = (s: RootState) => selectUI(s).isDarkMode;
 export const selectCurrentId = (s: RootState) => selectUI(s).currentId;
 export const selectHoverId = (s: RootState) => selectUI(s).hoverId;
 export const selectBoardFen = (s: RootState) => selectUI(s).boardFen;
 export const selectBoardOrientation = (s: RootState) => selectUI(s).boardOrientation;
 export const selectBoardPromotionTarget = (s: RootState) => selectUI(s).boardPromotionTarget;
-export const selectTreeMode = (s: RootState) => selectUI(s).treeMode;
 export const selectTreeSource = (s: RootState) => selectUI(s).treeSource;
 export const selectTreeMinFrequencyPct = (s: RootState) => selectUI(s).treeMinFrequencyPct;
 export const selectTreeMoveLimit = (s: RootState) => selectUI(s).treeMoveLimit;
@@ -25,28 +25,24 @@ export const selectEngineTime = (s: RootState) => selectUI(s).engineTime
 // Tree data selectors
 export const selectTreeState = (s: RootState) => s.tree;
 export const selectTreeNodeMap = (s: RootState) => selectTreeState(s).nodes;
+export const selectPinnedNodes = (s: RootState) => selectTreeState(s).pinnedNodes;
 
 // Engine data selectors
 export const selectEngineData = (s: RootState) => s.engine;
 export const selectEngineOutput = (s: RootState) => selectEngineData(s).output;
 
-const selectFocusCurrentId = createSelector(
-  [selectTreeMode, selectCurrentId],
-  (mode, currentId) => mode === "focus" ? currentId : "",
-);
-
 export const selectTreeRoot = createSelector(
   [
     selectTreeNodeMap,
+    selectPinnedNodes,
     selectTreeMinFrequencyPct,
     selectTreeMoveLimit,
     selectTreeSource,
-    selectTreeMode,
-    selectFocusCurrentId,
+    selectCurrentId,
   ],
-  (nodes, minFrequencyPct, moveLimit, source, mode, currentId) => {
+  (nodes, pinnedNodes, minFrequencyPct, moveLimit, source, currentId) => {
     const rootId = '';
-    return treeBuild(nodes, rootId, minFrequencyPct, moveLimit, source, mode, currentId);
+    return treeBuild(nodes, rootId, pinnedNodes, minFrequencyPct, moveLimit, source, currentId);
   }
 );
 
@@ -89,7 +85,13 @@ export const selectCurrentNodeData = createSelector(
   (nodes, nodeId) => nodes[nodeId] || null
 );
 
+export const selectHoverNodeData = createSelector(
+  [selectTreeNodeMap, selectHoverId],
+  (nodes, hoverId) => (hoverId ? nodes[hoverId] || null : null)
+);
+
 export const selectCurrentMove = (s: RootState) => selectCurrentNodeData(s)?.move || null;
+export const selectHoverMove = (s: RootState) => selectHoverNodeData(s)?.move || null;
 
 export const selectSideToMove = createSelector(
   [selectBoardFen],

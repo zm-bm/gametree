@@ -2,7 +2,6 @@ import { Id, Move } from "./chess";
 import { SourceStats } from "./openings";
 
 export type TreeSource = "otb" | "online";
-export type TreeMode = "focus" | "compare";
 export type TreeWinRateComparison = "relative" | "absolute";
 
 export type NodeStats = Record<TreeSource, SourceStats>;
@@ -10,7 +9,6 @@ export type NodeStats = Record<TreeSource, SourceStats>;
 type BaseTreeNode = {
   id: Id;
   childrenLoaded: boolean;
-  collapsed: boolean;
   loading: boolean;
   move: Move | null;
   edgeStats: NodeStats;

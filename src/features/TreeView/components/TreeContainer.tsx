@@ -14,13 +14,13 @@ interface Props {
 const TreeContainerBase = ({
   root,
 }: Props)  => {
-  const { nodeSize } = useContext(TreeDimensionsContext);
+  const { treeNodeSpacing } = useContext(TreeDimensionsContext);
 
   if (!root) return null;
   return (
     <VisxTree<TreeViewNode>
       root={root}
-      nodeSize={nodeSize}
+      nodeSize={treeNodeSpacing}
       separation={separation}
     >
       {(tree) =>

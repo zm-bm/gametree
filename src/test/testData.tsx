@@ -56,7 +56,6 @@ export const openings: OpeningTotals = {
 export const treeNode: TreeViewNode = {
   id: '',
   childrenLoaded: true,
-  collapsed: false,
   loading: false,
   edgeStats: {
     otb: { white: 10, draws: 20, black: 30, total: 60 },
@@ -76,7 +75,6 @@ export const treeNode: TreeViewNode = {
     {
       id: 'd2d4',
       childrenLoaded: false,
-      collapsed: false,
       loading: false,
       edgeStats: {
         otb: { white: 4, draws: 5, black: 6, total: 15 },
@@ -97,7 +95,6 @@ export const treeNode: TreeViewNode = {
     {
       id: 'e2e4',
       childrenLoaded: false,
-      collapsed: false,
       loading: false,
       edgeStats: {
         otb: { white: 1, draws: 2, black: 3, total: 6 },

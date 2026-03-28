@@ -1,13 +1,12 @@
 import React, { useCallback, useMemo } from "react";
-import { HierarchyPointNode } from "@visx/hierarchy/lib/types";
 import { IconType } from "react-icons";
-import { FaBookmark, FaBullseye, FaChevronRight } from "react-icons/fa";
+import { FaBookmark, FaBullseye  } from "react-icons/fa";
+import { FaThumbtack, FaThumbtackSlash } from "react-icons/fa6";
 import { useSelector } from "react-redux";
 
 import { RootState, useAppDispatch } from "@/store";
-import { selectTreeMode } from "@/store/selectors";
-import { TreeViewNode } from "@/shared/types";
-import { nav, tree } from "@/store/slices";
+import { selectPinnedNodes } from "@/store/selectors";
+import { tree } from "@/store/slices";
 import { cn } from "@/shared/lib/cn";
 
 interface ButtonConfig {
@@ -15,74 +14,67 @@ interface ButtonConfig {
   icon: IconType;
   onClick: (e: React.MouseEvent) => void;
   rotate?: number;
-  active?: boolean;
+  isActive?: boolean;
 }
 
 interface Props {
-  node: HierarchyPointNode<TreeViewNode>;
+  nodeId: string;
   nodeRadius: number;
   onMouseLeave: () => void;
 }
 
 export const TreeNodeButtons = ({
-  node,
+  nodeId,
   nodeRadius,
   onMouseLeave,
 }: Props) => {
-  const { collapsed } = node.data;
   const dispatch = useAppDispatch();
-  const treeMode = useSelector((s: RootState) => selectTreeMode(s));
+  const pinnedNodes = useSelector((s: RootState) => selectPinnedNodes(s));
+  const isPinned = pinnedNodes.includes(nodeId);
 
   const stopPropagation = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
   }, []);
 
   const buttonConfigs: ButtonConfig[] = useMemo(() => {
-    const configs: ButtonConfig[] = [];
-
-    if (treeMode === "compare") {
-      configs.push({
-        key: 'collapse/expand',
-        icon: FaChevronRight,
-        onClick: () => {
-          if (!node.data.childrenLoaded) {
-            dispatch(nav.actions.navigateToId(node.data.id));
-          } else {
-            dispatch(tree.actions.setNodeCollapsed({ nodeId: node.data.id, value: !collapsed }))
-          }
+    return [
+      {
+        key: 'pin',
+        icon: isPinned ? FaThumbtackSlash : FaThumbtack,
+        onClick: (e: React.MouseEvent) => {
+          e.stopPropagation();
+          dispatch(tree.actions.toggleNodePinned(nodeId));
         },
-        rotate: (node.data.collapsed || (node.data.children.length === 0 && !node.data.loading))
-          ? 0 : 90,
-        active: node.data.collapsed,
-      });
-    }
-
-    configs.push(
+        isActive: isPinned,
+      },
       {
         key: 'isolate',
         icon: FaBullseye,
-        onClick: (e: React.MouseEvent) => { e.stopPropagation(); }
+        onClick: (e: React.MouseEvent) => { e.stopPropagation(); },
       },
       {
         key: 'bookmark',
         icon: FaBookmark,
-        onClick: (e: React.MouseEvent) => { e.stopPropagation(); }
+        onClick: (e: React.MouseEvent) => { e.stopPropagation(); },
       },
-    );
-
-    return configs;
-  }, [collapsed, node, dispatch, treeMode]);
+    ];
+  }, [dispatch, isPinned, nodeId]);
 
   const drawerConfig = useMemo(() => {
     const numIcons = buttonConfigs.length;
-    const buttonSize = nodeRadius;
+    const buttonSize = Math.max(18, Math.round(nodeRadius * 0.84));
+    const buttonGap = Math.max(1, Math.round(buttonSize * 0.08));
+    const drawerPadding = 0;
+    const drawerHeight = buttonSize * numIcons + buttonGap * (numIcons - 1) + drawerPadding * 2;
     
     return {
       buttonSize,
       drawerWidth: buttonSize,
-      drawerHeight: buttonSize * numIcons,
-      drawerX: -nodeRadius * 2.25,
-      drawerY: -buttonSize * numIcons / 2,
+      buttonGap,
+      drawerPadding,
+      drawerHeight,
+      drawerX: -(nodeRadius * 2.05),
+      drawerY: -drawerHeight / 2,
     };
   }, [nodeRadius, buttonConfigs.length]);
 
@@ -112,42 +104,61 @@ export const TreeNodeButtons = ({
           width={drawerConfig.drawerWidth} 
           height={drawerConfig.drawerHeight}
           rx={4} ry={4}
-          className="stroke-lightmode-950/40 dark:stroke-darkmode-100/20 fill-lightmode-50/90 dark:fill-darkmode-900/90"
-          strokeWidth={1}
+          className="stroke-lightmode-900/20 dark:stroke-darkmode-100/20 fill-lightmode-50/80 dark:fill-darkmode-800/70"
+          strokeWidth={0.85}
           vectorEffect="non-scaling-stroke"
         />
         
         {/* Vertical button stack */}
-        {buttonConfigs.map((button, index) => (
-          <g
-            key={button.key}
-            transform={`translate(${drawerConfig.buttonSize/2}, ${index * drawerConfig.buttonSize + drawerConfig.buttonSize/2}) rotate(${button.rotate ?? 0})`}
-            onClick={button.onClick}
-            className="cursor-pointer select-none group"
-            style={{ pointerEvents: "auto" }}
-          >
-            <title>{button.key}</title>
-            <rect 
-              x={-drawerConfig.buttonSize/2} 
-              y={-drawerConfig.buttonSize/2} 
-              width={drawerConfig.buttonSize} 
-              height={drawerConfig.buttonSize}
-              rx={4} ry={4}
-              fill="transparent" 
-              className={cn(
-                "group-hover:fill-lightmode-900/10 dark:group-hover:fill-darkmode-100/10",
-                button.active && "fill-lightmode-900/15 dark:fill-darkmode-100/15",
-              )}
-            />
-            
-            <g transform={`translate(${-drawerConfig.buttonSize/4},${-drawerConfig.buttonSize/4})`}>
-              <button.icon 
-                size={drawerConfig.buttonSize/2}
-                className="text-slate-700 dark:text-slate-200" 
+        {buttonConfigs.map((button, index) => {
+          const buttonSurfaceClassName = cn(
+            "transition-colors duration-150",
+            button.isActive && "fill-amber-400/20 stroke-amber-700/50 dark:fill-amber-300/10 dark:stroke-amber-200/50",
+            button.isActive
+              ? "group-hover:fill-amber-400/30 group-hover:stroke-amber-700/70"
+              : "group-hover:fill-lightmode-700/10 group-hover:stroke-lightmode-900/20",
+            button.isActive
+              ? "dark:group-hover:fill-amber-300/20 dark:group-hover:stroke-amber-100/70"
+              : "dark:group-hover:fill-darkmode-100/10 dark:group-hover:stroke-darkmode-100/30",
+          );
+          const buttonIconClassName = cn(
+            "transition-colors duration-150",
+            button.isActive
+              ? "text-amber-700 group-hover:text-amber-800 dark:text-amber-200 dark:group-hover:text-amber-100"
+              : "text-slate-600 group-hover:text-slate-800 dark:text-darkmode-200 dark:group-hover:text-darkmode-100",
+          );
+
+          return (
+            <g
+              key={button.key}
+              transform={`translate(${drawerConfig.buttonSize/2}, ${drawerConfig.drawerPadding + index * (drawerConfig.buttonSize + drawerConfig.buttonGap) + drawerConfig.buttonSize/2}) rotate(${button.rotate ?? 0})`}
+              onClick={button.onClick}
+              className="cursor-pointer select-none group"
+              style={{ pointerEvents: "auto" }}
+            >
+              <title>{button.key}</title>
+              <rect 
+                x={-drawerConfig.buttonSize/2} 
+                y={-drawerConfig.buttonSize/2} 
+                width={drawerConfig.buttonSize} 
+                height={drawerConfig.buttonSize}
+                rx={4} ry={4}
+                fill="transparent" 
+                className={buttonSurfaceClassName}
+                stroke={button.isActive ? "currentColor" : "transparent"}
+                strokeWidth={0.85}
+                color={button.isActive ? "rgba(217,119,6,0.68)" : undefined}
               />
+              
+              <g transform={`translate(${-drawerConfig.buttonSize * 0.2},${-drawerConfig.buttonSize * 0.2})`}>
+                <button.icon 
+                  size={drawerConfig.buttonSize * 0.4}
+                  className={buttonIconClassName} 
+                />
+              </g>
             </g>
-          </g>
-        ))}
+          );
+        })}
       </g>
     </>
   );

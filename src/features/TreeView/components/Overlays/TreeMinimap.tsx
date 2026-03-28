@@ -19,7 +19,7 @@ interface Props {
 };
 
 export const TreeMinimap = ({ tree, spring }: Props) => {
-  const { nodeSize, width, height } = useContext(TreeDimensionsContext);
+  const { treeNodeSpacing, width, height } = useContext(TreeDimensionsContext);
   const { zoom: { transformMatrix, isDragging, setTransformMatrix, dragStart, dragEnd }} = useContext(ZoomContext);
 
   const minimapSize = useMemo(() => Math.round(Math.min(width, height) * 0.3), [width, height]);
@@ -77,7 +77,7 @@ export const TreeMinimap = ({ tree, spring }: Props) => {
         { tree && transform &&
           <Tree<TreeViewNode>
             root={tree}
-            nodeSize={nodeSize}
+            nodeSize={treeNodeSpacing}
             separation={separation}
           >
             {(tree) => (

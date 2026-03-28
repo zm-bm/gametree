@@ -27,7 +27,6 @@ export function buildNodes(
     node = {
       id: nodeId,
       childrenLoaded: true,
-      collapsed: false,
       loading: false,
       move: getMoveFromId(nodeId),
       edgeStats: rootPositionStats,
@@ -75,7 +74,6 @@ export function buildChildNodes(
     children.push({
       id: childId,
       childrenLoaded: false,
-      collapsed: false,
       loading: false,
       move: childMove,
       edgeStats: childEdgeStats,
