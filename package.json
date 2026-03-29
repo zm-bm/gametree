@@ -9,7 +9,8 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "test": "vitest",
-    "test:debug": "vitest --disable-console-intercept"
+    "test:debug": "vitest --disable-console-intercept",
+    "test:single": "vitest run"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.11.2",
