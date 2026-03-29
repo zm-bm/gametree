@@ -12,12 +12,26 @@ startAppListening({
     ui.actions.setEngineThreads,
     ui.actions.setCurrent,
   ),
-  effect: async (_, listenerApi) => {
+  effect: async (action, listenerApi) => {
     const { dispatch, getState } = listenerApi;
-    dispatch(engine.actions.clearEngineOutput());
 
     const state = getState();
     const running = selectEngineRunning(state);
+
+    const isSetCurrent = action.type === ui.actions.setCurrent.type;
+    const isToggleEngine = action.type === ui.actions.toggleEngine.type;
+    const isSetEngineRunning = action.type === ui.actions.setEngineRunning.type;
+    const isSetEngineHash = action.type === ui.actions.setEngineHash.type;
+    const isSetEngineThreads = action.type === ui.actions.setEngineThreads.type;
+
+    const shouldClearOnStart =
+      (isToggleEngine && running)
+      || (isSetEngineRunning && action.payload === true)
+      || ((isSetEngineHash || isSetEngineThreads) && running);
+
+    if (isSetCurrent || shouldClearOnStart) {
+      dispatch(engine.actions.clearEngineOutput());
+    }
 
     if (running) {
       startEngine();
