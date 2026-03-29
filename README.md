@@ -23,27 +23,24 @@ npm run build
 
 - treeview
     - feat(tree-buttons): copy line button (FEN / PGN / UCI position?)
-    - fix(test): fix tests
     - feat(nav-next-node): remember last visited child index 
     - fix(tree-buttons): node buttons sticky if mouse leaves through bridge div
     - feat(tree-buttons): buttons should scale based on zoom level to maintain consistent physical size on screen
-    - feat(hotkeys)
-        - vim keys for navigation
-        - space / shift+click to pin/unpin node
+    - feat(hotkeys): vim keys navigation, space / shift+click to pin/unpin node
     - fix(tree-zoom): smooth zoom, can be jumpy / jerky
     - feat(tree-minimap): make collapsable
     - fix(tree-minimap): tree interaction cut off by bottom right overlay wrapper
 
 - sidepane
-    - feat(sidepane): make resizable
-    - opening metadata view (ECO, name, win probabilities)
-    - engine evaluation view (eval bar + graph + PV + controls)
-    - bookmarks view (global list + navigation + delete)
+    - feat(sidepane): make sidepane resizable
+    - feat(sidepane-opening): opening metadata view (ECO, name, win probabilities)
+    - feat(sidepane-evaluation): engine evaluation view (eval bar + graph + PV + controls)
+    - feat(sidepane-bookmarks): bookmarks view (global list + navigation + delete)
 
 - other
+    - fix(test): fix tests
     - better move sounds
     - code formatter + pre-commit
-    - fix tests
 
 ## Acknowledgments
 

@@ -40,6 +40,7 @@ const ui = createSlice({
     setTreeMoveLimit(state, action: PA<number>) { state.treeMoveLimit = action.payload; },
     setTreeWinRateComparison(state, action: PA<TreeWinRateComparison>) { state.treeWinRateComparison = action.payload; },
     toggleEngine(state) { state.engineRunning = !state.engineRunning; },
+    setEngineRunning(state, action: PA<boolean>) { state.engineRunning = action.payload; },
     setEngineHash(state, action: PA<number>) { state.engineHash = action.payload; },
     setEngineThreads(state, action: PA<number>) { state.engineThreads = action.payload; },
   },

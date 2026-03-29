@@ -7,6 +7,7 @@ import { startEngine, stopEngine } from "../../worker";
 startAppListening({
   matcher: isAnyOf(
     ui.actions.toggleEngine,
+    ui.actions.setEngineRunning,
     ui.actions.setEngineHash,
     ui.actions.setEngineThreads,
     ui.actions.setCurrent,
@@ -31,6 +32,6 @@ startAppListening({
   effect: async (action, listenerApi) => {
     const { dispatch } = listenerApi;
     console.error('Engine error:', action.payload);
-    dispatch(ui.actions.toggleEngine());
+    dispatch(ui.actions.setEngineRunning(false));
   }
 });

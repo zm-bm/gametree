@@ -57,7 +57,7 @@ const EngineControls = () => {
         <option value="16">16 Threads</option>
       </select>
       <div className="flex flex-col text-xs leading-none overflow-hidden whitespace-nowrap	">
-        <span>Stockfish 16</span>
+        <span>Stockfish 18</span>
         <p>in local browser</p>
       </div>
     </div>

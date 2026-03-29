@@ -11,7 +11,20 @@ import {
   selectEngineTime
 } from './store/selectors';
 
-let worker: Worker;
+let engineWorker: Worker | null = null;
+let isEngineReady = false;
+let startRequested = false;
+
+const initializeWorkerIfNeeded = () => {
+  if (engineWorker) {
+    return;
+  }
+
+  engineWorker = new Stockfish();
+  engineWorker.onmessage = handleWorkerMessage;
+  engineWorker.onerror = handleWorkerError;
+  engineWorker.postMessage('uci');
+};
 
 const isEngineInfo = (line: string) => {
   return (
@@ -22,24 +35,19 @@ const isEngineInfo = (line: string) => {
   );
 }
 
-const onmessage = (event: MessageEvent) => {
-  if (isEngineInfo(event.data)) {
-    store.dispatch(engine.actions.reportEngineOutput(event.data));
+const buildGoCommand = (depth: number, time: number | null) => {
+  if (typeof time === 'number' && Number.isFinite(time) && time > 0) {
+    return `go depth ${depth} movetime ${Math.round(time)}`;
   }
+
+  return `go depth ${depth}`;
 };
 
-const onerror = (error: ErrorEvent) => {
-  store.dispatch(engine.actions.reportEngineError(error.message));
-};
+const runSearch = () => {
+  if (!engineWorker || !isEngineReady) {
+    return;
+  }
 
-export const initializeEngine = () => {
-  worker = new Stockfish();
-  worker.onmessage = onmessage;
-  worker.onerror = onerror;
-  worker.postMessage('uci');
-};
-
-export const startEngine = () => {
   const state = store.getState();
   const fen = selectBoardFen(state);
   const hash = selectEngineHash(state);
@@ -47,13 +55,66 @@ export const startEngine = () => {
   const depth = selectEngineDepth(state);
   const time = selectEngineTime(state);
 
-  worker.postMessage('stop');
-  worker.postMessage(`setoption name Hash value ${hash}`);
-  worker.postMessage(`setoption name Threads value ${threads}`);
-  worker.postMessage(`position fen ${fen}`);
-  worker.postMessage(`go depth ${depth} movetime ${time}`);
+  engineWorker.postMessage('stop');
+  engineWorker.postMessage(`setoption name Hash value ${hash}`);
+  engineWorker.postMessage(`setoption name Threads value ${threads}`);
+  engineWorker.postMessage(`position fen ${fen}`);
+  engineWorker.postMessage(buildGoCommand(depth, time));
+};
+
+const handleWorkerMessage = (event: MessageEvent) => {
+  if (typeof event.data !== 'string') {
+    return;
+  }
+
+  const line = event.data;
+
+  if (line === 'uciok') {
+    engineWorker?.postMessage('isready');
+    return;
+  }
+
+  if (line === 'readyok') {
+    isEngineReady = true;
+    if (startRequested) {
+      runSearch();
+    }
+    return;
+  }
+
+  if (isEngineInfo(line)) {
+    store.dispatch(engine.actions.reportEngineOutput(line));
+  }
+};
+
+const handleWorkerError = (error: ErrorEvent) => {
+  store.dispatch(engine.actions.reportEngineError(error.message));
+};
+
+export const initializeEngine = () => {
+  initializeWorkerIfNeeded();
+};
+
+export const startEngine = () => {
+  initializeWorkerIfNeeded();
+  if (!engineWorker) {
+    return;
+  }
+
+  startRequested = true;
+  if (!isEngineReady) {
+    engineWorker.postMessage('isready');
+    return;
+  }
+
+  runSearch();
 }
 
 export const stopEngine = () => {
-  worker.postMessage('stop');
+  startRequested = false;
+  if (!engineWorker) {
+    return;
+  }
+
+  engineWorker.postMessage('stop');
 }
