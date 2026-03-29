@@ -15,15 +15,20 @@ let engineWorker: Worker | null = null;
 let isEngineReady = false;
 let startRequested = false;
 
-const initializeWorkerIfNeeded = () => {
+const initializeWorkerIfNeeded = (): Worker | null => {
+  if (typeof Worker === 'undefined') {
+    return null;
+  }
+
   if (engineWorker) {
-    return;
+    return engineWorker;
   }
 
   engineWorker = new Stockfish();
   engineWorker.onmessage = handleWorkerMessage;
   engineWorker.onerror = handleWorkerError;
   engineWorker.postMessage('uci');
+  return engineWorker;
 };
 
 const isEngineInfo = (line: string) => {
@@ -96,14 +101,14 @@ export const initializeEngine = () => {
 };
 
 export const startEngine = () => {
-  initializeWorkerIfNeeded();
-  if (!engineWorker) {
+  const worker = initializeWorkerIfNeeded();
+  if (!worker) {
     return;
   }
 
   startRequested = true;
   if (!isEngineReady) {
-    engineWorker.postMessage('isready');
+    worker.postMessage('isready');
     return;
   }
 
@@ -112,9 +117,5 @@ export const startEngine = () => {
 
 export const stopEngine = () => {
   startRequested = false;
-  if (!engineWorker) {
-    return;
-  }
-
-  engineWorker.postMessage('stop');
+  engineWorker?.postMessage('stop');
 }
