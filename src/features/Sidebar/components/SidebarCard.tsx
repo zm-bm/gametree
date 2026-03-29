@@ -4,7 +4,8 @@ import { cn } from "@/shared/lib/cn";
 import { CollapsibleCard } from "@/shared/ui/CollapsibleCard";
 
 interface SidebarCardProps {
-  title: string;
+  title?: string;
+  header?: ReactNode;
   children: ReactNode;
   maxHeight?: string;
   className?: string;
@@ -13,14 +14,17 @@ interface SidebarCardProps {
 
 export const SidebarCard = ({
   title,
+  header,
   children,
   maxHeight = "max-h-60",
   className,
   persistKey,
 }: SidebarCardProps) => {
+  const resolvedHeader = header ?? <span className="font-semibold tracking-tight">{title}</span>;
+
   return (
     <CollapsibleCard
-      header={<span className="font-semibold tracking-tight">{title}</span>}
+      header={resolvedHeader}
       className={cn("sidebar-card", className)}
       headerClassName="p-3 interactive-sidebar"
       contentClassName="sidebar-divider"

@@ -1,6 +1,6 @@
 import ChessBoard from './components/ChessBoard'
 import EngineView from './components/EngineView'
-import Fen from './components/Fen';
+import EngineHeaderSummary from './components/EngineView/EngineHeaderSummary';
 import OpeningView from './components/OpeningView';
 import { SidebarCard } from './components/SidebarCard';
 
@@ -9,11 +9,11 @@ const Sidebar = () => {
     <div className="flex-1 flex flex-col space-y-5 h-full">
       <ChessBoard className="sidebar-card" />
 
-      <SidebarCard title="Opening">
+      <SidebarCard title="Opening" persistKey='gtOpeningViewCollapsed'>
         <OpeningView />
       </SidebarCard>
 
-      <SidebarCard title="Engine">
+      <SidebarCard header={<EngineHeaderSummary />} persistKey='gtEngineViewCollapsed'>
         <EngineView />
       </SidebarCard>
 
@@ -22,10 +22,6 @@ const Sidebar = () => {
           Bookmarks view coming soon!
         </span>
       </SidebarCard>
-
-      <div className="sidebar-card">
-        <Fen />
-      </div>
     </div>
   );
 };
