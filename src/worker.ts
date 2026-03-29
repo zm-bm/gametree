@@ -7,7 +7,6 @@ import {
   selectBoardFen,
   selectEngineDepth,
   selectEngineHash,
-  selectEngineThreads,
   selectEngineTime
 } from './store/selectors';
 
@@ -56,13 +55,12 @@ const runSearch = () => {
   const state = store.getState();
   const fen = selectBoardFen(state);
   const hash = selectEngineHash(state);
-  const threads = selectEngineThreads(state);
   const depth = selectEngineDepth(state);
   const time = selectEngineTime(state);
 
   engineWorker.postMessage('stop');
   engineWorker.postMessage(`setoption name Hash value ${hash}`);
-  engineWorker.postMessage(`setoption name Threads value ${threads}`);
+  // engineWorker.postMessage('setoption name Threads value 1');
   engineWorker.postMessage(`position fen ${fen}`);
   engineWorker.postMessage(buildGoCommand(depth, time));
 };

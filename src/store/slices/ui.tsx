@@ -23,7 +23,7 @@ const ui = createSlice({
     treeWinRateComparison: 'relative' as TreeWinRateComparison,
     // engine state / options
     engineRunning: false as boolean,
-    engineHash: 16 as number,
+    engineHash: 32 as number,
     engineThreads: 1 as number,
     engineDepth: 30 as number,
     engineTime: null as number | null,
