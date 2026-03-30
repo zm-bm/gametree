@@ -1,6 +1,5 @@
 import ChessBoard from './components/ChessBoard'
 import EngineView from './components/EngineView'
-import EngineHeaderSummary from './components/EngineView/EngineHeaderSummary';
 import OpeningView from './components/OpeningView';
 import { SidebarCard } from './components/SidebarCard';
 
@@ -13,9 +12,7 @@ const Sidebar = () => {
         <OpeningView />
       </SidebarCard>
 
-      <SidebarCard header={<EngineHeaderSummary />} persistKey='gtEngineViewCollapsed'>
-        <EngineView />
-      </SidebarCard>
+      <EngineView />
 
       <SidebarCard title="Bookmarks">
         <span className="text-sm text-gray-500 italic">

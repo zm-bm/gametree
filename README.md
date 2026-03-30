@@ -30,6 +30,7 @@ npm run build
     - fix(tree-zoom): smooth zoom, can be jumpy / jerky
     - feat(tree-minimap): make collapsable
     - fix(tree-minimap): tree interaction cut off by bottom right overlay wrapper
+    - feat(tree-options): add info/tooltip for data source
 
 - sidepane
     - feat(sidepane): make sidepane resizable

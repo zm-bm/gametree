@@ -74,7 +74,7 @@ export const TreeOptionsOverlay = () => {
             onKeyDown={preventDefault}
             onChange={selectOtb}
           />
-          <span title="Games played over the board">OTB (1800+ players)</span>
+          <span title="Games played over the board">Over the board</span>
         </label>
         <label className={cn(dataSourceLabel, source === "online" && dataSourceActive)}>
           <input
@@ -85,9 +85,9 @@ export const TreeOptionsOverlay = () => {
             onKeyDown={preventDefault}
             onChange={selectOnline}
           />
-          <span title="Games played online">Online (1800+ players)</span>
+          <span title="Games played online">Online</span>
         </label>
-        <label className={cn(dataSourceLabel, source === "online" && dataSourceActive)}>
+        {/* <label className={cn(dataSourceLabel, source === "online" && dataSourceActive)}>
           <input
             type="radio"
             name="src"
@@ -96,8 +96,8 @@ export const TreeOptionsOverlay = () => {
             onChange={() => {}}
             disabled
           />
-          <span title="All games played on lichess">Lichess (coming soon!)</span>
-        </label>
+          <span title="All games played on lichess">Lichess</span>
+        </label> */}
       </div>
 
       <div>
