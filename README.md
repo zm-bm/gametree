@@ -31,6 +31,8 @@ npm run build
     - feat(tree-minimap): make collapsable
     - fix(tree-minimap): tree interaction cut off by bottom right overlay wrapper
     - feat(tree-options): add info/tooltip for data source
+    - refactor(tree-node): move tree node components to separate dir
+    - feat(tree-node): transposition detection + annotation
 
 - sidepane
     - feat(sidepane): make sidepane resizable
