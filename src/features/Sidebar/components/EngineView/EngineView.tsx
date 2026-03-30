@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { Chess } from "chess.js";
 import { IoIosPause, IoIosPlay } from "react-icons/io";
@@ -32,6 +32,8 @@ const formatSpeed = (speed: number) => (
     maximumFractionDigits: 0,
   }).format(speed)
 );
+
+const EVAL_BAR_SCALE_PAWNS = 3;
 
 const EngineView = () => {
   const dispatch = useAppDispatch();
@@ -74,6 +76,7 @@ const EngineView = () => {
   }
 
   const chessForPv = new Chess(fen);
+  const pvMoves = engineOutput?.pv ?? [];
   const evalDisplay = hasOutput ? evalText : "-";
   const depthDisplay = hasOutput ? depth : "-";
   const timeDisplay = hasOutput && typeof time === "number" ? `${(time / 1000).toFixed(1)}s` : "--";
@@ -107,7 +110,44 @@ const EngineView = () => {
       : cpForTone < 0
         ? "text-red-400"
         : "text-gray-100";
-  const whiteShare = Math.max(0.05, Math.min(0.95, 0.5 + (cpForBar / 500) * 0.5));
+  const barNormalized = Math.max(-1, Math.min(1, cpForBar / (EVAL_BAR_SCALE_PAWNS * 100)));
+  const whiteShare = Math.max(0.05, Math.min(0.95, 0.5 + barNormalized * 0.45));
+
+  const pvTokens = useMemo(() => {
+    if (!pvMoves.length) return null;
+
+    return pvMoves.map((move, moveIx) => {
+      try {
+        const chessMove = chessForPv.move(move);
+        const isWhiteMove = chessMove.color === "w";
+        const isFirstMove = moveIx === 0;
+        const showMoveNumber = isWhiteMove || isFirstMove;
+        const fullMoveNumber = parseInt(chessMove.before.split(" ")[5] || "1");
+
+        return (
+          <span
+            key={chessMove.lan + moveIx}
+            data-id={chessMove.lan}
+            className="hover:text-sky-600 cursor-pointer"
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
+          >
+            {showMoveNumber && (
+              <span className="font-semibold text-gray-700 dark:text-gray-300">
+                {fullMoveNumber}
+                {isWhiteMove ? "." : "..."}
+              </span>
+            )}
+            <span>{chessMove.san}</span>
+            {" "}
+            {isWhiteMove ? " " : <>&nbsp;</>}
+          </span>
+        );
+      } catch {
+        return null;
+      }
+    });
+  }, [pvMoves, chessForPv, onMouseEnter, onMouseLeave]);
 
   return (
     <SidebarCard
@@ -116,8 +156,8 @@ const EngineView = () => {
       maxHeight='max-h-[100rem]'
     >
       {/* Controls */}
-      <div className="grid grid-cols-4 items-center gap-3 py-2">
-        <div className="justify-self-start">
+      <div className="flex items-center gap-3 py-2 min-w-0">
+        <div className="shrink-0">
         <button
           onClick={engineToggle}
           className={cn(
@@ -135,30 +175,27 @@ const EngineView = () => {
         </button>
         </div>
 
-        <div className="justify-self-start min-w-0 text-lg font-semibold leading-none text-white/90 truncate">
+        <div className="min-w-0 text-lg font-semibold leading-none text-white/90 truncate shrink-0">
           Stockfish 18
         </div>
 
-        <div className="justify-self-center text-lg leading-none whitespace-nowrap text-white/80">
-          <span className="text-white/60">depth </span>
-          <span className="font-semibold text-white/90">{depthDisplay}</span>
-        </div>
-
-        <div className="justify-self-end text-lg leading-none whitespace-nowrap text-white/80">
-          {npsKnDisplay}
+        <div className="flex items-center gap-2 text-sm leading-none whitespace-nowrap text-white/60">
+          <span>
+            depth <span className="font-semibold text-white/80">{depthDisplay}</span>
+          </span>
+          <span className="text-white/40">&bull;</span>
+          <span className="font-semibold text-white/80">{npsKnDisplay}</span>
         </div>
       </div>
 
       {/* Primary analysis */}
       <div className="space-y-3 min-h-48 pt-10 pb-6 text-center">
-        <div className="flex items-end justify-center gap-3">
-          <span className={`text-6xl font-semibold tracking-tight leading-none ${evalToneClass}`}>
-            {evalDisplay}
-          </span>
-          <span className="text-base text-gray-500 dark:text-gray-400 leading-none">
-            best:{" "}
-            <span className={`font-semibold ${hasOutput ? "text-gray-100" : "text-gray-500"}`}>{hasOutput ? bestMoveSan : "-"}</span>
-          </span>
+        <div className={`text-6xl font-semibold tracking-tight leading-none ${evalToneClass}`}>
+          {evalDisplay}
+        </div>
+        <div className="text-sm text-gray-500 dark:text-gray-400 leading-none">
+          best move:{" "}
+          <span className={`font-semibold ${hasOutput ? "text-gray-100" : "text-gray-500"}`}>{hasOutput ? bestMoveSan : "-"}</span>
         </div>
         <div className="pt-2 px-2">
           <div className="h-8 rounded-md border border-gray-300/50 dark:border-white/10 overflow-hidden flex">
@@ -176,51 +213,34 @@ const EngineView = () => {
       {/* Principal variation */}
       <div className="space-y-2 py-4">
         <div className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-500">Principal variation</div>
-        <div className="engine-pv-line engine-pv-clamp h-24 text-base leading-relaxed text-gray-900 dark:text-gray-100">
-          {
-            engineOutput?.pv ? engineOutput!.pv.map((move, moveIx) => {
-              try {
-                const chessMove = chessForPv.move(move);
-                const isWhiteMove = chessMove.color === "w";
-                const isFirstMove = moveIx === 0;
-                const showMoveNumber = isWhiteMove || isFirstMove;
-                const fullMoveNumber = parseInt(chessMove.before.split(" ")[5] || "1");
-
-                return (
-                  <span
-                    key={chessMove.lan + moveIx}
-                    data-id={chessMove.lan}
-                    className="hover:text-sky-600 cursor-pointer"
-                    onMouseEnter={onMouseEnter}
-                    onMouseLeave={onMouseLeave}
-                  >
-                    {showMoveNumber && (
-                      <>
-                        {fullMoveNumber}
-                        {isWhiteMove ? "." : "..."}
-                      </>
-                    )}
-                    <span>{chessMove.san}</span>
-                    {" "}
-                    {isWhiteMove ? " " : <>&nbsp;</>}
-                  </span>
-                );
-              } catch {
-                return null;
-              }
-            }) : <span className="text-gray-500 dark:text-gray-500">no analysis yet</span>
-          }
+        <div className="engine-pv-line min-h-24 max-h-48 overflow-y-auto pr-1 text-base leading-7 text-gray-900 dark:text-gray-100">
+          {pvTokens ?? <span className="text-gray-500 dark:text-gray-500">no analysis yet</span>}
         </div>
       </div>
 
       {/* Secondary stats */}
       <div className="py-2">
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500/70 dark:text-gray-500/80">
-          <span>time {timeDisplay}</span>
-          <span>nps {npsDisplay}</span>
-          <span>hash {hashDisplay}</span>
-          <span>seldepth {selDepthDisplay}</span>
-          <span>tb {tbDisplay}</span>
+        <div className="grid grid-cols-5 gap-2 text-xs text-gray-500/70 dark:text-gray-500/80">
+          <div className="text-center leading-tight">
+            <span>time </span>
+            <span className="font-semibold text-gray-400 dark:text-gray-300 tabular-nums">{timeDisplay}</span>
+          </div>
+          <div className="text-center leading-tight">
+            <span>nps </span>
+            <span className="font-semibold text-gray-400 dark:text-gray-300 tabular-nums">{npsDisplay}</span>
+          </div>
+          <div className="text-center leading-tight">
+            <span>hash </span>
+            <span className="font-semibold text-gray-400 dark:text-gray-300 tabular-nums">{hashDisplay}</span>
+          </div>
+          <div className="text-center leading-tight">
+            <span>seldepth </span>
+            <span className="font-semibold text-gray-400 dark:text-gray-300 tabular-nums">{selDepthDisplay}</span>
+          </div>
+          <div className="text-center leading-tight">
+            <span>tb </span>
+            <span className="font-semibold text-gray-400 dark:text-gray-300 tabular-nums">{tbDisplay}</span>
+          </div>
         </div>
       </div>
     </SidebarCard>

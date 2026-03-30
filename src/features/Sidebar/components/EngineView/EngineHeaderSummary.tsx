@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { useSelector } from "react-redux";
 
 import { RootState } from "@/store";
@@ -20,31 +19,36 @@ const EngineHeaderSummary = ({ collapsed }: EngineHeaderSummaryProps) => {
   const orientation = useSelector((s: RootState) => selectBoardOrientation(s));
   const sideToMove = useSelector((s: RootState) => selectSideToMove(s));
 
-  const summary = useMemo(() => {
-    if (collapsed && running && engineOutput) {
-      const depth = engineOutput.depth || 0;
-      const scoreText = formatEngineEval(engineOutput, {
-        sideToMove,
-        orientation,
-        convention: "white",
-      });
+  const hasOutput = Boolean(engineOutput);
+  const stateText = running ? "running" : "idle";
+  const evalText = hasOutput && engineOutput ? formatEngineEval(engineOutput, {
+    sideToMove,
+    orientation,
+    convention: "white",
+  }) : null;
 
-      return `Engine: ${scoreText} @ d${depth}`;
-    }
-
-    return null;
-  }, [collapsed, running, engineOutput, sideToMove, orientation]);
-
-  if (summary) {
-    return <span className="font-semibold tracking-tight">{summary}</span>;
-  }
+  const stateClass = running
+    ? "text-emerald-300/85 dark:text-emerald-300/80"
+    : "text-teal-200/75 dark:text-teal-300/65";
 
   return (
     <span className="font-semibold tracking-tight">
-      Engine:{" "}
-      <span className="text-emerald-300">
-        {running ? "ON" : "OFF"}
-      </span>
+      <span>Engine:</span>{" "}
+      {!collapsed && (
+        <span className={stateClass}>{stateText}</span>
+      )}
+      {collapsed && !evalText && (
+        <span className={stateClass}>idle</span>
+      )}
+      {collapsed && evalText && (
+        <>
+          <span className={stateClass}>{stateText}</span>
+          <span className="mx-1 text-slate-500/80">·</span>
+          <span className="text-emerald-200 dark:text-emerald-200">{evalText}</span>
+          <span className="mx-1 text-slate-500/80">·</span>
+          <span className="font-medium text-slate-400 dark:text-slate-500">d{engineOutput?.depth ?? 0}</span>
+        </>
+      )}
     </span>
   );
 };
