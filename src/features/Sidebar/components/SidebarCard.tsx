@@ -3,9 +3,11 @@ import { ReactNode } from "react";
 import { cn } from "@/shared/lib/cn";
 import { CollapsibleCard } from "@/shared/ui/CollapsibleCard";
 
+type HeaderRenderer = (collapsed: boolean) => ReactNode;
+
 interface SidebarCardProps {
   title?: string;
-  header?: ReactNode;
+  header?: ReactNode | HeaderRenderer;
   children: ReactNode;
   maxHeight?: string;
   className?: string;

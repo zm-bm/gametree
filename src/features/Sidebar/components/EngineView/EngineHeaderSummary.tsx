@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { useSelector } from "react-redux";
 
 import { RootState } from "@/store";
+import { formatEngineEval } from "@/shared/lib/engineEval";
 import {
   selectBoardOrientation,
   selectEngineOutput,
@@ -9,54 +10,43 @@ import {
   selectSideToMove,
 } from "@/store/selectors";
 
-const formatCentipawns = (cp: number, sideToMove: string, orientation: string) => {
-  const turn = sideToMove === "white" ? 1 : -1;
-  const flipped = orientation === "white" ? 1 : -1;
-  const score = (cp * turn * flipped) / 100;
+interface EngineHeaderSummaryProps {
+  collapsed: boolean;
+}
 
-  return Intl.NumberFormat(undefined, {
-    signDisplay: "always",
-    minimumFractionDigits: 1,
-    maximumFractionDigits: 1,
-  }).format(score);
-};
-
-const formatMate = (mate: number, sideToMove: string, orientation: string) => {
-  const turn = sideToMove === "white" ? 1 : -1;
-  const flipped = orientation === "white" ? 1 : -1;
-  const plies = mate * turn * flipped;
-  const sign = plies > 0 ? "+" : "-";
-  return `${sign}#${Math.abs(plies)}`;
-};
-
-const EngineHeaderSummary = () => {
+const EngineHeaderSummary = ({ collapsed }: EngineHeaderSummaryProps) => {
   const running = useSelector((s: RootState) => selectEngineRunning(s));
   const engineOutput = useSelector((s: RootState) => selectEngineOutput(s));
   const orientation = useSelector((s: RootState) => selectBoardOrientation(s));
   const sideToMove = useSelector((s: RootState) => selectSideToMove(s));
 
   const summary = useMemo(() => {
-    if (!running) {
-      return "Engine: off";
+    if (collapsed && running && engineOutput) {
+      const depth = engineOutput.depth || 0;
+      const scoreText = formatEngineEval(engineOutput, {
+        sideToMove,
+        orientation,
+        convention: "white",
+      });
+
+      return `Engine: ${scoreText} @ d${depth}`;
     }
 
-    if (!engineOutput) {
-      return "Engine: on";
-    }
+    return null;
+  }, [collapsed, running, engineOutput, sideToMove, orientation]);
 
-    const depth = engineOutput.depth || 0;
-    let scoreText = "-";
+  if (summary) {
+    return <span className="font-semibold tracking-tight">{summary}</span>;
+  }
 
-    if (typeof engineOutput.cp === "number") {
-      scoreText = formatCentipawns(engineOutput.cp, sideToMove, orientation);
-    } else if (typeof engineOutput.mate === "number") {
-      scoreText = formatMate(engineOutput.mate, sideToMove, orientation);
-    }
-
-    return `Engine: ${scoreText} @ d${depth}`;
-  }, [running, engineOutput, sideToMove, orientation]);
-
-  return <span className="font-semibold tracking-tight">{summary}</span>;
+  return (
+    <span className="font-semibold tracking-tight">
+      Engine:{" "}
+      <span className="text-emerald-300">
+        {running ? "ON" : "OFF"}
+      </span>
+    </span>
+  );
 };
 
 export default EngineHeaderSummary;

@@ -3,10 +3,10 @@ import { useSelector } from "react-redux";
 import { Chess } from "chess.js";
 import { IoIosPause, IoIosPlay } from "react-icons/io";
 import { cn } from "@/shared/lib/cn";
+import { formatEngineEval, getEngineBarCp, getNormalizedEngineScore } from "@/shared/lib/engineEval";
 
 import { RootState, useAppDispatch } from "@/store";
 import { ui } from "@/store/slices";
-import { EngineOutput } from "@/shared/types";
 import {
   selectBoardFen,
   selectBoardOrientation,
@@ -33,51 +33,6 @@ const formatSpeed = (speed: number) => (
   }).format(speed)
 );
 
-const getPerspectiveScore = (
-  engineOutput: EngineOutput,
-  sideToMove: string,
-  orientation: string,
-) => {
-  const { cp, mate } = engineOutput;
-  const turn = sideToMove === "white" ? 1 : -1;
-  const flipped = orientation === "white" ? 1 : -1;
-
-  if (cp !== undefined) {
-    const score = cp * turn * flipped;
-    return { cp: score, mate: undefined };
-  }
-
-  return {
-    cp: undefined,
-    mate: mate !== undefined ? mate * turn * flipped : undefined,
-  };
-};
-
-const formatPrimaryEval = (
-  engineOutput: EngineOutput | null,
-  sideToMove: string,
-  orientation: string,
-) => {
-  if (!engineOutput) return "-";
-
-  const { cp, mate } = getPerspectiveScore(engineOutput, sideToMove, orientation);
-
-  if (cp !== undefined) {
-    return Intl.NumberFormat(locale, {
-      signDisplay: "always",
-      minimumFractionDigits: 1,
-      maximumFractionDigits: 1,
-    }).format(cp / 100);
-  }
-
-  if (mate !== undefined) {
-    const sign = mate > 0 ? "" : "-";
-    return `${sign}M${Math.abs(mate)}`;
-  }
-
-  return "-";
-};
-
 const EngineView = () => {
   const dispatch = useAppDispatch();
   const running = useSelector((s: RootState) => selectEngineRunning(s));
@@ -88,7 +43,11 @@ const EngineView = () => {
 
   const { time, speed, depth = 0, seldepth = 0, hashfull, tbhits } = engineOutput || {};
   const hasOutput = Boolean(engineOutput);
-  const evalText = formatPrimaryEval(engineOutput, sideToMove, orientation);
+  const evalText = formatEngineEval(
+    engineOutput,
+    { sideToMove, orientation, convention: "white" },
+    locale,
+  );
 
   const engineToggle = useCallback(() => {
     dispatch(ui.actions.toggleEngine());
@@ -124,18 +83,35 @@ const EngineView = () => {
   const hashDisplay = hasOutput && typeof hashfull === "number" ? `${Math.round(hashfull / 10)}%` : "--";
   const tbDisplay = hasOutput && typeof tbhits === "number" ? tbhits : "--";
 
-  const { cp: perspectiveCp, mate: perspectiveMate } = hasOutput
-    ? getPerspectiveScore(engineOutput!, sideToMove, orientation)
+  const normalizedScorePerspective = hasOutput
+    ? getNormalizedEngineScore(engineOutput!, {
+      sideToMove,
+      orientation,
+      convention: "perspective",
+    })
+    : { cp: 0, mate: undefined };
+  const normalizedScoreWhite = hasOutput
+    ? getNormalizedEngineScore(engineOutput!, {
+      sideToMove,
+      orientation,
+      convention: "white",
+    })
     : { cp: 0, mate: undefined };
 
-  const cpForBar = perspectiveMate !== undefined
-    ? (perspectiveMate > 0 ? 1000 : -1000)
-    : (perspectiveCp ?? 0);
+  const cpForTone = getEngineBarCp(normalizedScorePerspective);
+  const cpForBar = getEngineBarCp(normalizedScoreWhite);
+  const evalToneClass = !hasOutput
+    ? "text-gray-500"
+    : cpForTone > 0
+      ? "text-emerald-300"
+      : cpForTone < 0
+        ? "text-red-400"
+        : "text-gray-100";
   const whiteShare = Math.max(0.05, Math.min(0.95, 0.5 + (cpForBar / 500) * 0.5));
 
   return (
     <SidebarCard
-      header={<EngineHeaderSummary />}
+      header={(collapsed) => <EngineHeaderSummary collapsed={collapsed} />}
       persistKey='gtEngineViewCollapsed'
       maxHeight='max-h-[100rem]'
     >
@@ -175,11 +151,14 @@ const EngineView = () => {
 
       {/* Primary analysis */}
       <div className="space-y-3 min-h-48 pt-10 pb-6 text-center">
-        <div className={`text-6xl font-semibold tracking-tight leading-none ${hasOutput ? "text-gray-100" : "text-gray-500"}`}>
-          {evalDisplay}
-        </div>
-        <div className="text-base text-gray-500 dark:text-gray-400 leading-none">
-          best: <span className={`font-semibold ${hasOutput ? "text-gray-100" : "text-gray-500"}`}>{hasOutput ? bestMoveSan : "-"}</span>
+        <div className="flex items-end justify-center gap-3">
+          <span className={`text-6xl font-semibold tracking-tight leading-none ${evalToneClass}`}>
+            {evalDisplay}
+          </span>
+          <span className="text-base text-gray-500 dark:text-gray-400 leading-none">
+            best:{" "}
+            <span className={`font-semibold ${hasOutput ? "text-gray-100" : "text-gray-500"}`}>{hasOutput ? bestMoveSan : "-"}</span>
+          </span>
         </div>
         <div className="pt-2 px-2">
           <div className="h-8 rounded-md border border-gray-300/50 dark:border-white/10 overflow-hidden flex">
