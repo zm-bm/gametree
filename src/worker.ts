@@ -3,6 +3,7 @@ import Stockfish from 'stockfish/bin/stockfish-18-lite.js?worker'
 
 import { store } from './store';
 import { engine } from './store/slices';
+import { gametreeDebug, gametreeDebugWarn } from './shared/lib/gametreeDebug';
 import {
   selectBoardFen,
   selectEngineDepth,
@@ -13,9 +14,16 @@ import {
 let engineWorker: Worker | null = null;
 let isEngineReady = false;
 let startRequested = false;
+const workerScope = 'worker';
+
+const sendUciCommand = (worker: Worker, command: string) => {
+  gametreeDebug(workerScope, 'uci ->', command);
+  worker.postMessage(command);
+};
 
 const initializeWorkerIfNeeded = (): Worker | null => {
   if (typeof Worker === 'undefined') {
+    gametreeDebugWarn(workerScope, 'Worker API unavailable; engine disabled in this environment');
     return null;
   }
 
@@ -26,7 +34,7 @@ const initializeWorkerIfNeeded = (): Worker | null => {
   engineWorker = new Stockfish();
   engineWorker.onmessage = handleWorkerMessage;
   engineWorker.onerror = handleWorkerError;
-  engineWorker.postMessage('uci');
+  sendUciCommand(engineWorker, 'uci');
   return engineWorker;
 };
 
@@ -58,11 +66,11 @@ const runSearch = () => {
   const depth = selectEngineDepth(state);
   const time = selectEngineTime(state);
 
-  engineWorker.postMessage('stop');
-  engineWorker.postMessage(`setoption name Hash value ${hash}`);
-  // engineWorker.postMessage('setoption name Threads value 1');
-  engineWorker.postMessage(`position fen ${fen}`);
-  engineWorker.postMessage(buildGoCommand(depth, time));
+  sendUciCommand(engineWorker, 'stop');
+  sendUciCommand(engineWorker, `setoption name Hash value ${hash}`);
+  // sendUciCommand(engineWorker, 'setoption name Threads value 1');
+  sendUciCommand(engineWorker, `position fen ${fen}`);
+  sendUciCommand(engineWorker, buildGoCommand(depth, time));
 };
 
 const handleWorkerMessage = (event: MessageEvent) => {
@@ -71,9 +79,12 @@ const handleWorkerMessage = (event: MessageEvent) => {
   }
 
   const line = event.data;
+  gametreeDebug(workerScope, 'uci <-', line);
 
   if (line === 'uciok') {
-    engineWorker?.postMessage('isready');
+    if (engineWorker) {
+      sendUciCommand(engineWorker, 'isready');
+    }
     return;
   }
 
@@ -91,6 +102,7 @@ const handleWorkerMessage = (event: MessageEvent) => {
 };
 
 const handleWorkerError = (error: ErrorEvent) => {
+  gametreeDebugWarn(workerScope, 'worker error', error.message);
   store.dispatch(engine.actions.reportEngineError(error.message));
 };
 
@@ -106,7 +118,7 @@ export const startEngine = () => {
 
   startRequested = true;
   if (!isEngineReady) {
-    worker.postMessage('isready');
+    sendUciCommand(worker, 'isready');
     return;
   }
 
@@ -115,5 +127,7 @@ export const startEngine = () => {
 
 export const stopEngine = () => {
   startRequested = false;
-  engineWorker?.postMessage('stop');
+  if (engineWorker) {
+    sendUciCommand(engineWorker, 'stop');
+  }
 }
