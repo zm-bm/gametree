@@ -1,8 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { Chess } from "chess.js";
-import { IoIosPause, IoIosPlay } from "react-icons/io";
-import { cn } from "@/shared/lib/cn";
 import { formatEngineEval, getEngineBarCp, getNormalizedEngineScore } from "@/shared/lib/engineEval";
 
 import { RootState, useAppDispatch } from "@/store";
@@ -16,7 +14,8 @@ import {
 } from "@/store/selectors";
 import "./EngineView.css";
 import { SidebarCard } from "../SidebarCard";
-import EngineHeaderSummary from './EngineHeaderSummary';
+import EngineHeaderSummary from "./EngineHeaderSummary";
+import EngineControlsRow from "./EngineControlsRow";
 
 function getLocale() {
   if (navigator.languages != undefined) return navigator.languages[0];
@@ -152,43 +151,16 @@ const EngineView = () => {
   return (
     <SidebarCard
       header={(collapsed) => <EngineHeaderSummary collapsed={collapsed} />}
-      persistKey='gtEngineViewCollapsed'
-      maxHeight='max-h-[100rem]'
+      persistKey="gtEngineViewCollapsed"
+      maxHeight="max-h-[100rem]"
     >
-      {/* Controls */}
-      <div className="flex items-center gap-3 py-2 min-w-0">
-        <div className="shrink-0">
-        <button
-          onClick={engineToggle}
-          className={cn(
-            'h-10 min-w-24 px-3 inline-flex items-center justify-center gap-2 rounded-md border transition-colors',
-            running
-              ? "border-red-400/40 bg-red-500/20 text-red-100 hover:bg-red-500/30"
-              : "border-sky-300/40 bg-sky-500/20 text-sky-100 hover:bg-sky-500/30"
-          )}
-          title="Start/stop engine"
-        >
-          {running ? <IoIosPause className="text-lg" /> : <IoIosPlay className="text-lg" />}
-          <span className="text-xs font-semibold uppercase tracking-wide">
-            {running ? "Stop" : "Start"}
-          </span>
-        </button>
-        </div>
+      <EngineControlsRow
+        running={running}
+        depthDisplay={depthDisplay}
+        npsKnDisplay={npsKnDisplay}
+        onToggle={engineToggle}
+      />
 
-        <div className="min-w-0 text-lg font-semibold leading-none text-white/90 truncate shrink-0">
-          Stockfish 18
-        </div>
-
-        <div className="flex items-center gap-2 text-sm leading-none whitespace-nowrap text-white/60">
-          <span>
-            depth <span className="font-semibold text-white/80">{depthDisplay}</span>
-          </span>
-          <span className="text-white/40">&bull;</span>
-          <span className="font-semibold text-white/80">{npsKnDisplay}</span>
-        </div>
-      </div>
-
-      {/* Primary analysis */}
       <div className="space-y-3 min-h-48 pt-10 pb-6 text-center">
         <div className={`text-6xl font-semibold tracking-tight leading-none ${evalToneClass}`}>
           {evalDisplay}
@@ -210,7 +182,6 @@ const EngineView = () => {
         </div>
       </div>
 
-      {/* Principal variation */}
       <div className="space-y-2 py-4">
         <div className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-500">Principal variation</div>
         <div className="engine-pv-line min-h-24 max-h-48 overflow-y-auto pr-1 text-base leading-7 text-gray-900 dark:text-gray-100">
@@ -218,7 +189,6 @@ const EngineView = () => {
         </div>
       </div>
 
-      {/* Secondary stats */}
       <div className="py-2">
         <div className="grid grid-cols-5 gap-2 text-xs text-gray-500/70 dark:text-gray-500/80">
           <div className="text-center leading-tight">
