@@ -18,11 +18,13 @@ const getScoreMultiplier = (
   orientation: string,
   convention: EngineEvalConvention,
 ) => {
+  const turn = sideToMove === "white" ? 1 : -1;
+
   if (convention === "white") {
-    return 1;
+    // UCI cp/mate is from side-to-move perspective; convert to white POV.
+    return turn;
   }
 
-  const turn = sideToMove === "white" ? 1 : -1;
   const flipped = orientation === "white" ? 1 : -1;
   return turn * flipped;
 };

@@ -1,19 +1,24 @@
 import { IoIosPause, IoIosPlay } from "react-icons/io";
 import { cn } from "@/shared/lib/cn";
 
-interface EngineControlsRowProps {
+interface EngineControlsProps {
   running: boolean;
-  depthDisplay: number | string;
-  npsKnDisplay: string;
+  hasOutput: boolean;
+  depth?: number;
+  speed?: number;
   onToggle: () => void;
 }
 
-const EngineControlsRow = ({
+const EngineControls = ({
   running,
-  depthDisplay,
-  npsKnDisplay,
+  hasOutput,
+  depth,
+  speed,
   onToggle,
-}: EngineControlsRowProps) => {
+}: EngineControlsProps) => {
+  const depthDisplay = hasOutput ? (depth ?? 0) : "-";
+  const npsKnDisplay = hasOutput && typeof speed === "number" ? `${Math.round(speed / 1000)} kn/s` : "--";
+
   return (
     <div className="flex items-center gap-2.5 py-2 min-w-0">
       <div className="shrink-0">
@@ -49,4 +54,4 @@ const EngineControlsRow = ({
   );
 };
 
-export default EngineControlsRow;
+export default EngineControls;

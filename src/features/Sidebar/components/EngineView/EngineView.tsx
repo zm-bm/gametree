@@ -1,7 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { Chess } from "chess.js";
-import { formatEngineEval, getEngineBarCp, getNormalizedEngineScore } from "@/shared/lib/engineEval";
 
 import { RootState, useAppDispatch } from "@/store";
 import { ui } from "@/store/slices";
@@ -15,7 +14,8 @@ import {
 import "./EngineView.css";
 import { SidebarCard } from "../SidebarCard";
 import EngineHeaderSummary from "./EngineHeaderSummary";
-import EngineControlsRow from "./EngineControlsRow";
+import EngineControls from "./EngineControls";
+import EnginePrimaryAnalysis from "./EnginePrimaryAnalysis";
 
 function getLocale() {
   if (navigator.languages != undefined) return navigator.languages[0];
@@ -32,8 +32,6 @@ const formatSpeed = (speed: number) => (
   }).format(speed)
 );
 
-const EVAL_BAR_SCALE_PAWNS = 3;
-
 const EngineView = () => {
   const dispatch = useAppDispatch();
   const running = useSelector((s: RootState) => selectEngineRunning(s));
@@ -44,11 +42,6 @@ const EngineView = () => {
 
   const { time, speed, depth = 0, seldepth = 0, hashfull, tbhits } = engineOutput || {};
   const hasOutput = Boolean(engineOutput);
-  const evalText = formatEngineEval(
-    engineOutput,
-    { sideToMove, orientation, convention: "white" },
-    locale,
-  );
 
   const engineToggle = useCallback(() => {
     dispatch(ui.actions.toggleEngine());
@@ -63,54 +56,13 @@ const EngineView = () => {
     dispatch(ui.actions.setHover(null));
   }, [dispatch]);
 
-  const chessForBestMove = new Chess(fen);
-  const bestMoveUci = engineOutput?.pv?.[0];
-  let bestMoveSan = "-";
-  if (bestMoveUci) {
-    try {
-      bestMoveSan = chessForBestMove.move(bestMoveUci).san;
-    } catch {
-      bestMoveSan = bestMoveUci;
-    }
-  }
-
   const chessForPv = new Chess(fen);
   const pvMoves = engineOutput?.pv ?? [];
-  const evalDisplay = hasOutput ? evalText : "-";
-  const depthDisplay = hasOutput ? depth : "-";
   const timeDisplay = hasOutput && typeof time === "number" ? `${(time / 1000).toFixed(1)}s` : "--";
   const npsDisplay = hasOutput && typeof speed === "number" ? formatSpeed(speed) : "--";
-  const npsKnDisplay = hasOutput && typeof speed === "number" ? `${Math.round(speed / 1000)} kn/s` : "--";
   const selDepthDisplay = hasOutput ? seldepth : "--";
   const hashDisplay = hasOutput && typeof hashfull === "number" ? `${Math.round(hashfull / 10)}%` : "--";
   const tbDisplay = hasOutput && typeof tbhits === "number" ? tbhits : "--";
-
-  const normalizedScorePerspective = hasOutput
-    ? getNormalizedEngineScore(engineOutput!, {
-      sideToMove,
-      orientation,
-      convention: "perspective",
-    })
-    : { cp: 0, mate: undefined };
-  const normalizedScoreWhite = hasOutput
-    ? getNormalizedEngineScore(engineOutput!, {
-      sideToMove,
-      orientation,
-      convention: "white",
-    })
-    : { cp: 0, mate: undefined };
-
-  const cpForTone = getEngineBarCp(normalizedScorePerspective);
-  const cpForBar = getEngineBarCp(normalizedScoreWhite);
-  const evalToneClass = !hasOutput
-    ? "text-gray-500"
-    : cpForTone > 0
-      ? "text-emerald-300"
-      : cpForTone < 0
-        ? "text-red-400"
-        : "text-gray-100";
-  const barNormalized = Math.max(-1, Math.min(1, cpForBar / (EVAL_BAR_SCALE_PAWNS * 100)));
-  const whiteShare = Math.max(0.05, Math.min(0.95, 0.5 + barNormalized * 0.45));
 
   const pvTokens = useMemo(() => {
     if (!pvMoves.length) return null;
@@ -154,33 +106,21 @@ const EngineView = () => {
       persistKey="gtEngineViewCollapsed"
       maxHeight="max-h-[100rem]"
     >
-      <EngineControlsRow
+      <EngineControls
         running={running}
-        depthDisplay={depthDisplay}
-        npsKnDisplay={npsKnDisplay}
+        hasOutput={hasOutput}
+        depth={depth}
+        speed={speed}
         onToggle={engineToggle}
       />
 
-      <div className="space-y-3 min-h-48 pt-10 pb-6 text-center">
-        <div className={`text-6xl font-semibold tracking-tight leading-none ${evalToneClass}`}>
-          {evalDisplay}
-        </div>
-        <div className="text-sm text-gray-500 dark:text-gray-400 leading-none">
-          best move:{" "}
-          <span className={`font-semibold ${hasOutput ? "text-gray-100" : "text-gray-500"}`}>{hasOutput ? bestMoveSan : "-"}</span>
-        </div>
-        <div className="pt-2 px-2">
-          <div className="h-8 rounded-md border border-gray-300/50 dark:border-white/10 overflow-hidden flex">
-            <div className="h-full bg-gray-100/90 dark:bg-gray-100/90" style={{ width: `${whiteShare * 100}%` }} />
-            <div className="h-full bg-gray-900/70 dark:bg-gray-900/80" style={{ width: `${(1 - whiteShare) * 100}%` }} />
-          </div>
-          <div className="mt-2 flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
-            <span>white</span>
-            <span>0</span>
-            <span>black</span>
-          </div>
-        </div>
-      </div>
+      <EnginePrimaryAnalysis
+        engineOutput={engineOutput}
+        fen={fen}
+        sideToMove={sideToMove}
+        orientation={orientation}
+        locale={locale}
+      />
 
       <div className="space-y-2 py-4">
         <div className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-500">Principal variation</div>
