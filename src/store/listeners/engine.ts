@@ -13,9 +13,11 @@ startAppListening({
     ui.actions.setCurrent,
   ),
   effect: async (action, listenerApi) => {
-    const { dispatch, getState } = listenerApi;
+    const { dispatch, getState, getOriginalState } = listenerApi;
 
+    const prevState = getOriginalState();
     const state = getState();
+    const wasRunning = selectEngineRunning(prevState);
     const running = selectEngineRunning(state);
 
     const isSetCurrent = action.type === ui.actions.setCurrent.type;
@@ -35,7 +37,7 @@ startAppListening({
 
     if (running) {
       startEngine();
-    } else {
+    } else if (wasRunning) {
       stopEngine();
     }
   },
