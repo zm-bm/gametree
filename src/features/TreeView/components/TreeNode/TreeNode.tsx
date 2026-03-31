@@ -5,18 +5,20 @@ import { Group } from "@visx/group";
 import { HierarchyPointNode } from "@visx/hierarchy/lib/types";
 import { animated } from "react-spring";
 import { FluidValue } from '@react-spring/shared';
-import { FaThumbtack } from "react-icons/fa6";
 
 import { RootState } from "@/store";
 import { selectBoardOrientation, selectCurrentVisibleId, selectIsDarkMode, selectPinnedNodes } from "@/store/selectors";
 import { TreeViewNode } from "@/shared/types";
 import { TreeDimensionsContext } from "../../context/TreeDimensionsContext";
 import { useTreeNodeInteractions } from "../../hooks/useTreeNodeInteractions";
-import { TreeNodeButtons } from "./TreeNodeButtons";
-import { TreeNodeLoadingIndicator } from "./TreeNodeLoadingIndicator";
-import { TreeNodeMoveLabel } from "./TreeNodeMoveLabel";
-import { TreeNodeMoveFrequency } from "./TreeNodeMoveFrequency";
-import { TreeNodeWinFrequency } from "./TreeNodeWinFrequency";
+import {
+  TreeNodeButtons,
+  TreeNodeLoadingIndicator,
+  TreeNodeMoveLabel,
+  TreeNodeMoveFrequency,
+  TreeNodePinnedBadge,
+  TreeNodeWinFrequency,
+} from "./index";
 
 const AnimatedGroup = animated(Group);
 
@@ -72,11 +74,6 @@ export const TreeNode = ({
   const nodePalette = useMemo(() => getTreeNodePalette(isDarkMode), [isDarkMode]);
   const isPinned = pinnedNodes.includes(id);
   const nodeFen = node.data.move?.after || DEFAULT_POSITION;
-  const pinnedBadgeSize = Math.max(8, Math.round(nodeRectSize * 0.18));
-  const pinnedBadgeRadius = Math.max(2, Math.round(pinnedBadgeSize * 0.28));
-  const pinnedIconSize = pinnedBadgeSize * 0.52;
-  const pinnedBadgeX = nodeRectSize / 2 - pinnedBadgeSize * 0.52;
-  const pinnedBadgeY = -nodeRectSize / 2 + pinnedBadgeSize * 0.52;
 
   return (
     <AnimatedGroup
@@ -131,27 +128,7 @@ export const TreeNode = ({
               style={{ pointerEvents: "none" }}
             />
 
-            {isPinned && (
-              <g transform={`translate(${pinnedBadgeX}, ${pinnedBadgeY})`} style={{ pointerEvents: "none" }}>
-                <rect
-                  x={-pinnedBadgeSize / 2}
-                  y={-pinnedBadgeSize / 2}
-                  width={pinnedBadgeSize}
-                  height={pinnedBadgeSize}
-                  rx={pinnedBadgeRadius}
-                  ry={pinnedBadgeRadius}
-                  fill={isDarkMode ? "rgba(30,41,59,0.62)" : "rgba(203,213,225,0.72)"}
-                  stroke={isDarkMode ? "rgba(148,163,184,0.12)" : "rgba(71,85,105,0.16)"}
-                  strokeWidth={0.6}
-                />
-                <FaThumbtack
-                  size={pinnedIconSize}
-                  className="text-amber-700 dark:text-amber-300"
-                  x={-pinnedIconSize / 2}
-                  y={-pinnedIconSize / 2}
-                />
-              </g>
-            )}
+            {isPinned && <TreeNodePinnedBadge nodeRectSize={nodeRectSize} isDarkMode={isDarkMode} />}
 
             {/* Move frequency metadata pill (share among siblings). */}
             <TreeNodeMoveFrequency
