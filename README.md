@@ -22,6 +22,10 @@ npm run build
 ## Roadmap
 
 - treeview
+    - feat(tree): (?) option for tree links colored by engine eval
+    - feat(tree): highlight best move?
+    - feat(tree): option for node sorting (frequency default, win rate, eval)
+
     - feat(tree-buttons): copy line button (FEN / PGN / UCI position?)
     - feat(nav-next-node): remember last visited child index 
     - fix(tree-buttons): node buttons sticky if mouse leaves through bridge div
@@ -35,9 +39,10 @@ npm run build
     - feat(tree-node): transposition detection + annotation
 
 - sidepane
+    - feat(sidepane): (?) rename sidebar
+    - feat(sidepane): add current line breadcrumbs (placement?)
     - feat(sidepane): make sidepane resizable
     - feat(sidepane-opening): opening metadata view (ECO, name, win probabilities)
-    - feat(sidepane-bookmarks): bookmarks view (global list + navigation + delete)
 
 - other
     - fix(test): fix tests

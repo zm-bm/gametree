@@ -3,7 +3,7 @@ import { HierarchyPointNode } from "d3-hierarchy";
 import { TreeViewNode } from "@/shared/types";
 
 import { TreeLink } from "./TreeLink";
-import { TreeNode } from './TreeNode';
+import { TreeNode } from "./TreeNode";
 import { useAnimatedTreeLayout } from "../hooks";
 
 interface Props {
