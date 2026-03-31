@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { IconType } from "react-icons";
-import { FaBookmark, FaCheck, FaCopy } from "react-icons/fa";
+import { FaCheck, FaCopy, FaExternalLinkAlt } from "react-icons/fa";
 import { FaThumbtack, FaThumbtackSlash } from "react-icons/fa6";
 import { useSelector } from "react-redux";
 
@@ -8,6 +8,11 @@ import { RootState, useAppDispatch } from "@/store";
 import { selectPinnedNodes } from "@/store/selectors";
 import { tree } from "@/store/slices";
 import { cn } from "@/shared/lib/cn";
+
+const getLichessAnalysisUrl = (fen: string) => {
+  const fenPath = fen.trim().replace(/\s+/g, "_");
+  return `https://lichess.org/analysis/standard/${fenPath}`;
+};
 
 interface ButtonConfig {
   key: string;
@@ -75,10 +80,13 @@ export const TreeNodeButtons = ({
         isActive: isFenCopied,
       },
       {
-        key: 'bookmark',
-        title: 'bookmark',
-        icon: FaBookmark,
-        onClick: (e: React.MouseEvent) => { e.stopPropagation(); },
+        key: 'lichess',
+        title: 'open in lichess',
+        icon: FaExternalLinkAlt,
+        onClick: (e: React.MouseEvent) => {
+          e.stopPropagation();
+          window.open(getLichessAnalysisUrl(fen), "_blank", "noopener,noreferrer");
+        },
       },
     ];
   }, [dispatch, fen, isFenCopied, isPinned, nodeId]);

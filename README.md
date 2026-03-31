@@ -26,7 +26,6 @@ npm run build
     - feat(tree): highlight best move?
     - feat(tree): option for node sorting (frequency default, win rate, eval)
 
-    - feat(tree-buttons): copy line button (FEN / PGN / UCI position?)
     - feat(nav-next-node): remember last visited child index 
     - fix(tree-buttons): node buttons sticky if mouse leaves through bridge div
     - feat(tree-buttons): buttons should scale based on zoom level to maintain consistent physical size on screen
