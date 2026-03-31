@@ -65,7 +65,7 @@ const EnginePrincipalVariation = ({ fen, pvMoves }: EnginePrincipalVariationProp
   return (
     <div className="space-y-2 py-4">
       <div className="text-xs uppercase tracking-wide text-slate-400/85">{PV_TITLE}</div>
-      <div className="engine-pv-line min-h-20 max-h-48 overflow-y-auto pr-1 text-base leading-7 text-slate-100/95">
+      <div className="min-h-20 max-h-48 overflow-y-auto pr-1 text-base leading-7 text-slate-100/95 break-words">
         {pvTokens ?? <span className="text-slate-400/85">{NO_ANALYSIS_TEXT}</span>}
       </div>
     </div>

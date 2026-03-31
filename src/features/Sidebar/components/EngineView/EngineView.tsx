@@ -10,7 +10,6 @@ import {
   selectEngineRunning,
   selectSideToMove,
 } from "@/store/selectors";
-import "./EngineView.css";
 import { SidebarCard } from "../SidebarCard";
 import EngineHeaderSummary from "./EngineHeaderSummary";
 import EngineControls from "./EngineControls";
