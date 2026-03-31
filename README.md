@@ -37,7 +37,6 @@ npm run build
 - sidepane
     - feat(sidepane): make sidepane resizable
     - feat(sidepane-opening): opening metadata view (ECO, name, win probabilities)
-    - feat(sidepane-evaluation): engine evaluation view (eval bar + graph + PV + controls)
     - feat(sidepane-bookmarks): bookmarks view (global list + navigation + delete)
 
 - other
