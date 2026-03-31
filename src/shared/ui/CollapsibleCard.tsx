@@ -1,8 +1,10 @@
 import { useState, useEffect, useMemo, ReactNode } from "react";
 import { cn } from "@/shared/lib/cn";
 
+type HeaderRenderer = (collapsed: boolean) => ReactNode;
+
 interface CollapsibleCardProps {
-  header: ReactNode;
+  header: ReactNode | HeaderRenderer;
   collapsed?: boolean;
   onToggle?: (collapsed: boolean) => void;
   children: ReactNode;
@@ -78,6 +80,7 @@ export const CollapsibleCard = ({
 
   const baseHeaderClassName = "w-full flex items-center justify-between gap-2 text-sm cursor-pointer select-none";
   const appliedHeaderClassName = headerClassName ?? "p-3 interactive-sidebar";
+  const resolvedHeader = typeof header === "function" ? header(isCollapsed) : header;
 
   return (
     <div className={cn("flex flex-col", className)}>
@@ -85,7 +88,7 @@ export const CollapsibleCard = ({
         className={cn(baseHeaderClassName, appliedHeaderClassName)}
         onClick={handleToggle}
       >
-        <div>{header}</div>
+        <div>{resolvedHeader}</div>
         <div
           className="transition-transform"
           style={arrowStyle}

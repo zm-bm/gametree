@@ -19,11 +19,11 @@ const ui = createSlice({
     // tree state
     treeSource: 'otb' as TreeSource,
     treeMinFrequencyPct: 2 as number,
-    treeMoveLimit: 0 as number,
+    treeMoveLimit: 8 as number,
     treeWinRateComparison: 'relative' as TreeWinRateComparison,
     // engine state / options
     engineRunning: false as boolean,
-    engineHash: 16 as number,
+    engineHash: 32 as number,
     engineThreads: 1 as number,
     engineDepth: 30 as number,
     engineTime: null as number | null,
@@ -40,6 +40,7 @@ const ui = createSlice({
     setTreeMoveLimit(state, action: PA<number>) { state.treeMoveLimit = action.payload; },
     setTreeWinRateComparison(state, action: PA<TreeWinRateComparison>) { state.treeWinRateComparison = action.payload; },
     toggleEngine(state) { state.engineRunning = !state.engineRunning; },
+    setEngineRunning(state, action: PA<boolean>) { state.engineRunning = action.payload; },
     setEngineHash(state, action: PA<number>) { state.engineHash = action.payload; },
     setEngineThreads(state, action: PA<number>) { state.engineThreads = action.payload; },
   },

@@ -1,84 +1,46 @@
-import { useRef } from 'react';
-import { describe, expect, it, vi } from 'vitest';
-import { screen } from '@testing-library/react'
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Config } from 'chessground/config';
-import { DEFAULT_POSITION } from 'chess.js';
 
 import ChessBoard from '../../features/Sidebar/components/ChessBoard';
-import {
-  // MockDispatch,
-  renderWithProviders,
-} from '../../test/testUtils';
-// import { setupStore } from '../../store';
-import engine from '../../store/slices/engine';
+import { renderWithProviders } from '../../test/testUtils';
 
-vi.mock('../../hooks/useDimensions', () => ({
-  useDimensions: vi.fn(() => [useRef(), { width: 404, height: 404 }])
+const mockedConfig: Config = {
+  fen: '8/8/8/8/8/8/8/8 w - - 0 1',
+  orientation: 'white',
+  turnColor: 'white',
+  drawable: { autoShapes: [] },
+};
+
+const useChessgroundConfigMock = vi.fn(() => mockedConfig);
+vi.mock('@/shared/hooks', () => ({
+  useChessgroundConfig: () => useChessgroundConfigMock(),
 }));
 
-let baseboardProps: { config?: Config } = {};
-vi.mock('../../components/BaseBoard', () => ({
-  default: vi.fn(props => {
-    baseboardProps = props;
-    return <div {...props} />;
-  }
-)}));
-
-// const a2a4 = (new Chess()).move({ from: 'a2', to: 'a4' })
+let boardProps: { config?: Config; className?: string; promotionOverlay?: boolean } = {};
+vi.mock('@/shared/ui/Board', () => ({
+  default: vi.fn((props) => {
+    boardProps = props;
+    return <div data-testid="board-mock" />;
+  }),
+}));
 
 describe('Board', () => {
-  it('renders board wrapper with correct size', () => {
+  beforeEach(() => {
+    boardProps = {};
+    useChessgroundConfigMock.mockClear();
+  });
+
+  it('passes chessground config into Board', () => {
     renderWithProviders(<ChessBoard />);
-    
-    expect(screen.getByTestId('board-wrapper').style.height).toEqual('400px');
-    expect(screen.getByTestId('board-wrapper').style.width).toEqual('400px');
+
+    expect(useChessgroundConfigMock).toHaveBeenCalledTimes(1);
+    expect(boardProps.config).toBe(mockedConfig);
   });
 
-  it('generates correct chessground config', () => {
-    renderWithProviders(<ChessBoard />, { preloadedState: {
-      engine: engine.getInitialState(),
-    }});
+  it('passes Board presentation props', () => {
+    renderWithProviders(<ChessBoard className="sidebar-card" />);
 
-    expect(baseboardProps.config).toMatchObject({
-      fen: DEFAULT_POSITION,
-      orientation: 'white',
-      turnColor: 'white',
-      check: false,
-      lastMove: [],
-      drawable: { autoShapes: [{ orig: 'a2', dest: 'a4', brush: 'paleGreen' }] }
-    });
+    expect(boardProps.className).toBe('sidebar-card');
+    expect(boardProps.promotionOverlay).toBe(true);
   });
-
-  // it('dispatches moves', () => {
-  //   const mockStore = setupStore();
-  //   mockStore.dispatch = vi.fn() as MockDispatch;
-  //   vi.mock('../../thunks', () => ({
-  //     MakeMove: vi.fn()
-  //   }))
-
-  //   renderWithProviders(<ChessBoard />, { store: mockStore });
-    
-  //   baseboardProps?.config?.events?.move?.('a2', 'a4');
-  //   expect(mockStore.dispatch).toHaveBeenCalledWith(MakeMove(a2a4))
-
-  //   vi.clearAllMocks();
-  // });
-
-  // it('dispatches promotions', () => {
-  //   const mockStore = setupStore({
-  //     game: {
-  //       ...gameInitialState,
-  //       moveTree: [{
-  //         ...rootNode,
-  //         move: new Chess('rn1qkbnr/1Ppppppp/8/8/8/8/1PPPPPPP/RNBQKBNR b KQkq - 0 4').move('d8c8'),
-  //       }] as MoveNode[]
-  //       }
-  //   });
-  //   mockStore.dispatch = vi.fn() as MockDispatch;
-
-  //   renderWithProviders(<ChessBoard />, { store: mockStore });
-    
-  //   baseboardProps?.config?.events?.move?.('b7', 'a8');
-  //   expect(mockStore.dispatch).toHaveBeenCalledWith(setPromotionTarget(['b7', 'a8']))
-  // });
 });

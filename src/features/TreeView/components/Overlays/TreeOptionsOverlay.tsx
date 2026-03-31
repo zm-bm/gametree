@@ -26,8 +26,6 @@ export const TreeOptionsOverlay = () => {
   const winRateComparison = useSelector((s: RootState) => selectTreeWinRateComparison(s));
   const moveLimitSliderMax = Math.max(20, moveLimit);
 
-  const preventDefault = useCallback((e: React.KeyboardEvent) => e.preventDefault(), []);
-
   const selectOtb = useCallback(() => {
     dispatch(ui.actions.setTreeSource("otb"));
   }, [dispatch]);
@@ -71,10 +69,9 @@ export const TreeOptionsOverlay = () => {
             name="src"
             className={cn(radioInput)}
             checked={source === "otb"}
-            onKeyDown={preventDefault}
             onChange={selectOtb}
           />
-          <span title="Games played over the board">OTB (1800+ players)</span>
+          <span title="Games played over the board">Over the board</span>
         </label>
         <label className={cn(dataSourceLabel, source === "online" && dataSourceActive)}>
           <input
@@ -82,12 +79,11 @@ export const TreeOptionsOverlay = () => {
             name="src"
             className={cn(radioInput)}
             checked={source === "online"}
-            onKeyDown={preventDefault}
             onChange={selectOnline}
           />
-          <span title="Games played online">Online (1800+ players)</span>
+          <span title="Games played online">Online</span>
         </label>
-        <label className={cn(dataSourceLabel, source === "online" && dataSourceActive)}>
+        {/* <label className={cn(dataSourceLabel, source === "online" && dataSourceActive)}>
           <input
             type="radio"
             name="src"
@@ -96,8 +92,8 @@ export const TreeOptionsOverlay = () => {
             onChange={() => {}}
             disabled
           />
-          <span title="All games played on lichess">Lichess (coming soon!)</span>
-        </label>
+          <span title="All games played on lichess">Lichess</span>
+        </label> */}
       </div>
 
       <div>
@@ -114,7 +110,6 @@ export const TreeOptionsOverlay = () => {
             name="win-rate-comparison"
             className={cn(radioInput)}
             checked={winRateComparison === "relative"}
-            onKeyDown={preventDefault}
             onChange={setWinRateComparisonRelative}
           />
           <span>Relative</span>
@@ -125,7 +120,6 @@ export const TreeOptionsOverlay = () => {
             name="win-rate-comparison"
             className={cn(radioInput)}
             checked={winRateComparison === "absolute"}
-            onKeyDown={preventDefault}
             onChange={setWinRateComparisonAbsolute}
           />
           <span>Absolute</span>
@@ -162,7 +156,6 @@ export const TreeOptionsOverlay = () => {
           step={0.5}
           value={minFrequencyPct}
           onChange={setMinFrequencyPct}
-          onKeyDown={preventDefault}
           className={cn([
             "w-full appearance-none h-1.5 rounded-full cursor-pointer",
             "bg-lightmode-300 dark:bg-darkmode-300",
@@ -201,7 +194,6 @@ export const TreeOptionsOverlay = () => {
           step={1}
           value={moveLimit}
           onChange={setMoveLimit}
-          onKeyDown={preventDefault}
           className={cn([
             "w-full appearance-none h-1.5 rounded-full cursor-pointer",
             "bg-lightmode-300 dark:bg-darkmode-300",
