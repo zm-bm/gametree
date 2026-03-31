@@ -18,6 +18,7 @@ const tree = createSlice({
   initialState: {
     nodes: {} as TreeStore,
     pinnedNodes: [] as Id[],
+    lastVisitedChildByParent: {} as Record<Id, Id>,
   },
   reducers: {
     addNodes(state, action: PayloadAction<AddNodes>) {
@@ -42,6 +43,11 @@ const tree = createSlice({
       }
 
       state.pinnedNodes.splice(pinnedIndex, 1);
+    },
+
+    setLastVisitedChild(state, action: PayloadAction<{ parentId: Id; childId: Id }>) {
+      const { parentId, childId } = action.payload;
+      state.lastVisitedChildByParent[parentId] = childId;
     },
   },
 });

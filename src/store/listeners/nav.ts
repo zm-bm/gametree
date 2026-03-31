@@ -3,10 +3,25 @@ import { DEFAULT_POSITION } from "chess.js";
 
 import { RootState } from "@/store";
 import { startAppListening } from "@/store/listener";
-import { nav, ui } from "@/store/slices";
+import { nav, tree, ui } from "@/store/slices";
 import { selectCurrentId, selectCurrentNode, selectTreeNodeMap } from "@/store/selectors";
 import { getChildId, getParentId } from "@/shared/lib/id";
-import { Id, Move, getNodeFen, getSiblingNodeIds, pickPreferredNodeId } from "@/shared/types";
+import { Id, Move, TreeStore, getNodeFen, getSiblingNodeIds } from "@/shared/types";
+
+function pickPreferredNodeId(nodeIds: Id[], nodes: TreeStore, rememberedChildId?: Id): Id | undefined {
+  if (!nodeIds.length) return undefined;
+
+  if (rememberedChildId && nodeIds.includes(rememberedChildId) && nodes[rememberedChildId]) {
+    return rememberedChildId;
+  }
+
+  const exploredNodeId = nodeIds.find((nodeId) => nodes[nodeId]?.childrenLoaded);
+  if (exploredNodeId) return exploredNodeId;
+
+  return nodeIds.length % 2
+    ? nodeIds[Math.floor(nodeIds.length / 2)]
+    : nodeIds[Math.floor(nodeIds.length / 2 - 1)];
+}
 
 type NavResult = { id: Id; fen: string };
 
@@ -46,15 +61,16 @@ const getNavTarget = (action: UnknownAction, state: RootState): NavResult | unde
     case nav.actions.navigateDown.type: {
       // Navigate to the first child node (preferably one that has loaded its own children)
       let id: Id | undefined;
+      const rememberedChildId = state.tree.lastVisitedChildByParent[currentId];
       const visibleChildren = currentNode?.children;
       if (visibleChildren?.length) {
         const childIds = visibleChildren.map((child) => child.data.id);
-        id = pickPreferredNodeId(childIds, nodes);
+        id = pickPreferredNodeId(childIds, nodes, rememberedChildId);
       } else {
         const childIds = currentNodeData?.children || [];
         if (!childIds.length) return undefined;
 
-        id = pickPreferredNodeId(childIds, nodes);
+        id = pickPreferredNodeId(childIds, nodes, rememberedChildId);
       }
 
       if (id === undefined || !nodes[id]) return undefined;
@@ -109,6 +125,11 @@ startAppListening({
     if (target !== undefined) {
       dispatch(ui.actions.setFen(target.fen));
       dispatch(ui.actions.setCurrent(target.id));
+
+      const parentId = getParentId(target.id);
+      if (parentId !== null && parentId !== target.id) {
+        dispatch(tree.actions.setLastVisitedChild({ parentId, childId: target.id }));
+      }
     }
   }
 });

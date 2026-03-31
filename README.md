@@ -22,11 +22,6 @@ npm run build
 ## Roadmap
 
 - treeview
-    - feat(tree): (?) option for tree links colored by engine eval
-    - feat(tree): highlight best move?
-    - feat(tree): option for node sorting (frequency default, win rate, eval)
-
-    - feat(nav-next-node): remember last visited child index 
     - fix(tree-buttons): node buttons sticky if mouse leaves through bridge div
     - feat(tree-buttons): buttons should scale based on zoom level to maintain consistent physical size on screen
     - feat(hotkeys): vim keys navigation, space / shift+click to pin/unpin node
@@ -34,8 +29,10 @@ npm run build
     - feat(tree-minimap): make collapsable
     - fix(tree-minimap): tree interaction cut off by bottom right overlay wrapper
     - feat(tree-options): add info/tooltip for data source
-    - refactor(tree-node): move tree node components to separate dir
     - feat(tree-node): transposition detection + annotation
+    - feat(tree): (?) option for tree links colored by engine eval
+    - feat(tree): highlight best move?
+    - feat(tree): option for node sorting (frequency default, win rate, eval)
 
 - sidepane
     - feat(sidepane): (?) rename sidebar
