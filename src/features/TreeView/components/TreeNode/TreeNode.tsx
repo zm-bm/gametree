@@ -71,6 +71,7 @@ export const TreeNode = ({
 
   const nodePalette = useMemo(() => getTreeNodePalette(isDarkMode), [isDarkMode]);
   const isPinned = pinnedNodes.includes(id);
+  const nodeFen = node.data.move?.after || DEFAULT_POSITION;
   const pinnedBadgeSize = Math.max(8, Math.round(nodeRectSize * 0.18));
   const pinnedBadgeRadius = Math.max(2, Math.round(pinnedBadgeSize * 0.28));
   const pinnedIconSize = pinnedBadgeSize * 0.52;
@@ -88,6 +89,7 @@ export const TreeNode = ({
       {!minimap && isNodeHovered && (
         <TreeNodeButtons
           nodeId={id}
+          fen={nodeFen}
           nodeRadius={nodeRadius}
           onMouseLeave={handleNodeMouseLeave}
         />
@@ -97,7 +99,7 @@ export const TreeNode = ({
       <g
         cursor={minimap ? undefined : "pointer"}
         onClick={handleNodeClick}
-        data-fen={node.data.move?.after || DEFAULT_POSITION}
+        data-fen={nodeFen}
         data-move={node.data.move?.lan || ""}
         data-id={node.data.id}
       >

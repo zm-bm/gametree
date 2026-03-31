@@ -1,6 +1,6 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { IconType } from "react-icons";
-import { FaBookmark, FaBullseye  } from "react-icons/fa";
+import { FaBookmark, FaCheck, FaCopy } from "react-icons/fa";
 import { FaThumbtack, FaThumbtackSlash } from "react-icons/fa6";
 import { useSelector } from "react-redux";
 
@@ -11,6 +11,7 @@ import { cn } from "@/shared/lib/cn";
 
 interface ButtonConfig {
   key: string;
+  title: string;
   icon: IconType;
   onClick: (e: React.MouseEvent) => void;
   rotate?: number;
@@ -19,18 +20,28 @@ interface ButtonConfig {
 
 interface Props {
   nodeId: string;
+  fen: string;
   nodeRadius: number;
   onMouseLeave: () => void;
 }
 
 export const TreeNodeButtons = ({
   nodeId,
+  fen,
   nodeRadius,
   onMouseLeave,
 }: Props) => {
   const dispatch = useAppDispatch();
   const pinnedNodes = useSelector((s: RootState) => selectPinnedNodes(s));
   const isPinned = pinnedNodes.includes(nodeId);
+  const [isFenCopied, setIsFenCopied] = useState(false);
+
+  useEffect(() => {
+    if (!isFenCopied) return;
+
+    const timeoutId = window.setTimeout(() => setIsFenCopied(false), 1200);
+    return () => window.clearTimeout(timeoutId);
+  }, [isFenCopied]);
 
   const stopPropagation = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
@@ -40,6 +51,7 @@ export const TreeNodeButtons = ({
     return [
       {
         key: 'pin',
+        title: isPinned ? 'unpin' : 'pin',
         icon: isPinned ? FaThumbtackSlash : FaThumbtack,
         onClick: (e: React.MouseEvent) => {
           e.stopPropagation();
@@ -48,17 +60,28 @@ export const TreeNodeButtons = ({
         isActive: isPinned,
       },
       {
-        key: 'isolate',
-        icon: FaBullseye,
-        onClick: (e: React.MouseEvent) => { e.stopPropagation(); },
+        key: 'copy',
+        title: isFenCopied ? 'copied' : 'copy fen',
+        icon: isFenCopied ? FaCheck : FaCopy,
+        onClick: async (e: React.MouseEvent) => {
+          e.stopPropagation();
+          try {
+            await navigator.clipboard.writeText(fen);
+            setIsFenCopied(true);
+          } catch {
+            setIsFenCopied(false);
+          }
+        },
+        isActive: isFenCopied,
       },
       {
         key: 'bookmark',
+        title: 'bookmark',
         icon: FaBookmark,
         onClick: (e: React.MouseEvent) => { e.stopPropagation(); },
       },
     ];
-  }, [dispatch, isPinned, nodeId]);
+  }, [dispatch, fen, isFenCopied, isPinned, nodeId]);
 
   const drawerConfig = useMemo(() => {
     const numIcons = buttonConfigs.length;
@@ -136,7 +159,7 @@ export const TreeNodeButtons = ({
               className="cursor-pointer select-none group"
               style={{ pointerEvents: "auto" }}
             >
-              <title>{button.key}</title>
+              <title>{button.title}</title>
               <rect 
                 x={-drawerConfig.buttonSize/2} 
                 y={-drawerConfig.buttonSize/2} 
