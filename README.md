@@ -22,8 +22,6 @@ npm run build
 ## Roadmap
 
 - feat(tree-help): replace legend / hotkeys collapse cards with help modal / overlay
-- feat(tree-minimap): make minimap collapsable
-- feat(tree-options): add info/tooltip for data source
 
 - feat(tree-node): highlight best engine move on the tree
 - feat(tree-options): option for tree links colored by engine eval
