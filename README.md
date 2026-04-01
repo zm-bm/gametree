@@ -22,7 +22,6 @@ npm run build
 ## Roadmap
 
 - treeview
-    - feat(tree-buttons): buttons should scale based on zoom level to maintain consistent physical size on screen
     - feat(hotkeys): vim keys navigation, space / shift+click to pin/unpin node
     - fix(tree-zoom): smooth zoom, can be jumpy / jerky
     - feat(tree-minimap): make collapsable
@@ -41,7 +40,7 @@ npm run build
 
 - other
     - fix(test): fix tests
-    - check for unused components / dead code
+    - check for unused components / dead code (tooltip, ecodisplay, others?)
     - better move sounds
     - code formatter + pre-commit
 

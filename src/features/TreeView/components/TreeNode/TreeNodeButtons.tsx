@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { IconType } from "react-icons";
 import { FaCheck, FaCopy, FaExternalLinkAlt } from "react-icons/fa";
 import { FaThumbtack, FaThumbtackSlash } from "react-icons/fa6";
@@ -8,6 +8,7 @@ import { RootState, useAppDispatch } from "@/store";
 import { selectPinnedNodes } from "@/store/selectors";
 import { tree } from "@/store/slices";
 import { cn } from "@/shared/lib/cn";
+import { ZoomContext } from "../../context/ZoomContext";
 
 const getLichessAnalysisUrl = (fen: string) => {
   const fenPath = fen.trim().replace(/\s+/g, "_");
@@ -35,6 +36,7 @@ export const TreeNodeButtons = ({
   nodeRadius,
 }: Props) => {
   const dispatch = useAppDispatch();
+  const { zoom } = useContext(ZoomContext);
   const pinnedNodes = useSelector((s: RootState) => selectPinnedNodes(s));
   const isPinned = pinnedNodes.includes(nodeId);
   const [isFenCopied, setIsFenCopied] = useState(false);
@@ -87,30 +89,49 @@ export const TreeNodeButtons = ({
 
   const drawerConfig = useMemo(() => {
     const numIcons = buttonConfigs.length;
-    const buttonSize = Math.max(18, Math.round(nodeRadius * 0.84));
+    const zoomCompensation = zoom.transformMatrix.scaleX / 1.5;
+    const buttonSize = Math.max(16, Math.round(nodeRadius / zoomCompensation));
     const buttonGap = Math.max(1, Math.round(buttonSize * 0.08));
     const drawerPadding = 0;
+    const drawerCornerRadius = Math.max(3, Math.round(buttonSize * 0.2));
+    const buttonCornerRadius = Math.max(3, Math.round(buttonSize * 0.2));
+    const drawerGapFromNode = Math.max(2, Math.round(buttonSize * 0.18));
+    const nodeHalfSize = nodeRadius;
+    const drawerWidth = buttonSize;
     const drawerHeight = buttonSize * numIcons + buttonGap * (numIcons - 1) + drawerPadding * 2;
+    const drawerX = -(nodeHalfSize + drawerGapFromNode + drawerWidth);
+    const drawerY = -drawerHeight / 2;
+    const bridgeX = drawerX + drawerWidth;
+    const bridgeWidth = drawerGapFromNode;
+    const bridgeY = Math.min(-nodeHalfSize, drawerY);
+    const bridgeBottom = Math.max(nodeHalfSize, drawerY + drawerHeight);
+    const bridgeHeight = bridgeBottom - bridgeY;
     
     return {
       buttonSize,
-      drawerWidth: buttonSize,
+      drawerWidth,
       buttonGap,
       drawerPadding,
       drawerHeight,
-      drawerX: -(nodeRadius * 2.05),
-      drawerY: -drawerHeight / 2,
+      drawerX,
+      drawerY,
+      drawerCornerRadius,
+      buttonCornerRadius,
+      bridgeX,
+      bridgeY,
+      bridgeWidth,
+      bridgeHeight,
     };
-  }, [nodeRadius, buttonConfigs.length]);
+  }, [nodeRadius, buttonConfigs.length, zoom.transformMatrix?.scaleX]);
 
   return (
     <>
       {/* Invisible bridge between node and drawer */}
       <rect
-        x={drawerConfig.drawerX}
-        y={-nodeRadius}
-        width={nodeRadius * 1.25}
-        height={nodeRadius * 2}
+        x={drawerConfig.bridgeX}
+        y={drawerConfig.bridgeY}
+        width={drawerConfig.bridgeWidth}
+        height={drawerConfig.bridgeHeight}
         fill="transparent"
         stroke="transparent"
         style={{ pointerEvents: "auto" }}
@@ -125,7 +146,7 @@ export const TreeNodeButtons = ({
           x={0} y={0} 
           width={drawerConfig.drawerWidth} 
           height={drawerConfig.drawerHeight}
-          rx={4} ry={4}
+          rx={drawerConfig.drawerCornerRadius} ry={drawerConfig.drawerCornerRadius}
           className="stroke-lightmode-900/20 dark:stroke-darkmode-100/20 fill-lightmode-50/80 dark:fill-darkmode-800/70"
           strokeWidth={0.85}
           vectorEffect="non-scaling-stroke"
@@ -164,7 +185,7 @@ export const TreeNodeButtons = ({
                 y={-drawerConfig.buttonSize/2} 
                 width={drawerConfig.buttonSize} 
                 height={drawerConfig.buttonSize}
-                rx={4} ry={4}
+                rx={drawerConfig.buttonCornerRadius} ry={drawerConfig.buttonCornerRadius}
                 fill="transparent" 
                 className={buttonSurfaceClassName}
                 stroke={button.isActive ? "currentColor" : "transparent"}

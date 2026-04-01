@@ -5,8 +5,8 @@ import { Tree } from './components/Tree';
 import { ZoomProvider, TreeDimensionsProvider  } from "./context";
 
 const zoomProps = {
-  scaleXMin: 1 / 8,
-  scaleYMin: 1 / 8,
+  scaleXMin: 1 / 2,
+  scaleYMin: 1 / 2,
   scaleXMax: 4,
   scaleYMax: 4,
   initialTransformMatrix: {
