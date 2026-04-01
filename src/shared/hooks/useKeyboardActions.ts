@@ -1,7 +1,9 @@
 import { useEffect } from "react";
+import { useSelector } from "react-redux";
 
 import { useAppDispatch } from "../../store";
-import { nav } from "../../store/slices";
+import { selectCurrentVisibleId } from "../../store/selectors";
+import { nav, tree, ui } from "../../store/slices";
 
 let prev = 0;
 const THROTTLE_MS = 333;
@@ -43,7 +45,7 @@ const isArrowOwningTarget = (target: EventTarget | null) => {
 };
 
 const shouldHandleArrowNav = (event: KeyboardEvent) => {
-  if (!["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(event.key)) {
+  if (!["arrowup", "arrowdown", "arrowleft", "arrowright", "h", "j", "k", "l"].includes(event.key.toLowerCase())) {
     return false;
   }
 
@@ -58,35 +60,70 @@ const shouldHandleArrowNav = (event: KeyboardEvent) => {
   return true;
 };
 
+
+const shouldHandleGlobalShortcut = (event: KeyboardEvent) => {
+  if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) {
+    return false;
+  }
+
+  if (isEditableTarget(event.target) || isArrowOwningTarget(event.target)) {
+    return false;
+  }
+
+  return true;
+};
 export const useKeyboardActions = () => {
   const dispatch = useAppDispatch();
 
+  const currentVisibleId = useSelector(selectCurrentVisibleId);
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (!shouldHandleArrowNav(event)) return;
+      const key = event.key.toLowerCase();
 
-      // Consume browser scrolling only for app-level arrow navigation.
-      event.preventDefault();
+      if (shouldHandleArrowNav(event)) {
+        // Consume browser scrolling only for app-level arrow navigation.
+        event.preventDefault();
 
-      const now = Date.now();
-      if (now - prev < THROTTLE_MS) return;
-      prev = now;
+        const now = Date.now();
+        if (now - prev < THROTTLE_MS) return;
+        prev = now;
 
-      switch (event.key) {
-        case 'ArrowUp':
-          dispatch(nav.actions.navigatePrevSibling());
-          break;
-        case 'ArrowDown':
-          dispatch(nav.actions.navigateNextSibling());
-          break;
-        case 'ArrowLeft':
-          dispatch(nav.actions.navigateUp());
-          break;
-        case 'ArrowRight':
-          dispatch(nav.actions.navigateDown());
-          break;
+        switch (key) {
+          case 'arrowup':
+          case 'k':
+            dispatch(nav.actions.navigatePrevSibling());
+            return;
+          case 'arrowdown':
+          case 'j':
+            dispatch(nav.actions.navigateNextSibling());
+            return;
+          case 'arrowleft':
+          case 'h':
+            dispatch(nav.actions.navigateUp());
+            return;
+          case 'arrowright':
+          case 'l':
+            dispatch(nav.actions.navigateDown());
+            return;
+          default:
+            return;
+        }
+      }
+
+      if (!shouldHandleGlobalShortcut(event) || event.repeat) return;
+
+      switch (key) {
+        case 'e':
+          event.preventDefault();
+          dispatch(ui.actions.toggleEngine());
+          return;
+        case 'p':
+          if (!currentVisibleId) return;
+          event.preventDefault();
+          dispatch(tree.actions.toggleNodePinned(currentVisibleId));
+          return;
         default:
-          break;
+          return;
       }
     };
     const handleKeyUp = () => { prev = 0; };
@@ -97,5 +134,5 @@ export const useKeyboardActions = () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [dispatch]);
+  }, [dispatch, currentVisibleId]);
 };
