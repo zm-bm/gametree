@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { IconType } from "react-icons";
 import { FaCheck, FaCopy, FaExternalLinkAlt } from "react-icons/fa";
 import { FaThumbtack, FaThumbtackSlash } from "react-icons/fa6";
@@ -27,14 +27,12 @@ interface Props {
   nodeId: string;
   fen: string;
   nodeRadius: number;
-  onMouseLeave: () => void;
 }
 
 export const TreeNodeButtons = ({
   nodeId,
   fen,
   nodeRadius,
-  onMouseLeave,
 }: Props) => {
   const dispatch = useAppDispatch();
   const pinnedNodes = useSelector((s: RootState) => selectPinnedNodes(s));
@@ -47,10 +45,6 @@ export const TreeNodeButtons = ({
     const timeoutId = window.setTimeout(() => setIsFenCopied(false), 1200);
     return () => window.clearTimeout(timeoutId);
   }, [isFenCopied]);
-
-  const stopPropagation = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-  }, []);
 
   const buttonConfigs: ButtonConfig[] = useMemo(() => {
     return [
@@ -120,14 +114,11 @@ export const TreeNodeButtons = ({
         fill="transparent"
         stroke="transparent"
         style={{ pointerEvents: "auto" }}
-        onMouseEnter={stopPropagation}
-        onMouseLeave={stopPropagation}
       />
 
       {/* Button drawer */}
       <g
         transform={`translate(${drawerConfig.drawerX}, ${drawerConfig.drawerY})`}
-        onMouseLeave={onMouseLeave}
       >
         {/* Drawer background */}
         <rect

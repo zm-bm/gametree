@@ -88,7 +88,6 @@ export const TreeNode = ({
           nodeId={id}
           fen={nodeFen}
           nodeRadius={nodeRadius}
-          onMouseLeave={handleNodeMouseLeave}
         />
       )}
 

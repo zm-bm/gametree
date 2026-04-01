@@ -22,7 +22,6 @@ npm run build
 ## Roadmap
 
 - treeview
-    - fix(tree-buttons): node buttons sticky if mouse leaves through bridge div
     - feat(tree-buttons): buttons should scale based on zoom level to maintain consistent physical size on screen
     - feat(hotkeys): vim keys navigation, space / shift+click to pin/unpin node
     - fix(tree-zoom): smooth zoom, can be jumpy / jerky
@@ -42,6 +41,7 @@ npm run build
 
 - other
     - fix(test): fix tests
+    - check for unused components / dead code
     - better move sounds
     - code formatter + pre-commit
 
