@@ -31,6 +31,7 @@ export function useTreeNavigation({
   const currentNode = useSelector((s: RootState) => selectCurrentNode(s));
   const followCurrentRef = useRef(true);
   const lastCurrentPosRef = useRef<{ id: string; x: number; y: number } | null>(null);
+  const wheelSyncFrame = useRef<number | null>(null);
 
   // React-spring, used for animating zoom and pan
   const [, spring] = useSpring<TransformMatrix>(() => ({
@@ -46,6 +47,18 @@ export function useTreeNavigation({
     spring.stop();
     spring.set(transformRef.current);
   }, [spring, transformRef]);
+
+  // Coalesce wheel sync into one RAF callback to avoid stale timeout-based spring rewinds.
+  const onWheel = useCallback(() => {
+    if (wheelSyncFrame.current !== null) {
+      cancelAnimationFrame(wheelSyncFrame.current);
+    }
+
+    wheelSyncFrame.current = requestAnimationFrame(() => {
+      wheelSyncFrame.current = null;
+      updateSpring();
+    });
+  }, [updateSpring]);
 
   // Handle zooming in and out
   const handleZoom = useCallback((direction: 'in' | 'out') => {
@@ -78,6 +91,15 @@ export function useTreeNavigation({
     });
   }, [spring, transformRef, width, height]);
 
+  // Cleanup wheel sync RAF on unmount
+  useEffect(() => {
+    return () => {
+      if (wheelSyncFrame.current !== null) {
+        cancelAnimationFrame(wheelSyncFrame.current);
+      }
+    };
+  }, []);
+
   // Follow the current node while in "follow" mode:
   // - currentId change => always pan and re-enable follow
   // - same currentId but coords changed (layout/data update) => pan only if following
@@ -108,5 +130,6 @@ export function useTreeNavigation({
     spring,
     updateSpring,
     handleZoom,
+    onWheel,
   };
 };

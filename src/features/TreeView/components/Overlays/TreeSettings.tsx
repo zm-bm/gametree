@@ -18,7 +18,7 @@ const dataSourceActive = "bg-lightmode-900/10 dark:bg-darkmode-100/10";
 const radioInput = "accent-sky-500 dark:accent-sky-400 cursor-pointer";
 const sectionLabel = "text-sm font-semibold";
 
-export const TreeOptionsOverlay = () => {
+export const TreeSettings = () => {
   const dispatch = useAppDispatch();
   const source = useSelector((s: RootState) => selectTreeSource(s));
   const minFrequencyPct = useSelector((s: RootState) => selectTreeMinFrequencyPct(s));
@@ -56,13 +56,19 @@ export const TreeOptionsOverlay = () => {
 
   return (
     <TreeOverlayCard
-      title="Tree Options"
+      title="Tree Settings"
       persistKey="gtTreeOptionsCollapsed"
       maxHeight="max-h-[100rem]"
       className="w-[16rem]"
     >
       <div>
-        <div className={cn(sectionLabel, 'pb-1')}>Data Source</div>
+        <div className={cn(sectionLabel, 'pb-1 flex items-center gap-1')}>
+          <span>Data Source</span>
+          <InfoTooltip
+            ariaLabel="Data source help"
+            text="Both datasets are sourced from LumbrasGigabase. The source pool is focused on stronger player games (typically around 1800+)."
+          />
+        </div>
         <label className={cn(dataSourceLabel, source === "otb" && dataSourceActive)}>
           <input
             type="radio"
@@ -71,7 +77,7 @@ export const TreeOptionsOverlay = () => {
             checked={source === "otb"}
             onChange={selectOtb}
           />
-          <span title="Games played over the board">Over the board</span>
+          <span title="In-person tournament and club games">OTB (over the board)</span>
         </label>
         <label className={cn(dataSourceLabel, source === "online" && dataSourceActive)}>
           <input
@@ -81,7 +87,7 @@ export const TreeOptionsOverlay = () => {
             checked={source === "online"}
             onChange={selectOnline}
           />
-          <span title="Games played online">Online</span>
+          <span title="Games played on internet platforms">Online games</span>
         </label>
         {/* <label className={cn(dataSourceLabel, source === "online" && dataSourceActive)}>
           <input
@@ -98,9 +104,9 @@ export const TreeOptionsOverlay = () => {
 
       <div>
         <div className={cn(sectionLabel, "pb-1 flex items-center gap-1")}>
-          <span>Win Rate Comparison</span>
+          <span>Win Rate Mode</span>
           <InfoTooltip
-            ariaLabel="Win rate comparison help"
+            ariaLabel="Win rate mode help"
             text="Relative compares each move against its parent. Absolute compares each move against a 50/50 baseline."
           />
         </div>

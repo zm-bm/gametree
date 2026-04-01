@@ -51,7 +51,7 @@ export const TreeDPad = () => {
   const handleLeft = useCallback(() => dispatch(nav.actions.navigateUp()), [dispatch]);
 
   return (
-    <div className="z-40 select-none treeview-card mx-2">
+    <div className="z-40 select-none treeview-card mx-2 pointer-events-auto">
       <div 
         className={cn(
           "relative transition-all duration-300 ease-in-out",

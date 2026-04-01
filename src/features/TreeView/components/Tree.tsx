@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useRef } from 'react';
+import { useContext } from 'react';
 import { useSelector } from 'react-redux';
 
 import { RootState } from '@/store';
@@ -8,7 +8,7 @@ import { TreeContainer } from './TreeContainer';
 import { SVGDefs } from './SVGDefs';
 import { TreeGrid } from './TreeGrid';
 import { useTreeNavigation } from '../hooks';
-import { TreeZoomControls, TreeLegend, TreeDPad, TreeMinimap, TreeErrorOverlays, TreeOptionsOverlay, TreeHotkeys } from './Overlays';
+import { TreeZoomControls, TreeHelp, TreeDPad, TreeMinimap, TreeErrorOverlays, TreeSettings } from './Overlays';
 import { TreeDimensionsContext, ZoomContext } from "../context";
 
 export const Tree = () => {
@@ -16,35 +16,20 @@ export const Tree = () => {
   const { zoom, transformRef } = useContext(ZoomContext);
   const currentNodeId = useSelector((state: RootState) => selectCurrentId(state))
   const tree = useSelector((state: RootState) => selectTree(state));
+  const hasTree = Boolean(tree);
 
-  const { spring, updateSpring, handleZoom } = useTreeNavigation({ zoom, transformRef, width, height });
+  const {
+    spring,
+    updateSpring,
+    handleZoom,
+    onWheel,
+  } = useTreeNavigation({ zoom, transformRef, width, height });
   const {
     isError,
     isFetching,
     error,
     refetch,
   } = openingsApi.useGetNodesQuery({ nodeId: currentNodeId });
-  const hasTree = Boolean(tree);
-  const wheelSyncFrame = useRef<number | null>(null);
-
-  // Coalesce wheel sync into one RAF callback to avoid stale timeout-based spring rewinds.
-  const onWheel = useCallback(() => {
-    if (wheelSyncFrame.current !== null) {
-      cancelAnimationFrame(wheelSyncFrame.current);
-    }
-    wheelSyncFrame.current = requestAnimationFrame(() => {
-      wheelSyncFrame.current = null;
-      updateSpring();
-    });
-  }, [updateSpring]);
-
-  useEffect(() => {
-    return () => {
-      if (wheelSyncFrame.current !== null) {
-        cancelAnimationFrame(wheelSyncFrame.current);
-      }
-    };
-  }, []);
 
   return (
     <div className='relative h-full'>
@@ -78,13 +63,12 @@ export const Tree = () => {
 
       {/* top left overlays */}
       <div className="absolute top-2 left-2">
-        <TreeOptionsOverlay />
+        <TreeSettings />
       </div>
 
       {/* top right overlays */}
-      <div className="absolute top-2 right-2 flex flex-col items-end space-y-2">
-        <TreeLegend />
-        <TreeHotkeys />
+      <div className="absolute top-2 right-2">
+        <TreeHelp />
       </div>
 
       {/* bottom left overlays */}
@@ -93,7 +77,7 @@ export const Tree = () => {
       </div>
 
       {/* bottom right overlays */}
-      <div className="absolute bottom-0 right-0 space-y-2 flex flex-col items-end">
+      <div className="absolute bottom-0 right-0 space-y-2 flex flex-col items-end pointer-events-none">
         <TreeDPad />
         <TreeMinimap tree={tree} spring={spring} />
       </div>
