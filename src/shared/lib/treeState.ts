@@ -1,6 +1,6 @@
 import { Chess, DEFAULT_POSITION, Square } from "chess.js";
 
-import { OpeningMove, OpeningTotals, TreeStoreNode, TreeStore, Id, toNodeStats } from "@/shared/types";
+import { OpeningMove, OpeningTotals, TreeStoreNode, TreeStore, Id, toNodeStats } from "../types";
 import { serializeMove } from "./chess";
 import { getChildId, getMoveFromId, getParentId } from "./id";
 

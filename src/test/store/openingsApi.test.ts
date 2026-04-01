@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { setupStore } from '@/store';
-import { openingsApi } from '@/store/openingsApi';
-import { OpeningTotals } from '@/shared/types';
+import { setupStore } from '../../store';
+import { openingsApi } from '../../store/openingsApi';
+import { OpeningTotals } from '../../shared/types';
 
 const asResponse = (payload: unknown, status = 200): Response =>
   new Response(JSON.stringify(payload), {

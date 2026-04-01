@@ -2,7 +2,7 @@ import { memo } from "react";
 import { HierarchyPointNode } from "@visx/hierarchy/lib/types";
 
 import { TreeViewNode } from "@/shared/types";
-import { COLORS } from "../lib/colors";
+import { COLORS } from "../../lib/colors";
 
 const FONT_WEIGHT = 600;
 const MIN_LABEL_PERCENT = 10;

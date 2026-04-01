@@ -21,28 +21,24 @@ npm run build
 
 ## Roadmap
 
-- treeview
-    - feat(tree-buttons): copy line button (FEN / PGN / UCI position?)
-    - feat(nav-next-node): remember last visited child index 
-    - fix(tree-buttons): node buttons sticky if mouse leaves through bridge div
-    - feat(tree-buttons): buttons should scale based on zoom level to maintain consistent physical size on screen
-    - feat(hotkeys): vim keys navigation, space / shift+click to pin/unpin node
-    - fix(tree-zoom): smooth zoom, can be jumpy / jerky
-    - feat(tree-minimap): make collapsable
-    - fix(tree-minimap): tree interaction cut off by bottom right overlay wrapper
-    - feat(tree-options): add info/tooltip for data source
-    - refactor(tree-node): move tree node components to separate dir
-    - feat(tree-node): transposition detection + annotation
+- feat(tree-hotkeys): vim keys navigation, space / shift+click to pin/unpin node
+- feat(tree-help): replace legend / hotkeys collapse cards with help modal / overlay
+- feat(tree-minimap): make minimap collapsable
+- fix(tree-minimap): tree interaction cut off by bottom right overlay wrapper
+- feat(tree-options): add info/tooltip for data source
 
-- sidepane
-    - feat(sidepane): make sidepane resizable
-    - feat(sidepane-opening): opening metadata view (ECO, name, win probabilities)
-    - feat(sidepane-bookmarks): bookmarks view (global list + navigation + delete)
+- feat(tree-node): highlight best engine move on the tree
+- feat(tree-options): option for tree links colored by engine eval
+- feat(tree-options): option for tree nodes sorted by frequency, win rate, eval
 
-- other
-    - fix(test): fix tests
-    - better move sounds
-    - code formatter + pre-commit
+- feat(sidebar-layout): sidepane -> sidebar, add scrollable analysis, pin board
+- feat(sidebar-opening): opening metadata view (ECO, name, win probabilities, current line)
+- feat(sidebar-engine): redo
+
+- fix(test): fix tests
+- feat(move-sounds): better move sounds
+- chore: remove dead code (tooltip, ecodisplay, others?)
+- chore: add code formatter + pre-commit
 
 ## Acknowledgments
 

@@ -13,12 +13,6 @@ const Sidebar = () => {
       </SidebarCard>
 
       <EngineView />
-
-      <SidebarCard title="Bookmarks">
-        <span className="text-sm text-gray-500 italic">
-          Bookmarks view coming soon!
-        </span>
-      </SidebarCard>
     </div>
   );
 };

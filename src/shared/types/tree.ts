@@ -85,17 +85,6 @@ export function getNodeFen(nodes: TreeStore, nodeId: Id, fallbackFen: string): s
   return nodes[nodeId]?.move?.after || fallbackFen;
 }
 
-export function pickPreferredNodeId(nodeIds: Id[], nodes: TreeStore): Id | undefined {
-  if (!nodeIds.length) return undefined;
-
-  const exploredNodeId = nodeIds.find((nodeId) => nodes[nodeId]?.childrenLoaded);
-  if (exploredNodeId) return exploredNodeId;
-
-  return nodeIds.length % 2
-    ? nodeIds[Math.floor(nodeIds.length / 2)]
-    : nodeIds[Math.floor(nodeIds.length / 2 - 1)];
-}
-
 export function getParentPathId(nodeId: Id): Id | null {
   const lastComma = nodeId.lastIndexOf(",");
   if (lastComma === -1) return nodeId ? "" : null;

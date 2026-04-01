@@ -5,10 +5,19 @@ import { Tree } from './components/Tree';
 import { ZoomProvider, TreeDimensionsProvider  } from "./context";
 
 const zoomProps = {
-  scaleXMin: 1 / 8,
-  scaleYMin: 1 / 8,
+  scaleXMin: 1 / 2,
+  scaleYMin: 1 / 2,
   scaleXMax: 4,
   scaleYMax: 4,
+  wheelDelta: (event: WheelEvent | React.WheelEvent) => {
+    const direction = -event.deltaY > 0 ? 1 : -1;
+    const step = 0.06;
+    const factor = direction > 0 ? (1 + step) : (1 - step);
+    return {
+      scaleX: factor,
+      scaleY: factor,
+    };
+  },
   initialTransformMatrix: {
     translateX: 0,
     translateY: 0,

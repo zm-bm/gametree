@@ -1,6 +1,6 @@
 import { Move as ChessMove } from "chess.js";
 
-import { Move } from "@/shared/types";
+import { Move } from "../types";
 
 export function serializeMove(move: ChessMove): Move {
   return {

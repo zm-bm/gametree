@@ -4,16 +4,16 @@ import { Chess, Square, SQUARES } from "chess.js";
 import { Color, Key } from 'chessground/types';
 import { Config } from "chessground/config";
 
-import { RootState, useAppDispatch } from "@/store";
-import { nav, ui } from "@/store/slices";
+import { RootState, useAppDispatch } from "../../store";
+import { nav, ui } from "../../store/slices";
 import {
   selectBoardOrientation,
   selectBoardFen,
   selectCurrentMove,
   selectEngineOutput,
   selectHoverMove,
-} from "@/store/selectors";
-import { serializeMove } from "@/shared/lib/chess";
+} from "../../store/selectors";
+import { serializeMove } from "../lib/chess";
 
 export function useBoardDisplay(fen: string) {
   const currentMove = useSelector((s: RootState) => selectCurrentMove(s));
