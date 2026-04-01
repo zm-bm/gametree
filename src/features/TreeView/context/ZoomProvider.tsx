@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useLayoutEffect } from "react";
 import { ProvidedZoom } from "@visx/zoom/lib/types";
 
 import { ZoomState } from "@/shared/types";
@@ -12,9 +12,9 @@ type ZoomProviderProps = {
 export const ZoomProvider: React.FC<ZoomProviderProps> = ({ children, zoom }) => {
   const transformRef = useRef(zoom.transformMatrix);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     transformRef.current = zoom.transformMatrix;
-  }, [zoom]);
+  }, [zoom.transformMatrix]);
 
   return (
     <ZoomContext.Provider value={{ zoom, transformRef }}>

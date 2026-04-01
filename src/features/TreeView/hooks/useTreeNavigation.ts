@@ -8,6 +8,12 @@ import { TreeViewNode, ZoomState } from '@/shared/types';
 import { RootState } from '@/store';
 import { selectCurrentId, selectCurrentNode } from '@/store/selectors';
 
+const SPRING_CONFIG = {
+  tension: 150,
+  friction: 26,
+  clamp: true,
+} as const;
+
 export interface Props {
   zoom: ProvidedZoom<SVGSVGElement> & ZoomState;
   transformRef: React.MutableRefObject<TransformMatrix>;
@@ -29,6 +35,7 @@ export function useTreeNavigation({
   // React-spring, used for animating zoom and pan
   const [, spring] = useSpring<TransformMatrix>(() => ({
     ...zoom.initialTransformMatrix,
+    config: SPRING_CONFIG,
     onChange: ({ value }) => zoom.setTransformMatrix(value as TransformMatrix),
   }));
 
@@ -36,21 +43,30 @@ export function useTreeNavigation({
   const updateSpring = useCallback(() => {
     // Manual pan/drag means user is exploring and camera should stop auto-following.
     followCurrentRef.current = false;
+    spring.stop();
     spring.set(transformRef.current);
   }, [spring, transformRef]);
 
   // Handle zooming in and out
   const handleZoom = useCallback((direction: 'in' | 'out') => {
-    // TODO: use zoom.handleWheel with calculated centerpoint
-    const scale = direction === 'in' ? (6 / 5) : (5 / 6);
+    const scaleStep = 1.12;
+    const scale = direction === 'in' ? scaleStep : (1 / scaleStep);
+    const centerX = width / 2;
+    const centerY = height / 2;
+    const nextScaleX = transformRef.current.scaleX * scale;
+    const nextScaleY = transformRef.current.scaleY * scale;
+    const nextTranslateX = centerX - (centerX - transformRef.current.translateX) * scale;
+    const nextTranslateY = centerY - (centerY - transformRef.current.translateY) * scale;
+
     spring.start({
       ...transformRef.current,
-      translateX: transformRef.current.translateX * scale,
-      translateY: transformRef.current.translateY * scale,
-      scaleX: transformRef.current.scaleX * scale,
-      scaleY: transformRef.current.scaleY * scale,
+      translateX: nextTranslateX,
+      translateY: nextTranslateY,
+      scaleX: nextScaleX,
+      scaleY: nextScaleY,
+      config: SPRING_CONFIG,
     })
-  }, [spring, transformRef]);
+  }, [spring, transformRef, width, height]);
 
   // Handler for panning to a specific node
   const panToNode = useCallback((node: HierarchyPointNode<TreeViewNode>) => {
@@ -58,6 +74,7 @@ export function useTreeNavigation({
       ...transformRef.current,
       translateX: (-node.y * transformRef.current.scaleX) + (width / 3),
       translateY: (-node.x * transformRef.current.scaleY) + (height / 2),
+      config: SPRING_CONFIG,
     });
   }, [spring, transformRef, width, height]);
 

@@ -1,4 +1,4 @@
-import { useCallback, useContext } from 'react';
+import { useCallback, useContext, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 
 import { RootState } from '@/store';
@@ -25,9 +25,26 @@ export const Tree = () => {
     refetch,
   } = openingsApi.useGetNodesQuery({ nodeId: currentNodeId });
   const hasTree = Boolean(tree);
+  const wheelSyncFrame = useRef<number | null>(null);
 
-  // TODO: add spring to zoom context -> update spring on wheel events
-  const onWheel = useCallback(() => setTimeout(updateSpring, 20), [updateSpring]);
+  // Coalesce wheel sync into one RAF callback to avoid stale timeout-based spring rewinds.
+  const onWheel = useCallback(() => {
+    if (wheelSyncFrame.current !== null) {
+      cancelAnimationFrame(wheelSyncFrame.current);
+    }
+    wheelSyncFrame.current = requestAnimationFrame(() => {
+      wheelSyncFrame.current = null;
+      updateSpring();
+    });
+  }, [updateSpring]);
+
+  useEffect(() => {
+    return () => {
+      if (wheelSyncFrame.current !== null) {
+        cancelAnimationFrame(wheelSyncFrame.current);
+      }
+    };
+  }, []);
 
   return (
     <div className='relative h-full'>

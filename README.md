@@ -22,12 +22,11 @@ npm run build
 ## Roadmap
 
 - treeview
+    - feat(tree-node): transposition detection + annotation
     - feat(hotkeys): vim keys navigation, space / shift+click to pin/unpin node
-    - fix(tree-zoom): smooth zoom, can be jumpy / jerky
     - feat(tree-minimap): make collapsable
     - fix(tree-minimap): tree interaction cut off by bottom right overlay wrapper
     - feat(tree-options): add info/tooltip for data source
-    - feat(tree-node): transposition detection + annotation
     - feat(tree): (?) option for tree links colored by engine eval
     - feat(tree): highlight best move?
     - feat(tree): option for node sorting (frequency default, win rate, eval)
