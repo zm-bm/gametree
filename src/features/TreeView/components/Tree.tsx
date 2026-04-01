@@ -78,7 +78,7 @@ export const Tree = () => {
       </div>
 
       {/* bottom right overlays */}
-      <div className="absolute bottom-0 right-0 space-y-2 flex flex-col items-end">
+      <div className="absolute bottom-0 right-0 space-y-2 flex flex-col items-end pointer-events-none">
         <TreeDPad />
         <TreeMinimap tree={tree} spring={spring} />
       </div>

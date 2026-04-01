@@ -57,7 +57,7 @@ export const TreeMinimap = ({ tree, spring }: Props) => {
   return (
     <svg
       className={cn([
-        'treeview-card border-none border-t border-l rounded-none rounded-tl-md',
+        'treeview-card border-none border-t border-l rounded-none rounded-tl-md pointer-events-auto',
         'bg-opacity-5 backdrop-blur-lg hover:bg-lightmode-200/90 dark:hover:bg-darkmode-800/90',
       ])}
       width={minimapSize}

@@ -23,7 +23,6 @@ npm run build
 
 - feat(tree-help): replace legend / hotkeys collapse cards with help modal / overlay
 - feat(tree-minimap): make minimap collapsable
-- fix(tree-minimap): tree interaction cut off by bottom right overlay wrapper
 - feat(tree-options): add info/tooltip for data source
 
 - feat(tree-node): highlight best engine move on the tree
