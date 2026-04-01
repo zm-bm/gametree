@@ -9,6 +9,7 @@ type HelpModalProps = {
   onClose: () => void;
   children: React.ReactNode;
   dismissLabel?: string;
+  maxWidthClassName?: string;
 };
 
 export const HelpModal = ({
@@ -17,6 +18,7 @@ export const HelpModal = ({
   onClose,
   children,
   dismissLabel = "Got it",
+  maxWidthClassName = "max-w-lg",
 }: HelpModalProps) => {
   useEffect(() => {
     if (!isOpen) return;
@@ -47,13 +49,14 @@ export const HelpModal = ({
           aria-modal="true"
           aria-label={title}
           className={cn(
-            "treeview-card w-full max-w-lg",
-            "max-h-[85vh] overflow-hidden",
+            "treeview-card w-full",
+            maxWidthClassName,
+            "max-h-[90vh] overflow-hidden",
             "flex flex-col",
           )}
         >
-          <header className="flex items-center justify-between px-4 py-3 border-b border-lightmode-900/15 dark:border-darkmode-100/20">
-            <h2 className="text-base font-semibold">{title}</h2>
+          <header className="flex items-center justify-between px-5 py-3 border-b border-lightmode-900/15 dark:border-darkmode-100/20">
+            <h2 className="text-[17px] font-semibold tracking-tight">{title}</h2>
             <button
               type="button"
               aria-label="Close help"
@@ -64,11 +67,11 @@ export const HelpModal = ({
             </button>
           </header>
 
-          <div className="px-4 py-3 overflow-y-auto space-y-4 text-sm leading-6">
+          <div className="px-5 py-4 overflow-y-auto space-y-5 text-sm leading-5">
             {children}
           </div>
 
-          <footer className="px-4 py-3 border-t border-lightmode-900/15 dark:border-darkmode-100/20 flex justify-end">
+          <footer className="px-5 py-3 border-t border-lightmode-900/15 dark:border-darkmode-100/20 flex justify-end">
             <button
               type="button"
               className="treeview-card px-3 py-1.5 text-sm interactive-treeview"

@@ -49,6 +49,7 @@ interface Props {
   x: FluidValue<number> | number;
   y: FluidValue<number> | number;
   minimap?: boolean;
+  showButtonDrawer?: boolean;
 }
 
 export const TreeNode = ({
@@ -56,6 +57,7 @@ export const TreeNode = ({
   x,
   y,
   minimap = false,
+  showButtonDrawer = true,
 }: Props) => {
   const { id, loading } = node.data;
 
@@ -83,7 +85,7 @@ export const TreeNode = ({
       onMouseLeave={handleNodeMouseLeave}
     >
       {/* Button drawer */}
-      {!minimap && isNodeHovered && (
+      {!minimap && showButtonDrawer && isNodeHovered && (
         <TreeNodeButtons
           nodeId={id}
           fen={nodeFen}
