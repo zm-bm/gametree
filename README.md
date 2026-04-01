@@ -21,27 +21,24 @@ npm run build
 
 ## Roadmap
 
-- treeview
-    - feat(tree-node): transposition detection + annotation
-    - feat(hotkeys): vim keys navigation, space / shift+click to pin/unpin node
-    - feat(tree-minimap): make collapsable
-    - fix(tree-minimap): tree interaction cut off by bottom right overlay wrapper
-    - feat(tree-options): add info/tooltip for data source
-    - feat(tree): (?) option for tree links colored by engine eval
-    - feat(tree): highlight best move?
-    - feat(tree): option for node sorting (frequency default, win rate, eval)
+- feat(tree-hotkeys): vim keys navigation, space / shift+click to pin/unpin node
+- feat(tree-help): replace legend / hotkeys collapse cards with help modal / overlay
+- feat(tree-minimap): make minimap collapsable
+- fix(tree-minimap): tree interaction cut off by bottom right overlay wrapper
+- feat(tree-options): add info/tooltip for data source
 
-- sidepane
-    - feat(sidepane): (?) rename sidebar
-    - feat(sidepane): add current line breadcrumbs (placement?)
-    - feat(sidepane): make sidepane resizable
-    - feat(sidepane-opening): opening metadata view (ECO, name, win probabilities)
+- feat(tree-node): highlight best engine move on the tree
+- feat(tree-options): option for tree links colored by engine eval
+- feat(tree-options): option for tree nodes sorted by frequency, win rate, eval
 
-- other
-    - fix(test): fix tests
-    - check for unused components / dead code (tooltip, ecodisplay, others?)
-    - better move sounds
-    - code formatter + pre-commit
+- feat(sidebar-layout): sidepane -> sidebar, add scrollable analysis, pin board
+- feat(sidebar-opening): opening metadata view (ECO, name, win probabilities, current line)
+- feat(sidebar-engine): redo
+
+- fix(test): fix tests
+- feat(move-sounds): better move sounds
+- chore: remove dead code (tooltip, ecodisplay, others?)
+- chore: add code formatter + pre-commit
 
 ## Acknowledgments
 
