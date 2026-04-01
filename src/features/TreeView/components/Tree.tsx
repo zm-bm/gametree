@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useRef } from 'react';
+import { useContext } from 'react';
 import { useSelector } from 'react-redux';
 
 import { RootState } from '@/store';
@@ -16,35 +16,20 @@ export const Tree = () => {
   const { zoom, transformRef } = useContext(ZoomContext);
   const currentNodeId = useSelector((state: RootState) => selectCurrentId(state))
   const tree = useSelector((state: RootState) => selectTree(state));
+  const hasTree = Boolean(tree);
 
-  const { spring, updateSpring, handleZoom } = useTreeNavigation({ zoom, transformRef, width, height });
+  const {
+    spring,
+    updateSpring,
+    handleZoom,
+    onWheel,
+  } = useTreeNavigation({ zoom, transformRef, width, height });
   const {
     isError,
     isFetching,
     error,
     refetch,
   } = openingsApi.useGetNodesQuery({ nodeId: currentNodeId });
-  const hasTree = Boolean(tree);
-  const wheelSyncFrame = useRef<number | null>(null);
-
-  // Coalesce wheel sync into one RAF callback to avoid stale timeout-based spring rewinds.
-  const onWheel = useCallback(() => {
-    if (wheelSyncFrame.current !== null) {
-      cancelAnimationFrame(wheelSyncFrame.current);
-    }
-    wheelSyncFrame.current = requestAnimationFrame(() => {
-      wheelSyncFrame.current = null;
-      updateSpring();
-    });
-  }, [updateSpring]);
-
-  useEffect(() => {
-    return () => {
-      if (wheelSyncFrame.current !== null) {
-        cancelAnimationFrame(wheelSyncFrame.current);
-      }
-    };
-  }, []);
 
   return (
     <div className='relative h-full'>

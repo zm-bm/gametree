@@ -21,7 +21,6 @@ npm run build
 
 ## Roadmap
 
-- feat(tree-hotkeys): vim keys navigation, space / shift+click to pin/unpin node
 - feat(tree-help): replace legend / hotkeys collapse cards with help modal / overlay
 - feat(tree-minimap): make minimap collapsable
 - fix(tree-minimap): tree interaction cut off by bottom right overlay wrapper
