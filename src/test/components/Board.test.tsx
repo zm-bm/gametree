@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Config } from 'chessground/config';
 
 import ChessBoard from '../../features/Sidebar/components/ChessBoard';
-import { renderWithProviders } from '../../test/testUtils';
+import { renderWithProviders } from '../testUtils';
 
 const mockedConfig: Config = {
   fen: '8/8/8/8/8/8/8/8 w - - 0 1',

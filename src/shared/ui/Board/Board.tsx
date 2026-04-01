@@ -3,9 +3,9 @@ import { Chessground } from 'chessground';
 import { Api } from 'chessground/api';
 import { Config } from 'chessground/config';
 
-import { cn } from '@/shared/lib/cn';
-import { useBoardSize } from '@/shared/hooks/useBoardSize';
-import PromotionOverlay from '@/shared/ui/PromotionOverlay';
+import { cn } from '../../lib/cn';
+import { useBoardSize } from '../../hooks/useBoardSize';
+import PromotionOverlay from '../PromotionOverlay';
 import "./chessground.base.css";
 import "./chessground.board.css";
 import "./chessground.pieces.css";

@@ -1,12 +1,12 @@
 import { isAnyOf, UnknownAction } from "@reduxjs/toolkit";
 import { DEFAULT_POSITION } from "chess.js";
 
-import { RootState } from "@/store";
-import { startAppListening } from "@/store/listener";
-import { nav, tree, ui } from "@/store/slices";
-import { selectCurrentId, selectCurrentNode, selectTreeNodeMap } from "@/store/selectors";
-import { getChildId, getParentId } from "@/shared/lib/id";
-import { Id, Move, TreeStore, getNodeFen, getSiblingNodeIds } from "@/shared/types";
+import { RootState } from "..";
+import { startAppListening } from "../listener";
+import { nav, tree, ui } from "../slices";
+import { selectCurrentId, selectCurrentNode, selectTreeNodeMap } from "../selectors";
+import { getChildId, getParentId } from "../../shared/lib/id";
+import { Id, Move, TreeStore, getNodeFen, getSiblingNodeIds } from "../../shared/types";
 
 function pickPreferredNodeId(nodeIds: Id[], nodes: TreeStore, rememberedChildId?: Id): Id | undefined {
   if (!nodeIds.length) return undefined;

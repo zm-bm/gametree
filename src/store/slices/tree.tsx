@@ -1,7 +1,7 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
-import { OpeningTotals, Id, TreeStore } from "@/shared/types";
-import { addNodesToTree } from "@/shared/lib/treeState";
+import { OpeningTotals, Id, TreeStore } from "../../shared/types";
+import { addNodesToTree } from "../../shared/lib/treeState";
 
 interface AddNodes {
   nodeId: Id,

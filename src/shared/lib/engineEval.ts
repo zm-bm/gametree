@@ -1,4 +1,4 @@
-import { EngineOutput } from "@/shared/types";
+import { EngineOutput } from "../types";
 
 export type EngineEvalConvention = "perspective" | "white";
 

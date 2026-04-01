@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { engine, ui, tree, nav } from './slices'
 import { openingsApi } from './openingsApi';
 import { listenerMiddleware } from './listener';
-import { initializeEngine } from '@/worker';
+import { initializeEngine } from '../worker';
 
 const rootReducer = combineReducers({
   engine: engine.reducer,

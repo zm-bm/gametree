@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 import {
   // MockDispatch,
   renderWithProviders,
-} from "../../test/testUtils";
+} from "../testUtils";
 import PromotionOverlay from "../../shared/ui/PromotionOverlay/PromotionOverlay";
 // import { setupStore } from "../../store";
 

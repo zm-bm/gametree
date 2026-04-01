@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 
-import { useAppDispatch } from "@/store";
-import { nav } from "@/store/slices";
+import { useAppDispatch } from "../../store";
+import { nav } from "../../store/slices";
 
 let prev = 0;
 const THROTTLE_MS = 333;

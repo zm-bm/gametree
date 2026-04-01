@@ -1,6 +1,6 @@
 import React from "react";
 import { cn } from "@/shared/lib/cn";
-import { colorScale } from "@/features/TreeView/lib/colors";
+import { colorScale } from "../../lib/colors";
 import { TreeOverlayCard } from "./TreeOverlayCard";
 
 const LEGEND_STYLES = {

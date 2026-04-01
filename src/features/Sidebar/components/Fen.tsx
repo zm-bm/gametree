@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 
-import { RootState } from "../../../store";
-import { selectBoardFen } from "../../../store/selectors";
+import { RootState } from "@/store";
+import { selectBoardFen } from "@/store/selectors";
 
 const Fen = () => {
   const fen = useSelector((s: RootState) => selectBoardFen(s));

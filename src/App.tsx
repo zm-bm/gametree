@@ -1,9 +1,9 @@
 import { useState } from 'react';
 
-import TreeView from '@/features/TreeView';
-import Sidebar from '@/features/Sidebar';
-import { useKeyboardActions } from '@/shared/hooks';
-import { cn } from '@/shared/lib/cn';
+import TreeView from './features/TreeView';
+import Sidebar from './features/Sidebar';
+import { useKeyboardActions } from './shared/hooks';
+import { cn } from './shared/lib/cn';
 
 const TABS = [
   { id: 'sidebar', label: 'Chess' },

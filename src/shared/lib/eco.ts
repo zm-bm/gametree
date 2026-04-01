@@ -1,6 +1,6 @@
 import eco from "./eco.json";
 
-import { MovePath, OpeningBookEntry } from "@/shared/types";
+import { MovePath, OpeningBookEntry } from "../types";
 
 const book = eco as OpeningBookEntry[];
 const bookByUci = new Map<string, OpeningBookEntry>();

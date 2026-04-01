@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from "react";
 import { ProvidedZoom } from "@visx/zoom/lib/types";
 
-import { ZoomState } from "../../../shared/types";
+import { ZoomState } from "@/shared/types";
 import { ZoomContext } from "./ZoomContext";
 
 type ZoomProviderProps = {

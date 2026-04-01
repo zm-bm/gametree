@@ -1,6 +1,6 @@
 import { Chess, DEFAULT_POSITION } from "chess.js";
 
-import { Move, Id } from "@/shared/types";
+import { Move, Id } from "../types";
 import { serializeMove } from "./chess";
 
 export const getParentId = (nodeId: Id) => {
