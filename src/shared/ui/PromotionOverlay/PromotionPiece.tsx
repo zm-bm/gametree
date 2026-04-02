@@ -9,7 +9,7 @@ import { nav } from "@/store/slices";
 import { selectBoardPromotionTarget, selectBoardFen } from "@/store/selectors";
 import { serializeMove } from "../../lib/chess";
 
-type PromotionPieceProps = {
+export type PromotionPieceProps = {
   pieceName: string;
   pieceSymbol: PieceSymbol;
   sideToMove: Color;
