@@ -8,11 +8,47 @@ import { TreeViewNode, ZoomState } from '@/shared/types';
 import { RootState } from '@/store';
 import { selectCurrentId, selectCurrentNode } from '@/store/selectors';
 
-const SPRING_CONFIG = {
+export const SPRING_CONFIG = {
   tension: 150,
   friction: 26,
   clamp: true,
 } as const;
+
+export const ZOOM_BUTTON_SCALE_STEP = 1.12;
+export const PAN_TARGET_X_RATIO = 1 / 3;
+export const PAN_TARGET_Y_RATIO = 1 / 2;
+
+export function getZoomedTransform(
+  currentTransform: TransformMatrix,
+  viewport: { width: number; height: number },
+  direction: 'in' | 'out',
+) {
+  const scale = direction === 'in'
+    ? ZOOM_BUTTON_SCALE_STEP
+    : (1 / ZOOM_BUTTON_SCALE_STEP);
+  const centerX = viewport.width / 2;
+  const centerY = viewport.height / 2;
+
+  return {
+    ...currentTransform,
+    translateX: centerX - (centerX - currentTransform.translateX) * scale,
+    translateY: centerY - (centerY - currentTransform.translateY) * scale,
+    scaleX: currentTransform.scaleX * scale,
+    scaleY: currentTransform.scaleY * scale,
+  };
+}
+
+export function getPanToNodeTransform(
+  currentTransform: TransformMatrix,
+  viewport: { width: number; height: number },
+  nodePosition: { x: number; y: number },
+) {
+  return {
+    ...currentTransform,
+    translateX: (-nodePosition.y * currentTransform.scaleX) + (viewport.width * PAN_TARGET_X_RATIO),
+    translateY: (-nodePosition.x * currentTransform.scaleY) + (viewport.height * PAN_TARGET_Y_RATIO),
+  };
+}
 
 export interface Props {
   zoom: ProvidedZoom<SVGSVGElement> & ZoomState;
@@ -31,7 +67,6 @@ export function useTreeNavigation({
   const currentNode = useSelector((s: RootState) => selectCurrentNode(s));
   const followCurrentRef = useRef(true);
   const lastCurrentPosRef = useRef<{ id: string; x: number; y: number } | null>(null);
-  const wheelSyncFrame = useRef<number | null>(null);
 
   // React-spring, used for animating zoom and pan
   const [, spring] = useSpring<TransformMatrix>(() => ({
@@ -39,6 +74,15 @@ export function useTreeNavigation({
     config: SPRING_CONFIG,
     onChange: ({ value }) => zoom.setTransformMatrix(value as TransformMatrix),
   }));
+
+  const startFromCurrentTransform = useCallback((nextTransform: TransformMatrix) => {
+    spring.stop();
+    spring.start({
+      from: transformRef.current,
+      to: nextTransform,
+      config: SPRING_CONFIG,
+    });
+  }, [spring, transformRef]);
 
   // Update spring with current transform when transform changes
   const updateSpring = useCallback(() => {
@@ -48,57 +92,21 @@ export function useTreeNavigation({
     spring.set(transformRef.current);
   }, [spring, transformRef]);
 
-  // Coalesce wheel sync into one RAF callback to avoid stale timeout-based spring rewinds.
-  const onWheel = useCallback(() => {
-    if (wheelSyncFrame.current !== null) {
-      cancelAnimationFrame(wheelSyncFrame.current);
-    }
-
-    wheelSyncFrame.current = requestAnimationFrame(() => {
-      wheelSyncFrame.current = null;
-      updateSpring();
-    });
-  }, [updateSpring]);
-
   // Handle zooming in and out
   const handleZoom = useCallback((direction: 'in' | 'out') => {
-    const scaleStep = 1.12;
-    const scale = direction === 'in' ? scaleStep : (1 / scaleStep);
-    const centerX = width / 2;
-    const centerY = height / 2;
-    const nextScaleX = transformRef.current.scaleX * scale;
-    const nextScaleY = transformRef.current.scaleY * scale;
-    const nextTranslateX = centerX - (centerX - transformRef.current.translateX) * scale;
-    const nextTranslateY = centerY - (centerY - transformRef.current.translateY) * scale;
-
-    spring.start({
-      ...transformRef.current,
-      translateX: nextTranslateX,
-      translateY: nextTranslateY,
-      scaleX: nextScaleX,
-      scaleY: nextScaleY,
-      config: SPRING_CONFIG,
-    })
-  }, [spring, transformRef, width, height]);
+    const nextTransform = getZoomedTransform(transformRef.current, { width, height }, direction);
+    startFromCurrentTransform(nextTransform);
+  }, [startFromCurrentTransform, transformRef, width, height]);
 
   // Handler for panning to a specific node
   const panToNode = useCallback((node: HierarchyPointNode<TreeViewNode>) => {
-    spring.start({
-      ...transformRef.current,
-      translateX: (-node.y * transformRef.current.scaleX) + (width / 3),
-      translateY: (-node.x * transformRef.current.scaleY) + (height / 2),
-      config: SPRING_CONFIG,
-    });
-  }, [spring, transformRef, width, height]);
-
-  // Cleanup wheel sync RAF on unmount
-  useEffect(() => {
-    return () => {
-      if (wheelSyncFrame.current !== null) {
-        cancelAnimationFrame(wheelSyncFrame.current);
-      }
-    };
-  }, []);
+    const nextTransform = getPanToNodeTransform(
+      transformRef.current,
+      { width, height },
+      { x: node.x, y: node.y },
+    );
+    startFromCurrentTransform(nextTransform);
+  }, [startFromCurrentTransform, transformRef, width, height]);
 
   // Follow the current node while in "follow" mode:
   // - currentId change => always pan and re-enable follow
@@ -130,6 +138,5 @@ export function useTreeNavigation({
     spring,
     updateSpring,
     handleZoom,
-    onWheel,
   };
 };

@@ -22,7 +22,6 @@ export const Tree = () => {
     spring,
     updateSpring,
     handleZoom,
-    onWheel,
   } = useTreeNavigation({ zoom, transformRef, width, height });
   const {
     isError,
@@ -41,7 +40,6 @@ export const Tree = () => {
         ref={zoom.containerRef}
         onMouseUp={updateSpring}
         onTouchEnd={updateSpring}
-        onWheel={onWheel}
       >
         <SVGDefs/>
 
