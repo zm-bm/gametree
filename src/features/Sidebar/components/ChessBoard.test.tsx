@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Config } from 'chessground/config';
 
-import ChessBoard from '../../features/Sidebar/components/ChessBoard';
-import { renderWithProviders } from '../testUtils';
+import { renderWithProviders } from '@/test/renderWithProviders';
+import ChessBoard from './ChessBoard';
 
 const mockedConfig: Config = {
   fen: '8/8/8/8/8/8/8/8 w - - 0 1',
@@ -24,7 +24,7 @@ vi.mock('@/shared/ui/Board', () => ({
   }),
 }));
 
-describe('Board', () => {
+describe('ChessBoard', () => {
   beforeEach(() => {
     boardProps = {};
     useChessgroundConfigMock.mockClear();

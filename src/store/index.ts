@@ -1,5 +1,6 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
+import type { PreloadedState } from '@reduxjs/toolkit';
 import { useDispatch } from 'react-redux';
 
 import { engine, ui, tree, nav } from './slices'
@@ -15,7 +16,7 @@ const rootReducer = combineReducers({
   [openingsApi.reducerPath]: openingsApi.reducer,
 });
 
-export function setupStore(preloadedState?: Partial<RootState>) {
+export function setupStore(preloadedState?: PreloadedState<RootState>) {
   return configureStore({
     reducer: rootReducer,
     middleware: (getDefault) =>
