@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Config } from 'chessground/config';
+import { screen } from '@testing-library/react';
 
 import { renderWithProviders } from '@/test/renderWithProviders';
 import ChessBoard from './ChessBoard';
@@ -16,31 +17,65 @@ vi.mock('@/shared/hooks', () => ({
   useChessgroundConfig: () => useChessgroundConfigMock(),
 }));
 
-let boardProps: { config?: Config; className?: string; promotionOverlay?: boolean } = {};
+const boardMock = vi.fn((props: { config?: Config; className?: string; promotionOverlay?: boolean }) => (
+  <div data-testid="board-mock" data-classname={props.className} />
+));
+
 vi.mock('@/shared/ui/Board', () => ({
-  default: vi.fn((props) => {
-    boardProps = props;
-    return <div data-testid="board-mock" />;
-  }),
+  default: (props: { config?: Config; className?: string; promotionOverlay?: boolean }) => boardMock(props),
+}));
+
+vi.mock('./ToggleOrientationButton', () => ({
+  default: () => <div data-testid="toggle-orientation-button" />,
 }));
 
 describe('ChessBoard', () => {
   beforeEach(() => {
-    boardProps = {};
-    useChessgroundConfigMock.mockClear();
+    useChessgroundConfigMock.mockReset();
+    useChessgroundConfigMock.mockReturnValue(mockedConfig);
+    boardMock.mockClear();
   });
 
-  it('passes chessground config into Board', () => {
+  it('renders board and orientation toggle control', () => {
     renderWithProviders(<ChessBoard />);
 
     expect(useChessgroundConfigMock).toHaveBeenCalledTimes(1);
-    expect(boardProps.config).toBe(mockedConfig);
+    expect(screen.getByTestId('board-mock')).toBeInTheDocument();
+    expect(screen.getByTestId('toggle-orientation-button')).toBeInTheDocument();
   });
 
-  it('passes Board presentation props', () => {
+  it('passes board config and presentation props', () => {
     renderWithProviders(<ChessBoard className="sidebar-card" />);
 
-    expect(boardProps.className).toBe('sidebar-card');
-    expect(boardProps.promotionOverlay).toBe(true);
+    expect(useChessgroundConfigMock).toHaveBeenCalledTimes(1);
+    expect(boardMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        config: mockedConfig,
+        className: 'sidebar-card',
+        promotionOverlay: true,
+      })
+    );
+  });
+
+  it('passes updated config to Board on rerender', () => {
+    const nextConfig: Config = {
+      ...mockedConfig,
+      orientation: 'black',
+      turnColor: 'black',
+    };
+
+    useChessgroundConfigMock.mockReturnValueOnce(mockedConfig).mockReturnValueOnce(nextConfig);
+
+    const { rerender } = renderWithProviders(<ChessBoard className="sidebar-card" />);
+    rerender(<ChessBoard className="sidebar-card" />);
+
+    expect(useChessgroundConfigMock).toHaveBeenCalledTimes(2);
+    expect(boardMock).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        config: nextConfig,
+        className: 'sidebar-card',
+        promotionOverlay: true,
+      })
+    );
   });
 });
