@@ -26,7 +26,7 @@ npm run build
 - feat(sidebar-layout): sidepane -> sidebar, add scrollable analysis, pin board
 - feat(sidebar-opening): opening metadata view (ECO, name, win probabilities, current line)
 - feat(sidebar-engine): redo
-- chore: remove dead code (tooltip, ecodisplay, others?)
+- chore: remove dead code (tooltip, ecodisplay, NodeTooltipData, others?)
 
 - chore: add code formatter + pre-commit
 - feat(tree-node): highlight best engine move on the tree

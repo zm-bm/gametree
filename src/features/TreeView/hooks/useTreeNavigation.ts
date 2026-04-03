@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import { ProvidedZoom, TransformMatrix } from '@visx/zoom/lib/types';
+import { TransformMatrix } from '@visx/zoom/lib/types';
 import { HierarchyPointNode } from '@visx/hierarchy/lib/types';
 import { useSpring } from '@react-spring/web'
 
-import { TreeViewNode, ZoomState } from '@/shared/types';
+import { TreeViewNode, TreeZoom } from '@/shared/types';
 import { RootState } from '@/store';
 import { selectCurrentId, selectCurrentNode } from '@/store/selectors';
 
@@ -51,7 +51,7 @@ export function getPanToNodeTransform(
 }
 
 export interface Props {
-  zoom: ProvidedZoom<SVGSVGElement> & ZoomState;
+  zoom: TreeZoom;
   transformRef: React.MutableRefObject<TransformMatrix>;
   width: number;
   height: number;

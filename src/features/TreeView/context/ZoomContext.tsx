@@ -1,14 +1,14 @@
 import { createContext } from 'react';
-import { ProvidedZoom, TransformMatrix } from '@visx/zoom/lib/types';
+import { TransformMatrix } from '@visx/zoom/lib/types';
 
-import { ZoomState } from "@/shared/types";
+import { TreeZoom } from "@/shared/types";
 
 type ZoomContextType = {
-  zoom: ProvidedZoom<SVGSVGElement> & ZoomState;
+  zoom: TreeZoom;
   transformRef: React.MutableRefObject<TransformMatrix>;
 };
 
 export const ZoomContext = createContext<ZoomContextType>({
-  zoom: {} as ProvidedZoom<SVGSVGElement> & ZoomState,
+  zoom: {} as TreeZoom,
   transformRef: { current: {} as TransformMatrix },
 });

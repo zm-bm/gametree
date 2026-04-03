@@ -1,12 +1,11 @@
 import React, { useRef, useLayoutEffect } from "react";
-import { ProvidedZoom } from "@visx/zoom/lib/types";
 
-import { ZoomState } from "@/shared/types";
+import { TreeZoom } from "@/shared/types";
 import { ZoomContext } from "./ZoomContext";
 
 type ZoomProviderProps = {
   children: React.ReactNode;
-  zoom: ProvidedZoom<SVGSVGElement> & ZoomState;
+  zoom: TreeZoom;
 };
 
 export const ZoomProvider: React.FC<ZoomProviderProps> = ({ children, zoom }) => {
