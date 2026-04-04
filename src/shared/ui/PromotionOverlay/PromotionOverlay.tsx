@@ -15,9 +15,9 @@ const PROMOTIONS: Promotion[] = [
   { piece: 'knight', symbol: 'n'},
 ];
 
-type Props = { size: number };
+export type PromotionOverlayProps = { size: number };
 
-const PromotionOverlay = ({ size }: Props) => {
+const PromotionOverlay = ({ size }: PromotionOverlayProps) => {
   const orientation = useSelector((s: RootState) => selectBoardOrientation(s));
   const sideToMove = useSelector((s: RootState) => selectSideToMove(s));
   const target = useSelector((s: RootState) => selectBoardPromotionTarget(s));

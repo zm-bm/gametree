@@ -1,12 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, screen } from '@testing-library/react';
 
-import { createTestZoom, renderTreeViewWithContexts } from '../testUtils';
+import { createTestTreeViewNode, createTestZoom, renderTreeViewWithContexts } from '../testUtils';
 import { Tree } from './Tree';
-
-const selectCurrentIdMock = vi.fn((_: unknown) => 'e2e4');
-const selectTreeMock = vi.fn((_: unknown): unknown => ({ data: { id: '' } }));
-const useSelectorMock = vi.fn((selector: (state: unknown) => unknown) => selector({}));
+import { TreeMinimapProps, TreeOverlayProps, TreeZoomControlsProps } from './Overlays';
+import type { TreeContainerProps } from './TreeContainer';
 
 const updateSpringMock = vi.fn();
 const handleZoomMock = vi.fn();
@@ -25,38 +23,28 @@ const queryState = {
 };
 
 const useGetNodesQueryMock = vi.fn((_: { nodeId: string }) => queryState);
-
-const treeContainerMock = vi.fn((_: { root: unknown }) => <g data-testid="tree-container" />);
+const treeContainerMock = vi.fn((_: TreeContainerProps) => <g data-testid="tree-container" />);
 const treeGridMock = vi.fn(() => <g data-testid="tree-grid" />);
 const svgDefsMock = vi.fn(() => <defs data-testid="svg-defs" />);
-const treeErrorOverlaysMock = vi.fn(
-  (_: { hasTree: boolean; isError: boolean; isFetching: boolean; error: unknown; onRetry: () => void }) => (
-    <div data-testid="tree-error-overlays" />
-  )
-);
+const treeErrorOverlaysMock = vi.fn((_: TreeOverlayProps) => (<div data-testid="tree-error-overlays" />));
 const treeSettingsMock = vi.fn(() => <div data-testid="tree-settings" />);
 const treeHelpMock = vi.fn(() => <div data-testid="tree-help" />);
-const treeZoomControlsMock = vi.fn((_: { handleZoom: (direction: 'in' | 'out') => void }) => (
-  <div data-testid="tree-zoom-controls" />
-));
+const treeZoomControlsMock = vi.fn((_: TreeZoomControlsProps) => (<div data-testid="tree-zoom-controls" />));
 const treeDPadMock = vi.fn(() => <div data-testid="tree-dpad" />);
-const treeMinimapMock = vi.fn((_: { tree: unknown; spring: unknown }) => <div data-testid="tree-minimap" />);
-
-vi.mock('react-redux', async () => {
-  const actual = await vi.importActual<typeof import('react-redux')>('react-redux');
-  return {
-    ...actual,
-    useSelector: (selector: (state: unknown) => unknown) => useSelectorMock(selector),
-  };
-});
-
-vi.mock('@/store/selectors', () => ({
-  selectCurrentId: (state: unknown) => selectCurrentIdMock(state),
-  selectTree: (state: unknown) => selectTreeMock(state),
-}));
+const treeMinimapMock = vi.fn((_: TreeMinimapProps) => <div data-testid="tree-minimap" />);
 
 vi.mock('@/store/openingsApi', () => ({
   openingsApi: {
+    reducerPath: 'openingsApi',
+    reducer: (state = {}) => state,
+    middleware: () => (next: (action: unknown) => unknown) => (action: unknown) => next(action),
+    endpoints: {
+      getNodes: {
+        matchPending: () => false,
+        matchFulfilled: () => false,
+        matchRejected: () => false,
+      },
+    },
     useGetNodesQuery: (args: { nodeId: string }) => useGetNodesQueryMock(args),
   },
 }));
@@ -66,7 +54,7 @@ vi.mock('../hooks', () => ({
 }));
 
 vi.mock('./TreeContainer', () => ({
-  TreeContainer: (props: { root: unknown }) => treeContainerMock(props),
+  TreeContainer: (props: TreeContainerProps) => treeContainerMock(props),
 }));
 
 vi.mock('./SVGDefs', () => ({
@@ -78,22 +66,28 @@ vi.mock('./TreeGrid', () => ({
 }));
 
 vi.mock('./Overlays', () => ({
-  TreeErrorOverlays: (props: {
-    hasTree: boolean;
-    isError: boolean;
-    isFetching: boolean;
-    error: unknown;
-    onRetry: () => void;
-  }) => treeErrorOverlaysMock(props),
+  TreeErrorOverlays: (props: TreeOverlayProps) => treeErrorOverlaysMock(props),
   TreeSettings: () => treeSettingsMock(),
   TreeHelp: () => treeHelpMock(),
-  TreeZoomControls: (props: { handleZoom: (direction: 'in' | 'out') => void }) => treeZoomControlsMock(props),
+  TreeZoomControls: (props: TreeZoomControlsProps) => treeZoomControlsMock(props),
   TreeDPad: () => treeDPadMock(),
-  TreeMinimap: (props: { tree: unknown; spring: unknown }) => treeMinimapMock(props),
+  TreeMinimap: (props: TreeMinimapProps) => treeMinimapMock(props),
 }));
 
-const renderTree = (treeValue: unknown = { data: { id: '' } }) => {
-  selectTreeMock.mockReturnValue(treeValue);
+const renderTree = ({ hasTree = true, currentId = 'e2e4' }: { hasTree?: boolean; currentId?: string } = {}) => {
+  const preloadedState = {
+    ui: {
+      currentId,
+      treeSource: 'otb' as const,
+      treeMinFrequencyPct: 2,
+      treeMoveLimit: 8,
+    },
+    tree: {
+      nodes: hasTree ? { '': createTestTreeViewNode({ id: '' }) } : {},
+      pinnedNodes: [],
+      lastVisitedChildByParent: {},
+    },
+  };
 
   const zoom = {
     ...createTestZoom(2, 5, 10),
@@ -104,30 +98,20 @@ const renderTree = (treeValue: unknown = { data: { id: '' } }) => {
 
   return renderTreeViewWithContexts(<Tree />, {
     zoomOverrides: zoom,
+    preloadedState,
   });
 };
 
-type TreeErrorOverlaysProps = {
-  hasTree: boolean;
-  isError: boolean;
-  isFetching: boolean;
-  error: unknown;
-  onRetry: () => void;
-};
-
-const getTreeErrorOverlaysProps = (): TreeErrorOverlaysProps => {
+const getTreeErrorOverlaysProps = (): TreeOverlayProps => {
   const firstCall = treeErrorOverlaysMock.mock.calls[0];
   expect(firstCall).toBeDefined();
   if (!firstCall) throw new Error('Expected TreeErrorOverlays to be called');
 
-  return firstCall[0] as TreeErrorOverlaysProps;
+  return firstCall[0] as TreeOverlayProps;
 };
 
 describe('Tree', () => {
   beforeEach(() => {
-    selectCurrentIdMock.mockClear();
-    selectTreeMock.mockReset();
-    useSelectorMock.mockClear();
     useTreeNavigationMock.mockClear();
     useGetNodesQueryMock.mockClear();
     updateSpringMock.mockClear();
@@ -140,15 +124,18 @@ describe('Tree', () => {
   });
 
   it('wires tree data, query state, and overlay props', () => {
-    const treeValue = { data: { id: '' } };
-    renderTree(treeValue);
+    renderTree();
 
     expect(useGetNodesQueryMock).toHaveBeenCalledWith({ nodeId: 'e2e4' });
     expect(useTreeNavigationMock).toHaveBeenCalledWith(
       expect.objectContaining({ width: 900, height: 500 })
     );
 
-    expect(treeContainerMock).toHaveBeenCalledWith(expect.objectContaining({ root: treeValue }));
+    expect(treeContainerMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        root: expect.objectContaining({ data: expect.objectContaining({ id: '' }) }),
+      })
+    );
     expect(treeErrorOverlaysMock).toHaveBeenCalledWith(
       expect.objectContaining({
         hasTree: true,
@@ -161,7 +148,10 @@ describe('Tree', () => {
       expect.objectContaining({ handleZoom: handleZoomMock })
     );
     expect(treeMinimapMock).toHaveBeenCalledWith(
-      expect.objectContaining({ tree: treeValue, spring: { x: 1 } })
+      expect.objectContaining({
+        tree: expect.objectContaining({ data: expect.objectContaining({ id: '' }) }),
+        spring: { x: 1 },
+      })
     );
 
     expect(screen.getByTestId('svg-defs')).toBeInTheDocument();
@@ -172,7 +162,7 @@ describe('Tree', () => {
   });
 
   it('calls updateSpring handlers and retry callback', () => {
-    const { container } = renderTree(null);
+    const { container } = renderTree({ hasTree: false });
 
     const svg = container.querySelector('svg');
     expect(svg).toBeInTheDocument();

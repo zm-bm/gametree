@@ -5,6 +5,7 @@ import { Config } from 'chessground/config';
 
 import { renderWithProviders } from '@/test/renderWithProviders';
 import Board from './Board';
+import type { PromotionOverlayProps } from '../PromotionOverlay/PromotionOverlay';
 
 const setMock = vi.fn();
 
@@ -21,12 +22,12 @@ vi.mock('../../hooks/useBoardSize', () => ({
   ],
 }));
 
-const promotionOverlayMock = vi.fn(({ size }: { size: number }) => (
+const promotionOverlayMock = vi.fn(({ size }: PromotionOverlayProps) => (
   <div data-testid="promotion-overlay-mock" data-size={size} />
 ));
 
 vi.mock('../PromotionOverlay', () => ({
-  default: ({ size }: { size: number }) => promotionOverlayMock({ size }),
+  default: ({ size }: PromotionOverlayProps) => promotionOverlayMock({ size }),
 }));
 
 describe('Board', () => {

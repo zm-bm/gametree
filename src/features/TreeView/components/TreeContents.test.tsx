@@ -5,28 +5,30 @@ import { TreeViewNode } from '@/shared/types';
 
 import { createTestHierarchyPointNode, renderTreeViewWithContexts } from '../testUtils';
 import { TreeContents } from './TreeContents';
+import type { TreeLinkProps } from './TreeLink';
+import type { TreeNodeProps } from './TreeNode';
 
-const treeLinkMock = vi.fn((_: unknown) => <path data-testid="tree-link" />);
-const treeNodeMock = vi.fn((_: unknown) => <g data-testid="tree-node" />);
+const treeLinkMock = vi.fn((_: TreeLinkProps) => <path data-testid="tree-link" />);
+const treeNodeMock = vi.fn((_: TreeNodeProps) => <g data-testid="tree-node" />);
 const useAnimatedTreeLayoutMock = vi.fn((_: unknown[]) => ({
   ax: (id: string) => id.length * 10,
   ay: (id: string) => id.length * 100,
 }));
 
 vi.mock('./TreeLink', () => ({
-  TreeLink: (props: unknown) => treeLinkMock(props),
+  TreeLink: (props: TreeLinkProps) => treeLinkMock(props),
 }));
 
 vi.mock('./TreeNode', () => ({
-  TreeNode: (props: unknown) => treeNodeMock(props),
+  TreeNode: (props: TreeNodeProps) => treeNodeMock(props),
 }));
 
 vi.mock('../hooks', () => ({
   useAnimatedTreeLayout: (nodes: unknown[]) => useAnimatedTreeLayoutMock(nodes),
 }));
 
-const rootNode = createTestHierarchyPointNode('', 11, 22);
-const childNode = createTestHierarchyPointNode('e2e4', 33, 44);
+const rootNode = createTestHierarchyPointNode({ id: '', x: 11, y: 22 });
+const childNode = createTestHierarchyPointNode({ id: 'e2e4', x: 33, y: 44 });
 
 const tree = {
   links: () => [{ source: rootNode, target: childNode }],

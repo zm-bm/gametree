@@ -1,8 +1,10 @@
-import { render } from '@testing-library/react';
 import { TransformMatrix } from '@visx/zoom/lib/types';
+import type { HierarchyPointNode } from '@visx/hierarchy/lib/types';
 import type { ReactElement } from 'react';
 
-import { TreeViewNode, TreeZoom } from '@/shared/types';
+import { Move, TreeStoreNode, TreeViewNode, TreeZoom } from '@/shared/types';
+import { renderWithProviders } from '@/test/renderWithProviders';
+import type { RenderOptionsWithStore } from '@/test/renderWithProviders';
 
 import { TreeDimensionsContext, ZoomContext } from './context';
 
@@ -63,18 +65,77 @@ export function createTestTreeViewNode(overrides: Partial<TreeViewNode> = {}): T
   };
 }
 
-export function createTestHierarchyPointNode(
-  id: string,
-  x: number,
-  y: number,
-  children: Array<{ data: TreeViewNode; x: number; y: number }> = [],
-) {
+export function createTestTreeStoreNode(overrides: Partial<TreeStoreNode> = {}): TreeStoreNode {
   return {
-    data: createTestTreeViewNode({ id }),
+    id: '',
+    childrenLoaded: true,
+    loading: false,
+    move: null,
+    edgeStats: {
+      otb: { white: 0, draws: 0, black: 0, total: 0 },
+      online: { white: 0, draws: 0, black: 0, total: 0 },
+    },
+    positionStats: {
+      otb: { white: 0, draws: 0, black: 0, total: 0 },
+      online: { white: 0, draws: 0, black: 0, total: 0 },
+    },
+    children: [],
+    ...overrides,
+  };
+}
+
+export function createTestMove(overrides: Partial<Move> = {}): Move {
+  return {
+    color: 'w',
+    from: 'e2',
+    to: 'e4',
+    piece: 'p',
+    san: 'e4',
+    lan: 'e2e4',
+    before: 'before-fen',
+    after: 'after-fen',
+    ...overrides,
+  };
+}
+
+type TestHierarchyPointNodeOptions = {
+  id?: string;
+  x?: number;
+  y?: number;
+  children?: Array<{ data: TreeViewNode; x: number; y: number }>;
+  node?: Partial<TreeViewNode>;
+  parent?: Partial<TreeViewNode>;
+};
+
+export function createTestHierarchyPointNode(
+  options: TestHierarchyPointNodeOptions = {}
+): HierarchyPointNode<TreeViewNode> {
+  const {
+    id = '',
+    x = 0,
+    y = 0,
+    children = [],
+    node: nodeOverrides = {},
+    parent,
+  } = options;
+
+  const node = {
+    data: createTestTreeViewNode({
+      id,
+      ...nodeOverrides,
+    }),
     x,
     y,
     children,
-  };
+  } as HierarchyPointNode<TreeViewNode>;
+
+  if (parent) {
+    node.parent = {
+      data: createTestTreeViewNode({ id: '', ...parent }),
+    } as HierarchyPointNode<TreeViewNode>;
+  }
+
+  return node;
 }
 
 const defaultZoom = {
@@ -83,23 +144,29 @@ const defaultZoom = {
   containerRef: { current: null },
 } as unknown as TreeZoom;
 
-type RenderTreeViewOptions = {
+type TreeViewRenderOptions = RenderOptionsWithStore & {
   dimensions?: Partial<TreeDimensionsValue>;
   zoomOverrides?: Partial<TreeZoom>;
 };
 
 export function renderTreeViewWithContexts(
   ui: ReactElement,
-  options: RenderTreeViewOptions = {}
+  options: TreeViewRenderOptions = {}
 ) {
-  const dimensions = { ...defaultDimensions, ...(options.dimensions || {}) };
-  const zoom = { ...defaultZoom, ...(options.zoomOverrides || {}) } as TreeZoom;
+  const {
+    dimensions: dimensionsOverrides,
+    zoomOverrides,
+    ...renderOptions
+  } = options;
+  const dimensions = { ...defaultDimensions, ...(dimensionsOverrides || {}) };
+  const zoom = { ...defaultZoom, ...(zoomOverrides || {}) } as TreeZoom;
 
-  return render(
+  return renderWithProviders(
     <TreeDimensionsContext.Provider value={dimensions}>
       <ZoomContext.Provider value={{ zoom, transformRef: { current: createTestTransformMatrix() } }}>
         {ui}
       </ZoomContext.Provider>
-    </TreeDimensionsContext.Provider>
+    </TreeDimensionsContext.Provider>,
+    renderOptions
   );
 }

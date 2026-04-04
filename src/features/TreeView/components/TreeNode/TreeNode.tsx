@@ -44,7 +44,7 @@ function getTreeNodePalette(isDarkMode: boolean): TreeNodePalette {
   };
 }
 
-interface Props {
+export interface TreeNodeProps {
   node: HierarchyPointNode<TreeViewNode>;
   x: FluidValue<number> | number;
   y: FluidValue<number> | number;
@@ -58,7 +58,7 @@ export const TreeNode = ({
   y,
   minimap = false,
   showButtonDrawer = true,
-}: Props) => {
+}: TreeNodeProps) => {
   const { id, loading } = node.data;
 
   const { fontSize, nodeRadius, nodeRectSize } = useContext(TreeDimensionsContext);

@@ -7,13 +7,13 @@ import { TreeContents } from "./TreeContents";
 import { separation } from "../lib/separation";
 import { TreeDimensionsContext } from "../context";
 
-interface Props {
-  root: HierarchyNode<TreeViewNode> | null,
-};
+export interface TreeContainerProps {
+  root: HierarchyNode<TreeViewNode> | null;
+}
 
 const TreeContainerBase = ({
   root,
-}: Props)  => {
+}: TreeContainerProps)  => {
   const { treeNodeSpacing } = useContext(TreeDimensionsContext);
 
   if (!root) return null;

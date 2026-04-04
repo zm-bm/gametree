@@ -24,7 +24,7 @@ interface ButtonConfig {
   isActive?: boolean;
 }
 
-interface Props {
+export interface TreeNodeButtonsProps {
   nodeId: string;
   fen: string;
   nodeRadius: number;
@@ -34,7 +34,7 @@ export const TreeNodeButtons = ({
   nodeId,
   fen,
   nodeRadius,
-}: Props) => {
+}: TreeNodeButtonsProps) => {
   const dispatch = useAppDispatch();
   const { zoom } = useContext(ZoomContext);
   const pinnedNodes = useSelector((s: RootState) => selectPinnedNodes(s));

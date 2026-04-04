@@ -46,14 +46,14 @@ function getTreeLinkWidth(
   return Math.min(scaledWidth, maxWidth);
 }
 
-interface Props {
+export interface TreeLinkProps {
   link: HierarchyPointLink<TreeViewNode>;
   sourceX: FluidValue<number> | number;
   sourceY: FluidValue<number> | number;
   targetX: FluidValue<number> | number;
   targetY: FluidValue<number> | number;
   minimap?: boolean;
-};
+}
 
 export const TreeLink = ({
   link,
@@ -62,7 +62,7 @@ export const TreeLink = ({
   targetX,
   targetY,
   minimap = false,
-}: Props) => {
+}: TreeLinkProps) => {
   const { nodeRadius } = useContext(TreeDimensionsContext);
   const winRateComparison = useSelector((s: RootState) => selectTreeWinRateComparison(s));
   const boardOrientation = useSelector((s: RootState) => selectBoardOrientation(s));

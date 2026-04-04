@@ -6,6 +6,7 @@ import { TreeViewNode } from '@/shared/types';
 import { renderTreeViewWithContexts } from '../testUtils';
 import { separation } from '../lib/separation';
 import { TreeContainer } from './TreeContainer';
+import type { TreeContentsProps } from './TreeContents';
 
 const visxTreeMock = vi.fn(
   ({ children }: { children: (tree: unknown) => React.ReactNode }) => (
@@ -13,7 +14,7 @@ const visxTreeMock = vi.fn(
   )
 );
 
-const treeContentsMock = vi.fn((_: { tree: unknown }) => <div data-testid="tree-contents" />);
+const treeContentsMock = vi.fn((_: TreeContentsProps) => <div data-testid="tree-contents" />);
 
 vi.mock('@visx/hierarchy', () => ({
   Tree: (props: {
@@ -25,7 +26,7 @@ vi.mock('@visx/hierarchy', () => ({
 }));
 
 vi.mock('./TreeContents', () => ({
-  TreeContents: (props: { tree: unknown }) => treeContentsMock(props),
+  TreeContents: (props: TreeContentsProps) => treeContentsMock(props),
 }));
 
 describe('TreeContainer', () => {

@@ -1,4 +1,5 @@
 export { TreeNode } from "./TreeNode";
+export type { TreeNodeProps } from "./TreeNode";
 export { TreeNodeButtons } from "./TreeNodeButtons";
 export { TreeNodeLoadingIndicator } from "./TreeNodeLoadingIndicator";
 export { TreeNodeMoveLabel } from "./TreeNodeMoveLabel";

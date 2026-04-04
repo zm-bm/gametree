@@ -4,13 +4,14 @@ import { screen } from '@testing-library/react';
 import { renderWithProviders } from '@/test/renderWithProviders';
 
 import Sidebar from './Sidebar';
+import type { ChessBoardProps } from './components/ChessBoard';
 
-const chessBoardMock = vi.fn((props: { className?: string }) => (
+const chessBoardMock = vi.fn((props: ChessBoardProps) => (
   <div data-testid="sidebar-chessboard" data-classname={props.className} />
 ));
 
 vi.mock('./components/ChessBoard', () => ({
-  default: (props: { className?: string }) => chessBoardMock(props),
+  default: (props: ChessBoardProps) => chessBoardMock(props),
 }));
 
 vi.mock('./components/OpeningView', () => ({

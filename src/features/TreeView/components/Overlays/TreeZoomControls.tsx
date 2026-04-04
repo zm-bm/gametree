@@ -4,7 +4,11 @@ import { FaMinus, FaPlus } from 'react-icons/fa';
 const buttonClass = 'focus:outline-none interactive-treeview';
 const iconClass = 'h-5 w-5 m-2';
 
-export const TreeZoomControls = ({ handleZoom }: { handleZoom: (direction: 'in' | 'out') => void }) => {
+export interface TreeZoomControlsProps {
+  handleZoom: (direction: 'in' | 'out') => void;
+}
+
+export const TreeZoomControls = ({ handleZoom }: TreeZoomControlsProps) => {
   const zoomIn = useCallback(() => handleZoom('in'), [handleZoom]);
   const zoomOut = useCallback(() => handleZoom('out'), [handleZoom]);
 

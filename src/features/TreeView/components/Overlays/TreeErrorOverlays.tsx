@@ -1,6 +1,6 @@
 import { OpeningsQueryError, getOpeningsHttpStatus } from "@/store/openingsApi";
 
-interface Props {
+export interface TreeOverlayProps {
   hasTree: boolean;
   isError: boolean;
   isFetching: boolean;
@@ -46,7 +46,7 @@ const getTreeExpansionErrorText = (error?: OpeningsQueryError): string => {
   return "Could not load additional moves.";
 };
 
-export const TreeErrorOverlays = ({ hasTree, isError, isFetching, error, onRetry }: Props) => {
+export const TreeErrorOverlays = ({ hasTree, isError, isFetching, error, onRetry }: TreeOverlayProps) => {
   const isInitialTreeLoadError = !hasTree && isError && !isFetching;
   const isTreeExpansionError = hasTree && isError && !isFetching;
 

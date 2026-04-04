@@ -10,13 +10,13 @@ import "./chessground.base.css";
 import "./chessground.board.css";
 import "./chessground.pieces.css";
 
-interface Props {
+export interface BoardProps {
   config: Config,
   className?: string,
   promotionOverlay?: boolean,
 }
 
-const Board = ({ config, className, promotionOverlay = false }: Props) => {
+const Board = ({ config, className, promotionOverlay = false }: BoardProps) => {
   const chessgroundRef = useRef<HTMLDivElement>(null);
   const [api, setApi] = useState<Api | undefined>(undefined);
   const [ref, boardSize] = useBoardSize();

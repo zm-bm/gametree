@@ -32,7 +32,7 @@ function getFittedLabel(value: number, segmentWidth: number, fontSize: number) {
   };
 }
 
-type TreeNodeWinFrequencyProps = {
+export interface TreeNodeWinFrequencyProps {
   node: HierarchyPointNode<TreeViewNode>;
   nodeSize: number;
   barTrackColor: string;

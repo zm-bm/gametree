@@ -4,6 +4,7 @@ import { screen } from '@testing-library/react';
 
 import { renderWithProviders } from '@/test/renderWithProviders';
 import ChessBoard from './ChessBoard';
+import { BoardProps } from '@/shared/ui/Board/Board';
 
 const mockedConfig: Config = {
   fen: '8/8/8/8/8/8/8/8 w - - 0 1',
@@ -17,12 +18,12 @@ vi.mock('@/shared/hooks', () => ({
   useChessgroundConfig: () => useChessgroundConfigMock(),
 }));
 
-const boardMock = vi.fn((props: { config?: Config; className?: string; promotionOverlay?: boolean }) => (
+const boardMock = vi.fn((props: BoardProps) => (
   <div data-testid="board-mock" data-classname={props.className} />
 ));
 
 vi.mock('@/shared/ui/Board', () => ({
-  default: (props: { config?: Config; className?: string; promotionOverlay?: boolean }) => boardMock(props),
+  default: (props: BoardProps) => boardMock(props),
 }));
 
 vi.mock('./ToggleOrientationButton', () => ({
