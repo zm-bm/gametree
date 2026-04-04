@@ -10,8 +10,6 @@ import {
   selectEngineRunning,
   selectSideToMove,
 } from "@/store/selectors";
-import { SidebarCard } from "../SidebarCard";
-import EngineHeaderSummary from "./EngineHeaderSummary";
 import EngineControls from "./EngineControls";
 import EnginePrimaryAnalysis from "./EnginePrimaryAnalysis";
 import EnginePrincipalVariation from "./EnginePrincipalVariation";
@@ -34,37 +32,45 @@ const EngineView = () => {
 
   const { speed, depth = 0 } = engineOutput || {};
   const hasOutput = Boolean(engineOutput);
+  const stateText = running ? "running" : "idle";
+  const stateClass = running
+    ? "text-emerald-300/85 dark:text-emerald-300/80"
+    : "text-teal-200/75 dark:text-teal-300/65";
 
   const engineToggle = useCallback(() => {
     dispatch(ui.actions.toggleEngine());
   }, [dispatch]);
 
   return (
-    <SidebarCard
-      header={(collapsed) => <EngineHeaderSummary collapsed={collapsed} />}
-      persistKey="gtEngineViewCollapsed"
-      maxHeight="max-h-[100rem]"
-    >
-      <EngineControls
-        running={running}
-        hasOutput={hasOutput}
-        depth={depth}
-        speed={speed}
-        onToggle={engineToggle}
-      />
+    <div className="sidebar-card">
+      <div className="p-3 interactive-sidebar">
+        <span className="font-semibold tracking-tight">
+          <span>Engine:</span>{" "}
+          <span className={stateClass}>{stateText}</span>
+        </span>
+      </div>
+      <div className="sidebar-divider">
+        <EngineControls
+          running={running}
+          hasOutput={hasOutput}
+          depth={depth}
+          speed={speed}
+          onToggle={engineToggle}
+        />
 
-      <EnginePrimaryAnalysis
-        engineOutput={engineOutput}
-        fen={fen}
-        sideToMove={sideToMove}
-        orientation={orientation}
-        locale={locale}
-      />
+        <EnginePrimaryAnalysis
+          engineOutput={engineOutput}
+          fen={fen}
+          sideToMove={sideToMove}
+          orientation={orientation}
+          locale={locale}
+        />
 
-      <EnginePrincipalVariation fen={fen} pvMoves={engineOutput?.pv ?? []} />
+        <EnginePrincipalVariation fen={fen} pvMoves={engineOutput?.pv ?? []} />
 
-      <EngineSecondaryStats engineOutput={engineOutput} locale={locale} />
-    </SidebarCard>
+        <EngineSecondaryStats engineOutput={engineOutput} locale={locale} />
+      </div>
+    </div>
   );
 };
 
