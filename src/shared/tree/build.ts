@@ -1,4 +1,4 @@
-import type { Id, TreeSource, TreeStore, TreeViewNode } from "../../types";
+import type { Id, TreeSource, TreeStore, TreeViewNode } from "@/types";
 import { getNextPathChildId, getPathIds } from "./path";
 import { sourceGameCount } from "./stats";
 

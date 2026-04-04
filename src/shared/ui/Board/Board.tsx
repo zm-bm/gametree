@@ -3,8 +3,8 @@ import { Chessground } from 'chessground';
 import { Api } from 'chessground/api';
 import { Config } from 'chessground/config';
 
-import { cn } from '../../cn';
-import { useBoardSize } from '../../hooks/useBoardSize';
+import { cn } from '@/shared/cn';
+import { useBoardSize } from '@/shared/hooks/useBoardSize';
 import PromotionOverlay from '../PromotionOverlay';
 import "./chessground.base.css";
 import "./chessground.board.css";

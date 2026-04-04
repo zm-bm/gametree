@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { createTestTreeStoreNode } from '@/test/treeFixtures';
 
-import type { OpeningMove, OpeningTotals, SourceStats, TreeStore } from "../../types";
+import type { OpeningMove, OpeningTotals, SourceStats, TreeStore } from "@/types";
 import { getMoveFromPathId } from '../chess';
 import { toNodeStats } from './stats';
 import { addNodesToTree, buildChildNodes, buildNodes } from './state';

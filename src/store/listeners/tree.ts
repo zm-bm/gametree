@@ -1,8 +1,8 @@
 import { isAnyOf, isRejectedWithValue } from "@reduxjs/toolkit";
 import { DEFAULT_POSITION } from "chess.js";
 
-import { createSkeletonGateRegistry } from "../../shared/tree/skeletonGate";
-import { findNearestExistingAncestorId } from "../../shared/tree";
+import { createSkeletonGateRegistry } from "@/shared/tree/skeletonGate";
+import { findNearestExistingAncestorId } from "@/shared/tree";
 import { selectCurrentId, selectCurrentNodeData, selectCurrentVisibleId } from "../selectors";
 import { startAppListening } from "../listener";
 import { getOpeningsHttpStatus, openingsApi } from "../openingsApi";

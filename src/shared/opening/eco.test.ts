@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { MovePath } from "../../types";
+import type { MovePath } from "@/types";
 import { getECO, getECOByUciPath } from './eco';
 
 function makePath(lans: string[]): MovePath {

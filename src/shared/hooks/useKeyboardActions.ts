@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 
-import { useAppDispatch } from "../../store";
-import { selectCurrentVisibleId } from "../../store/selectors";
-import { nav, tree, ui } from "../../store/slices";
+import { useAppDispatch } from "@/store";
+import { selectCurrentVisibleId } from "@/store/selectors";
+import { nav, tree, ui } from "@/store/slices";
 
 let prev = 0;
 const THROTTLE_MS = 333;

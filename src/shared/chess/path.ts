@@ -1,6 +1,6 @@
 import { Chess, DEFAULT_POSITION } from "chess.js";
 
-import { Id } from "../../types";
+import { Id } from "@/types";
 import { serializeMove } from "./move";
 
 export function getMoveFromPathId(nodeId: Id) {

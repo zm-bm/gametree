@@ -5,8 +5,8 @@ import { RootState } from "..";
 import { startAppListening } from "../listener";
 import { nav, tree, ui } from "../slices";
 import { selectCurrentId, selectCurrentNode, selectTreeNodeMap } from "../selectors";
-import { getChildPathId, getNodeFen, getParentPathId, getSiblingNodeIds } from "../../shared/tree";
-import { Id, Move, TreeStore } from "../../types";
+import { getChildPathId, getNodeFen, getParentPathId, getSiblingNodeIds } from "@/shared/tree";
+import { Id, Move, TreeStore } from "@/types";
 
 function pickPreferredNodeId(nodeIds: Id[], nodes: TreeStore, rememberedChildId?: Id): Id | undefined {
   if (!nodeIds.length) return undefined;

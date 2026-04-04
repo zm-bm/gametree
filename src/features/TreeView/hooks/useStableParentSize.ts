@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useParentSize } from "@visx/responsive";
-import { appDebug } from "../../../shared/debug";
+import { appDebug } from "@/shared/debug";
 
 type Size = {
   width: number;

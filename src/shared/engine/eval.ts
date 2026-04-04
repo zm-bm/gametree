@@ -3,7 +3,7 @@ import type {
   EngineOutput,
   EvalContext,
   NormalizedEngineScore,
-} from "../../types";
+} from "@/types";
 
 const getScoreMultiplier = (
   sideToMove: string,

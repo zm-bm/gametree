@@ -1,4 +1,4 @@
-import type { Id, Move, TreeStore } from "../../types";
+import type { Id, Move, TreeStore } from "@/types";
 
 export function getChildPathId(parentId: Id, move: Move) {
   return [parentId, move.lan].filter(Boolean).join(",");

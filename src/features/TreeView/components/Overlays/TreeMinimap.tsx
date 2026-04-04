@@ -8,11 +8,11 @@ import { BiChevronDown, BiChevronUp } from 'react-icons/bi';
 
 import { TreeViewNode } from "@/types";
 import { cn } from '@/shared/cn';
-import { useTreeMinimap } from '../../hooks';
-import { ZoomContext, TreeDimensionsContext } from "../../context";
+import { useTreeMinimap } from '@/features/TreeView/hooks';
+import { ZoomContext, TreeDimensionsContext } from "@/features/TreeView/context";
 import { SVGDefs } from '../SVGDefs';
 import { TreeContents } from '../TreeContents';
-import { treeSeparation } from '../../lib/treeSeparation';
+import { treeSeparation } from '@/features/TreeView/lib/treeSeparation';
 
 export interface TreeMinimapProps {
   tree: HierarchyNode<TreeViewNode> | null;

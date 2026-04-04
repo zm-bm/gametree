@@ -2,7 +2,7 @@ import { PayloadAction as PA, createSlice } from '@reduxjs/toolkit';
 import { Color } from 'chessground/types';
 import { DEFAULT_POSITION, Square } from 'chess.js';
 
-import { TreeSource, TreeWinRateComparison, Id } from "../../types";
+import { TreeSource, TreeWinRateComparison, Id } from "@/types";
 
 const ui = createSlice({
   name: 'ui',

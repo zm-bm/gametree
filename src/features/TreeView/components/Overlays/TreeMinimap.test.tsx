@@ -7,7 +7,7 @@ import type { HierarchyNode } from '@visx/hierarchy/lib/types';
 import type { TreeViewNode } from '@/types';
 
 import { renderTreeViewWithContexts } from '@/test/treeFixtures';
-import { treeSeparation } from '../../lib/treeSeparation';
+import { treeSeparation } from '@/features/TreeView/lib/treeSeparation';
 import { TreeMinimap } from './TreeMinimap';
 import type { TreeContentsProps } from '../TreeContents';
 

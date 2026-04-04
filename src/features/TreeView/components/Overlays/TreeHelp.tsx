@@ -3,7 +3,7 @@ import { HierarchyPointNode } from "@visx/hierarchy/lib/types";
 
 import { cn } from "@/shared/cn";
 import { TreeViewNode } from "@/types";
-import { TreeDimensionsContext } from "../../context/TreeDimensionsContext";
+import { TreeDimensionsContext } from "@/features/TreeView/context/TreeDimensionsContext";
 import { TreeNode } from "../TreeNode";
 
 import { HelpModal } from "./HelpModal";

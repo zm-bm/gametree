@@ -4,7 +4,7 @@ import type {
   TreeSource,
   TreeStoreNode,
   TreeViewNode,
-} from "../../types";
+} from "@/types";
 
 export function toNodeStats(input: { otb: SourceStats; online: SourceStats }): NodeStats {
   return {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { EngineOutput } from "../../types";
+import type { EngineOutput } from "@/types";
 import {
   formatEngineEval,
   getEngineBarCp,

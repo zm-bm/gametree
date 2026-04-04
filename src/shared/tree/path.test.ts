@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { createTestMove, createTestTreeStoreNode } from '@/test/treeFixtures';
 
-import type { TreeStore } from "../../types";
+import type { TreeStore } from "@/types";
 import {
   findNearestExistingAncestorId,
   getChildPathId,

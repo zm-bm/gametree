@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef } from "react";
 import { scaleLinear } from "@visx/scale";
 
 import { TreeDimensionsContext } from "./TreeDimensionsContext";
-import { appDebug } from "../../../shared/debug";
+import { appDebug } from "@/shared/debug";
 
 const nodeScale = scaleLinear({
   domain: [360, 1440],
