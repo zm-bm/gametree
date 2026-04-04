@@ -72,6 +72,7 @@ const shouldHandleGlobalShortcut = (event: KeyboardEvent) => {
 
   return true;
 };
+
 export const useKeyboardActions = () => {
   const dispatch = useAppDispatch();
 
