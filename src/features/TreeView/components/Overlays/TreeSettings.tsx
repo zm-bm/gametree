@@ -11,7 +11,7 @@ import {
 import { ui } from "@/store/slices";
 import { cn } from "@/shared/lib/cn";
 import { InfoTooltip } from "@/shared/ui/InfoTooltip";
-import { TreeOverlayCard } from "./TreeOverlayCard";
+import { CollapsibleCard } from "@/shared/ui/CollapsibleCard";
 
 const dataSourceLabel = "flex gap-2 p-1 rounded text-sm font-medium cursor-pointer interactive-treeview";
 const dataSourceActive = "bg-lightmode-900/10 dark:bg-darkmode-100/10";
@@ -55,11 +55,13 @@ export const TreeSettings = () => {
   }, [dispatch]);
 
   return (
-    <TreeOverlayCard
-      title="Tree Settings"
-      persistKey="gtTreeOptionsCollapsed"
+    <CollapsibleCard
+      header={<div className="text-sm font-bold">Tree Settings</div>}
+      className="treeview-card w-[16rem] select-none"
+      headerClassName="px-3 py-2 interactive-treeview"
+      contentClassName="treeview-divider"
       maxHeight="max-h-[100rem]"
-      className="w-[16rem]"
+      persistKey="gtTreeOptionsCollapsed"
     >
       <div>
         <div className={cn(sectionLabel, 'pb-1 flex items-center gap-1')}>
@@ -208,6 +210,6 @@ export const TreeSettings = () => {
           ])}
         />
       </div>
-    </TreeOverlayCard>
+    </CollapsibleCard>
   );
 };
