@@ -9,8 +9,8 @@ import type { TreeViewNode } from '@/shared/types';
 const getNodeWinScoreMock = vi.fn((node: { id: string }) => (node.id === 'target' ? 0.8 : 0.2));
 const getTreeLinkFrequencyMock = vi.fn((_: { id: string }, __: { id: string }) => 0.5);
 
-vi.mock('@/shared/types', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/shared/types')>();
+vi.mock('@/shared/tree', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/shared/tree')>();
   return {
     ...actual,
     getNodeWinScore: (node: { id: string }) => getNodeWinScoreMock(node),

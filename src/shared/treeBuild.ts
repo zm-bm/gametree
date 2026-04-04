@@ -1,12 +1,5 @@
-import { Id } from "./chess";
-import {
-  getNextPathChildId,
-  getPathIds,
-  TreeStore,
-  TreeViewNode,
-  TreeSource,
-  sourceGameCount,
-} from "./tree";
+import { getNextPathChildId, getPathIds, sourceGameCount } from "./tree";
+import type { Id, TreeStore, TreeSource, TreeViewNode } from "./types";
 
 /**
  * Limit visible child ids for a single parent while preserving any required ids

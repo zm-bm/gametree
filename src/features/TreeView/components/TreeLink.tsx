@@ -7,7 +7,8 @@ import { useSelector } from "react-redux";
 import { cn } from "@/shared/lib/cn";
 import { RootState } from "@/store";
 import { selectBoardOrientation, selectTreeWinRateComparison } from "@/store/selectors";
-import { TreeViewNode, getNodeWinScore, getTreeLinkFrequency } from "@/shared/types";
+import { getNodeWinScore, getTreeLinkFrequency } from "@/shared/tree";
+import { TreeViewNode } from "@/shared/types";
 import { TreeDimensionsContext } from "../context/TreeDimensionsContext";
 import { colorScale } from "../lib/colors";
 
