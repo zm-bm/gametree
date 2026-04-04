@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { screen } from '@testing-library/react';
 
-import { createTestHierarchyPointNode } from '../../testUtils';
+import { createTestHierarchyPointNode } from '@/test/treeFixtures';
 import { renderWithProviders } from '@/test/renderWithProviders';
 
 import { TreeNodeMoveFrequency } from './TreeNodeMoveFrequency';

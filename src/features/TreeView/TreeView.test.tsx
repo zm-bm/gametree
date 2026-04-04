@@ -4,7 +4,7 @@ import { screen } from '@testing-library/react';
 
 import { TreeDimensionsContext, ZoomContext } from './context';
 import { treeZoomConfig } from './lib/zoomConfig';
-import { createTestTransformMatrix, createTestZoom, renderTreeViewWithContexts } from './testUtils';
+import { createTestTransformMatrix, createTestZoom, renderTreeViewWithContexts } from '@/test/treeFixtures';
 import TreeView from './TreeView';
 
 const useStableParentSizeMock = vi.fn(() => ({

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { useContext } from 'react';
 import { render, screen } from '@testing-library/react';
 
-import { createTestZoom } from '../testUtils';
+import { createTestZoom } from '@/test/treeFixtures';
 import { ZoomContext } from './ZoomContext';
 import { ZoomProvider } from './ZoomProvider';
 

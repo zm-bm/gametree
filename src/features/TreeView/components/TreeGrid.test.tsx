@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { renderTreeViewWithContexts } from '../testUtils';
+import { renderTreeViewWithContexts } from '@/test/treeFixtures';
 import { TreeGrid } from './TreeGrid';
 
 describe('TreeGrid', () => {

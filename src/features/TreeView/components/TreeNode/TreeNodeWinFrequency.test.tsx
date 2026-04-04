@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import type { HierarchyPointNode } from '@visx/hierarchy/lib/types';
 
-import { createTestTreeViewNode } from '../../testUtils';
+import { createTestTreeViewNode } from '@/test/treeFixtures';
 import type { TreeViewNode } from '@/shared/types';
 
 import { TreeNodeWinFrequency } from './TreeNodeWinFrequency';

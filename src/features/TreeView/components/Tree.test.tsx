@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, screen } from '@testing-library/react';
 
-import { createTestTreeViewNode, createTestZoom, renderTreeViewWithContexts } from '../testUtils';
+import { createTestTreeViewNode, createTestZoom, renderTreeViewWithContexts } from '@/test/treeFixtures';
 import { Tree } from './Tree';
 import { TreeMinimapProps, TreeOverlayProps, TreeZoomControlsProps } from './Overlays';
 import type { TreeContainerProps } from './TreeContainer';

@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { UseSpringProps } from 'react-spring';
 
-import { createTestHierarchyPointNode } from '@/features/TreeView/testUtils';
+import { createTestHierarchyPointNode } from '@/test/treeFixtures';
 
 type SpringLifecycleConfig = Pick<UseSpringProps<{ t: number }>, 'onChange' | 'onRest'>;
 type SpringOnChange = (args: { value: { t?: number } }) => void;

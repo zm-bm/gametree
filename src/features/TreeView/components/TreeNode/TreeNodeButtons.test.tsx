@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 
-import { renderTreeViewWithContexts } from '../../testUtils';
+import { renderTreeViewWithContexts } from '@/test/treeFixtures';
 import { TreeNodeButtons } from './TreeNodeButtons';
 
 const NODE_ID = 'e2e4';

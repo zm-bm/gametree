@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { createTestHierarchyPointNode } from '@/features/TreeView/testUtils';
+import { createTestHierarchyPointNode } from '@/test/treeFixtures';
 import { nav, ui } from '@/store/slices';
 
 const mockDispatch = vi.fn();

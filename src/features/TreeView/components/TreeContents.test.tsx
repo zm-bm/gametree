@@ -3,7 +3,7 @@ import { HierarchyPointNode } from 'd3-hierarchy';
 
 import { TreeViewNode } from '@/shared/types';
 
-import { createTestHierarchyPointNode, renderTreeViewWithContexts } from '../testUtils';
+import { createTestHierarchyPointNode, renderTreeViewWithContexts } from '@/test/treeFixtures';
 import { TreeContents } from './TreeContents';
 import type { TreeLinkProps } from './TreeLink';
 import type { TreeNodeProps } from './TreeNode';

@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import type { TransformMatrix } from '@visx/zoom/lib/types';
 
-import { createTestHierarchyPointNode } from '@/features/TreeView/testUtils';
+import { createTestHierarchyPointNode } from '@/test/treeFixtures';
 import {
   treeViewportCenter,
   toSvgPoint,

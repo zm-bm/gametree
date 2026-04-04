@@ -5,8 +5,7 @@ import type { ReactElement } from 'react';
 import { Move, TreeStoreNode, TreeViewNode, TreeZoom } from '@/shared/types';
 import { renderWithProviders } from '@/test/renderWithProviders';
 import type { RenderOptionsWithStore } from '@/test/renderWithProviders';
-
-import { TreeDimensionsContext, ZoomContext } from './context';
+import { TreeDimensionsContext, ZoomContext } from '@/features/TreeView/context';
 
 type TreeDimensionsValue = React.ContextType<typeof TreeDimensionsContext>;
 

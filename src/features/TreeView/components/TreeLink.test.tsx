@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { HierarchyPointLink } from '@visx/hierarchy/lib/types';
 
-import { createTestTreeViewNode, renderTreeViewWithContexts } from '../testUtils';
+import { createTestTreeViewNode, renderTreeViewWithContexts } from '@/test/treeFixtures';
 import { TreeLink } from './TreeLink';
 import { colorScale } from '../lib/colors';
 import type { TreeViewNode } from '@/shared/types';

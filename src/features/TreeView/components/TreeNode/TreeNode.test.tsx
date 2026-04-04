@@ -6,7 +6,7 @@ import {
   createTestHierarchyPointNode,
   createTestTreeStoreNode,
   renderTreeViewWithContexts,
-} from '../../testUtils';
+} from '@/test/treeFixtures';
 import { TreeNode } from './TreeNode';
 
 const treeNodeButtonsMock = vi.fn((_: unknown) => <g data-testid="tree-node-buttons" />);
