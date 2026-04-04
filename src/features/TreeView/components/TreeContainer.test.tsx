@@ -4,7 +4,7 @@ import { HierarchyNode } from '@visx/hierarchy/lib/types';
 
 import { TreeViewNode } from '@/shared/types';
 import { renderTreeViewWithContexts } from '../testUtils';
-import { separation } from '../lib/separation';
+import { treeSeparation } from '../lib/treeSeparation';
 import { TreeContainer } from './TreeContainer';
 import type { TreeContentsProps } from './TreeContents';
 
@@ -52,7 +52,7 @@ describe('TreeContainer', () => {
       expect.objectContaining({
         root,
         nodeSize: [40, 120],
-        separation,
+        separation: treeSeparation,
       })
     );
     expect(treeContentsMock).toHaveBeenCalledWith(

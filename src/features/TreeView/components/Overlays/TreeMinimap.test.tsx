@@ -7,7 +7,7 @@ import type { HierarchyNode } from '@visx/hierarchy/lib/types';
 import type { TreeViewNode } from '@/shared/types';
 
 import { renderTreeViewWithContexts } from '../../testUtils';
-import { separation } from '../../lib/separation';
+import { treeSeparation } from '../../lib/treeSeparation';
 import { TreeMinimap } from './TreeMinimap';
 import type { TreeContentsProps } from '../TreeContents';
 
@@ -92,7 +92,7 @@ describe('TreeMinimap', () => {
       expect.objectContaining({
         root: tree,
         nodeSize: [40, 120],
-        separation,
+        separation: treeSeparation,
       })
     );
     expect(treeContentsMock).toHaveBeenCalledWith(

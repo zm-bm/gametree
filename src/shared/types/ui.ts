@@ -7,13 +7,3 @@ export type ZoomState = {
 };
 
 export type TreeZoom = ProvidedZoom<SVGSVGElement> & ZoomState;
-
-export type NodeTooltipData = {
-  white: number;
-  draws: number;
-  black: number;
-  parent: number;
-  rating?: number;
-  eco?: string;
-  name?: string;
-};

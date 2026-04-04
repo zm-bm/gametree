@@ -3,7 +3,7 @@ import { useContext } from 'react';
 import { screen } from '@testing-library/react';
 
 import { TreeDimensionsContext, ZoomContext } from './context';
-import { treeZoomProps } from './lib/zoomProps';
+import { treeZoomConfig } from './lib/zoomConfig';
 import { createTestTransformMatrix, createTestZoom, renderTreeViewWithContexts } from './testUtils';
 import TreeView from './TreeView';
 
@@ -74,10 +74,10 @@ describe('TreeView', () => {
       expect.objectContaining({
         width: 800,
         height: 600,
-        scaleXMin: treeZoomProps.scaleXMin,
-        scaleYMin: treeZoomProps.scaleYMin,
-        scaleXMax: treeZoomProps.scaleXMax,
-        scaleYMax: treeZoomProps.scaleYMax,
+        scaleXMin: treeZoomConfig.scaleXMin,
+        scaleYMin: treeZoomConfig.scaleYMin,
+        scaleXMax: treeZoomConfig.scaleXMax,
+        scaleYMax: treeZoomConfig.scaleYMax,
       })
     );
 

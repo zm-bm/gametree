@@ -12,7 +12,7 @@ import { useTreeMinimap } from '../../hooks';
 import { ZoomContext, TreeDimensionsContext } from "../../context";
 import { SVGDefs } from '../SVGDefs';
 import { TreeContents } from '../TreeContents';
-import { separation } from '../../lib/separation';
+import { treeSeparation } from '../../lib/treeSeparation';
 
 export interface TreeMinimapProps {
   tree: HierarchyNode<TreeViewNode> | null;
@@ -145,7 +145,7 @@ export const TreeMinimap = ({ tree, spring }: TreeMinimapProps) => {
             <Tree<TreeViewNode>
               root={tree}
               nodeSize={treeNodeSpacing}
-              separation={separation}
+              separation={treeSeparation}
             >
               {(tree) => (
                 <Group transform={transform.matrix}>

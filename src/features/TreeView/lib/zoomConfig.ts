@@ -1,6 +1,6 @@
 import { WheelEvent as ReactWheelEvent } from "react";
 
-export const treeZoomProps = {
+export const treeZoomConfig = {
   scaleXMin: 1 / 2,
   scaleYMin: 1 / 2,
   scaleXMax: 4,

@@ -4,25 +4,21 @@ import { TransformMatrix } from "@visx/zoom/lib/types";
 import { SpringRef } from "react-spring";
 
 import { TreeViewNode } from "@/shared/types";
-
-const INITIAL_BOUNDS = {
-  left: Infinity,
-  top: Infinity,
-  right: -Infinity,
-  bottom: -Infinity,
-};
+import {
+  svgMatrix,
+  boundsFromPoints,
+  localPointFromClient,
+  fitBounds,
+  fromSvgPoint,
+  toSvgRect,
+  centerTreePoint,
+  treeViewportRect,
+} from "@/features/TreeView/lib/svgMath";
 
 type MinimapEvent = {
   clientX: number;
   clientY: number;
   currentTarget: EventTarget & SVGSVGElement
-};
-
-const getEventPoint = (event: MinimapEvent) => {
-  const rect = event.currentTarget.getBoundingClientRect();
-  const x = event.clientX - rect.left;
-  const y = event.clientY - rect.top;
-  return { x, y };
 };
 
 interface Props {
@@ -49,12 +45,7 @@ export const useTreeMinimap = ({
 
   // Calculate tree bounds for coordinate conversions
   const treeBounds = useMemo(() => {
-    return nodes.length ? nodes.reduce((bounds, node) => ({
-      left: Math.min(bounds.left, node.y),
-      top: Math.min(bounds.top, node.x),
-      right: Math.max(bounds.right, node.y),
-      bottom: Math.max(bounds.bottom, node.x),
-    }), INITIAL_BOUNDS) : null;
+    return boundsFromPoints(nodes.map((node) => ({ x: node.y, y: node.x })));
   }, [nodes]);
 
   // Calculate optimal margin based on tree size
@@ -63,26 +54,17 @@ export const useTreeMinimap = ({
   // Calculate minimap transform parameters
   const minimapTransform = useMemo(() => {
     if (!treeBounds) return null;
-
-    const treeBoundsWidth = treeBounds.right - treeBounds.left;
-    const treeBoundsHeight = treeBounds.bottom - treeBounds.top;
-
-    // Calculate scale to fit tree in minimap
-    const xScale = minimapWidth / (treeBoundsWidth || 1);
-    const yScale = minimapHeight / (treeBoundsHeight || 1);
-    const scale = Math.min(xScale, yScale) * scaleFactor;
-
-    // Calculate translation to center tree in minimap
-    const offsetX = (minimapWidth - treeBoundsWidth * scale) / 2;
-    const offsetY = (minimapHeight - treeBoundsHeight * scale) / 2;
-    const translateX = -treeBounds.left * scale + offsetX;
-    const translateY = -treeBounds.top * scale + offsetY;
+    const { scale, translateX, translateY } = fitBounds(
+      treeBounds,
+      { width: minimapWidth, height: minimapHeight },
+      scaleFactor,
+    );
 
     return {
       scale,
       translateX,
       translateY,
-      matrix: `matrix(${scale} 0 0 ${scale} ${translateX} ${translateY})`,
+      matrix: svgMatrix({ scale, translateX, translateY }),
     };
   }, [treeBounds, scaleFactor, minimapWidth, minimapHeight]);
 
@@ -90,28 +72,18 @@ export const useTreeMinimap = ({
   const viewportRect = useMemo(() => {
     if (!minimapTransform) return null;
 
-    // Convert main viewport position to tree coordinates
-    const treeLeft = -transformMatrix.translateX / transformMatrix.scaleX;
-    const treeTop = -transformMatrix.translateY / transformMatrix.scaleY;
-    const treeViewportWidth = treeWidth / transformMatrix.scaleX;
-    const treeViewportHeight = treeHeight / transformMatrix.scaleY;
+    const treeViewport = treeViewportRect(transformMatrix, {
+      width: treeWidth,
+      height: treeHeight,
+    });
 
-    // Map tree coordinates to minimap coordinates
-    return {
-      x: treeLeft * minimapTransform.scale + minimapTransform.translateX,
-      y: treeTop * minimapTransform.scale + minimapTransform.translateY,
-      width: treeViewportWidth * minimapTransform.scale,
-      height: treeViewportHeight * minimapTransform.scale,
-    }
+    return toSvgRect(treeViewport, minimapTransform);
   }, [transformMatrix, minimapTransform, treeWidth, treeHeight]);
 
   // Convert minimap coordinates to tree coordinates
   const minimapToTreeCoords = useCallback((minimapX: number, minimapY: number) => {
     if (!minimapTransform) return null;
-    return {
-      x: (minimapX - minimapTransform.translateX) / minimapTransform.scale,
-      y: (minimapY - minimapTransform.translateY) / minimapTransform.scale,
-    };
+    return fromSvgPoint({ x: minimapX, y: minimapY }, minimapTransform);
   }, [minimapTransform]);
 
   // Center the viewport on a specific point in the minimap
@@ -119,19 +91,19 @@ export const useTreeMinimap = ({
     // Convert to tree coordinates 
     const treeCoords = minimapToTreeCoords(minimapX, minimapY);
     if (!treeCoords) return;
-    
-    // Calculate proper center position with viewport center offset
-    const transform = {
-      ...transformMatrix,
-      translateX: -treeCoords.x * transformMatrix.scaleX + treeWidth / 2,
-      translateY: -treeCoords.y * transformMatrix.scaleY + treeHeight / 2,
-    };
+
+    const transform = centerTreePoint(
+      transformMatrix,
+      { width: treeWidth, height: treeHeight },
+      treeCoords,
+    );
     setTransformMatrix(transform);
     spring.set(transform);
   }, [minimapToTreeCoords, setTransformMatrix, transformMatrix, treeWidth, treeHeight, spring]);
 
   const centerViewport = useCallback((event: MinimapEvent) => {
-    const { x, y } = getEventPoint(event);
+    const rect = event.currentTarget.getBoundingClientRect();
+    const { x, y } = localPointFromClient({ x: event.clientX, y: event.clientY }, rect);
     centerViewportPoint(x, y);
   }, [centerViewportPoint]);
 

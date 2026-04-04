@@ -3,7 +3,7 @@ import { Zoom } from '@visx/zoom';
 import { Tree } from './components/Tree';
 import { ZoomProvider, TreeDimensionsProvider  } from "./context";
 import { useStableParentSize } from './hooks/useStableParentSize';
-import { treeZoomProps } from './lib/zoomProps';
+import { treeZoomConfig } from './lib/zoomConfig';
 
 const TreeView = () =>  {
   const { parentRef, width, height } = useStableParentSize();
@@ -14,7 +14,7 @@ const TreeView = () =>  {
         <Zoom<SVGSVGElement>
           width={width}
           height={height}
-          {...treeZoomProps}
+          {...treeZoomConfig}
         >
           {zoom => (
             <ZoomProvider zoom={zoom}>

@@ -4,7 +4,7 @@ import { Tree as VisxTree } from "@visx/hierarchy";
 
 import { TreeViewNode } from "@/shared/types";
 import { TreeContents } from "./TreeContents";
-import { separation } from "../lib/separation";
+import { treeSeparation } from "../lib/treeSeparation";
 import { TreeDimensionsContext } from "../context";
 
 export interface TreeContainerProps {
@@ -21,7 +21,7 @@ const TreeContainerBase = ({
     <VisxTree<TreeViewNode>
       root={root}
       nodeSize={treeNodeSpacing}
-      separation={separation}
+      separation={treeSeparation}
     >
       {(tree) =>
         <TreeContents tree={tree} />
