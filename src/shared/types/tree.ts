@@ -21,9 +21,7 @@ export type TreeStoreNode = BaseTreeNode & {
 
 export type TreeStore = Record<Id, TreeStoreNode>;
 
-type TreeNodeStats = SourceStats;
-
-export type TreeViewNode = BaseTreeNode & TreeNodeStats & {
+export type TreeViewNode = BaseTreeNode & SourceStats & {
   children: TreeViewNode[];
   childCount: number;
 };
