@@ -1,23 +1,7 @@
+import type { Id, Move, TreeStore } from "../../types";
 
-import type {
-  Id,
-  NodeStats,
-  SourceStats,
-  TreeSource,
-  TreeStore,
-  TreeStoreNode,
-  TreeViewNode,
-} from "./types";
-
-export function toNodeStats(input: { otb: SourceStats; online: SourceStats }): NodeStats {
-  return {
-    otb: input.otb,
-    online: input.online,
-  };
-}
-
-export function sourceGameCount(node: TreeStoreNode, source: TreeSource) {
-  return node.edgeStats[source].total;
+export function getChildPathId(parentId: Id, move: Move) {
+  return [parentId, move.lan].filter(Boolean).join(",");
 }
 
 export function getPathIds(currentId: Id) {
@@ -74,12 +58,4 @@ export function getSiblingNodeIds(nodes: TreeStore, currentId: Id): Id[] {
   const parentId = getParentPathId(currentId);
   if (parentId === null || parentId === currentId) return [];
   return nodes[parentId]?.children || [];
-}
-
-export function getTreeLinkFrequency(source: TreeViewNode, target: TreeViewNode): number {
-  return source.total ? target.total / source.total : 0;
-}
-
-export function getNodeWinScore(node: TreeViewNode): number {
-  return node.total > 0 ? (node.white - node.black) / node.total : 0;
 }

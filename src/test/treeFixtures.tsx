@@ -2,7 +2,7 @@ import { TransformMatrix } from '@visx/zoom/lib/types';
 import type { HierarchyPointNode } from '@visx/hierarchy/lib/types';
 import type { ReactElement } from 'react';
 
-import { Move, TreeStoreNode, TreeViewNode, TreeZoom } from '@/shared/types';
+import { Move, TreeStoreNode, TreeViewNode, TreeZoom } from '@/types';
 import { renderWithProviders } from '@/test/renderWithProviders';
 import type { RenderOptionsWithStore } from '@/test/renderWithProviders';
 import { TreeDimensionsContext, ZoomContext } from '@/features/TreeView/context';

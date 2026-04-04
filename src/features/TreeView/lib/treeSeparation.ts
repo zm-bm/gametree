@@ -1,6 +1,6 @@
 import { HierarchyPointNode } from '@visx/hierarchy/lib/types';
 
-import { TreeViewNode } from '@/shared/types';
+import { TreeViewNode } from '@/types';
 
 export const treeSeparation = (
   a: HierarchyPointNode<TreeViewNode>,

@@ -8,7 +8,7 @@ import { FluidValue } from '@react-spring/shared';
 
 import { RootState } from "@/store";
 import { selectBoardOrientation, selectCurrentVisibleId, selectIsDarkMode, selectPinnedNodes } from "@/store/selectors";
-import { TreeViewNode } from "@/shared/types";
+import { TreeViewNode } from "@/types";
 import { TreeDimensionsContext } from "../../context/TreeDimensionsContext";
 import { useTreeNodeInteractions } from "../../hooks/useTreeNodeInteractions";
 import {

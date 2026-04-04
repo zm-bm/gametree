@@ -1,9 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent } from '@testing-library/react';
 
-import { setupStore } from '@/store';
 import { nav } from '@/store/slices';
-import { renderWithProviders } from '@/test/renderWithProviders';
+import { renderWithProviders, setupTestStore } from '@/test/renderWithProviders';
 
 import { PromotionPiece, type PromotionPieceProps } from './PromotionPiece';
 
@@ -44,7 +43,7 @@ describe('PromotionPiece', () => {
   });
 
   it('dispatches commitMove when clicked and target exists', () => {
-    const store = setupStore({
+    const store = setupTestStore({
       ui: {
         boardFen,
         boardPromotionTarget: ['a7', 'a8'],
@@ -54,6 +53,7 @@ describe('PromotionPiece', () => {
     const dispatchSpy = vi.spyOn(store, 'dispatch').mockImplementation(() => ({ type: 'test/mock' }));
 
     const { container } = renderWithProviders(<PromotionPiece {...baseProps} />, { store });
+
     const square = container.querySelector('.square');
     expect(square).toBeInTheDocument();
     if (!square) throw new Error('Expected square to be rendered');
@@ -73,7 +73,7 @@ describe('PromotionPiece', () => {
   });
 
   it('does not dispatch move when target is missing', () => {
-    const store = setupStore();
+    const store = setupTestStore();
     const dispatchSpy = vi.spyOn(store, 'dispatch').mockImplementation(() => ({ type: 'test/mock' }));
 
     const { container } = renderWithProviders(<PromotionPiece {...baseProps} />, { store });

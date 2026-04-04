@@ -4,7 +4,7 @@ import type { HierarchyPointLink } from '@visx/hierarchy/lib/types';
 import { createTestTreeViewNode, renderTreeViewWithContexts } from '@/test/treeFixtures';
 import { TreeLink } from './TreeLink';
 import { colorScale } from '../lib/colors';
-import type { TreeViewNode } from '@/shared/types';
+import type { TreeViewNode } from '@/types';
 
 const getNodeWinScoreMock = vi.fn((node: { id: string }) => (node.id === 'target' ? 0.8 : 0.2));
 const getTreeLinkFrequencyMock = vi.fn((_: { id: string }, __: { id: string }) => 0.5);

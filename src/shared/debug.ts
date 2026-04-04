@@ -22,6 +22,7 @@ const DEBUG_PERSIST_STORAGE_KEY = "debugPersist";
 const GAMETREE_DEBUG_PERSIST_STORAGE_KEY = "gametreeDebugPersist";
 const DEBUG_BUFFER_STORAGE_KEY = "gametreeDebugBuffer";
 const DEBUG_BUFFER_LIMIT = 500;
+const APP_DEBUG_DOMAIN = "gametree";
 
 type DebugLevel = "debug" | "info" | "warn" | "error";
 
@@ -246,13 +247,25 @@ export function debugWarn(domain: string, scope: string, message: string, data?:
 }
 
 export function isGametreeDebugEnabled() {
-  return isDebugEnabled("gametree");
+  return isDebugEnabled(APP_DEBUG_DOMAIN);
 }
 
 export function gametreeDebug(scope: string, message: string, data?: unknown) {
-  debugLog("gametree", scope, message, data);
+  debugLog(APP_DEBUG_DOMAIN, scope, message, data);
 }
 
 export function gametreeDebugWarn(scope: string, message: string, data?: unknown) {
-  debugWarn("gametree", scope, message, data);
+  debugWarn(APP_DEBUG_DOMAIN, scope, message, data);
+}
+
+export function isAppDebugEnabled() {
+  return isGametreeDebugEnabled();
+}
+
+export function appDebug(scope: string, message: string, data?: unknown) {
+  gametreeDebug(scope, message, data);
+}
+
+export function appDebugWarn(scope: string, message: string, data?: unknown) {
+  gametreeDebugWarn(scope, message, data);
 }

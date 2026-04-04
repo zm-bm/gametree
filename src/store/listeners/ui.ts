@@ -1,4 +1,4 @@
-import { playMoveSound } from "../../shared/lib/sound";
+import { playMoveSound } from "../../shared/sound";
 import { startAppListening } from "../listener";
 import { selectBoardPromotionTarget } from "../selectors";
 import { ui } from "../slices";

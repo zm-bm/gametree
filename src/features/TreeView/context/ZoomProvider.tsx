@@ -1,6 +1,6 @@
 import React, { useRef, useLayoutEffect } from "react";
 
-import { TreeZoom } from "@/shared/types";
+import { TreeZoom } from "@/types";
 import { ZoomContext } from "./ZoomContext";
 
 type ZoomProviderProps = {

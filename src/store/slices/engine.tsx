@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { EngineOutput } from '../../shared/types';
+import { EngineOutput } from '../../types';
 
 const match = (line: string, regex: { [Symbol.match](string: string): RegExpMatchArray | null; }) => {
   const match = line.match(regex);

@@ -3,7 +3,7 @@ import { HierarchyPointNode } from "@visx/hierarchy/lib/types";
 import { TransformMatrix } from "@visx/zoom/lib/types";
 import { SpringRef } from "react-spring";
 
-import { TreeViewNode } from "@/shared/types";
+import { TreeViewNode } from "@/types";
 import {
   svgMatrix,
   boundsFromPoints,

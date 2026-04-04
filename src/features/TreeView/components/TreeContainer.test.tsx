@@ -2,7 +2,7 @@ import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { screen } from '@testing-library/react';
 import { HierarchyNode } from '@visx/hierarchy/lib/types';
 
-import { TreeViewNode } from '@/shared/types';
+import { TreeViewNode } from '@/types';
 import { renderTreeViewWithContexts } from '@/test/treeFixtures';
 import { treeSeparation } from '../lib/treeSeparation';
 import { TreeContainer } from './TreeContainer';

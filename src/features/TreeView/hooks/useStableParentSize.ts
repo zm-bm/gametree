@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useParentSize } from "@visx/responsive";
-import { gametreeDebug } from "../../../shared/lib/gametreeDebug";
+import { appDebug } from "../../../shared/debug";
 
 type Size = {
   width: number;
@@ -18,20 +18,20 @@ export function useStableParentSize() {
   useEffect(() => {
     if (width > 0 && height > 0) {
       lastGoodSizeRef.current = { width, height };
-      gametreeDebug(DEBUG_SCOPE, "updated-last-good-size", { width, height });
+      appDebug(DEBUG_SCOPE, "updated-last-good-size", { width, height });
     }
   }, [width, height]);
 
   const remeasureParent = useCallback((reason: string, attempt: number) => {
     const el = parentRef.current;
     if (!el) {
-      gametreeDebug(DEBUG_SCOPE, "remeasure-skipped-no-parent", { reason, attempt });
+      appDebug(DEBUG_SCOPE, "remeasure-skipped-no-parent", { reason, attempt });
       return false;
     }
 
     const rect = el.getBoundingClientRect();
     if (rect.width <= 0 || rect.height <= 0) {
-      gametreeDebug(DEBUG_SCOPE, "remeasure-skipped-nonpositive-rect", {
+      appDebug(DEBUG_SCOPE, "remeasure-skipped-nonpositive-rect", {
         reason,
         attempt,
         rect: {
@@ -50,7 +50,7 @@ export function useStableParentSize() {
       top: rect.top,
       left: rect.left,
     });
-    gametreeDebug(DEBUG_SCOPE, "remeasure-success", {
+    appDebug(DEBUG_SCOPE, "remeasure-success", {
       reason,
       attempt,
       rect: {
@@ -71,7 +71,7 @@ export function useStableParentSize() {
       }
 
       if (!didMeasure && attempt === REMEASURE_MAX_ATTEMPTS) {
-        gametreeDebug(DEBUG_SCOPE, "remeasure-max-attempts-reached", {
+        appDebug(DEBUG_SCOPE, "remeasure-max-attempts-reached", {
           reason,
           attempt,
         });
@@ -82,20 +82,20 @@ export function useStableParentSize() {
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.hidden) {
-        gametreeDebug(DEBUG_SCOPE, "visibilitychange-hidden", { hidden: true });
+        appDebug(DEBUG_SCOPE, "visibilitychange-hidden", { hidden: true });
         return;
       }
-      gametreeDebug(DEBUG_SCOPE, "visibilitychange-visible", { hidden: false });
+      appDebug(DEBUG_SCOPE, "visibilitychange-visible", { hidden: false });
       scheduleRemeasure("visibilitychange");
     };
 
     const handlePageShow = () => {
-      gametreeDebug(DEBUG_SCOPE, "pageshow");
+      appDebug(DEBUG_SCOPE, "pageshow");
       scheduleRemeasure("pageshow");
     };
 
     const handleWindowFocus = () => {
-      gametreeDebug(DEBUG_SCOPE, "focus");
+      appDebug(DEBUG_SCOPE, "focus");
       scheduleRemeasure("focus");
     };
 
@@ -104,7 +104,7 @@ export function useStableParentSize() {
     window.addEventListener("focus", handleWindowFocus);
 
     // Kick once on mount to recover if initial observer measurement was zero.
-    gametreeDebug(DEBUG_SCOPE, "mount-initial-remeasure");
+    appDebug(DEBUG_SCOPE, "mount-initial-remeasure");
     scheduleRemeasure("mount");
 
     return () => {
@@ -117,7 +117,7 @@ export function useStableParentSize() {
   useEffect(() => {
     if (width > 0 && height > 0) return;
     if (lastGoodSizeRef.current.width === 0 || lastGoodSizeRef.current.height === 0) return;
-    gametreeDebug(DEBUG_SCOPE, "observer-reported-nonpositive-size", {
+    appDebug(DEBUG_SCOPE, "observer-reported-nonpositive-size", {
       width,
       height,
       lastGoodSize: lastGoodSizeRef.current,
@@ -132,14 +132,14 @@ export function useStableParentSize() {
     const nowUsingFallback = (width <= 0 || height <= 0) && stableWidth > 0 && stableHeight > 0;
 
     if (nowUsingFallback && !usingFallbackRef.current) {
-      gametreeDebug(DEBUG_SCOPE, "using-fallback-size", {
+      appDebug(DEBUG_SCOPE, "using-fallback-size", {
         observedSize: { width, height },
         fallbackSize: { width: stableWidth, height: stableHeight },
       });
     }
 
     if (!nowUsingFallback && usingFallbackRef.current) {
-      gametreeDebug(DEBUG_SCOPE, "recovered-from-fallback-size", {
+      appDebug(DEBUG_SCOPE, "recovered-from-fallback-size", {
         observedSize: { width, height },
       });
     }

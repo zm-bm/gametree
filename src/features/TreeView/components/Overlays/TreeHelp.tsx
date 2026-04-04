@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { HierarchyPointNode } from "@visx/hierarchy/lib/types";
 
-import { cn } from "@/shared/lib/cn";
-import { TreeViewNode } from "@/shared/types";
+import { cn } from "@/shared/cn";
+import { TreeViewNode } from "@/types";
 import { TreeDimensionsContext } from "../../context/TreeDimensionsContext";
 import { TreeNode } from "../TreeNode";
 

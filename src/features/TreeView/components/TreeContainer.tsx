@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { HierarchyNode } from "@visx/hierarchy/lib/types";
 import { Tree as VisxTree } from "@visx/hierarchy";
 
-import { TreeViewNode } from "@/shared/types";
+import { TreeViewNode } from "@/types";
 import { TreeContents } from "./TreeContents";
 import { treeSeparation } from "../lib/treeSeparation";
 import { TreeDimensionsContext } from "../context";

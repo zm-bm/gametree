@@ -1,6 +1,6 @@
-import eco from "./eco.json";
+import eco from './eco.json';
 
-import { MovePath, OpeningBookEntry } from "../types";
+import { MovePath, OpeningBookEntry } from "../../types";
 
 const book = eco as OpeningBookEntry[];
 const bookByUci = new Map<string, OpeningBookEntry>();
@@ -19,7 +19,7 @@ export function getECOByUciPath(uciPath: string) {
     const ecoEntry = bookByUci.get(cursor);
     if (ecoEntry) return ecoEntry;
 
-    const pivot = cursor.lastIndexOf(",");
+    const pivot = cursor.lastIndexOf(',');
     if (pivot === -1) return null;
     cursor = cursor.slice(0, pivot);
   }
@@ -29,5 +29,5 @@ export function getECOByUciPath(uciPath: string) {
 
 export function getECO(path: MovePath) {
   if (path.length === 0) return null;
-  return getECOByUciPath(path.map((move) => move.lan).join(","));
+  return getECOByUciPath(path.map((move) => move.lan).join(','));
 }

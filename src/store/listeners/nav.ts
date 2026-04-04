@@ -5,9 +5,8 @@ import { RootState } from "..";
 import { startAppListening } from "../listener";
 import { nav, tree, ui } from "../slices";
 import { selectCurrentId, selectCurrentNode, selectTreeNodeMap } from "../selectors";
-import { getChildId, getParentId } from "../../shared/lib/id";
-import { getNodeFen, getSiblingNodeIds } from "../../shared/tree";
-import { Id, Move, TreeStore } from "../../shared/types";
+import { getChildPathId, getNodeFen, getParentPathId, getSiblingNodeIds } from "../../shared/tree";
+import { Id, Move, TreeStore } from "../../types";
 
 function pickPreferredNodeId(nodeIds: Id[], nodes: TreeStore, rememberedChildId?: Id): Id | undefined {
   if (!nodeIds.length) return undefined;
@@ -38,7 +37,7 @@ const getNavTarget = (action: UnknownAction, state: RootState): NavResult | unde
     case nav.actions.commitMove.type: {
       // Committing a move always navigates to the child node corresponding to that move
       const move = action.payload as Move;
-      const id = getChildId(currentId, move);
+      const id = getChildPathId(currentId, move);
       const fen = move.after || DEFAULT_POSITION
       return { id, fen };
     }
@@ -53,7 +52,7 @@ const getNavTarget = (action: UnknownAction, state: RootState): NavResult | unde
     
     case nav.actions.navigateUp.type: {
       // Navigating up moves to the parent node if it exists
-      const id = (currentNode?.parent?.data.id as Id | undefined) ?? getParentId(currentId);
+      const id = (currentNode?.parent?.data.id as Id | undefined) ?? getParentPathId(currentId);
       if (id === undefined || id === null || id === currentId || !nodes[id]) return undefined;
       const fen = getNodeFen(nodes, id, DEFAULT_POSITION);
       return { id, fen };
@@ -127,7 +126,7 @@ startAppListening({
       dispatch(ui.actions.setFen(target.fen));
       dispatch(ui.actions.setCurrent(target.id));
 
-      const parentId = getParentId(target.id);
+      const parentId = getParentPathId(target.id);
       if (parentId !== null && parentId !== target.id) {
         dispatch(tree.actions.setLastVisitedChild({ parentId, childId: target.id }));
       }

@@ -1,7 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, screen } from '@testing-library/react';
 
-import { createTestTreeViewNode, createTestZoom, renderTreeViewWithContexts } from '@/test/treeFixtures';
+import type { TreeStore } from '@/types';
+import { createTestTreeStoreNode, createTestZoom, renderTreeViewWithContexts } from '@/test/treeFixtures';
 import { Tree } from './Tree';
 import { TreeMinimapProps, TreeOverlayProps, TreeZoomControlsProps } from './Overlays';
 import type { TreeContainerProps } from './TreeContainer';
@@ -74,7 +75,13 @@ vi.mock('./Overlays', () => ({
   TreeMinimap: (props: TreeMinimapProps) => treeMinimapMock(props),
 }));
 
-const renderTree = ({ hasTree = true, currentId = 'e2e4' }: { hasTree?: boolean; currentId?: string } = {}) => {
+const renderTree = ({
+  currentId = 'e2e4',
+  nodes = { '': createTestTreeStoreNode({ id: '' }) },
+}: {
+  currentId?: string;
+  nodes?: TreeStore;
+} = {}) => {
   const preloadedState = {
     ui: {
       currentId,
@@ -83,7 +90,7 @@ const renderTree = ({ hasTree = true, currentId = 'e2e4' }: { hasTree?: boolean;
       treeMoveLimit: 8,
     },
     tree: {
-      nodes: hasTree ? { '': createTestTreeViewNode({ id: '' }) } : {},
+      nodes,
       pinnedNodes: [],
       lastVisitedChildByParent: {},
     },
@@ -162,7 +169,7 @@ describe('Tree', () => {
   });
 
   it('calls updateSpring handlers and retry callback', () => {
-    const { container } = renderTree({ hasTree: false });
+    const { container } = renderTree({ nodes: {} });
 
     const svg = container.querySelector('svg');
     expect(svg).toBeInTheDocument();

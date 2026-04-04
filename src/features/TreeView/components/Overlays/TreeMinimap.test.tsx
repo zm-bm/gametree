@@ -4,7 +4,7 @@ import type { TransformMatrix } from '@visx/zoom/lib/types';
 import type { SpringRef } from 'react-spring';
 import type { HierarchyNode } from '@visx/hierarchy/lib/types';
 
-import type { TreeViewNode } from '@/shared/types';
+import type { TreeViewNode } from '@/types';
 
 import { renderTreeViewWithContexts } from '@/test/treeFixtures';
 import { treeSeparation } from '../../lib/treeSeparation';

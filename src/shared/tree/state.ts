@@ -1,9 +1,9 @@
 import { Chess, DEFAULT_POSITION, Square } from "chess.js";
 
-import { toNodeStats } from "../tree";
-import { OpeningMove, OpeningTotals, TreeStoreNode, TreeStore, Id } from "../types";
-import { serializeMove } from "./chess";
-import { getChildId, getMoveFromId, getParentId } from "./id";
+import type { Id, OpeningMove, OpeningTotals, TreeStore, TreeStoreNode } from "../../types";
+import { getMoveFromPathId, serializeMove } from "../chess";
+import { getChildPathId, getParentPathId } from "./path";
+import { toNodeStats } from "./stats";
 
 export function buildNodes(
   nodes: TreeStore,
@@ -15,8 +15,8 @@ export function buildNodes(
   let node = nodes[nodeId];
 
   if (node) {
-    const parentId = getParentId(nodeId);
-    const hasParentEdge = Boolean(parentId && nodes[parentId]?.children.includes(nodeId));
+    const parentId = getParentPathId(nodeId);
+    const hasParentEdge = parentId !== null && Boolean(nodes[parentId]?.children.includes(nodeId));
 
     node = {
       ...node,
@@ -29,7 +29,7 @@ export function buildNodes(
       id: nodeId,
       childrenLoaded: true,
       loading: false,
-      move: getMoveFromId(nodeId),
+      move: getMoveFromPathId(nodeId),
       edgeStats: rootPositionStats,
       positionStats: rootPositionStats,
       children: [],
@@ -37,9 +37,9 @@ export function buildNodes(
   }
 
   const childNodes = buildChildNodes(nodes, node, openingData.moves);
-  const children = childNodes.map(child => child.id);
+  const children = childNodes.map((child) => child.id);
   node.children = [...new Set([...node.children, ...children])];
-  
+
   return [node, ...childNodes];
 }
 
@@ -58,7 +58,7 @@ export function buildChildNodes(
     const promotion = uci.length > 4 ? uci.slice(4) : undefined;
     const childMove = serializeMove(chess.move({ from, to, promotion }));
     chess.undo();
-    const childId = getChildId(parentNode.id, childMove);
+    const childId = getChildPathId(parentNode.id, childMove);
     const childEdgeStats = toNodeStats(moveData);
 
     const existingNode = nodes[childId];
@@ -82,23 +82,18 @@ export function buildChildNodes(
       children: [],
     });
   }
-  
+
   return children;
 }
 
-export const addNodesToTree = (nodes: TreeStore, nodeId: Id, openingData: OpeningTotals) => {
-  // Build and add new nodes to tree
+export function addNodesToTree(nodes: TreeStore, nodeId: Id, openingData: OpeningTotals) {
   const newNodes = buildNodes(nodes, nodeId, openingData);
   for (const node of newNodes) {
     nodes[node.id] = node;
   }
 
-  // Update parent node
-  const parentId = getParentId(nodeId);
-  if (parentId && nodes[parentId]) {
-    if (!nodes[parentId].children.includes(nodeId)) {
-      nodes[parentId].children.push(nodeId);
-    }
+  const parentId = getParentPathId(nodeId);
+  if (parentId !== null && nodes[parentId] && !nodes[parentId].children.includes(nodeId)) {
+    nodes[parentId].children.push(nodeId);
   }
-};
-
+}

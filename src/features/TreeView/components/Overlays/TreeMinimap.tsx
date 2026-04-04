@@ -6,8 +6,8 @@ import { Tree } from '@visx/hierarchy';
 import { Group } from '@visx/group'
 import { BiChevronDown, BiChevronUp } from 'react-icons/bi';
 
-import { TreeViewNode } from "@/shared/types";
-import { cn } from '@/shared/lib/cn';
+import { TreeViewNode } from "@/types";
+import { cn } from '@/shared/cn';
 import { useTreeMinimap } from '../../hooks';
 import { ZoomContext, TreeDimensionsContext } from "../../context";
 import { SVGDefs } from '../SVGDefs';

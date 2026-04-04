@@ -2,13 +2,13 @@ import { describe, expect, it } from 'vitest';
 
 import { createTestTreeStoreNode } from '@/test/treeFixtures';
 
-import type { TreeStore } from './types';
+import type { TreeStore } from "../../types";
 import {
   buildShallowNode,
   filterTreeNodes,
   orderTreeNodes,
   treeBuild,
-} from './treeBuild';
+} from './build';
 
 function makeTreeStore(): TreeStore {
   return {
@@ -73,7 +73,7 @@ function makeTreeStore(): TreeStore {
   };
 }
 
-describe('shared tree build helpers', () => {
+describe('tree build helpers', () => {
   it('orders nodes toward center by total frequency', () => {
     const nodes = [
       { id: 'n1', total: 1 },
@@ -82,7 +82,7 @@ describe('shared tree build helpers', () => {
       { id: 'n4', total: 4 },
     ] as Array<{ id: string; total: number }> as never;
 
-    expect(orderTreeNodes(nodes).map((n) => n.id)).toEqual(['n2', 'n4', 'n3', 'n1']);
+    expect(orderTreeNodes(nodes).map((node) => node.id)).toEqual(['n2', 'n4', 'n3', 'n1']);
   });
 
   it('filters tree nodes by loaded-state and frequency threshold', () => {
@@ -114,8 +114,8 @@ describe('shared tree build helpers', () => {
     expect(built).not.toBeNull();
     if (!built) return;
 
-    expect(built.children.map((n) => n.id)).toEqual(['a']);
-    expect(built.children[0].children.map((n) => n.id)).toEqual(['a,a2']);
+    expect(built.children.map((node) => node.id)).toEqual(['a']);
+    expect(built.children[0].children.map((node) => node.id)).toEqual(['a,a2']);
   });
 
   it('adds pinned branch visibility with ancestor chain and pinned children', () => {
@@ -125,10 +125,9 @@ describe('shared tree build helpers', () => {
     expect(built).not.toBeNull();
     if (!built) return;
 
-    // Both focus branch (a) and pinned branch (b) should be visible under root.
-    expect(new Set(built.children.map((n) => n.id))).toEqual(new Set(['a', 'b']));
+    expect(new Set(built.children.map((node) => node.id))).toEqual(new Set(['a', 'b']));
 
-    const pinnedBranch = built.children.find((n) => n.id === 'b');
-    expect(pinnedBranch?.children.map((n) => n.id)).toEqual(['b,b1']);
+    const pinnedBranch = built.children.find((node) => node.id === 'b');
+    expect(pinnedBranch?.children.map((node) => node.id)).toEqual(['b,b1']);
   });
 });

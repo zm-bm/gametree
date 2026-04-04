@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "@/store";
 import { selectPinnedNodes } from "@/store/selectors";
 import { tree } from "@/store/slices";
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/cn";
 import { ZoomContext } from "../../context/ZoomContext";
 
 const getLichessAnalysisUrl = (fen: string) => {

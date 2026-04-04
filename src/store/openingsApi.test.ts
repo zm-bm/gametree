@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { OpeningTotals } from '@/shared/types';
+import { OpeningTotals } from '@/types';
 
 import { setupStore } from './index';
 import { openingsApi } from './openingsApi';

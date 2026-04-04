@@ -1,5 +1,5 @@
 import { IoIosPause, IoIosPlay } from "react-icons/io";
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/cn";
 
 interface EngineControlsProps {
   running: boolean;

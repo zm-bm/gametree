@@ -1,17 +1,9 @@
-import { EngineOutput } from "../types";
-
-export type EngineEvalConvention = "perspective" | "white";
-
-interface EvalContext {
-  sideToMove: string;
-  orientation: string;
-  convention?: EngineEvalConvention;
-}
-
-export interface NormalizedEngineScore {
-  cp?: number;
-  mate?: number;
-}
+import type {
+  EngineEvalConvention,
+  EngineOutput,
+  EvalContext,
+  NormalizedEngineScore,
+} from "../../types";
 
 const getScoreMultiplier = (
   sideToMove: string,

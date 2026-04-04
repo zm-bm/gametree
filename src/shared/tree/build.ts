@@ -1,10 +1,7 @@
-import { getNextPathChildId, getPathIds, sourceGameCount } from "./tree";
-import type { Id, TreeStore, TreeSource, TreeViewNode } from "./types";
+import type { Id, TreeSource, TreeStore, TreeViewNode } from "../../types";
+import { getNextPathChildId, getPathIds } from "./path";
+import { sourceGameCount } from "./stats";
 
-/**
- * Limit visible child ids for a single parent while preserving any required ids
- * such as the current-path continuation.
- */
 function limitTreeNodeIds(
   nodes: TreeStore,
   nodeIds: Id[],
@@ -32,30 +29,22 @@ function limitTreeNodeIds(
   return [...required, ...optional];
 }
 
-/**
- * Arrange children so highest-frequency moves end up near the visual center.
- */
 export function orderTreeNodes(nodes: TreeViewNode[]) {
   const orderedNodes: TreeViewNode[] = [];
   let start = 0;
   let end = nodes.length - 1;
 
   nodes.sort((a, b) => a.total - b.total);
-  for (let i = 0; i < nodes.length; i++) {
-    if (i % 2 === 0) {
-      orderedNodes[end--] = nodes[i];
+  for (let index = 0; index < nodes.length; index++) {
+    if (index % 2 === 0) {
+      orderedNodes[end--] = nodes[index];
     } else {
-      orderedNodes[start++] = nodes[i];
+      orderedNodes[start++] = nodes[index];
     }
   }
   return orderedNodes;
 }
 
-/**
- * Decide whether a child should be included based on frequency threshold.
- *
- * Already-loaded nodes are always included so explored branches remain visible.
- */
 export function filterTreeNodes(
   nodes: TreeStore,
   nodeId: Id,
@@ -73,9 +62,6 @@ export function filterTreeNodes(
   return frequency >= frequencyMin;
 }
 
-/**
- * Build a non-recursive node used for one-ply leaf rendering.
- */
 export function buildShallowNode(nodes: TreeStore, nodeId: Id, source: TreeSource): TreeViewNode | null {
   const node = nodes[nodeId];
   if (!node) return null;
@@ -89,9 +75,6 @@ export function buildShallowNode(nodes: TreeStore, nodeId: Id, source: TreeSourc
   };
 }
 
-/**
- * Add the visible focus context around the current path.
- */
 function addFocusContext(
   nodes: TreeStore,
   currentId: Id,
@@ -130,19 +113,12 @@ function addFocusContext(
   }
 }
 
-/**
- * Add the full ancestor chain up to root for a pinned node.
- */
 function addAncestorChain(nodeId: Id, visibleNodeIds: Set<Id>) {
   for (const pathNodeId of getPathIds(nodeId)) {
     visibleNodeIds.add(pathNodeId);
   }
 }
 
-/**
- * Add visible direct children below a pinned node, still respecting local
- * frequency and move-limit filtering.
- */
 function addPinnedChildren(
   nodes: TreeStore,
   nodeId: Id,
@@ -211,9 +187,6 @@ function buildVisibleTree(
   };
 }
 
-/**
- * Public tree builder used by selectors.
- */
 export function treeBuild(
   nodes: TreeStore,
   nodeId: Id,

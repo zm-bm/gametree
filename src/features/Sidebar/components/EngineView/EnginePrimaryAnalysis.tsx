@@ -1,6 +1,6 @@
 import { Chess } from "chess.js";
-import { EngineOutput } from "@/shared/types";
-import { formatEngineEval, getEngineBarCp, getNormalizedEngineScore } from "@/shared/lib/engineEval";
+import { EngineOutput } from "@/types";
+import { formatEngineEval, getEngineBarCp, getNormalizedEngineScore } from "@/shared/engine";
 
 interface EnginePrimaryAnalysisProps {
   engineOutput: EngineOutput | null;

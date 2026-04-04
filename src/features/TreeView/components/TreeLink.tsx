@@ -4,11 +4,11 @@ import { animated, to } from "react-spring";
 import { FluidValue } from '@react-spring/shared';
 import { useSelector } from "react-redux";
 
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/cn";
 import { RootState } from "@/store";
 import { selectBoardOrientation, selectTreeWinRateComparison } from "@/store/selectors";
 import { getNodeWinScore, getTreeLinkFrequency } from "@/shared/tree";
-import { TreeViewNode } from "@/shared/types";
+import { TreeViewNode } from "@/types";
 import { TreeDimensionsContext } from "../context/TreeDimensionsContext";
 import { colorScale } from "../lib/colors";
 

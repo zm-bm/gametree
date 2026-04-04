@@ -1,4 +1,4 @@
-import { EngineOutput } from "@/shared/types";
+import { EngineOutput } from "@/types";
 
 interface EngineSecondaryStatsProps {
   engineOutput: EngineOutput | null;

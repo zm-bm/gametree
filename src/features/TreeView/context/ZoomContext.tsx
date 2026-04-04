@@ -1,7 +1,7 @@
 import { createContext } from 'react';
 import { TransformMatrix } from '@visx/zoom/lib/types';
 
-import { TreeZoom } from "@/shared/types";
+import { TreeZoom } from "@/types";
 
 type ZoomContextType = {
   zoom: TreeZoom;

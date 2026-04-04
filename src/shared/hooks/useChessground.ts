@@ -13,7 +13,7 @@ import {
   selectEngineOutput,
   selectHoverMove,
 } from "../../store/selectors";
-import { serializeMove } from "../lib/chess";
+import { serializeMove } from "../chess";
 
 export function useBoardDisplay(fen: string) {
   const currentMove = useSelector((s: RootState) => selectCurrentMove(s));

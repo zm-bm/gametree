@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { HierarchyPointNode } from 'd3-hierarchy';
 
-import { TreeViewNode } from '@/shared/types';
+import { TreeViewNode } from '@/types';
 
 import { createTestHierarchyPointNode, renderTreeViewWithContexts } from '@/test/treeFixtures';
 import { TreeContents } from './TreeContents';

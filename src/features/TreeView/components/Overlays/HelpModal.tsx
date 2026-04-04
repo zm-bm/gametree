@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
 
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/cn";
 
 type HelpModalProps = {
   isOpen: boolean;

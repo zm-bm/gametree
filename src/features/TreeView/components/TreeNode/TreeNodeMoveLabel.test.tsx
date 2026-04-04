@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { render } from '@testing-library/react';
 
-import type { Move } from '@/shared/types';
+import type { Move } from '@/types';
 
 import { TreeNodeMoveLabel } from './TreeNodeMoveLabel';
 

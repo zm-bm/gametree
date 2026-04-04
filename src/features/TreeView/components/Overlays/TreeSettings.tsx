@@ -9,7 +9,7 @@ import {
   selectTreeWinRateComparison,
 } from "@/store/selectors";
 import { ui } from "@/store/slices";
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/cn";
 import { InfoTooltip } from "@/shared/ui/InfoTooltip";
 import { CollapsibleCard } from "@/shared/ui/CollapsibleCard";
 

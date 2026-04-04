@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef } from "react";
 import { scaleLinear } from "@visx/scale";
 
 import { TreeDimensionsContext } from "./TreeDimensionsContext";
-import { gametreeDebug } from "../../../shared/lib/gametreeDebug";
+import { appDebug } from "../../../shared/debug";
 
 const nodeScale = scaleLinear({
   domain: [360, 1440],
@@ -61,7 +61,7 @@ export const TreeDimensionsProvider: React.FC<TreeDimensionsProviderProps> = ({
 
     if (dimensionsKey === lastDimensionsKeyRef.current) return;
 
-    gametreeDebug("tree-size", "tree-dimensions-updated", {
+    appDebug("tree-size", "tree-dimensions-updated", {
       width,
       height,
       dimensions,

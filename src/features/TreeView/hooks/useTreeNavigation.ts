@@ -4,7 +4,7 @@ import { TransformMatrix } from '@visx/zoom/lib/types';
 import { HierarchyPointNode } from '@visx/hierarchy/lib/types';
 import { useSpring } from '@react-spring/web'
 
-import { TreeViewNode, TreeZoom } from '@/shared/types';
+import { TreeViewNode, TreeZoom } from '@/types';
 import { RootState } from '@/store';
 import { selectCurrentId, selectCurrentNode } from '@/store/selectors';
 import {
