@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef } from "react";
 import { scaleLinear } from "@visx/scale";
 
 import { TreeDimensionsContext } from "./TreeDimensionsContext";
-import { appDebug } from "@/shared/debug";
+import { logDebug } from "@/shared/debug";
 
 const nodeScale = scaleLinear({
   domain: [360, 1440],
@@ -61,7 +61,7 @@ export const TreeDimensionsProvider: React.FC<TreeDimensionsProviderProps> = ({
 
     if (dimensionsKey === lastDimensionsKeyRef.current) return;
 
-    appDebug("tree-size", "tree-dimensions-updated", {
+    logDebug("tree-size", "tree-dimensions-updated", {
       width,
       height,
       dimensions,

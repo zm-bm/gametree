@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useParentSize } from "@visx/responsive";
-import { appDebug } from "@/shared/debug";
+import { logDebug } from "@/shared/debug";
 
 type Size = {
   width: number;
@@ -18,20 +18,20 @@ export function useStableParentSize() {
   useEffect(() => {
     if (width > 0 && height > 0) {
       lastGoodSizeRef.current = { width, height };
-      appDebug(DEBUG_SCOPE, "updated-last-good-size", { width, height });
+      logDebug(DEBUG_SCOPE, "updated-last-good-size", { width, height });
     }
   }, [width, height]);
 
   const remeasureParent = useCallback((reason: string, attempt: number) => {
     const el = parentRef.current;
     if (!el) {
-      appDebug(DEBUG_SCOPE, "remeasure-skipped-no-parent", { reason, attempt });
+      logDebug(DEBUG_SCOPE, "remeasure-skipped-no-parent", { reason, attempt });
       return false;
     }
 
     const rect = el.getBoundingClientRect();
     if (rect.width <= 0 || rect.height <= 0) {
-      appDebug(DEBUG_SCOPE, "remeasure-skipped-nonpositive-rect", {
+      logDebug(DEBUG_SCOPE, "remeasure-skipped-nonpositive-rect", {
         reason,
         attempt,
         rect: {
@@ -50,7 +50,7 @@ export function useStableParentSize() {
       top: rect.top,
       left: rect.left,
     });
-    appDebug(DEBUG_SCOPE, "remeasure-success", {
+    logDebug(DEBUG_SCOPE, "remeasure-success", {
       reason,
       attempt,
       rect: {
@@ -71,7 +71,7 @@ export function useStableParentSize() {
       }
 
       if (!didMeasure && attempt === REMEASURE_MAX_ATTEMPTS) {
-        appDebug(DEBUG_SCOPE, "remeasure-max-attempts-reached", {
+        logDebug(DEBUG_SCOPE, "remeasure-max-attempts-reached", {
           reason,
           attempt,
         });
@@ -82,20 +82,20 @@ export function useStableParentSize() {
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.hidden) {
-        appDebug(DEBUG_SCOPE, "visibilitychange-hidden", { hidden: true });
+        logDebug(DEBUG_SCOPE, "visibilitychange-hidden", { hidden: true });
         return;
       }
-      appDebug(DEBUG_SCOPE, "visibilitychange-visible", { hidden: false });
+      logDebug(DEBUG_SCOPE, "visibilitychange-visible", { hidden: false });
       scheduleRemeasure("visibilitychange");
     };
 
     const handlePageShow = () => {
-      appDebug(DEBUG_SCOPE, "pageshow");
+      logDebug(DEBUG_SCOPE, "pageshow");
       scheduleRemeasure("pageshow");
     };
 
     const handleWindowFocus = () => {
-      appDebug(DEBUG_SCOPE, "focus");
+      logDebug(DEBUG_SCOPE, "focus");
       scheduleRemeasure("focus");
     };
 
@@ -104,7 +104,7 @@ export function useStableParentSize() {
     window.addEventListener("focus", handleWindowFocus);
 
     // Kick once on mount to recover if initial observer measurement was zero.
-    appDebug(DEBUG_SCOPE, "mount-initial-remeasure");
+    logDebug(DEBUG_SCOPE, "mount-initial-remeasure");
     scheduleRemeasure("mount");
 
     return () => {
@@ -117,7 +117,7 @@ export function useStableParentSize() {
   useEffect(() => {
     if (width > 0 && height > 0) return;
     if (lastGoodSizeRef.current.width === 0 || lastGoodSizeRef.current.height === 0) return;
-    appDebug(DEBUG_SCOPE, "observer-reported-nonpositive-size", {
+    logDebug(DEBUG_SCOPE, "observer-reported-nonpositive-size", {
       width,
       height,
       lastGoodSize: lastGoodSizeRef.current,
@@ -132,14 +132,14 @@ export function useStableParentSize() {
     const nowUsingFallback = (width <= 0 || height <= 0) && stableWidth > 0 && stableHeight > 0;
 
     if (nowUsingFallback && !usingFallbackRef.current) {
-      appDebug(DEBUG_SCOPE, "using-fallback-size", {
+      logDebug(DEBUG_SCOPE, "using-fallback-size", {
         observedSize: { width, height },
         fallbackSize: { width: stableWidth, height: stableHeight },
       });
     }
 
     if (!nowUsingFallback && usingFallbackRef.current) {
-      appDebug(DEBUG_SCOPE, "recovered-from-fallback-size", {
+      logDebug(DEBUG_SCOPE, "recovered-from-fallback-size", {
         observedSize: { width, height },
       });
     }

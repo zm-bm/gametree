@@ -3,7 +3,7 @@ import Stockfish from 'stockfish/bin/stockfish-18-lite.js?worker'
 
 import { store } from './store';
 import { engine } from './store/slices';
-import { appDebug, appDebugWarn } from './shared/debug';
+import { logDebug } from './shared/debug';
 import {
   selectBoardFen,
   selectEngineDepth,
@@ -17,13 +17,13 @@ let startRequested = false;
 const workerScope = 'worker';
 
 const sendUciCommand = (worker: Worker, command: string) => {
-  appDebug(workerScope, 'uci ->', command);
+  logDebug(workerScope, 'uci ->', command);
   worker.postMessage(command);
 };
 
 const initializeWorkerIfNeeded = (): Worker | null => {
   if (typeof Worker === 'undefined') {
-    appDebugWarn(workerScope, 'Worker API unavailable; engine disabled in this environment');
+    logDebug(workerScope, 'Worker API unavailable; engine disabled in this environment');
     return null;
   }
 
@@ -79,7 +79,7 @@ const handleWorkerMessage = (event: MessageEvent) => {
   }
 
   const line = event.data;
-  appDebug(workerScope, 'uci <-', line);
+  logDebug(workerScope, 'uci <-', line);
 
   if (line === 'uciok') {
     if (engineWorker) {
@@ -102,7 +102,7 @@ const handleWorkerMessage = (event: MessageEvent) => {
 };
 
 const handleWorkerError = (error: ErrorEvent) => {
-  appDebugWarn(workerScope, 'worker error', error.message);
+  logDebug(workerScope, 'worker error', error.message);
   store.dispatch(engine.actions.reportEngineError(error.message));
 };
 
