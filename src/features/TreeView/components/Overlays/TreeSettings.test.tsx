@@ -101,4 +101,22 @@ describe('TreeSettings', () => {
 
     expect(screen.queryByText('Data Source')).not.toBeInTheDocument();
   });
+
+  it('initializes collapsed from persisted localStorage state', () => {
+    localStorage.setItem('gtTreeOptionsCollapsed', '1');
+
+    renderWithProviders(<TreeSettings />);
+
+    expect(screen.queryByText('Data Source')).not.toBeInTheDocument();
+  });
+
+  it('expands from persisted collapsed state when header is clicked', () => {
+    localStorage.setItem('gtTreeOptionsCollapsed', '1');
+
+    renderWithProviders(<TreeSettings />);
+    fireEvent.click(screen.getByText('Tree Settings'));
+
+    expect(localStorage.getItem('gtTreeOptionsCollapsed')).toBe('');
+    expect(screen.getByText('Data Source')).toBeInTheDocument();
+  });
 });

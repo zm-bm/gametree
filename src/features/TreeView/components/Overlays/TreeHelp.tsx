@@ -226,7 +226,7 @@ export const TreeHelp = () => {
     <>
       <button
         type="button"
-        className="treeview-card px-3 py-1.5 text-sm font-semibold interactive-treeview"
+        className="gt-tree-panel px-3 py-1.5 text-sm font-semibold gt-treeview-hoverable"
         aria-label="Open help"
         onClick={openHelp}
       >

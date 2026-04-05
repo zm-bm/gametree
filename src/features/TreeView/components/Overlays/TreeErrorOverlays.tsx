@@ -56,13 +56,13 @@ export const TreeErrorOverlays = ({ hasTree, isError, isFetching, error, onRetry
     <>
       {isInitialTreeLoadError && (
         <div className="absolute inset-0 flex items-center justify-center p-4">
-          <div className="treeview-card w-full max-w-md p-4 text-center">
-            <p className="text-sm font-medium text-primary">Unable to load tree</p>
-            <p className="mt-1 text-xs text-secondary">{getInitialTreeLoadErrorText(error)}</p>
+          <div className="gt-tree-panel w-full max-w-md p-4 text-center">
+            <p className="text-sm font-medium text-lightmode-200 dark:text-darkmode-200">Unable to load tree</p>
+            <p className="mt-1 text-xs text-lightmode-400 dark:text-darkmode-400">{getInitialTreeLoadErrorText(error)}</p>
             <button
               type="button"
               onClick={onRetry}
-              className="mt-3 treeview-card px-2 py-1 text-xs interactive-treeview"
+              className="mt-3 gt-tree-panel px-2 py-1 text-xs gt-treeview-hoverable"
             >
               Retry
             </button>
@@ -72,12 +72,12 @@ export const TreeErrorOverlays = ({ hasTree, isError, isFetching, error, onRetry
 
       {isTreeExpansionError && (
         <div className="pointer-events-none absolute top-11 left-1/2 -translate-x-1/2 px-2">
-          <div className="pointer-events-auto treeview-card treeview-tone-warning flex items-center gap-2 px-2 py-1 text-xs">
+          <div className="pointer-events-auto gt-tree-panel border-amber-700/50 text-amber-600 dark:border-amber-500/40 dark:text-amber-300 flex items-center gap-2 px-2 py-1 text-xs">
             <span>{getTreeExpansionErrorText(error)}</span>
             <button
               type="button"
               onClick={onRetry}
-              className="treeview-card px-1.5 py-0.5 leading-none interactive-treeview"
+              className="gt-tree-panel px-1.5 py-0.5 leading-none gt-treeview-hoverable"
               aria-label="Retry loading additional moves"
             >
               Retry

@@ -52,15 +52,15 @@ const OpeningView = () => {
   }, [currentNode, source]);
 
   if (!currentNode) {
-    return <div className="text-xs text-secondary italic">No opening data for this position yet.</div>;
+    return <div className="text-xs text-lightmode-400 dark:text-darkmode-400 italic">No opening data for this position yet.</div>;
   }
 
   if (currentNode.loading) {
-    return <div className="text-xs text-secondary italic">Loading position…</div>;
+    return <div className="text-xs text-lightmode-400 dark:text-darkmode-400 italic">Loading position…</div>;
   }
 
   if (!positionStats) {
-    return <div className="text-xs text-secondary italic">No position stats available.</div>;
+    return <div className="text-xs text-lightmode-400 dark:text-darkmode-400 italic">No position stats available.</div>;
   }
 
   const total = positionStats.total;
@@ -72,7 +72,7 @@ const OpeningView = () => {
     <div className="space-y-3 text-xs">
       <div className="rounded-md border border-lightmode-900/10 dark:border-darkmode-100/15 px-2 py-1.5 space-y-1">
         <div className="flex items-center justify-between gap-2">
-          <span className="text-secondary uppercase tracking-wide">ECO</span>
+          <span className="text-lightmode-400 dark:text-darkmode-400 uppercase tracking-wide">ECO</span>
           {ecoEntry?.eco && <span className="tabular-nums font-medium">{ecoEntry.eco}</span>}
         </div>
         <div className="font-medium leading-snug">
@@ -81,11 +81,11 @@ const OpeningView = () => {
       </div>
 
       <div className="rounded-md border border-lightmode-900/10 dark:border-darkmode-100/15 px-2 py-1.5 space-y-2">
-        <div className="flex items-center justify-between text-secondary">
+        <div className="flex items-center justify-between text-lightmode-400 dark:text-darkmode-400">
           <span className="uppercase tracking-wide">{source}</span>
           <span>{compactNumber.format(total)} games</span>
         </div>
-        <div className="text-secondary tabular-nums">
+        <div className="text-lightmode-400 dark:text-darkmode-400 tabular-nums">
           W {toPercent(whitePct)} · D {toPercent(drawPct)} · B {toPercent(blackPct)}
         </div>
       </div>

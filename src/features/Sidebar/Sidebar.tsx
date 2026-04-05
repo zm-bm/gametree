@@ -4,13 +4,13 @@ import OpeningView from './components/OpeningView';
 
 const Sidebar = () => {
   return (
-    <div className="flex h-full min-h-0 flex-1 flex-col gap-5">
-      <div className="shrink-0 px-5">
-        <ChessBoard className="sidebar-card" />
+    <div className="gt-sidebar-layout">
+      <div className="gt-sidebar-board-slot">
+        <ChessBoard className="gt-sidebar-panel" />
       </div>
 
-      <div className="sidebar-scroll min-h-0 flex-1" data-testid="sidebar-scroll">
-        <div className="space-y-5 pr-1">
+      <div className="gt-sidebar-scroll-region" data-testid="sidebar-scroll">
+        <div className="gt-sidebar-stack">
           <OpeningView />
           <EngineView />
         </div>

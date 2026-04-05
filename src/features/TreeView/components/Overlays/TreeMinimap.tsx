@@ -105,7 +105,7 @@ export const TreeMinimap = ({ tree, spring }: TreeMinimapProps) => {
           "bg-lightmode-50/80 hover:bg-lightmode-100/90",
           "dark:bg-darkmode-900/80 dark:hover:bg-darkmode-800/90",
           "text-lightmode-700 dark:text-darkmode-100",
-          "transition-colors interactive-treeview",
+          "transition-colors gt-treeview-hoverable",
         ])}
         onClick={toggleCollapsed}
       >
@@ -121,58 +121,59 @@ export const TreeMinimap = ({ tree, spring }: TreeMinimapProps) => {
           opacity: isCollapsed ? 0 : 1,
         }}
       >
-      <svg
-        className={cn([
-          'treeview-card border-none border-t border-l rounded-none rounded-tl-md',
-          'bg-opacity-5 backdrop-blur-lg hover:bg-lightmode-200/90 dark:hover:bg-darkmode-800/90',
-        ])}
-        style={{ pointerEvents: isCollapsed ? 'none' : 'auto' }}
-        width={minimapSize}
-        height={minimapSize}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseLeave}
-        onTouchStart={handleTouch}
-        onTouchMove={handleTouch}
-        onTouchEnd={handleMouseUp}
-        cursor={isDragging ? 'grabbing' : 'grab'}
-        shapeRendering="crispEdges"
-      >
-        <SVGDefs />
-        <g>
-          { tree && transform &&
-            <Tree<TreeViewNode>
-              root={tree}
-              nodeSize={treeNodeSpacing}
-              separation={treeSeparation}
-            >
-              {(tree) => (
-                <Group transform={transform.matrix}>
-                  <TreeContents tree={tree} minimap={true} />
-                </Group>
-              )}
-            </Tree>
-          }
-          { viewport &&
-            <rect
-              className={cn([
-                'stroke-[0.75] stroke-lightmode-950/50 dark:stroke-darkmode-50/50',
-                'fill-lightmode-950/10 dark:fill-darkmode-100/10'
-              ])}
-              x={viewport.x}
-              y={viewport.y}
-              width={viewport.width}
-              height={viewport.height}
-              rx={6}
-              ry={6}
-              z={100}
-              filter="url(#minimapGlow)"
-              vectorEffect="non-scaling-stroke"
-            />
-          }
-        </g>
-      </svg>
+        <svg
+          data-testid="minimap-svg"
+          className={cn([
+            'gt-tree-panel border-none border-t border-l rounded-none rounded-tl-md',
+            'bg-opacity-5 backdrop-blur-lg hover:bg-lightmode-200/90 dark:hover:bg-darkmode-800/90',
+          ])}
+          style={{ pointerEvents: isCollapsed ? 'none' : 'auto' }}
+          width={minimapSize}
+          height={minimapSize}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseLeave}
+          onTouchStart={handleTouch}
+          onTouchMove={handleTouch}
+          onTouchEnd={handleMouseUp}
+          cursor={isDragging ? 'grabbing' : 'grab'}
+          shapeRendering="crispEdges"
+        >
+          <SVGDefs />
+          <g>
+            { tree && transform &&
+              <Tree<TreeViewNode>
+                root={tree}
+                nodeSize={treeNodeSpacing}
+                separation={treeSeparation}
+              >
+                {(tree) => (
+                  <Group transform={transform.matrix}>
+                    <TreeContents tree={tree} minimap={true} />
+                  </Group>
+                )}
+              </Tree>
+            }
+            { viewport &&
+              <rect
+                className={cn([
+                  'stroke-[0.75] stroke-lightmode-950/50 dark:stroke-darkmode-50/50',
+                  'fill-lightmode-950/10 dark:fill-darkmode-100/10'
+                ])}
+                x={viewport.x}
+                y={viewport.y}
+                width={viewport.width}
+                height={viewport.height}
+                rx={6}
+                ry={6}
+                z={100}
+                filter="url(#minimapGlow)"
+                vectorEffect="non-scaling-stroke"
+              />
+            }
+          </g>
+        </svg>
       </div>
     </div>
   );

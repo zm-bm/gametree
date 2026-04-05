@@ -42,14 +42,14 @@ const EngineView = () => {
   }, [dispatch]);
 
   return (
-    <div className="sidebar-card">
-      <div className="p-3 interactive-sidebar">
-        <span className="font-semibold tracking-tight">
-          <span>Engine:</span>{" "}
-          <span className={stateClass}>{stateText}</span>
-        </span>
-      </div>
-      <div className="sidebar-divider">
+    <div className="gt-sidebar-panel">
+      <div className="gt-sidebar-sections">
+        <div className="p-3">
+          <span className="font-semibold tracking-tight">
+            <span>Engine:</span>{" "}
+            <span className={stateClass}>{stateText}</span>
+          </span>
+        </div>
         <EngineControls
           running={running}
           hasOutput={hasOutput}

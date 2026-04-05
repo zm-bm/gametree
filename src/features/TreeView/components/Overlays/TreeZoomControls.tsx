@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { FaMinus, FaPlus } from 'react-icons/fa';
 
-const buttonClass = 'focus:outline-none interactive-treeview';
+const buttonClass = 'focus:outline-none gt-treeview-hoverable';
 const iconClass = 'h-5 w-5 m-2';
 
 export interface TreeZoomControlsProps {
@@ -13,7 +13,7 @@ export const TreeZoomControls = ({ handleZoom }: TreeZoomControlsProps) => {
   const zoomOut = useCallback(() => handleZoom('out'), [handleZoom]);
 
   return (
-    <div className="treeview-card flex flex-col gap-1 divide-y divide-lightmode-900/20 dark:divide-darkmode-100/20">
+    <div className="gt-tree-panel flex flex-col gap-1 divide-y divide-lightmode-900/20 dark:divide-darkmode-100/20">
       <button className={buttonClass} onClick={zoomIn} aria-label="Zoom in">
         <FaPlus className={iconClass} />
       </button>

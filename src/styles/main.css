@@ -36,120 +36,99 @@
 
 @layer components {
 
-    /* base styles */
+    /* app shell */
 
-    .text-primary { @apply text-lightmode-200 dark:text-darkmode-200; }
-    .text-secondary { @apply text-lightmode-400 dark:text-darkmode-400; }
-
-    .bg-sidebar { @apply bg-lightmode-800 dark:bg-darkmode-950; }
-    .border-sidebar { @apply border-lightmode-400/20 dark:border-darkmode-400/20; }
-    .bg-treeview { @apply bg-lightmode-200 dark:bg-darkmode-800; }
-
-    .interactive-sidebar { @apply hover:bg-lightmode-100/5 dark:hover:bg-darkmode-100/5; }
-    .interactive-treeview { @apply hover:bg-lightmode-900/10 dark:hover:bg-darkmode-100/10; }
-
-    .tree-number-input {
-        @apply appearance-none rounded-md;
-        @apply bg-lightmode-300/65 dark:bg-darkmode-700;
-        @apply text-lightmode-900 dark:text-darkmode-100;
-        @apply ring-1 ring-lightmode-700/25 dark:ring-darkmode-100/20;
-        @apply shadow-[inset_0_1px_0_rgba(255,255,255,0.45)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.05)];
-        @apply focus:outline-none focus:ring-2 focus:ring-sky-500/45 dark:focus:ring-sky-400/35;
-        @apply transition-colors;
+    .gt-app {
+        @apply w-full h-full min-h-screen max-h-screen;
     }
 
-    .tree-number-input::-webkit-outer-spin-button,
-    .tree-number-input::-webkit-inner-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
+    .gt-app-shell {
+        @apply flex flex-col sm:flex-row w-full h-full;
     }
 
-    .tree-number-input[type='number'] {
-        -moz-appearance: textfield;
+    .gt-mobile-tabs {
+        @apply flex flex-row w-full h-[48px] sm:hidden;
+        @apply text-lightmode-200 dark:text-darkmode-200 font-medium text-center;
+        @apply bg-lightmode-800 dark:bg-darkmode-950;
+        @apply border-b border-lightmode-400/20 dark:border-darkmode-400/20;
     }
 
-    /* layout shells */
+    .gt-mobile-tab {
+        @apply flex-1 border-b-4 border-transparent;
+        @apply bg-lightmode-800 dark:bg-darkmode-950;
+    }
+
+    .gt-mobile-tab-active {
+        @apply bg-lightmode-700/50 dark:bg-darkmode-900/80;
+        @apply border-highlight-500;
+    }
+
+    /* sidebar shell */
 
     .gt-sidebar {
         @apply relative overflow-hidden pt-5;
         @apply w-full sm:w-1/2 md:w-2/5 lg:w-1/3 2xl:w-1/4;
         @apply h-[calc(100vh-48px)] sm:h-screen;
-        @apply sm:border-r border-sidebar;
-        @apply bg-sidebar text-primary;
+        @apply sm:border-r border-lightmode-400/20 dark:border-darkmode-400/20;
+        @apply bg-lightmode-800 dark:bg-darkmode-950;
+        @apply text-lightmode-200 dark:text-darkmode-200;
         @apply bg-[radial-gradient(120%_80%_at_0%_0%,_rgba(255,255,255,0.05))];
         @apply dark:bg-[radial-gradient(120%_80%_at_0%_0%,rgba(255,255,255,0.02))];
     }
 
-    .sidebar-scroll {
-        @apply overflow-y-auto overflow-x-hidden;
+    .gt-sidebar-layout {
+        @apply flex h-full min-h-0 flex-1 flex-col gap-5;
+    }
+
+    .gt-sidebar-board-slot {
+        @apply shrink-0 px-5;
+    }
+
+    .gt-sidebar-scroll-region {
+        @apply min-h-0 flex-1 overflow-y-auto overflow-x-hidden;
         scrollbar-gutter: stable both-edges;
         scrollbar-color: #a8a8b0 transparent;
     }
 
-    .gt-treeview {
-        @apply w-full sm:w-1/2 md:w-3/5 lg:w-2/3 2xl:w-3/4;
-        @apply h-[calc(100vh-48px)] sm:h-screen;
-        @apply bg-treeview overflow-hidden;
-        @apply bg-[radial-gradient(72%_55%_at_72%_18%,_rgba(255,255,255,0.3))];
-        @apply dark:bg-[radial-gradient(72%_55%_at_72%_18%,_rgba(113,123,139,0.03))];
+    .gt-sidebar-stack {
+        @apply space-y-5 pr-1;
     }
 
-    /* cards */
-
-    .sidebar-card {
-        @apply rounded-lg;
-        @apply border border-lightmode-950/60 dark:border-darkmode-100/20;
+    .gt-sidebar-panel {
+        @apply border rounded-lg transition-colors;
+        @apply border-lightmode-950/60 dark:border-darkmode-100/20;
         @apply bg-lightmode-600/5 dark:bg-darkmode-600/5;
         @apply shadow-[0_6px_18px_rgba(0,0,0,0.25)];
     }
 
-    .treeview-card {
-        @apply rounded-md overflow-hidden backdrop-blur-sm;
+    .gt-sidebar-sections {
+        @apply flex flex-col *:p-4;
+        @apply divide-y divide-white/10 dark:divide-darkmode-100/20;
+        @apply [&>*:first-child]:border-t [&>*:first-child]:border-white/10 dark:[&>*:first-child]:border-darkmode-100/20;
+    }
+
+    /* tree shell */
+
+    .gt-treeview {
+        @apply w-full sm:w-1/2 md:w-3/5 lg:w-2/3 2xl:w-3/4;
+        @apply h-[calc(100vh-48px)] sm:h-screen;
+        @apply bg-lightmode-200 dark:bg-darkmode-800 overflow-hidden;
+        @apply bg-[radial-gradient(72%_55%_at_72%_18%,_rgba(255,255,255,0.3))];
+        @apply dark:bg-[radial-gradient(72%_55%_at_72%_18%,_rgba(113,123,139,0.03))];
+    }
+
+    .gt-treeview-canvas {
+        @apply w-full h-full relative overflow-hidden;
+    }
+
+    .gt-tree-panel {
+        @apply border rounded-md transition-colors;
+        @apply overflow-hidden backdrop-blur-sm;
         @apply text-lightmode-800 dark:text-darkmode-200;
-        @apply border border-lightmode-950/40 dark:border-darkmode-100/20;
-        @apply bg-lightmode-50/80 dark:bg-darkmode-900/80; 
+        @apply border-lightmode-950/40 dark:border-darkmode-100/20;
+        @apply bg-lightmode-50/80 dark:bg-darkmode-900/80;
         @apply shadow-[0_4px_12px_rgba(0,0,0,0.2)];
     }
 
-    /* dividers */
-
-    .sidebar-divider {
-        @apply flex flex-col *:p-4;
-        @apply divide-y divide-white/10 dark:divide-darkmode-100/20;
-    }
-
-    .sidebar-divider > :first-child {
-        @apply border-t border-white/10 dark:border-darkmode-100/20;
-    }
-
-    .treeview-divider {
-        @apply flex flex-col *:p-3;
-        @apply divide-y divide-lightmode-900/10 dark:divide-darkmode-100/20;
-    }
-
-    .treeview-divider > :first-child {
-        @apply border-t border-lightmode-900/10 dark:border-darkmode-100/20;
-    }
-
-    /* tones */
-
-    .treeview-tone-success {
-        @apply border-green-600/50 text-green-600;
-        @apply dark:border-green-500/40 dark:text-green-300;
-    }
-
-    .treeview-tone-info {
-        @apply border-sky-600/50 text-sky-600;
-        @apply dark:border-sky-500/40 dark:text-sky-300;
-    }
-
-    .treeview-tone-warning {
-        @apply border-amber-700/50 text-amber-600;
-        @apply dark:border-amber-500/40 dark:text-amber-300;
-    }
-
-    .treeview-tone-error {
-        @apply border-red-700/50 text-red-600;
-        @apply dark:border-red-500/40 dark:text-red-300;
-    }
+    .gt-treeview-hoverable { @apply hover:bg-lightmode-900/10 dark:hover:bg-darkmode-100/10; }
 }

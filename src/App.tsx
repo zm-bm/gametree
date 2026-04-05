@@ -10,28 +10,20 @@ const TABS = [
   { id: 'tree', label: 'Move Tree' },
 ];
 
-const tabWrapper = [
-  'flex flex-row w-full h-[48px] sm:hidden',
-  'text-primary font-medium text-center',
-  'bg-sidebar border-b border-sidebar',
-]
-
-const tabBase = 'flex-1 bg-sidebar border-b-4 border-transparent';
-const tabActive = 'bg-lightmode-700/50 dark:bg-darkmode-900/80 border-highlight-500';
-
 function App() {
   useKeyboardActions();
   const [activeTab, setActiveTab] = useState('tree');
 
   return (
-    <div className="w-full h-full min-h-screen max-h-screen">
-      <div className="flex flex-col sm:flex-row w-full h-full">
+    <div className="gt-app">
+      <div className="gt-app-shell">
 
-        <div className={cn(tabWrapper)}>
+        <div className="gt-mobile-tabs">
           {TABS.map(tab => (
             <button
+              type="button"
               key={tab.id}
-              className={cn(tabBase, { [tabActive]: activeTab === tab.id })}
+              className={cn('gt-mobile-tab', { 'gt-mobile-tab-active': activeTab === tab.id })}
               onClick={() => setActiveTab(tab.id)}
             >
               {tab.label}
