@@ -23,11 +23,20 @@ vi.mock('./components/EngineView', () => ({
 }));
 
 describe('Sidebar', () => {
-  it('renders chess board, opening view, and engine view', () => {
+  it('renders static chess board and a scroll region for opening and engine views', () => {
     renderWithProviders(<Sidebar />);
 
-    expect(screen.getByTestId('sidebar-chessboard')).toBeInTheDocument();
-    expect(screen.getByTestId('sidebar-opening-view')).toBeInTheDocument();
-    expect(screen.getByTestId('sidebar-engine-view')).toBeInTheDocument();
+    const chessBoard = screen.getByTestId('sidebar-chessboard');
+    const openingView = screen.getByTestId('sidebar-opening-view');
+    const engineView = screen.getByTestId('sidebar-engine-view');
+    const scrollArea = screen.getByTestId('sidebar-scroll');
+
+    expect(chessBoard).toBeInTheDocument();
+    expect(openingView).toBeInTheDocument();
+    expect(engineView).toBeInTheDocument();
+
+    expect(scrollArea).toContainElement(openingView);
+    expect(scrollArea).toContainElement(engineView);
+    expect(scrollArea).not.toContainElement(chessBoard);
   });
 });

@@ -71,14 +71,17 @@
     /* layout shells */
 
     .gt-sidebar {
-        @apply relative overflow-y-auto overflow-x-hidden;
+        @apply relative overflow-hidden pt-5;
         @apply w-full sm:w-1/2 md:w-2/5 lg:w-1/3 2xl:w-1/4;
         @apply h-[calc(100vh-48px)] sm:h-screen;
-        @apply py-5 px-[2px];
         @apply sm:border-r border-sidebar;
         @apply bg-sidebar text-primary;
         @apply bg-[radial-gradient(120%_80%_at_0%_0%,_rgba(255,255,255,0.05))];
         @apply dark:bg-[radial-gradient(120%_80%_at_0%_0%,rgba(255,255,255,0.02))];
+    }
+
+    .sidebar-scroll {
+        @apply overflow-y-auto overflow-x-hidden;
         scrollbar-gutter: stable both-edges;
         scrollbar-color: #a8a8b0 transparent;
     }

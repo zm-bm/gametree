@@ -21,10 +21,10 @@ npm run build
 
 ## Roadmap
 
-- feat(move-sounds): better move sounds
 - feat(sidebar-layout): add scrollable analysis, pin board
 - feat(sidebar-opening): opening metadata view (ECO, name, win probabilities, current line)
 - feat(sidebar-engine): redo
+- feat(move-sounds): better move sounds
 
 - chore: add code formatter + pre-commit
 - feat(tree-node): highlight best engine move on the tree
