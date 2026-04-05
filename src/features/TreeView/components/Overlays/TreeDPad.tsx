@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import { BiCollapse, BiExpand } from 'react-icons/bi'
 
 import { nav } from '@/store/slices';
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/cn';
 import { useAppDispatch } from '@/store';
 
 interface TreeDPadProps {

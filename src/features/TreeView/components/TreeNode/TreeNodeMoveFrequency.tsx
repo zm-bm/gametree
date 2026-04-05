@@ -4,9 +4,9 @@ import { useSelector } from "react-redux";
 
 import { RootState } from "@/store";
 import { selectTreeSource } from "@/store/selectors";
-import { TreeViewNode } from "@/shared/types";
+import { TreeViewNode } from "@/types";
 
-type TreeNodeMoveFrequencyProps = {
+export interface TreeNodeMoveFrequencyProps {
   node: HierarchyPointNode<TreeViewNode>;
   nodeRectSize: number;
   frequencyTextColor: string;

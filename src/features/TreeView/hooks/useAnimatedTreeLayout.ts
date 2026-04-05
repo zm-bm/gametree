@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 import { HierarchyPointNode } from "d3-hierarchy";
 import { useSpring, to } from "react-spring";
 
-import { TreeViewNode } from "@/shared/types";
+import { TreeViewNode } from "@/types";
 
 type XY = { x: number; y: number };
 type XYMap = Map<string, XY>;

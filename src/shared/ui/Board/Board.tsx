@@ -3,20 +3,20 @@ import { Chessground } from 'chessground';
 import { Api } from 'chessground/api';
 import { Config } from 'chessground/config';
 
-import { cn } from '../../lib/cn';
-import { useBoardSize } from '../../hooks/useBoardSize';
+import { cn } from '@/shared/cn';
+import { useBoardSize } from '@/shared/hooks/useBoardSize';
 import PromotionOverlay from '../PromotionOverlay';
 import "./chessground.base.css";
 import "./chessground.board.css";
 import "./chessground.pieces.css";
 
-interface Props {
+export interface BoardProps {
   config: Config,
   className?: string,
   promotionOverlay?: boolean,
 }
 
-const Board = ({ config, className, promotionOverlay = false }: Props) => {
+const Board = ({ config, className, promotionOverlay = false }: BoardProps) => {
   const chessgroundRef = useRef<HTMLDivElement>(null);
   const [api, setApi] = useState<Api | undefined>(undefined);
   const [ref, boardSize] = useBoardSize();

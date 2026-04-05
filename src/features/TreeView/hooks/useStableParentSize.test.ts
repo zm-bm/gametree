@@ -1,5 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type { MutableRefObject, RefObject } from 'react';
 
 import { useParentSize } from '@visx/responsive';
 
@@ -10,17 +11,12 @@ vi.mock('@visx/responsive', () => ({
 import { useStableParentSize } from './useStableParentSize';
 
 type MockParentSizeState = {
-  parentRef: { current: { getBoundingClientRect: () => DOMRectLike } | null };
-  width: number;
-  height: number;
-  resize: ReturnType<typeof vi.fn>;
-};
-
-type DOMRectLike = {
+  parentRef: MutableRefObject<HTMLElement | null>;
   width: number;
   height: number;
   top: number;
   left: number;
+  resize: ReturnType<typeof vi.fn>;
 };
 
 describe('useStableParentSize', () => {
@@ -33,13 +29,17 @@ describe('useStableParentSize', () => {
       parentRef: { current: null },
       width: 0,
       height: 0,
+      top: 0,
+      left: 0,
       resize: vi.fn(),
     };
 
     mockUseParentSize.mockImplementation(() => ({
-      parentRef: state.parentRef,
+      parentRef: state.parentRef as RefObject<HTMLElement>,
       width: state.width,
       height: state.height,
+      top: state.top,
+      left: state.left,
       resize: state.resize,
     }));
 
@@ -90,7 +90,7 @@ describe('useStableParentSize', () => {
         top: 10,
         left: 20,
       }),
-    };
+    } as HTMLElement;
 
     renderHook(() => useStableParentSize());
 
@@ -128,7 +128,7 @@ describe('useStableParentSize', () => {
         top: 0,
         left: 0,
       }),
-    };
+    } as HTMLElement;
 
     renderHook(() => useStableParentSize());
     state.resize.mockClear();

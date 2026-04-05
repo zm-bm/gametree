@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery, FetchBaseQueryError } from '@reduxjs/toolkit/query/react'
 import { SerializedError } from '@reduxjs/toolkit';
 
-import { OpeningTotals } from "../shared/types";
+import { OpeningTotals } from "../types";
 
 const API_URL =
   typeof window === 'undefined'

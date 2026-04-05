@@ -1,20 +1,20 @@
 import React, { useMemo } from "react";
 import { HierarchyPointNode } from "d3-hierarchy";
-import { TreeViewNode } from "@/shared/types";
+import { TreeViewNode } from "@/types";
 
 import { TreeLink } from "./TreeLink";
 import { TreeNode } from "./TreeNode";
 import { useAnimatedTreeLayout } from "../hooks";
 
-interface Props {
-  tree: HierarchyPointNode<TreeViewNode>,
-  minimap?: boolean,
+export interface TreeContentsProps {
+  tree: HierarchyPointNode<TreeViewNode>;
+  minimap?: boolean;
 }
 
 const TreeContentsBase = ({
   tree,
   minimap = false,
-}: Props) => {
+}: TreeContentsProps) => {
   const links = useMemo(() => tree.links(), [tree]);
   const nodes = useMemo(() => tree.descendants(), [tree]);
   const { ax, ay } = useAnimatedTreeLayout(nodes);

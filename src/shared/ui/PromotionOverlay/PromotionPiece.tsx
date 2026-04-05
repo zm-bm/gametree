@@ -7,9 +7,9 @@ import { Color } from "chessground/types";
 import { RootState, useAppDispatch } from "@/store";
 import { nav } from "@/store/slices";
 import { selectBoardPromotionTarget, selectBoardFen } from "@/store/selectors";
-import { serializeMove } from "../../lib/chess";
+import { serializeMove } from "@/shared/chess";
 
-type PromotionPieceProps = {
+export type PromotionPieceProps = {
   pieceName: string;
   pieceSymbol: PieceSymbol;
   sideToMove: Color;

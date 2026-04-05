@@ -3,7 +3,11 @@ import Board from "@/shared/ui/Board";
 
 import ToggleOrientationButton from './ToggleOrientationButton';
 
-const ChessBoard = ({ className }: { className?: string }) => {
+export interface ChessBoardProps {
+  className?: string;
+}
+
+const ChessBoard = ({ className }: ChessBoardProps) => {
   const config = useChessgroundConfig();
 
   return (

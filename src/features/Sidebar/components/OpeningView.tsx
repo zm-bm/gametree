@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 
 import { RootState } from "@/store";
 import { selectCurrentVisibleId, selectTreeNodeMap, selectTreeSource } from "@/store/selectors";
-import { OpeningBookEntry } from "@/shared/types";
+import { OpeningBookEntry } from "@/types";
 
 const compactNumber = new Intl.NumberFormat("en-US", {
   notation: "compact",
@@ -28,7 +28,7 @@ const OpeningView = () => {
 
     let cancelled = false;
 
-    void import("@/shared/lib/eco")
+    void import("@/shared/opening")
       .then(({ getECOByUciPath }) => {
         if (cancelled) return;
         setEcoEntry(getECOByUciPath(currentVisibleId));

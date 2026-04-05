@@ -2,7 +2,7 @@ import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { FaInfoCircle } from "react-icons/fa";
 import { createPortal } from "react-dom";
 
-import { cn } from "../lib/cn";
+import { cn } from "../cn";
 
 type TooltipInteraction = "hover" | "click" | "hybrid";
 

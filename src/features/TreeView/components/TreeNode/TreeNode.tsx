@@ -1,4 +1,4 @@
-import { useContext, useMemo } from "react";
+import { useContext } from "react";
 import { useSelector } from "react-redux";
 import { DEFAULT_POSITION } from "chess.js";
 import { Group } from "@visx/group";
@@ -8,9 +8,9 @@ import { FluidValue } from '@react-spring/shared';
 
 import { RootState } from "@/store";
 import { selectBoardOrientation, selectCurrentVisibleId, selectIsDarkMode, selectPinnedNodes } from "@/store/selectors";
-import { TreeViewNode } from "@/shared/types";
-import { TreeDimensionsContext } from "../../context/TreeDimensionsContext";
-import { useTreeNodeInteractions } from "../../hooks/useTreeNodeInteractions";
+import { TreeViewNode } from "@/types";
+import { TreeDimensionsContext } from "@/features/TreeView/context/TreeDimensionsContext";
+import { useTreeNodeInteractions } from "@/features/TreeView/hooks/useTreeNodeInteractions";
 import {
   TreeNodeButtons,
   TreeNodeLoadingIndicator,
@@ -22,29 +22,7 @@ import {
 
 const AnimatedGroup = animated(Group);
 
-type TreeNodePalette = {
-  frequencyTextColor: string;
-  barTrackColor: string;
-  barStrokeColor: string;
-};
-
-function getTreeNodePalette(isDarkMode: boolean): TreeNodePalette {
-  if (isDarkMode) {
-    return {
-      frequencyTextColor: "rgba(226,232,240,0.8)",
-      barTrackColor: "rgba(255,255,255,0.13)",
-      barStrokeColor: "rgba(255,255,255,0.24)",
-    };
-  }
-
-  return {
-    frequencyTextColor: "rgba(226,232,240,0.82)",
-    barTrackColor: "rgba(15,23,42,0.13)",
-    barStrokeColor: "rgba(15,23,42,0.22)",
-  };
-}
-
-interface Props {
+export interface TreeNodeProps {
   node: HierarchyPointNode<TreeViewNode>;
   x: FluidValue<number> | number;
   y: FluidValue<number> | number;
@@ -58,7 +36,7 @@ export const TreeNode = ({
   y,
   minimap = false,
   showButtonDrawer = true,
-}: Props) => {
+}: TreeNodeProps) => {
   const { id, loading } = node.data;
 
   const { fontSize, nodeRadius, nodeRectSize } = useContext(TreeDimensionsContext);
@@ -73,7 +51,11 @@ export const TreeNode = ({
     handleNodeMouseLeave,
   } = useTreeNodeInteractions({ node, minimap });
 
-  const nodePalette = useMemo(() => getTreeNodePalette(isDarkMode), [isDarkMode]);
+  const nodePalette = {
+    frequencyTextColor: "rgba(226,232,240,0.82)",
+    barTrackColor: isDarkMode ? "rgba(255,255,255,0.13)" : "rgba(15,23,42,0.13)",
+    barStrokeColor: isDarkMode ? "rgba(255,255,255,0.24)" : "rgba(15,23,42,0.22)",
+  };
   const isPinned = pinnedNodes.includes(id);
   const nodeFen = node.data.move?.after || DEFAULT_POSITION;
 

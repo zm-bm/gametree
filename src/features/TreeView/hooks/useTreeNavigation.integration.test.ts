@@ -25,7 +25,12 @@ vi.mock('react-redux', () => ({
   useSelector: vi.fn((selector: (state: unknown) => unknown) => selector({})),
 }));
 
-import { getPanToNodeTransform, useTreeNavigation } from './useTreeNavigation';
+import { anchorTreePoint } from '@/features/TreeView/lib/svgMath';
+import {
+  PAN_TARGET_X_RATIO,
+  PAN_TARGET_Y_RATIO,
+  useTreeNavigation,
+} from './useTreeNavigation';
 
 const makeMatrix = (): TransformMatrix => ({
   translateX: 10,
@@ -92,10 +97,11 @@ describe('useTreeNavigation integration scenarios', () => {
     };
     rerender();
 
-    const expected = getPanToNodeTransform(
+    const expected = anchorTreePoint(
       transformRef.current,
       { width: 300, height: 200 },
-      { x: 45, y: 130 },
+      { x: 130, y: 45 },
+      { xRatio: PAN_TARGET_X_RATIO, yRatio: PAN_TARGET_Y_RATIO },
     );
 
     expect(springApi.start).toHaveBeenCalledTimes(1);
@@ -136,10 +142,11 @@ describe('useTreeNavigation integration scenarios', () => {
       }),
     );
 
-    const expected = getPanToNodeTransform(
+    const expected = anchorTreePoint(
       transformRef.current,
       { width: 300, height: 200 },
-      { x: 50, y: 100 },
+      { x: 100, y: 50 },
+      { xRatio: PAN_TARGET_X_RATIO, yRatio: PAN_TARGET_Y_RATIO },
     );
 
     expect(springApi.start).toHaveBeenCalledWith(

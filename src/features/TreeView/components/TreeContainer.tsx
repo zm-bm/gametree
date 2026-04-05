@@ -2,18 +2,18 @@ import React, { useContext } from "react";
 import { HierarchyNode } from "@visx/hierarchy/lib/types";
 import { Tree as VisxTree } from "@visx/hierarchy";
 
-import { TreeViewNode } from "@/shared/types";
+import { TreeViewNode } from "@/types";
 import { TreeContents } from "./TreeContents";
-import { separation } from "../lib/separation";
+import { treeSeparation } from "../lib/treeSeparation";
 import { TreeDimensionsContext } from "../context";
 
-interface Props {
-  root: HierarchyNode<TreeViewNode> | null,
-};
+export interface TreeContainerProps {
+  root: HierarchyNode<TreeViewNode> | null;
+}
 
 const TreeContainerBase = ({
   root,
-}: Props)  => {
+}: TreeContainerProps)  => {
   const { treeNodeSpacing } = useContext(TreeDimensionsContext);
 
   if (!root) return null;
@@ -21,7 +21,7 @@ const TreeContainerBase = ({
     <VisxTree<TreeViewNode>
       root={root}
       nodeSize={treeNodeSpacing}
-      separation={separation}
+      separation={treeSeparation}
     >
       {(tree) =>
         <TreeContents tree={tree} />

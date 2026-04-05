@@ -1,8 +1,8 @@
 import { memo } from "react";
 import { HierarchyPointNode } from "@visx/hierarchy/lib/types";
 
-import { TreeViewNode } from "@/shared/types";
-import { COLORS } from "../../lib/colors";
+import { TreeViewNode } from "@/types";
+import { COLORS } from "@/features/TreeView/lib/colors";
 
 const FONT_WEIGHT = 600;
 const MIN_LABEL_PERCENT = 10;
@@ -32,7 +32,7 @@ function getFittedLabel(value: number, segmentWidth: number, fontSize: number) {
   };
 }
 
-type TreeNodeWinFrequencyProps = {
+export interface TreeNodeWinFrequencyProps {
   node: HierarchyPointNode<TreeViewNode>;
   nodeSize: number;
   barTrackColor: string;

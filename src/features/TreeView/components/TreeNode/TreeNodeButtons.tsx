@@ -7,8 +7,8 @@ import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "@/store";
 import { selectPinnedNodes } from "@/store/selectors";
 import { tree } from "@/store/slices";
-import { cn } from "@/shared/lib/cn";
-import { ZoomContext } from "../../context/ZoomContext";
+import { cn } from "@/shared/cn";
+import { ZoomContext } from "@/features/TreeView/context/ZoomContext";
 
 const getLichessAnalysisUrl = (fen: string) => {
   const fenPath = fen.trim().replace(/\s+/g, "_");
@@ -24,7 +24,7 @@ interface ButtonConfig {
   isActive?: boolean;
 }
 
-interface Props {
+export interface TreeNodeButtonsProps {
   nodeId: string;
   fen: string;
   nodeRadius: number;
@@ -34,7 +34,7 @@ export const TreeNodeButtons = ({
   nodeId,
   fen,
   nodeRadius,
-}: Props) => {
+}: TreeNodeButtonsProps) => {
   const dispatch = useAppDispatch();
   const { zoom } = useContext(ZoomContext);
   const pinnedNodes = useSelector((s: RootState) => selectPinnedNodes(s));

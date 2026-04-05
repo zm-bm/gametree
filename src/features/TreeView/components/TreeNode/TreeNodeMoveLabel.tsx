@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Move } from "@/shared/types";
+import { Move } from "@/types";
 
 const PIECE_SYMBOLS: Record<string, string> = {
   k: "♚",
@@ -15,12 +15,12 @@ const textStyle: React.CSSProperties = {
   fontFamily: "'Noto Sans', 'Segoe UI Symbol', sans-serif",
 };
 
-interface Props {
+export interface TreeNodeMoveLabelProps {
   move: Move | null;
   fontSize: number;
 }
 
-export const TreeNodeMoveLabel = ({ move, fontSize }: Props) => {
+export const TreeNodeMoveLabel = ({ move, fontSize }: TreeNodeMoveLabelProps) => {
   const { symbol, notation } = useMemo(() => {
     if (!move?.san) return { symbol: undefined, notation: "" };
     if (move.san === "O-O" || move.san === "O-O-O") return { symbol: undefined, notation: move.san };

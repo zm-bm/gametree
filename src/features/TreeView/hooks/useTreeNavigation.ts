@@ -1,12 +1,16 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import { ProvidedZoom, TransformMatrix } from '@visx/zoom/lib/types';
+import { TransformMatrix } from '@visx/zoom/lib/types';
 import { HierarchyPointNode } from '@visx/hierarchy/lib/types';
 import { useSpring } from '@react-spring/web'
 
-import { TreeViewNode, ZoomState } from '@/shared/types';
+import { TreeViewNode, TreeZoom } from '@/types';
 import { RootState } from '@/store';
 import { selectCurrentId, selectCurrentNode } from '@/store/selectors';
+import {
+  anchorTreePoint,
+  zoomAtPoint,
+} from '@/features/TreeView/lib/svgMath';
 
 export const SPRING_CONFIG = {
   tension: 150,
@@ -18,40 +22,8 @@ export const ZOOM_BUTTON_SCALE_STEP = 1.12;
 export const PAN_TARGET_X_RATIO = 1 / 3;
 export const PAN_TARGET_Y_RATIO = 1 / 2;
 
-export function getZoomedTransform(
-  currentTransform: TransformMatrix,
-  viewport: { width: number; height: number },
-  direction: 'in' | 'out',
-) {
-  const scale = direction === 'in'
-    ? ZOOM_BUTTON_SCALE_STEP
-    : (1 / ZOOM_BUTTON_SCALE_STEP);
-  const centerX = viewport.width / 2;
-  const centerY = viewport.height / 2;
-
-  return {
-    ...currentTransform,
-    translateX: centerX - (centerX - currentTransform.translateX) * scale,
-    translateY: centerY - (centerY - currentTransform.translateY) * scale,
-    scaleX: currentTransform.scaleX * scale,
-    scaleY: currentTransform.scaleY * scale,
-  };
-}
-
-export function getPanToNodeTransform(
-  currentTransform: TransformMatrix,
-  viewport: { width: number; height: number },
-  nodePosition: { x: number; y: number },
-) {
-  return {
-    ...currentTransform,
-    translateX: (-nodePosition.y * currentTransform.scaleX) + (viewport.width * PAN_TARGET_X_RATIO),
-    translateY: (-nodePosition.x * currentTransform.scaleY) + (viewport.height * PAN_TARGET_Y_RATIO),
-  };
-}
-
 export interface Props {
-  zoom: ProvidedZoom<SVGSVGElement> & ZoomState;
+  zoom: TreeZoom;
   transformRef: React.MutableRefObject<TransformMatrix>;
   width: number;
   height: number;
@@ -94,16 +66,24 @@ export function useTreeNavigation({
 
   // Handle zooming in and out
   const handleZoom = useCallback((direction: 'in' | 'out') => {
-    const nextTransform = getZoomedTransform(transformRef.current, { width, height }, direction);
+    const scaleMultiplier = direction === 'in'
+      ? ZOOM_BUTTON_SCALE_STEP
+      : (1 / ZOOM_BUTTON_SCALE_STEP);
+    const nextTransform = zoomAtPoint(
+      transformRef.current,
+      { x: width / 2, y: height / 2 },
+      scaleMultiplier,
+    );
     startFromCurrentTransform(nextTransform);
   }, [startFromCurrentTransform, transformRef, width, height]);
 
   // Handler for panning to a specific node
   const panToNode = useCallback((node: HierarchyPointNode<TreeViewNode>) => {
-    const nextTransform = getPanToNodeTransform(
+    const nextTransform = anchorTreePoint(
       transformRef.current,
       { width, height },
-      { x: node.x, y: node.y },
+      { x: node.y, y: node.x },
+      { xRatio: PAN_TARGET_X_RATIO, yRatio: PAN_TARGET_Y_RATIO },
     );
     startFromCurrentTransform(nextTransform);
   }, [startFromCurrentTransform, transformRef, width, height]);

@@ -6,18 +6,18 @@ import { Tree } from '@visx/hierarchy';
 import { Group } from '@visx/group'
 import { BiChevronDown, BiChevronUp } from 'react-icons/bi';
 
-import { TreeViewNode } from "@/shared/types";
-import { cn } from '@/shared/lib/cn';
-import { useTreeMinimap } from '../../hooks';
-import { ZoomContext, TreeDimensionsContext } from "../../context";
+import { TreeViewNode } from "@/types";
+import { cn } from '@/shared/cn';
+import { useTreeMinimap } from '@/features/TreeView/hooks';
+import { ZoomContext, TreeDimensionsContext } from "@/features/TreeView/context";
 import { SVGDefs } from '../SVGDefs';
 import { TreeContents } from '../TreeContents';
-import { separation } from '../../lib/separation';
+import { treeSeparation } from '@/features/TreeView/lib/treeSeparation';
 
-interface Props {
-  tree: HierarchyNode<TreeViewNode> | null,
-  spring: SpringRef<TransformMatrix>,
-};
+export interface TreeMinimapProps {
+  tree: HierarchyNode<TreeViewNode> | null;
+  spring: SpringRef<TransformMatrix>;
+}
 
 const MINIMAP_COLLAPSED_STORAGE_KEY = 'gtMinimapCollapsed';
 const MINIMAP_SIZE_RATIO = 0.25;
@@ -39,7 +39,7 @@ const getIsCollapsed = () => {
   return stored === '1';
 };
 
-export const TreeMinimap = ({ tree, spring }: Props) => {
+export const TreeMinimap = ({ tree, spring }: TreeMinimapProps) => {
   const { treeNodeSpacing, width, height } = useContext(TreeDimensionsContext);
   const { zoom: { transformMatrix, isDragging, setTransformMatrix, dragStart, dragEnd }} = useContext(ZoomContext);
   const [isCollapsed, setIsCollapsed] = useState(getIsCollapsed);
@@ -145,7 +145,7 @@ export const TreeMinimap = ({ tree, spring }: Props) => {
             <Tree<TreeViewNode>
               root={tree}
               nodeSize={treeNodeSpacing}
-              separation={separation}
+              separation={treeSeparation}
             >
               {(tree) => (
                 <Group transform={transform.matrix}>

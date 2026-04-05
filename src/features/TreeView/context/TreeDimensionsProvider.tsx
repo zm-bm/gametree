@@ -1,7 +1,8 @@
-import React, { useMemo }  from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { scaleLinear } from "@visx/scale";
 
 import { TreeDimensionsContext } from "./TreeDimensionsContext";
+import { logDebug } from "@/shared/debug";
 
 const nodeScale = scaleLinear({
   domain: [360, 1440],
@@ -26,6 +27,8 @@ export const TreeDimensionsProvider: React.FC<TreeDimensionsProviderProps> = ({
   width,
   children,
 }) => {
+  const lastDimensionsKeyRef = useRef<string>("");
+
   const dimensions = useMemo(() => {
     const minDimension = Math.min(height, width);
     const nodeRectSize = Math.round(nodeScale(minDimension) * 2);
@@ -44,6 +47,28 @@ export const TreeDimensionsProvider: React.FC<TreeDimensionsProviderProps> = ({
       fontSize: Math.round(fontScale(minDimension)),
     };
   }, [height, width]);
+
+  useEffect(() => {
+    const dimensionsKey = [
+      dimensions.width,
+      dimensions.height,
+      dimensions.nodeRadius,
+      dimensions.nodeRectSize,
+      dimensions.treeRowSpacing,
+      dimensions.treeColumnSpacing,
+      dimensions.fontSize,
+    ].join("|");
+
+    if (dimensionsKey === lastDimensionsKeyRef.current) return;
+
+    logDebug("tree-size", "tree-dimensions-updated", {
+      width,
+      height,
+      dimensions,
+    });
+
+    lastDimensionsKeyRef.current = dimensionsKey;
+  }, [dimensions, height, width]);
   
   return (
     <TreeDimensionsContext.Provider value={{ ...dimensions }}>

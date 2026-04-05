@@ -7,7 +7,7 @@ import { openingsApi } from './openingsApi';
 import { listenerMiddleware } from './listener';
 import { initializeEngine } from '../worker';
 
-const rootReducer = combineReducers({
+export const rootReducer = combineReducers({
   engine: engine.reducer,
   ui: ui.reducer,
   tree: tree.reducer,
@@ -15,7 +15,10 @@ const rootReducer = combineReducers({
   [openingsApi.reducerPath]: openingsApi.reducer,
 });
 
-export function setupStore(preloadedState?: Partial<RootState>) {
+export type RootState = ReturnType<typeof rootReducer>;
+export type PreloadedState = Parameters<typeof rootReducer>[0];
+
+export function setupStore(preloadedState?: PreloadedState) {
   return configureStore({
     reducer: rootReducer,
     middleware: (getDefault) =>
@@ -31,10 +34,8 @@ setupListeners(store.dispatch);
 
 initializeEngine();
 
-export type RootState = ReturnType<typeof rootReducer>;
 export type AppStore = ReturnType<typeof setupStore>;
 export type AppDispatch = AppStore['dispatch'];
-
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 
 import './listeners';

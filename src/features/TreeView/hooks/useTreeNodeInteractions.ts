@@ -3,7 +3,7 @@ import { HierarchyPointNode } from "@visx/hierarchy/lib/types";
 
 import { useAppDispatch } from "@/store";
 import { nav, ui } from "@/store/slices";
-import { TreeViewNode } from "@/shared/types";
+import { TreeViewNode } from "@/types";
 
 const DEFAULT_HOVER_DELAY_MS = 140;
 

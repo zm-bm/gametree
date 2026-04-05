@@ -2,7 +2,7 @@ import { startAppListening } from "../listener";
 import { engine, ui } from "../slices";
 import { selectEngineRunning } from "../selectors";
 import { isAnyOf } from "@reduxjs/toolkit";
-import { startEngine, stopEngine } from "../../worker";
+import { startEngine, stopEngine } from "@/worker";
 
 startAppListening({
   matcher: isAnyOf(
