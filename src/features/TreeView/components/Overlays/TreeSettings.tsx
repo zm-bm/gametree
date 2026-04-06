@@ -28,7 +28,7 @@ const treeNumberInputBase = [
   "[&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
   "[&::-webkit-outer-spin-button]:m-0 [&::-webkit-inner-spin-button]:m-0",
 ];
-const sectionClassName = "p-3 border-t border-lightmode-900/10 dark:border-darkmode-100/20";
+const sectionClassName = "p-3 border-t gt-divider-surface";
 const collapseDurationMs = 300;
 const collapsePersistKey = "gtTreeOptionsCollapsed";
 

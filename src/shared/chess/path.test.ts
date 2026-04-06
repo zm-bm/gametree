@@ -1,7 +1,7 @@
 import { DEFAULT_POSITION } from 'chess.js';
 import { describe, expect, it, vi } from 'vitest';
 
-import { getFenFromPathId, getMoveFromPathId } from './path';
+import { getFenFromPathId, getMoveFromPathId, getSanHistoryFromPathId } from './path';
 
 describe('chess path helpers', () => {
   it('replays a path id to recover the last move and fen', () => {
@@ -24,5 +24,10 @@ describe('chess path helpers', () => {
     expect(errorSpy).toHaveBeenCalled();
 
     errorSpy.mockRestore();
+  });
+
+  it('returns SAN history for a valid path and an empty list for invalid paths', () => {
+    expect(getSanHistoryFromPathId('e2e4,e7e5,g1f3')).toEqual(['e4', 'e5', 'Nf3']);
+    expect(getSanHistoryFromPathId('not-a-move')).toEqual([]);
   });
 });

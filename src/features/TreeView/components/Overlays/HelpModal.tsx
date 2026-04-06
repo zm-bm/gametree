@@ -55,7 +55,7 @@ export const HelpModal = ({
             "flex flex-col",
           )}
         >
-          <header className="flex items-center justify-between px-5 py-3 border-b border-lightmode-900/15 dark:border-darkmode-100/20">
+          <header className="flex items-center justify-between px-5 py-3 border-b gt-divider-surface-strong">
             <h2 className="text-[17px] font-semibold tracking-tight">{title}</h2>
             <button
               type="button"
@@ -71,7 +71,7 @@ export const HelpModal = ({
             {children}
           </div>
 
-          <footer className="px-5 py-3 border-t border-lightmode-900/15 dark:border-darkmode-100/20 flex justify-end">
+          <footer className="px-5 py-3 border-t gt-divider-surface-strong flex justify-end">
             <button
               type="button"
               className="gt-tree-panel px-3 py-1.5 text-sm gt-treeview-hoverable"

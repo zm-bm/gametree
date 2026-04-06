@@ -42,35 +42,33 @@ const EngineView = () => {
   }, [dispatch]);
 
   return (
-    <div className="gt-sidebar-panel">
-      <div className="gt-sidebar-sections">
-        <div className="p-3">
-          <span className="font-semibold tracking-tight">
-            <span>Engine:</span>{" "}
-            <span className={stateClass}>{stateText}</span>
-          </span>
-        </div>
-        <EngineControls
-          running={running}
-          hasOutput={hasOutput}
-          depth={depth}
-          speed={speed}
-          onToggle={engineToggle}
-        />
-
-        <EnginePrimaryAnalysis
-          engineOutput={engineOutput}
-          fen={fen}
-          sideToMove={sideToMove}
-          orientation={orientation}
-          locale={locale}
-        />
-
-        <EnginePrincipalVariation fen={fen} pvMoves={engineOutput?.pv ?? []} />
-
-        <EngineSecondaryStats engineOutput={engineOutput} locale={locale} />
+    <>
+      <div className="p-3">
+        <span className="font-semibold tracking-tight">
+          <span>Engine:</span>{" "}
+          <span className={stateClass}>{stateText}</span>
+        </span>
       </div>
-    </div>
+      <EngineControls
+        running={running}
+        hasOutput={hasOutput}
+        depth={depth}
+        speed={speed}
+        onToggle={engineToggle}
+      />
+
+      <EnginePrimaryAnalysis
+        engineOutput={engineOutput}
+        fen={fen}
+        sideToMove={sideToMove}
+        orientation={orientation}
+        locale={locale}
+      />
+
+      <EnginePrincipalVariation fen={fen} pvMoves={engineOutput?.pv ?? []} />
+
+      <EngineSecondaryStats engineOutput={engineOutput} locale={locale} />
+    </>
   );
 };
 

@@ -30,7 +30,7 @@ const markHelpSeen = () => {
 const keyClass = cn([
   "inline-flex items-center justify-center min-w-6 h-6 px-1 rounded",
   "text-[12px] font-semibold leading-none",
-  "border border-lightmode-900/30 dark:border-darkmode-100/30",
+  "border gt-divider-surface-strong",
   "bg-lightmode-200/60 dark:bg-darkmode-800/60",
   "text-lightmode-800 dark:text-darkmode-100",
 ]);
@@ -129,7 +129,7 @@ const HelpMarker = ({
 const AnnotatedNode = () => {
   return (
     <div className="grid gap-5 md:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] md:items-center">
-      <div className="relative mx-auto w-full max-w-[356px] rounded-lg border border-lightmode-900/20 dark:border-darkmode-100/20 bg-lightmode-50/70 dark:bg-darkmode-800/60 p-3">
+      <div className="relative mx-auto w-full max-w-[356px] rounded-lg border gt-border-surface bg-lightmode-50/70 dark:bg-darkmode-800/60 p-3">
         <svg
           viewBox="0 0 340 200"
           className="absolute inset-0 w-full h-full pointer-events-none"
@@ -248,7 +248,7 @@ export const TreeHelp = () => {
           <AnnotatedNode />
         </section>
 
-        <section className="pt-1 border-t border-lightmode-900/10 dark:border-darkmode-100/10">
+        <section className="pt-1 border-t gt-divider-surface">
           <h3 className="text-base font-semibold mb-2">Node and edge visuals</h3>
           <ul className="space-y-1.5 text-sm text-lightmode-800/90 dark:text-darkmode-200/90">
             <li>Each edge is a legal next move from the current position.</li>
@@ -259,7 +259,7 @@ export const TreeHelp = () => {
           </ul>
         </section>
 
-        <section className="pt-1 border-t border-lightmode-900/10 dark:border-darkmode-100/10">
+        <section className="pt-1 border-t gt-divider-surface">
           <h3 className="text-base font-semibold mb-2">How to use</h3>
           <ol className="space-y-1.5 text-sm text-lightmode-800/90 dark:text-darkmode-200/90 list-decimal pl-4">
             <li>Start from the current board position and click a node to follow that move.</li>
@@ -270,7 +270,7 @@ export const TreeHelp = () => {
           </ol>
         </section>
 
-        <section className="pt-1 border-t border-lightmode-900/10 dark:border-darkmode-100/10">
+        <section className="pt-1 border-t gt-divider-surface">
           <h3 className="text-base font-semibold mb-2 text-center">Keyboard shortcuts</h3>
           <div className="mx-auto grid grid-cols-[max-content_auto] justify-start gap-x-4 gap-y-1.5 w-fit">
             <span className={shortcutLabelClass}>Previous sibling</span>

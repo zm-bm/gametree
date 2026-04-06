@@ -13,7 +13,7 @@ export const TreeZoomControls = ({ handleZoom }: TreeZoomControlsProps) => {
   const zoomOut = useCallback(() => handleZoom('out'), [handleZoom]);
 
   return (
-    <div className="gt-tree-panel flex flex-col gap-1 divide-y divide-lightmode-900/20 dark:divide-darkmode-100/20">
+    <div className="gt-tree-panel gt-divide-surface flex flex-col gap-1">
       <button className={buttonClass} onClick={zoomIn} aria-label="Zoom in">
         <FaPlus className={iconClass} />
       </button>

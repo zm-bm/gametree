@@ -101,9 +101,8 @@ export const TreeMinimap = ({ tree, spring }: TreeMinimapProps) => {
           isCollapsed
             ? "rounded-md border rounded-b-none border-b-0"
             : "rounded-md border rounded-t-none border-t-0",
-          "border-lightmode-950/40 dark:border-darkmode-100/20",
-          "bg-lightmode-50/80 hover:bg-lightmode-100/90",
-          "dark:bg-darkmode-900/80 dark:hover:bg-darkmode-800/90",
+          "gt-border-surface",
+          "bg-lightmode-50/80 dark:bg-darkmode-900/80 ",
           "text-lightmode-700 dark:text-darkmode-100",
           "transition-colors gt-treeview-hoverable",
         ])}
@@ -124,7 +123,7 @@ export const TreeMinimap = ({ tree, spring }: TreeMinimapProps) => {
         <svg
           data-testid="minimap-svg"
           className={cn([
-            'gt-tree-panel border-none border-t border-l rounded-none rounded-tl-md',
+            'gt-tree-panel gt-border-surface-strong rounded-md',
             'bg-opacity-5 backdrop-blur-lg hover:bg-lightmode-200/90 dark:hover:bg-darkmode-800/90',
           ])}
           style={{ pointerEvents: isCollapsed ? 'none' : 'auto' }}

@@ -20,3 +20,14 @@ export function getFenFromPathId(nodeId: Id) {
   const move = getMoveFromPathId(nodeId);
   return move?.after || DEFAULT_POSITION;
 }
+
+export function getSanHistoryFromPathId(nodeId: Id) {
+  try {
+    const chess = new Chess(DEFAULT_POSITION);
+    const moves = nodeId.split(",");
+    moves.forEach((move) => move && chess.move(move));
+    return chess.history();
+  } catch {
+    return [];
+  }
+}
