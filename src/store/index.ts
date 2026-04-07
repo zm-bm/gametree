@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 
 import { engine, ui, tree, nav } from './slices'
 import { openingsApi } from './openingsApi';
+import { theoryApi } from './theoryApi';
 import { listenerMiddleware } from './listener';
 import { initializeEngine } from '../worker';
 
@@ -13,6 +14,7 @@ export const rootReducer = combineReducers({
   tree: tree.reducer,
   nav: nav.reducer,
   [openingsApi.reducerPath]: openingsApi.reducer,
+  [theoryApi.reducerPath]: theoryApi.reducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;
@@ -24,7 +26,7 @@ export function setupStore(preloadedState?: PreloadedState) {
     middleware: (getDefault) =>
       getDefault()
         .prepend(listenerMiddleware.middleware)
-        .concat([openingsApi.middleware]),
+        .concat([openingsApi.middleware, theoryApi.middleware]),
     preloadedState
   });
 }
@@ -39,4 +41,3 @@ export type AppDispatch = AppStore['dispatch'];
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 
 import './listeners';
-

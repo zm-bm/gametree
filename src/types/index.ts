@@ -3,3 +3,4 @@ export * from "./openings";
 export * from "./tree";
 export * from "./engine";
 export * from "./ui";
+export * from "./theory";

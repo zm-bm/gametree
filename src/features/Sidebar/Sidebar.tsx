@@ -1,6 +1,6 @@
 import ChessBoard from './components/ChessBoard'
 import EngineView from './components/EngineView'
-import PositionSummaryView from './components/PositionSummaryView';
+import PositionDetailsView from './components/PositionDetailsView';
 import './Sidebar.css';
 
 const Sidebar = () => {
@@ -19,7 +19,7 @@ const Sidebar = () => {
         <div className="gt-sidebar-scroll-region" data-testid="sidebar-scroll">
           <div className="gt-sidebar-stack">
             <div className="gt-sidebar-card gt-sidebar-sections">
-              <PositionSummaryView />
+              <PositionDetailsView />
             </div>
             <div className="gt-sidebar-card gt-sidebar-sections">
               <EngineView />
