@@ -1,6 +1,7 @@
 import { cn } from "@/shared/cn";
+import "./PositionSummary.css";
 
-type PositionDetailsMetadataProps = {
+type PositionSummaryProps = {
   openingName: string;
   ecoCode: string;
   recentLine: string;
@@ -16,7 +17,7 @@ const compactNumber = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 1,
 });
 
-const PositionDetailsMetadata = ({
+const PositionSummary = ({
   openingName,
   ecoCode,
   recentLine,
@@ -25,7 +26,7 @@ const PositionDetailsMetadata = ({
   hasCurrentNode,
   hasPositionStats,
   totalGames,
-}: PositionDetailsMetadataProps) => {
+}: PositionSummaryProps) => {
   const gameCountLabel = hasPositionStats ? `${compactNumber.format(totalGames)} games` : null;
   const statusMessage = isLoadingPosition
     ? "Loading position..."
@@ -37,25 +38,25 @@ const PositionDetailsMetadata = ({
 
   return (
     <>
-      <div className="gt-position-details-meta-head">
-        <div className="gt-position-details-meta-title">{openingName}</div>
-        <span className="gt-position-details-meta-eco">{ecoCode}</span>
+      <div className="gt-position-summary-head">
+        <div className="gt-position-summary-title">{openingName}</div>
+        <span className="gt-position-summary-eco">{ecoCode}</span>
       </div>
 
-      <div className="gt-position-details-meta-line-row">
-        <div className={cn("gt-position-details-meta-line", !hasSanMoves && "gt-position-details-meta-line--empty")}>
+      <div className="gt-position-summary-line-row">
+        <div className={cn("gt-position-summary-line", !hasSanMoves && "gt-position-summary-line--empty")}>
           {recentLine}
         </div>
         {gameCountLabel ? (
-          <span className="gt-position-details-meta-games">{gameCountLabel}</span>
+          <span className="gt-position-summary-games">{gameCountLabel}</span>
         ) : null}
       </div>
 
       {statusMessage ? (
-        <div className="gt-position-details-meta-status">{statusMessage}</div>
+        <div className="gt-position-summary-status">{statusMessage}</div>
       ) : null}
     </>
   );
 };
 
-export default PositionDetailsMetadata;
+export default PositionSummary;

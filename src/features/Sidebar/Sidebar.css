@@ -9,7 +9,7 @@
 }
 
 .gt-sidebar-layout {
-    @apply flex h-full min-h-0 flex-1 flex-col gap-2;
+    @apply flex h-full min-h-0 flex-1 flex-col gap-1.5;
 }
 
 .gt-sidebar-board-slot {
@@ -21,19 +21,21 @@
 }
 
 .gt-sidebar-scroll-region {
-    @apply min-h-0 flex-1 overflow-y-auto overflow-x-hidden pt-2 pl-2;
+    @apply relative min-h-0 flex-1 overflow-y-auto overflow-x-hidden pt-1.5 pb-2 pl-2 pr-1;
     scrollbar-gutter: stable;
     scrollbar-color: var(--gt-sb-scroll-thumb) transparent;
 }
 
+.gt-sidebar-context-strip {
+    @apply mx-2 mt-1 mb-1;
+}
+
 .gt-sidebar-analysis-divider {
-    @apply flex items-center gap-2 px-1 py-2.5 select-none;
-    @apply border-y;
-    border-color: var(--gt-sb-div-strong);
+    @apply flex items-center gap-2 px-2 pt-0.5 pb-1 select-none;
 }
 
 .gt-sidebar-analysis-divider-label {
-    @apply text-[10px] uppercase tracking-[0.16em];
+    @apply text-[9px] uppercase tracking-[0.12em];
     color: var(--gt-sb-label);
 }
 
@@ -43,7 +45,7 @@
 }
 
 .gt-sidebar-stack {
-    @apply flex flex-col gap-5 pr-1;
+    @apply flex flex-col gap-4;
 }
 
 .gt-sidebar-card {
@@ -58,6 +60,10 @@
 
 .gt-sidebar-sections > * {
     @apply p-3;
+}
+
+.gt-sidebar-context-strip.gt-sidebar-sections > * {
+    @apply p-2.5;
 }
 
 .gt-sidebar-sections > * + * {

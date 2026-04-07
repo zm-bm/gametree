@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { cn } from "@/shared/cn";
+import { useDisplayTheory } from "@/features/Sidebar/hooks/useDisplayTheory";
 import { theoryApi } from "@/store/theoryApi";
-import { useDisplayTheory } from "./useDisplayTheory";
+import "./PositionTheory.css";
 
 const THEORY_EXPAND_THRESHOLD = 320;
 
-type PositionDetailsTheoryProps = {
+type PositionTheoryProps = {
   currentVisibleId: string;
   openingName: string;
   recentLine: string;
@@ -19,12 +20,12 @@ const getTheoryPlaceholderText = (hasSettledTheory: boolean, hasTheoryError: boo
   return "No Wikibooks note for this position yet (possibly past available opening theory).";
 };
 
-const PositionDetailsTheory = ({
+const PositionTheory = ({
   currentVisibleId,
   openingName,
   recentLine,
   sanMoves,
-}: PositionDetailsTheoryProps) => {
+}: PositionTheoryProps) => {
   const {
     data: theoryData,
     isFetching: theoryLoading,
@@ -56,6 +57,11 @@ const PositionDetailsTheory = ({
     theoryBoxRef.current.scrollTop = 0;
   }, [theoryExpanded]);
 
+  useEffect(() => {
+    if (!theoryBoxRef.current) return;
+    theoryBoxRef.current.scrollTop = 0;
+  }, [currentVisibleId]);
+
   const theoryChars = useMemo(
     () => theorySnippets.reduce((totalChars, snippet) => totalChars + snippet.text.length, 0),
     [theorySnippets],
@@ -65,26 +71,26 @@ const PositionDetailsTheory = ({
   const canExpandTheory = theorySnippets.length > 1 || theoryChars > THEORY_EXPAND_THRESHOLD;
   const showingTheoryPlaceholder = !hasTheorySnippets;
   const theoryContentClass = showingTheoryPlaceholder
-    ? "gt-position-details-theory-box--collapsed gt-position-details-theory-box--placeholder"
+    ? "gt-position-theory-box--collapsed gt-position-theory-box--placeholder"
     : theoryExpanded
-      ? "gt-position-details-theory-box--expanded gt-position-details-theory-scroll gt-theory-scroll"
-      : "gt-position-details-theory-box--collapsed";
+      ? "gt-position-theory-box--expanded gt-position-theory-scroll gt-theory-scroll"
+      : "gt-position-theory-box--collapsed";
   const showActionRow = (hasTheorySnippets && Boolean(sourceUrl)) || (hasTheorySnippets && canExpandTheory);
   const showSourceLink = hasTheorySnippets && Boolean(sourceUrl);
   const showExpandToggle = hasTheorySnippets && canExpandTheory;
 
   return (
-    <div className="gt-position-details-theory">
-      <div className="gt-position-details-theory-stack">
-        <div ref={theoryBoxRef} className={cn("gt-position-details-theory-box", theoryContentClass)}>
+    <div className="gt-position-theory">
+      <div className="gt-position-theory-stack">
+        <div ref={theoryBoxRef} className={cn("gt-position-theory-box", theoryContentClass)}>
           {showingTheoryPlaceholder ? (
-            <p className="gt-position-details-theory-placeholder">{placeholderText}</p>
+            <p className="gt-position-theory-placeholder">{placeholderText}</p>
           ) : (
-            <div className="gt-position-details-theory-snippets">
+            <div className="gt-position-theory-snippets">
               {theorySnippets.map((snippet, idx) => (
                 <div
                   key={`${idx}-${snippet.kind}-${snippet.text.slice(0, 24)}`}
-                  className={snippet.kind === "heading" ? "gt-position-details-theory-heading" : "gt-position-details-theory-paragraph"}
+                  className={snippet.kind === "heading" ? "gt-position-theory-heading" : "gt-position-theory-paragraph"}
                   dangerouslySetInnerHTML={{ __html: snippet.html }}
                 >
                 </div>
@@ -92,18 +98,18 @@ const PositionDetailsTheory = ({
             </div>
           )}
           {!showingTheoryPlaceholder && !theoryExpanded && canExpandTheory ? (
-            <div className="gt-position-details-theory-fade" />
+            <div className="gt-position-theory-fade" />
           ) : null}
         </div>
 
         {showActionRow ? (
-          <div className="gt-position-details-theory-actions">
+          <div className="gt-position-theory-actions">
             {showSourceLink ? (
               <a
                 href={sourceUrl!}
                 target="_blank"
                 rel="noreferrer"
-                className="gt-position-details-theory-source-link"
+                className="gt-position-theory-source-link"
               >
                 Source
               </a>
@@ -114,7 +120,7 @@ const PositionDetailsTheory = ({
               <button
                 type="button"
                 onClick={() => setTheoryExpanded((expanded) => !expanded)}
-                className="gt-position-details-theory-toggle"
+                className="gt-position-theory-toggle"
               >
                 {theoryExpanded ? "Show less theory" : "Show more theory"}
               </button>
@@ -126,4 +132,4 @@ const PositionDetailsTheory = ({
   );
 };
 
-export default PositionDetailsTheory;
+export default PositionTheory;

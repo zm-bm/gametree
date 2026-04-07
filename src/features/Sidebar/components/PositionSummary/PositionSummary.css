@@ -1,0 +1,38 @@
+/* Root */
+.gt-position-summary {
+  @apply space-y-1 text-[11px];
+}
+
+/* Metadata */
+.gt-position-summary-head {
+  @apply flex items-baseline justify-between gap-2;
+}
+
+.gt-position-summary-title {
+  @apply min-w-0 truncate text-[13px] leading-snug font-semibold text-lightmode-200 dark:text-darkmode-200;
+}
+
+.gt-position-summary-eco {
+  @apply shrink-0 tabular-nums text-[11px] font-semibold text-lightmode-300 dark:text-darkmode-300;
+}
+
+.gt-position-summary-line-row {
+  @apply flex items-end justify-between gap-2;
+}
+
+.gt-position-summary-line {
+  @apply min-w-0 flex-1 text-[12px] leading-[1.35] text-lightmode-300 dark:text-darkmode-300;
+}
+
+.gt-position-summary-line--empty {
+  @apply italic text-lightmode-400 dark:text-darkmode-400;
+}
+
+.gt-position-summary-games {
+  @apply shrink-0 text-[10px] text-lightmode-400 dark:text-darkmode-400;
+}
+
+.gt-position-summary-status {
+  @apply text-[10px] italic text-lightmode-400 dark:text-darkmode-400;
+}
+

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
 
-import PositionDetailsMetadata from "./PositionDetailsMetadata";
+import PositionSummary from "./PositionSummary";
 
 const baseProps = {
   openingName: "Sicilian Defense: Najdorf Variation",
@@ -14,9 +14,9 @@ const baseProps = {
   totalGames: 715500,
 };
 
-describe("PositionDetailsMetadata", () => {
+describe("PositionSummary", () => {
   it("renders opening, eco, move line, and compact game count", () => {
-    render(<PositionDetailsMetadata {...baseProps} />);
+    render(<PositionSummary {...baseProps} />);
 
     expect(screen.getByText("Sicilian Defense: Najdorf Variation")).toBeInTheDocument();
     expect(screen.getByText("B90")).toBeInTheDocument();
@@ -27,7 +27,7 @@ describe("PositionDetailsMetadata", () => {
 
   it("shows start-position line as empty-state styling path and hides game count when stats missing", () => {
     render(
-      <PositionDetailsMetadata
+      <PositionSummary
         {...baseProps}
         recentLine="Start position"
         hasSanMoves={false}
@@ -43,7 +43,7 @@ describe("PositionDetailsMetadata", () => {
 
   it("prioritizes loading and missing-node status messages", () => {
     const { rerender } = render(
-      <PositionDetailsMetadata
+      <PositionSummary
         {...baseProps}
         isLoadingPosition={true}
       />,
@@ -51,7 +51,7 @@ describe("PositionDetailsMetadata", () => {
     expect(screen.getByText("Loading position...")).toBeInTheDocument();
 
     rerender(
-      <PositionDetailsMetadata
+      <PositionSummary
         {...baseProps}
         isLoadingPosition={false}
         hasCurrentNode={false}
