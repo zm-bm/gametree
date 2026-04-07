@@ -10,6 +10,69 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+
+    /* sf = shared surface, sb = sidebar */
+    --gt-sf-bd: rgb(13 24 41 / 0.36);
+    --gt-sf-bd-strong: rgb(13 24 41 / 0.64);
+    --gt-sf-div: rgb(13 24 41 / 0.16);
+    --gt-sf-div-strong: rgb(13 24 41 / 0.4);
+    --gt-sf-line: var(--gt-sf-div-strong);
+
+    --gt-sb-bd: rgb(148 178 211 / 0.34);
+    --gt-sb-bd-strong: rgb(184 208 233 / 0.48);
+    --gt-sb-div: rgb(148 178 211 / 0.24);
+    --gt-sb-div-strong: rgb(184 208 233 / 0.44);
+    --gt-sb-line: var(--gt-sb-div-strong);
+    --gt-sb-label: rgb(184 208 233 / 0.72);
+
+    --gt-sb-bg: rgb(30 41 59 / 1);
+    --gt-sb-edge: rgb(147 160 182 / 0.2);
+    --gt-sb-panel-bg: rgb(13 24 41 / 0.3);
+    --gt-sb-scroll-thumb: #a8a8b0;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --gt-sf-bd: rgb(141 207 255 / 0.2);
+        --gt-sf-bd-strong: rgb(141 207 255 / 0.2);
+        --gt-sf-div: rgb(193 227 255 / 0.1);
+        --gt-sf-div-strong: rgb(141 207 255 / 0.25);
+        --gt-sf-line: var(--gt-sf-div-strong);
+
+        --gt-sb-bd: rgb(141 207 255 / 0.2);
+        --gt-sb-bd-strong: rgb(141 207 255 / 0.2);
+        --gt-sb-div: rgb(193 227 255 / 0.1);
+        --gt-sb-div-strong: rgb(141 207 255 / 0.25);
+        --gt-sb-line: var(--gt-sb-div-strong);
+        --gt-sb-label: rgb(193 227 255 / 0.84);
+
+        --gt-sb-bg: rgb(9 9 11 / 1);
+        --gt-sb-edge: rgb(212 212 217 / 0.2);
+        --gt-sb-panel-bg: rgb(22 27 36 / 0.42);
+        --gt-sb-scroll-thumb: #9ca9bc;
+    }
+}
+
+:root.dark,
+.dark {
+    --gt-sf-bd: rgb(141 207 255 / 0.2);
+    --gt-sf-bd-strong: rgb(141 207 255 / 0.2);
+    --gt-sf-div: rgb(193 227 255 / 0.1);
+    --gt-sf-div-strong: rgb(141 207 255 / 0.25);
+    --gt-sf-line: var(--gt-sf-div-strong);
+
+    --gt-sb-bd: rgb(141 207 255 / 0.2);
+    --gt-sb-bd-strong: rgb(141 207 255 / 0.2);
+    --gt-sb-div: rgb(193 227 255 / 0.1);
+    --gt-sb-div-strong: rgb(141 207 255 / 0.25);
+    --gt-sb-line: var(--gt-sb-div-strong);
+    --gt-sb-label: rgb(193 227 255 / 0.84);
+
+    --gt-sb-bg: rgb(9 9 11 / 1);
+    --gt-sb-edge: rgb(212 212 217 / 0.2);
+    --gt-sb-panel-bg: rgb(22 27 36 / 0.42);
+    --gt-sb-panel-shadow: 0 12px 24px rgba(0,0,0,0.62);
+    --gt-sb-scroll-thumb: #9ca9bc;
 }
 
 @layer utilities {
@@ -36,117 +99,74 @@
 
 @layer components {
 
-    /* base styles */
-
-    .text-primary { @apply text-lightmode-200 dark:text-darkmode-200; }
-    .text-secondary { @apply text-lightmode-400 dark:text-darkmode-400; }
-
-    .bg-sidebar { @apply bg-lightmode-800 dark:bg-darkmode-950; }
-    .border-sidebar { @apply border-lightmode-400/20 dark:border-darkmode-400/20; }
-    .bg-treeview { @apply bg-lightmode-200 dark:bg-darkmode-800; }
-
-    .interactive-sidebar { @apply hover:bg-lightmode-100/5 dark:hover:bg-darkmode-100/5; }
-    .interactive-treeview { @apply hover:bg-lightmode-900/10 dark:hover:bg-darkmode-100/10; }
-
-    .tree-number-input {
-        @apply appearance-none rounded-md;
-        @apply bg-lightmode-300/65 dark:bg-darkmode-700;
-        @apply text-lightmode-900 dark:text-darkmode-100;
-        @apply ring-1 ring-lightmode-700/25 dark:ring-darkmode-100/20;
-        @apply shadow-[inset_0_1px_0_rgba(255,255,255,0.45)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.05)];
-        @apply focus:outline-none focus:ring-2 focus:ring-sky-500/45 dark:focus:ring-sky-400/35;
-        @apply transition-colors;
+    .gt-border-surface {
+        border-color: var(--gt-sf-bd);
     }
 
-    .tree-number-input::-webkit-outer-spin-button,
-    .tree-number-input::-webkit-inner-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
+    .gt-border-surface-strong {
+        border-color: var(--gt-sf-bd-strong);
     }
 
-    .tree-number-input[type='number'] {
-        -moz-appearance: textfield;
+    .gt-divider-surface {
+        border-color: var(--gt-sf-div);
     }
 
-    /* layout shells */
-
-    .gt-sidebar {
-        @apply relative overflow-y-auto overflow-x-hidden;
-        @apply w-full sm:w-1/2 md:w-2/5 lg:w-1/3 2xl:w-1/4;
-        @apply h-[calc(100vh-48px)] sm:h-screen;
-        @apply py-5 px-[2px];
-        @apply sm:border-r border-sidebar;
-        @apply bg-sidebar text-primary;
-        @apply bg-[radial-gradient(120%_80%_at_0%_0%,_rgba(255,255,255,0.05))];
-        @apply dark:bg-[radial-gradient(120%_80%_at_0%_0%,rgba(255,255,255,0.02))];
-        scrollbar-gutter: stable both-edges;
-        scrollbar-color: #a8a8b0 transparent;
+    .gt-divider-surface-strong {
+        border-color: var(--gt-sf-div-strong);
     }
+
+    .gt-divide-surface > * + * {
+        border-top: 1px solid var(--gt-sf-div);
+    }
+
+    /* app shell */
+
+    .gt-app {
+        @apply w-full h-full min-h-screen max-h-screen;
+    }
+
+    .gt-app-shell {
+        @apply flex flex-col sm:flex-row w-full h-full;
+    }
+
+    .gt-mobile-tabs {
+        @apply flex flex-row w-full h-[48px] sm:hidden;
+        @apply text-lightmode-200 dark:text-darkmode-200 font-medium text-center;
+        @apply bg-lightmode-800 dark:bg-darkmode-950;
+        @apply border-b border-lightmode-400/20 dark:border-darkmode-400/20;
+    }
+
+    .gt-mobile-tab {
+        @apply flex-1 border-b-4 border-transparent;
+        @apply bg-lightmode-800 dark:bg-darkmode-950;
+    }
+
+    .gt-mobile-tab-active {
+        @apply bg-lightmode-700/50 dark:bg-darkmode-900/80;
+        @apply border-highlight-500;
+    }
+
+    /* tree shell */
 
     .gt-treeview {
         @apply w-full sm:w-1/2 md:w-3/5 lg:w-2/3 2xl:w-3/4;
         @apply h-[calc(100vh-48px)] sm:h-screen;
-        @apply bg-treeview overflow-hidden;
+        @apply bg-lightmode-200 dark:bg-darkmode-800 overflow-hidden;
         @apply bg-[radial-gradient(72%_55%_at_72%_18%,_rgba(255,255,255,0.3))];
         @apply dark:bg-[radial-gradient(72%_55%_at_72%_18%,_rgba(113,123,139,0.03))];
     }
 
-    /* cards */
-
-    .sidebar-card {
-        @apply rounded-lg;
-        @apply border border-lightmode-950/60 dark:border-darkmode-100/20;
-        @apply bg-lightmode-600/5 dark:bg-darkmode-600/5;
-        @apply shadow-[0_6px_18px_rgba(0,0,0,0.25)];
+    .gt-treeview-canvas {
+        @apply w-full h-full relative overflow-hidden;
     }
 
-    .treeview-card {
-        @apply rounded-md overflow-hidden backdrop-blur-sm;
+    .gt-tree-panel {
+        @apply border rounded-md transition-colors;
+        @apply overflow-hidden backdrop-blur-sm;
         @apply text-lightmode-800 dark:text-darkmode-200;
-        @apply border border-lightmode-950/40 dark:border-darkmode-100/20;
-        @apply bg-lightmode-50/80 dark:bg-darkmode-900/80; 
-        @apply shadow-[0_4px_12px_rgba(0,0,0,0.2)];
+        @apply bg-lightmode-50/80 dark:bg-darkmode-900/80;
+        border-color: var(--gt-sf-bd);
     }
 
-    /* dividers */
-
-    .sidebar-divider {
-        @apply flex flex-col *:p-4;
-        @apply divide-y divide-white/10 dark:divide-darkmode-100/20;
-    }
-
-    .sidebar-divider > :first-child {
-        @apply border-t border-white/10 dark:border-darkmode-100/20;
-    }
-
-    .treeview-divider {
-        @apply flex flex-col *:p-3;
-        @apply divide-y divide-lightmode-900/10 dark:divide-darkmode-100/20;
-    }
-
-    .treeview-divider > :first-child {
-        @apply border-t border-lightmode-900/10 dark:border-darkmode-100/20;
-    }
-
-    /* tones */
-
-    .treeview-tone-success {
-        @apply border-green-600/50 text-green-600;
-        @apply dark:border-green-500/40 dark:text-green-300;
-    }
-
-    .treeview-tone-info {
-        @apply border-sky-600/50 text-sky-600;
-        @apply dark:border-sky-500/40 dark:text-sky-300;
-    }
-
-    .treeview-tone-warning {
-        @apply border-amber-700/50 text-amber-600;
-        @apply dark:border-amber-500/40 dark:text-amber-300;
-    }
-
-    .treeview-tone-error {
-        @apply border-red-700/50 text-red-600;
-        @apply dark:border-red-500/40 dark:text-red-300;
-    }
+    .gt-treeview-hoverable { @apply hover:bg-lightmode-900/10 dark:hover:bg-darkmode-100/10; }
 }

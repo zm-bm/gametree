@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { openingsApi } from './openingsApi';
+import { theoryApi } from './theoryApi';
 import { setupStore, rootReducer, store } from './index';
 import { ui } from './slices';
 
@@ -13,6 +14,7 @@ describe('store/index', () => {
     expect(state).toHaveProperty('tree');
     expect(state).toHaveProperty('nav');
     expect(state).toHaveProperty(openingsApi.reducerPath);
+    expect(state).toHaveProperty(theoryApi.reducerPath);
   });
 
   it('setupStore applies supplied preloaded state', () => {

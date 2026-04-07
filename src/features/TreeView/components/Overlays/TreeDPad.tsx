@@ -22,7 +22,7 @@ const DPadButton = ({
     title={label}
     aria-label={label} 
     className={cn(
-      "h-8 w-8 rounded-md grid place-items-center interactive-treeview",
+      "h-8 w-8 rounded-md grid place-items-center gt-treeview-hoverable",
       !visible && "opacity-0 pointer-events-none"
     )} 
     onClick={onClick}
@@ -51,7 +51,7 @@ export const TreeDPad = () => {
   const handleLeft = useCallback(() => dispatch(nav.actions.navigateUp()), [dispatch]);
 
   return (
-    <div className="z-40 select-none treeview-card mx-2 pointer-events-auto">
+    <div className="z-40 select-none gt-tree-panel mx-2 pointer-events-auto">
       <div 
         className={cn(
           "relative transition-all duration-300 ease-in-out",

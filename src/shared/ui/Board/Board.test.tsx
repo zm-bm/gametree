@@ -39,7 +39,7 @@ describe('Board', () => {
   it('initializes chessground with config and default animation settings', () => {
     const config: Config = { fen: '8/8/8/8/8/8/8/8 w - - 0 1' };
 
-    renderWithProviders(<Board config={config} className="sidebar-card" />);
+    renderWithProviders(<Board config={config} />);
 
     expect(Chessground).toHaveBeenCalledTimes(1);
     expect(Chessground).toHaveBeenCalledWith(
@@ -52,7 +52,6 @@ describe('Board', () => {
 
     const wrapper = screen.getByTestId('board-wrapper');
     expect(wrapper).toHaveStyle({ width: '320px', height: '320px' });
-    expect(wrapper.firstElementChild).toHaveClass('sidebar-card');
   });
 
   it('calls api.set when config changes', () => {

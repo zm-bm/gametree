@@ -42,35 +42,33 @@ const EngineView = () => {
   }, [dispatch]);
 
   return (
-    <div className="sidebar-card">
-      <div className="p-3 interactive-sidebar">
+    <>
+      <div className="p-3">
         <span className="font-semibold tracking-tight">
           <span>Engine:</span>{" "}
           <span className={stateClass}>{stateText}</span>
         </span>
       </div>
-      <div className="sidebar-divider">
-        <EngineControls
-          running={running}
-          hasOutput={hasOutput}
-          depth={depth}
-          speed={speed}
-          onToggle={engineToggle}
-        />
+      <EngineControls
+        running={running}
+        hasOutput={hasOutput}
+        depth={depth}
+        speed={speed}
+        onToggle={engineToggle}
+      />
 
-        <EnginePrimaryAnalysis
-          engineOutput={engineOutput}
-          fen={fen}
-          sideToMove={sideToMove}
-          orientation={orientation}
-          locale={locale}
-        />
+      <EnginePrimaryAnalysis
+        engineOutput={engineOutput}
+        fen={fen}
+        sideToMove={sideToMove}
+        orientation={orientation}
+        locale={locale}
+      />
 
-        <EnginePrincipalVariation fen={fen} pvMoves={engineOutput?.pv ?? []} />
+      <EnginePrincipalVariation fen={fen} pvMoves={engineOutput?.pv ?? []} />
 
-        <EngineSecondaryStats engineOutput={engineOutput} locale={locale} />
-      </div>
-    </div>
+      <EngineSecondaryStats engineOutput={engineOutput} locale={locale} />
+    </>
   );
 };
 

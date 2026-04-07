@@ -1,0 +1,149 @@
+/* Root */
+.gt-position-details-view {
+  @apply space-y-1 text-[11px];
+}
+
+/* Metadata */
+.gt-position-details-meta-head {
+  @apply flex items-baseline justify-between gap-2;
+}
+
+.gt-position-details-meta-title {
+  @apply min-w-0 truncate text-[13px] leading-snug font-semibold text-lightmode-200 dark:text-darkmode-200;
+}
+
+.gt-position-details-meta-eco {
+  @apply shrink-0 tabular-nums text-[11px] font-semibold text-lightmode-300 dark:text-darkmode-300;
+}
+
+.gt-position-details-meta-line-row {
+  @apply flex items-end justify-between gap-2;
+}
+
+.gt-position-details-meta-line {
+  @apply min-w-0 flex-1 text-[12px] leading-[1.35] text-lightmode-300 dark:text-darkmode-300;
+}
+
+.gt-position-details-meta-line--empty {
+  @apply italic text-lightmode-400 dark:text-darkmode-400;
+}
+
+.gt-position-details-meta-games {
+  @apply shrink-0 text-[10px] text-lightmode-400 dark:text-darkmode-400;
+}
+
+.gt-position-details-meta-status {
+  @apply text-[10px] italic text-lightmode-400 dark:text-darkmode-400;
+}
+
+/* Theory layout */
+.gt-position-details-theory {
+  @apply pt-0.5;
+}
+
+.gt-position-details-theory-stack {
+  @apply space-y-1;
+}
+
+.gt-position-details-theory-box {
+  @apply relative overflow-hidden rounded-md border px-2 py-1.5;
+}
+
+.gt-position-details-theory-box--collapsed {
+  @apply max-h-24 border-lightmode-500/20 bg-lightmode-700/10 pb-2 dark:border-darkmode-300/25 dark:bg-darkmode-700/20;
+}
+
+.gt-position-details-theory-box--expanded {
+  @apply max-h-72 overflow-y-auto border-lightmode-500/30 bg-lightmode-700/20 pr-1;
+  @apply shadow-[inset_0_1px_0_rgba(255,255,255,0.05),inset_0_0_0_1px_rgba(0,0,0,0.08)];
+  @apply dark:border-darkmode-300/40 dark:bg-darkmode-700/30;
+}
+
+.gt-position-details-theory-box--placeholder {
+  @apply min-h-24 max-h-24 overflow-hidden;
+}
+
+.gt-position-details-theory-scroll {
+  scrollbar-gutter: stable;
+  scrollbar-color: var(--gt-sb-scroll-thumb) transparent;
+}
+
+/* Theory typography */
+.gt-position-details-theory-body {
+  @apply break-words text-[11px] leading-[1.45] text-lightmode-300 dark:text-darkmode-300;
+}
+
+.gt-position-details-theory-snippets {
+  @apply space-y-2;
+}
+
+.gt-position-details-theory-paragraph {
+  @apply gt-position-details-theory-body;
+}
+
+.gt-position-details-theory-paragraph p {
+  margin: 0;
+}
+
+.gt-position-details-theory-paragraph p + p {
+  margin-top: 0.5rem;
+}
+
+.gt-position-details-theory-paragraph ul {
+  @apply list-disc pl-4;
+}
+
+.gt-position-details-theory-paragraph ol {
+  @apply list-decimal pl-4;
+}
+
+.gt-position-details-theory-paragraph li + li {
+  margin-top: 0.25rem;
+}
+
+.gt-position-details-theory-paragraph a {
+  @apply text-lightmode-300 underline underline-offset-2 hover:text-lightmode-200;
+  @apply dark:text-darkmode-300 dark:hover:text-darkmode-200;
+}
+
+.gt-position-details-theory-paragraph em {
+  @apply italic;
+}
+
+.gt-position-details-theory-paragraph strong {
+  @apply font-semibold;
+}
+
+.gt-position-details-theory-paragraph code {
+  @apply font-mono text-[10px];
+}
+
+.gt-position-details-theory-heading {
+  @apply border-l-2 border-lightmode-500/35 pl-2;
+  @apply text-[12px] leading-[1.25] font-semibold tracking-[0.02em] text-lightmode-200;
+  @apply dark:border-darkmode-300/35 dark:text-darkmode-200;
+}
+
+.gt-position-details-theory-placeholder {
+  @apply gt-position-details-theory-body;
+}
+
+/* Theory affordances */
+.gt-position-details-theory-fade {
+  @apply pointer-events-none absolute inset-x-0 bottom-0 h-8 rounded-b-md bg-gradient-to-t from-lightmode-700/75 to-transparent;
+  @apply dark:from-darkmode-700/85 dark:to-transparent;
+}
+
+.gt-position-details-theory-actions {
+  @apply flex items-center justify-between pt-1;
+}
+
+.gt-position-details-theory-source-link {
+  @apply text-[10px] text-lightmode-400 underline underline-offset-2 hover:text-lightmode-300;
+  @apply dark:text-darkmode-400 dark:hover:text-darkmode-300;
+}
+
+.gt-position-details-theory-toggle {
+  @apply text-[10px] font-medium text-lightmode-400 transition-colors hover:text-lightmode-300;
+  @apply dark:text-darkmode-400 dark:hover:text-darkmode-300;
+}

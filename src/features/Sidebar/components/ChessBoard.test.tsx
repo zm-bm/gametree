@@ -46,13 +46,12 @@ describe('ChessBoard', () => {
   });
 
   it('passes board config and presentation props', () => {
-    renderWithProviders(<ChessBoard className="sidebar-card" />);
+    renderWithProviders(<ChessBoard />);
 
     expect(useChessgroundConfigMock).toHaveBeenCalledTimes(1);
     expect(boardMock).toHaveBeenCalledWith(
       expect.objectContaining({
         config: mockedConfig,
-        className: 'sidebar-card',
         promotionOverlay: true,
       })
     );
@@ -67,14 +66,13 @@ describe('ChessBoard', () => {
 
     useChessgroundConfigMock.mockReturnValueOnce(mockedConfig).mockReturnValueOnce(nextConfig);
 
-    const { rerender } = renderWithProviders(<ChessBoard className="sidebar-card" />);
-    rerender(<ChessBoard className="sidebar-card" />);
+    const { rerender } = renderWithProviders(<ChessBoard />);
+    rerender(<ChessBoard />);
 
     expect(useChessgroundConfigMock).toHaveBeenCalledTimes(2);
     expect(boardMock).toHaveBeenLastCalledWith(
       expect.objectContaining({
         config: nextConfig,
-        className: 'sidebar-card',
         promotionOverlay: true,
       })
     );

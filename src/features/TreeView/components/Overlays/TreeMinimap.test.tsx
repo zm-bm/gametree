@@ -110,11 +110,11 @@ describe('TreeMinimap', () => {
     const dragStart = vi.fn();
     const dragEnd = vi.fn();
 
-    const { container } = renderTreeViewWithContexts(<TreeMinimap tree={tree} spring={mockSpring} />, {
+    renderTreeViewWithContexts(<TreeMinimap tree={tree} spring={mockSpring} />, {
       zoomOverrides: { isDragging: true, dragStart, dragEnd },
     });
 
-    const svg = container.querySelector('svg.treeview-card');
+    const svg = screen.getByTestId('minimap-svg');
     expect(svg).toBeInTheDocument();
     if (!svg) throw new Error('Expected minimap svg to render');
 

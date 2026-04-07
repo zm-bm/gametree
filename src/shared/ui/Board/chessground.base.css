@@ -57,11 +57,12 @@ cg-board square.last-move {
   background-size: cover;
   z-index: 2;
   will-change: transform;
-  pointer-events: none;
+  pointer-events: auto;
+  cursor: pointer;
 }
 
 cg-board piece.dragging {
-  cursor: move;
+  cursor: grabbing;
   /* !important to override z-index from 3D piece inline style */
   z-index: 11 !important;
 }
@@ -109,6 +110,8 @@ piece.fading {
 
 .cg-wrap cg-auto-pieces piece {
   opacity: 0.3;
+  pointer-events: none;
+  cursor: default;
 }
 
 .cg-wrap .cg-shapes {

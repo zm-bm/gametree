@@ -1,0 +1,65 @@
+.gt-sidebar {
+    @apply relative overflow-hidden pt-5;
+    @apply w-full sm:w-1/2 md:w-2/5 lg:w-1/3 2xl:w-1/4;
+    @apply h-[calc(100vh-48px)] sm:h-screen;
+    @apply sm:border-r;
+    @apply text-lightmode-200 dark:text-darkmode-200;
+    border-color: var(--gt-sb-edge);
+    background-color: var(--gt-sb-bg);
+}
+
+.gt-sidebar-layout {
+    @apply flex h-full min-h-0 flex-1 flex-col gap-2;
+}
+
+.gt-sidebar-board-slot {
+    @apply shrink-0 px-5;
+}
+
+.gt-sidebar-analysis-shell {
+    @apply min-h-0 flex-1 flex flex-col;
+}
+
+.gt-sidebar-scroll-region {
+    @apply min-h-0 flex-1 overflow-y-auto overflow-x-hidden pt-2 pl-2;
+    scrollbar-gutter: stable;
+    scrollbar-color: var(--gt-sb-scroll-thumb) transparent;
+}
+
+.gt-sidebar-analysis-divider {
+    @apply flex items-center gap-2 px-1 py-2.5 select-none;
+    @apply border-y;
+    border-color: var(--gt-sb-div-strong);
+}
+
+.gt-sidebar-analysis-divider-label {
+    @apply text-[10px] uppercase tracking-[0.16em];
+    color: var(--gt-sb-label);
+}
+
+.gt-sidebar-analysis-divider-line {
+    @apply h-px flex-1;
+    background-color: var(--gt-sb-line);
+}
+
+.gt-sidebar-stack {
+    @apply flex flex-col gap-5 pr-1;
+}
+
+.gt-sidebar-card {
+    @apply border rounded-lg transition-colors;
+    background-color: var(--gt-sb-panel-bg);
+    border-color: var(--gt-sb-bd-strong);
+}
+
+.gt-sidebar-sections {
+    @apply flex flex-col;
+}
+
+.gt-sidebar-sections > * {
+    @apply p-3;
+}
+
+.gt-sidebar-sections > * + * {
+    border-top: 1px solid var(--gt-sb-div);
+}

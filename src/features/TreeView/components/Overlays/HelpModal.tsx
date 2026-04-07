@@ -49,18 +49,18 @@ export const HelpModal = ({
           aria-modal="true"
           aria-label={title}
           className={cn(
-            "treeview-card w-full",
+            "gt-tree-panel w-full",
             maxWidthClassName,
             "max-h-[90vh] overflow-hidden",
             "flex flex-col",
           )}
         >
-          <header className="flex items-center justify-between px-5 py-3 border-b border-lightmode-900/15 dark:border-darkmode-100/20">
+          <header className="flex items-center justify-between px-5 py-3 border-b gt-divider-surface-strong">
             <h2 className="text-[17px] font-semibold tracking-tight">{title}</h2>
             <button
               type="button"
               aria-label="Close help"
-              className="h-8 w-8 rounded-md grid place-items-center interactive-treeview"
+              className="h-8 w-8 rounded-md grid place-items-center gt-treeview-hoverable"
               onClick={onClose}
             >
               x
@@ -71,10 +71,10 @@ export const HelpModal = ({
             {children}
           </div>
 
-          <footer className="px-5 py-3 border-t border-lightmode-900/15 dark:border-darkmode-100/20 flex justify-end">
+          <footer className="px-5 py-3 border-t gt-divider-surface-strong flex justify-end">
             <button
               type="button"
-              className="treeview-card px-3 py-1.5 text-sm interactive-treeview"
+              className="gt-tree-panel px-3 py-1.5 text-sm gt-treeview-hoverable"
               onClick={onClose}
             >
               {dismissLabel}

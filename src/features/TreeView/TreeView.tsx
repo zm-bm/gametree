@@ -9,7 +9,7 @@ const TreeView = () =>  {
   const { parentRef, width, height } = useStableParentSize();
 
   return (
-    <div ref={parentRef} className="w-full h-full relative overflow-hidden">
+    <div ref={parentRef} className="gt-treeview-canvas">
       <TreeDimensionsProvider height={height} width={width}>
         <Zoom<SVGSVGElement>
           width={width}

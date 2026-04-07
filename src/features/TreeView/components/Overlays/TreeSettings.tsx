@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 
 import { RootState, useAppDispatch } from "@/store";
@@ -11,20 +11,73 @@ import {
 import { ui } from "@/store/slices";
 import { cn } from "@/shared/cn";
 import { InfoTooltip } from "@/shared/ui/InfoTooltip";
-import { CollapsibleCard } from "@/shared/ui/CollapsibleCard";
 
-const dataSourceLabel = "flex gap-2 p-1 rounded text-sm font-medium cursor-pointer interactive-treeview";
+const dataSourceLabel = "flex gap-2 p-1 rounded text-sm font-medium cursor-pointer gt-treeview-hoverable";
 const dataSourceActive = "bg-lightmode-900/10 dark:bg-darkmode-100/10";
 const radioInput = "accent-sky-500 dark:accent-sky-400 cursor-pointer";
 const sectionLabel = "text-sm font-semibold";
+const treeNumberInputBase = [
+  "appearance-none rounded-md h-7 w-[3rem] px-2",
+  "text-sm font-semibold text-right tabular-nums",
+  "bg-lightmode-300/65 dark:bg-darkmode-700",
+  "text-lightmode-900 dark:text-darkmode-100",
+  "ring-1 ring-lightmode-700/25 dark:ring-darkmode-100/20",
+  "focus:ring-2 focus:ring-sky-500/45 dark:focus:ring-sky-400/35",
+  "focus:outline-none transition-colors",
+  "[appearance:textfield] [-moz-appearance:textfield]",
+  "[&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
+  "[&::-webkit-outer-spin-button]:m-0 [&::-webkit-inner-spin-button]:m-0",
+];
+const sectionClassName = "p-3 border-t gt-divider-surface";
+const collapseDurationMs = 300;
+const collapsePersistKey = "gtTreeOptionsCollapsed";
 
 export const TreeSettings = () => {
   const dispatch = useAppDispatch();
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    try {
+      return localStorage.getItem(collapsePersistKey) === "1";
+    } catch {
+      return false;
+    }
+  });
+  const [showContent, setShowContent] = useState(!isCollapsed);
+
   const source = useSelector((s: RootState) => selectTreeSource(s));
   const minFrequencyPct = useSelector((s: RootState) => selectTreeMinFrequencyPct(s));
   const moveLimit = useSelector((s: RootState) => selectTreeMoveLimit(s));
+  const moveLimitRangeMax = Math.max(20, moveLimit);
   const winRateComparison = useSelector((s: RootState) => selectTreeWinRateComparison(s));
-  const moveLimitSliderMax = Math.max(20, moveLimit);
+
+  useEffect(() => {
+    if (!isCollapsed) {
+      setShowContent(true);
+      return;
+    }
+
+    const timeout = window.setTimeout(() => setShowContent(false), collapseDurationMs);
+    return () => window.clearTimeout(timeout);
+  }, [isCollapsed]);
+
+  const arrowStyle = useMemo(
+    () => ({
+      transform: isCollapsed ? "rotate(180deg)" : "rotate(0deg)",
+      transition: `transform ${collapseDurationMs}ms`,
+    }),
+    [isCollapsed],
+  );
+
+  const toggleCollapsed = useCallback(() => {
+    setIsCollapsed((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem(collapsePersistKey, next ? "1" : "");
+      } catch {
+        // no-op
+      }
+      return next;
+    });
+  }, []);
 
   const selectOtb = useCallback(() => {
     dispatch(ui.actions.setTreeSource("otb"));
@@ -55,15 +108,27 @@ export const TreeSettings = () => {
   }, [dispatch]);
 
   return (
-    <CollapsibleCard
-      header={<div className="text-sm font-bold">Tree Settings</div>}
-      className="treeview-card w-[16rem] select-none"
-      headerClassName="px-3 py-2 interactive-treeview"
-      contentClassName="treeview-divider"
-      maxHeight="max-h-[100rem]"
-      persistKey="gtTreeOptionsCollapsed"
-    >
-      <div>
+    <div className="gt-tree-panel w-[16rem] select-none flex flex-col">
+      <div
+        className="w-full flex items-center justify-between gap-2 text-sm cursor-pointer select-none px-3 py-2 gt-treeview-hoverable"
+        onClick={toggleCollapsed}
+      >
+        <div className="text-sm font-bold">Tree Settings</div>
+        <div className="transition-transform" style={arrowStyle}>
+          ▲
+        </div>
+      </div>
+
+      <div
+        className={cn(
+          "transition-all ease-in-out overflow-hidden",
+          isCollapsed ? "max-h-0 opacity-0" : "max-h-[100rem] opacity-100",
+        )}
+        style={{ transitionDuration: `${collapseDurationMs}ms` }}
+      >
+        {showContent && (
+          <>
+            <div className={sectionClassName}>
         <div className={cn(sectionLabel, 'pb-1 flex items-center gap-1')}>
           <span>Data Source</span>
           <InfoTooltip
@@ -102,9 +167,9 @@ export const TreeSettings = () => {
           />
           <span title="All games played on lichess">Lichess</span>
         </label> */}
-      </div>
+            </div>
 
-      <div>
+            <div className={sectionClassName}>
         <div className={cn(sectionLabel, "pb-1 flex items-center gap-1")}>
           <span>Win Rate Mode</span>
           <InfoTooltip
@@ -132,9 +197,9 @@ export const TreeSettings = () => {
           />
           <span>Absolute</span>
         </label>
-      </div>
+            </div>
 
-      <div>
+            <div className={sectionClassName}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1">
             <div className={sectionLabel}>Min Frequency (%)</div>
@@ -150,10 +215,7 @@ export const TreeSettings = () => {
             step={0.5}
             value={minFrequencyPct}
             onChange={setMinFrequencyPct}
-            className={cn([
-              "tree-number-input h-7 w-[3rem] px-2",
-              "text-sm font-semibold text-right tabular-nums",
-            ])}
+            className={cn([treeNumberInputBase])}
             aria-label="Minimum move frequency percentage"
           />
         </div>
@@ -171,9 +233,9 @@ export const TreeSettings = () => {
             "accent-sky-500",
           ])}
         />
-      </div>
+            </div>
 
-      <div>
+            <div className={sectionClassName}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1">
             <div className={sectionLabel}>Move Limit</div>
@@ -188,17 +250,14 @@ export const TreeSettings = () => {
             step={1}
             value={moveLimit}
             onChange={setMoveLimit}
-            className={cn([
-              "tree-number-input h-7 w-[3rem] px-2",
-              "text-sm font-semibold text-right tabular-nums",
-            ])}
+            className={cn([treeNumberInputBase])}
             aria-label="Maximum moves shown per position"
           />
         </div>
         <input
           type="range"
           min={0}
-          max={moveLimitSliderMax}
+          max={moveLimitRangeMax}
           step={1}
           value={moveLimit}
           onChange={setMoveLimit}
@@ -209,7 +268,10 @@ export const TreeSettings = () => {
             "accent-sky-500",
           ])}
         />
+            </div>
+          </>
+        )}
       </div>
-    </CollapsibleCard>
+    </div>
   );
 };
