@@ -1,0 +1,118 @@
+/* Theory layout */
+.gt-position-theory {
+  @apply pt-0.5;
+}
+
+.gt-position-theory-stack {
+  @apply space-y-1;
+}
+
+.gt-position-theory-box {
+  @apply relative overflow-hidden rounded-md border px-2.5 py-1;
+}
+
+.gt-position-theory-box--collapsed {
+  @apply max-h-24 bg-lightmode-700/10 pb-1.5 dark:bg-darkmode-700/25;
+  @apply shadow-[inset_0_-1px_0_rgba(255,255,255,0.03)];
+  border-color: var(--gt-sb-theory-bd-collapsed);
+}
+
+.gt-position-theory-box--expanded {
+  @apply max-h-72 overflow-y-auto bg-lightmode-700/20 pr-1;
+  @apply shadow-[inset_0_1px_0_rgba(255,255,255,0.05),inset_0_0_0_1px_rgba(0,0,0,0.08)];
+  @apply dark:bg-darkmode-700/35;
+  border-color: var(--gt-sb-theory-bd-expanded);
+}
+
+.gt-position-theory-box--placeholder {
+  @apply min-h-24 max-h-24 overflow-hidden;
+}
+
+.gt-position-theory-scroll {
+  scrollbar-gutter: stable;
+  scrollbar-color: var(--gt-sb-scroll-thumb) transparent;
+}
+
+/* Theory typography */
+.gt-position-theory-body {
+  @apply break-words text-[11px] leading-[1.45] text-lightmode-300 dark:text-darkmode-300;
+}
+
+.gt-position-theory-snippets {
+  @apply space-y-1.5;
+}
+
+.gt-position-theory-paragraph {
+  @apply gt-position-theory-body;
+}
+
+.gt-position-theory-paragraph p {
+  margin: 0;
+}
+
+.gt-position-theory-paragraph p + p {
+  margin-top: 0.375rem;
+}
+
+.gt-position-theory-paragraph ul {
+  @apply list-disc pl-4;
+}
+
+.gt-position-theory-paragraph ol {
+  @apply list-decimal pl-4;
+}
+
+.gt-position-theory-paragraph li + li {
+  margin-top: 0.25rem;
+}
+
+.gt-position-theory-paragraph a {
+  @apply text-lightmode-300 underline underline-offset-2 hover:text-lightmode-200;
+  @apply dark:text-darkmode-200 dark:hover:text-darkmode-100;
+}
+
+.gt-position-theory-paragraph em {
+  @apply italic;
+}
+
+.gt-position-theory-paragraph strong {
+  @apply font-semibold;
+}
+
+.gt-position-theory-paragraph code {
+  @apply font-mono text-[10px];
+}
+
+.gt-position-theory-heading {
+  @apply text-[11px] leading-[1.3] font-semibold tracking-[0.01em] text-lightmode-200;
+  @apply dark:text-darkmode-100;
+}
+
+.gt-position-theory-placeholder {
+  @apply gt-position-theory-body;
+}
+
+/* Theory affordances */
+.gt-position-theory-fade {
+  @apply pointer-events-none absolute inset-x-0 bottom-0 h-8 rounded-b-md;
+  background-image: linear-gradient(
+    to top,
+    var(--gt-sb-theory-fade-from),
+    var(--gt-sb-theory-fade-via) 48%,
+    transparent
+  );
+}
+
+.gt-position-theory-actions {
+  @apply flex items-baseline justify-between pt-0.5;
+}
+
+.gt-position-theory-source-link {
+  @apply text-[10px] font-medium text-lightmode-400 underline underline-offset-2 hover:text-lightmode-300;
+  @apply dark:text-darkmode-300 dark:hover:text-darkmode-200;
+}
+
+.gt-position-theory-toggle {
+  @apply text-[10px] font-medium text-lightmode-400 transition-colors hover:text-lightmode-300;
+  @apply dark:text-darkmode-300 dark:hover:text-darkmode-200;
+}

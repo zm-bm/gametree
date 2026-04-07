@@ -85,6 +85,11 @@ export const selectCurrentNodeData = createSelector(
   (nodes, nodeId) => nodes[nodeId] || null
 );
 
+export const selectCurrentVisibleNodeData = createSelector(
+  [selectTreeNodeMap, selectCurrentVisibleId],
+  (nodes, nodeId) => nodes[nodeId] || null
+);
+
 export const selectHoverNodeData = createSelector(
   [selectTreeNodeMap, selectHoverId],
   (nodes, hoverId) => (hoverId ? nodes[hoverId] || null : null)
@@ -97,8 +102,3 @@ export const selectSideToMove = createSelector(
   [selectBoardFen],
   (fen) => fen.split(' ')[1] === 'w' ? 'white' : 'black'
 );
-
-// export const selectEco = createSelector(
-//   [selectMovePath],
-//   (path) => getECO(path)
-// );

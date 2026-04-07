@@ -1,4 +1,4 @@
-export const DEFAULT_THEORY_EXTRA_SECTIONS = 2;
+export const DEFAULT_THEORY_EXTRA_SECTIONS = 3;
 
 export const STOP_HEADINGS = new Set([
   'references',

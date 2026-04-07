@@ -28,6 +28,10 @@
     --gt-sb-bg: rgb(30 41 59 / 1);
     --gt-sb-edge: rgb(147 160 182 / 0.2);
     --gt-sb-panel-bg: rgb(13 24 41 / 0.3);
+    --gt-sb-theory-bd-collapsed: rgb(184 208 233 / 0.4);
+    --gt-sb-theory-bd-expanded: rgb(148 178 211 / 0.3);
+    --gt-sb-theory-fade-from: rgb(60 87 121 / 0.46);
+    --gt-sb-theory-fade-via: rgb(88 120 158 / 0.22);
     --gt-sb-scroll-thumb: #a8a8b0;
 }
 
@@ -49,6 +53,10 @@
         --gt-sb-bg: rgb(9 9 11 / 1);
         --gt-sb-edge: rgb(212 212 217 / 0.2);
         --gt-sb-panel-bg: rgb(22 27 36 / 0.42);
+        --gt-sb-theory-bd-collapsed: rgb(141 207 255 / 0.28);
+        --gt-sb-theory-bd-expanded: rgb(141 207 255 / 0.18);
+        --gt-sb-theory-fade-from: rgb(53 79 112 / 0.3);
+        --gt-sb-theory-fade-via: rgb(72 106 145 / 0.14);
         --gt-sb-scroll-thumb: #9ca9bc;
     }
 }
@@ -71,6 +79,10 @@
     --gt-sb-bg: rgb(9 9 11 / 1);
     --gt-sb-edge: rgb(212 212 217 / 0.2);
     --gt-sb-panel-bg: rgb(22 27 36 / 0.42);
+    --gt-sb-theory-bd-collapsed: rgb(141 207 255 / 0.28);
+    --gt-sb-theory-bd-expanded: rgb(141 207 255 / 0.18);
+    --gt-sb-theory-fade-from: rgb(53 79 112 / 0.3);
+    --gt-sb-theory-fade-via: rgb(72 106 145 / 0.14);
     --gt-sb-panel-shadow: 0 12px 24px rgba(0,0,0,0.62);
     --gt-sb-scroll-thumb: #9ca9bc;
 }
