@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 
+import { getECOByUciPathIfReady, getECOByUciPathLazy } from "@/shared/opening";
 import { OpeningBookEntry } from "@/types";
 
 export const useOpeningEntry = (currentVisibleId: string) => {
@@ -11,12 +12,18 @@ export const useOpeningEntry = (currentVisibleId: string) => {
       return;
     }
 
+    const readyEntry = getECOByUciPathIfReady(currentVisibleId);
+    if (readyEntry !== undefined) {
+      setEcoEntry(readyEntry);
+      return;
+    }
+
     let cancelled = false;
 
-    void import("@/shared/opening")
-      .then(({ getECOByUciPath }) => {
+    void getECOByUciPathLazy(currentVisibleId)
+      .then((entry) => {
         if (cancelled) return;
-        setEcoEntry(getECOByUciPath(currentVisibleId));
+        setEcoEntry(entry);
       })
       .catch(() => {
         if (cancelled) return;
@@ -30,4 +37,3 @@ export const useOpeningEntry = (currentVisibleId: string) => {
 
   return ecoEntry;
 };
-

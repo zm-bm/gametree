@@ -3,27 +3,34 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { OpeningBookEntry } from "@/types";
 
-const { mockGetECOByUciPath } = vi.hoisted(() => ({
-  mockGetECOByUciPath: vi.fn(),
+const { mockGetECOByUciPathIfReady, mockGetECOByUciPathLazy } = vi.hoisted(() => ({
+  mockGetECOByUciPathIfReady: vi.fn(),
+  mockGetECOByUciPathLazy: vi.fn(),
 }));
 
 vi.mock("@/shared/opening", () => ({
-  getECOByUciPath: (...args: Parameters<typeof mockGetECOByUciPath>) =>
-    mockGetECOByUciPath(...args),
+  getECOByUciPathIfReady: (...args: Parameters<typeof mockGetECOByUciPathIfReady>) =>
+    mockGetECOByUciPathIfReady(...args),
+  getECOByUciPathLazy: (...args: Parameters<typeof mockGetECOByUciPathLazy>) =>
+    mockGetECOByUciPathLazy(...args),
 }));
 
 import { useOpeningEntry } from "./useOpeningEntry";
 
 describe("useOpeningEntry", () => {
   beforeEach(() => {
-    mockGetECOByUciPath.mockReset();
+    mockGetECOByUciPathIfReady.mockReset();
+    mockGetECOByUciPathLazy.mockReset();
+    mockGetECOByUciPathIfReady.mockReturnValue(undefined);
+    mockGetECOByUciPathLazy.mockResolvedValue(null);
   });
 
   it("returns null and skips lookup when currentVisibleId is empty", () => {
     const { result } = renderHook(() => useOpeningEntry(""));
 
     expect(result.current).toBeNull();
-    expect(mockGetECOByUciPath).not.toHaveBeenCalled();
+    expect(mockGetECOByUciPathIfReady).not.toHaveBeenCalled();
+    expect(mockGetECOByUciPathLazy).not.toHaveBeenCalled();
   });
 
   it("loads ECO entry for a valid currentVisibleId", async () => {
@@ -32,25 +39,24 @@ describe("useOpeningEntry", () => {
       name: "Sicilian Defense",
       uci: "e2e4,c7c5",
     };
-    mockGetECOByUciPath.mockReturnValue(entry);
+    mockGetECOByUciPathLazy.mockResolvedValue(entry);
 
     const { result } = renderHook(() => useOpeningEntry("e2e4,c7c5"));
 
     await waitFor(() => {
       expect(result.current).toEqual(entry);
     });
-    expect(mockGetECOByUciPath).toHaveBeenCalledWith("e2e4,c7c5");
+    expect(mockGetECOByUciPathIfReady).toHaveBeenCalledWith("e2e4,c7c5");
+    expect(mockGetECOByUciPathLazy).toHaveBeenCalledWith("e2e4,c7c5");
   });
 
   it("falls back to null when opening lookup throws", async () => {
-    mockGetECOByUciPath.mockImplementation(() => {
-      throw new Error("lookup failed");
-    });
+    mockGetECOByUciPathLazy.mockRejectedValue(new Error("lookup failed"));
 
     const { result } = renderHook(() => useOpeningEntry("e2e4"));
 
     await waitFor(() => {
-      expect(mockGetECOByUciPath).toHaveBeenCalledWith("e2e4");
+      expect(mockGetECOByUciPathLazy).toHaveBeenCalledWith("e2e4");
       expect(result.current).toBeNull();
     });
   });
@@ -61,7 +67,7 @@ describe("useOpeningEntry", () => {
       name: "Queen's Pawn Game",
       uci: "d2d4",
     };
-    mockGetECOByUciPath.mockReturnValue(entry);
+    mockGetECOByUciPathLazy.mockResolvedValue(entry);
 
     const { result, rerender } = renderHook(
       ({ id }: { id: string }) => useOpeningEntry(id),
@@ -74,7 +80,21 @@ describe("useOpeningEntry", () => {
 
     rerender({ id: "" });
     expect(result.current).toBeNull();
-    expect(mockGetECOByUciPath).toHaveBeenCalledTimes(1);
+    expect(mockGetECOByUciPathLazy).toHaveBeenCalledTimes(1);
+  });
+
+  it("uses ready cache path without async lookup", () => {
+    const entry: OpeningBookEntry = {
+      eco: "C20",
+      name: "King's Pawn Game",
+      uci: "e2e4",
+    };
+    mockGetECOByUciPathIfReady.mockReturnValue(entry);
+
+    const { result } = renderHook(() => useOpeningEntry("e2e4"));
+
+    expect(result.current).toEqual(entry);
+    expect(mockGetECOByUciPathIfReady).toHaveBeenCalledWith("e2e4");
+    expect(mockGetECOByUciPathLazy).not.toHaveBeenCalled();
   });
 });
-

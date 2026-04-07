@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 
 import { formatMoveLine, getSanHistoryFromPathId } from "@/shared/chess";
 import { RootState } from "@/store";
-import { selectCurrentVisibleId, selectTreeNodeMap, selectTreeSource } from "@/store/selectors";
+import { selectCurrentVisibleId, selectCurrentVisibleNodeData, selectTreeSource } from "@/store/selectors";
 import ChessBoard from './components/ChessBoard'
 import EngineView from './components/EngineView'
 import PositionSummary from "./components/PositionSummary/PositionSummary";
@@ -13,10 +13,9 @@ import './Sidebar.css';
 
 const Sidebar = () => {
   const currentVisibleId = useSelector((s: RootState) => selectCurrentVisibleId(s));
+  const currentNode = useSelector((s: RootState) => selectCurrentVisibleNodeData(s));
   const source = useSelector((s: RootState) => selectTreeSource(s));
-  const nodeMap = useSelector((s: RootState) => selectTreeNodeMap(s));
   const ecoEntry = useOpeningEntry(currentVisibleId);
-  const currentNode = nodeMap[currentVisibleId];
 
   const sanMoves = useMemo(() => {
     if (!currentVisibleId) return [];
