@@ -2,7 +2,7 @@
 
 visualize, explore, and learn about the game tree of chess.
 
-<img width="1666" height="926" alt="image" src="https://github.com/user-attachments/assets/5390631e-44d2-4349-8e37-4f9e9eb43652" />
+<img width="640" height="356" alt="image" src="https://github.com/user-attachments/assets/5390631e-44d2-4349-8e37-4f9e9eb43652" />
 
 [demo](https://gametree.zmbm.dev)
 
