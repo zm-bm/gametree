@@ -6,6 +6,14 @@ visualize, explore, and learn about the game tree of chess.
 
 [demo](https://gametree.zmbm.dev)
 
+## Technical summary
+
+- The app renders an interactive opening tree from the current move path, where each node represents a legal next move and its observed frequency.
+- Tree data comes from `gametree-api` (`/api/totals`) and is loaded incrementally as you explore positions.
+- A synchronized board + sidebar show the selected position, opening context, and move-level stats.
+- Optional in-browser Stockfish analysis updates evaluation and principal variation for the current position.
+- Theory snippets are fetched from Wikibooks to add human-readable opening notes alongside the tree.
+
 ## Usage
 
 Run the app locally
@@ -20,6 +28,11 @@ Build
 ```sh
 npm run build
 ```
+
+### Backend note
+
+This frontend calls [gametree-api](https://github.com/zm-bm/gametree-api/) for `/api/*`.
+For local dev, run `gametree-api` separately on `http://localhost:8080` (Vite proxies `/api` there).
 
 ## Acknowledgments
 
