@@ -1,0 +1,177 @@
+.gt-engine-header-layout {
+  @apply relative;
+  @apply p-2;
+  @apply grid grid-cols-[34px_minmax(0,1fr)_auto] items-center gap-x-1.5;
+}
+
+.gt-engine-switch {
+  @apply relative h-5 w-9 inline-flex shrink-0 items-center rounded-full border  transition-colors;
+  border-color: rgb(148 163 184 / 0.56);
+  background-color: rgb(71 85 105 / 0.34);
+}
+
+.gt-engine-switch[aria-checked="true"] {
+  border-color: var(--gt-eng-switch-on-border);
+  background-color: var(--gt-eng-switch-on-bg);
+}
+
+.gt-engine-switch[aria-checked="false"] {
+  border-color: rgb(148 163 184 / 0.56);
+  background-color: rgb(71 85 105 / 0.34);
+}
+
+.gt-engine-switch:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 1px var(--gt-sb-bg),
+    0 0 0 3px rgb(111 153 206 / 0.45);
+}
+
+.gt-engine-switch-track {
+  @apply relative block h-full w-full rounded-full;
+  background-color: rgb(15 23 42 / 0.26);
+  box-shadow: inset 0 0 0 1px rgb(148 163 184 / 0.18);
+}
+
+.gt-engine-switch-thumb {
+  @apply absolute left-0 top-1/2 h-[14px] w-[14px] -translate-y-1/2 rounded-full transition-transform;
+  background-color: rgb(226 232 240 / 0.95);
+  box-shadow: 0 1px 2px rgb(2 6 23 / 0.35);
+}
+
+.gt-engine-switch[aria-checked="true"] .gt-engine-switch-track {
+  background-color: var(--gt-eng-switch-on-track);
+  box-shadow: inset 0 0 0 1px var(--gt-eng-switch-on-track-ring);
+}
+
+.gt-engine-switch[aria-checked="true"] .gt-engine-switch-thumb {
+  transform: translate(16px, -50%);
+  background-color: var(--gt-eng-switch-on-thumb);
+}
+
+.gt-engine-switch[aria-checked="true"]:focus-visible {
+  box-shadow:
+    0 0 0 1px var(--gt-sb-bg),
+    0 0 0 3px rgb(111 153 206 / 0.45);
+}
+
+.gt-engine-identity {
+  @apply min-w-0;
+}
+
+.gt-engine-name {
+  @apply min-w-0 text-[15px] font-semibold leading-none text-lightmode-100 dark:text-darkmode-100 truncate;
+}
+
+.gt-engine-header-score {
+  @apply pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2;
+  @apply text-center text-[20px] leading-none font-semibold tracking-tight tabular-nums text-lightmode-200 dark:text-darkmode-100;
+  @apply whitespace-nowrap;
+}
+
+.gt-engine-meta-stats {
+  @apply shrink-0 flex flex-col items-end justify-center gap-1;
+  @apply text-[11px] leading-none whitespace-nowrap text-right text-lightmode-300/85 dark:text-darkmode-300/85 tabular-nums;
+  @apply -my-1;
+}
+
+.gt-engine-meta-stat {
+  @apply whitespace-nowrap;
+}
+
+.gt-engine-meta-stat--depth {
+  @apply text-[11px];
+}
+
+.gt-engine-meta-value {
+  @apply font-semibold text-lightmode-200/90 dark:text-darkmode-200/90 tabular-nums;
+}
+
+.gt-engine-primary {
+  @apply pt-0.5;
+}
+
+.gt-engine-bar {
+  @apply border-y overflow-hidden;
+  border-color: var(--gt-sb-bd);
+  background-color: var(--gt-sb-panel-bg);
+}
+
+.gt-engine-bar-track {
+  @apply relative h-3.5 w-full min-h-0 flex;
+}
+
+.gt-engine-bar-segment--white {
+  @apply h-full transition-[width] duration-300;
+  background-color: var(--gt-eng-rail-white);
+}
+
+.gt-engine-bar-segment--black {
+  @apply h-full transition-[width] duration-300;
+  background-color: var(--gt-eng-rail-black);
+}
+
+.gt-engine-bar-marks {
+  @apply pointer-events-none absolute inset-0;
+}
+
+.gt-engine-bar-mark {
+  @apply absolute inset-y-0 w-px;
+  background-color: var(--gt-eng-rail-mark);
+}
+
+.gt-engine-bar-mark--center {
+  @apply w-[1.5px];
+  background-color: var(--gt-eng-rail-mark-center);
+}
+
+.gt-engine-pv {
+  @apply pt-1.5 px-2 flex flex-col;
+  border-top: 1px solid var(--gt-sb-div);
+}
+
+.gt-engine-pv-title {
+  @apply text-[10px] uppercase tracking-[0.08em] text-lightmode-400/80 dark:text-darkmode-400/80 mb-1;
+}
+
+.gt-engine-pv-body {
+  @apply h-12 overflow-y-auto pr-0.5;
+  @apply text-[13px] leading-[1.5] text-lightmode-200 dark:text-darkmode-200 break-words;
+}
+
+.gt-engine-pv-empty {
+  @apply text-lightmode-300/85 dark:text-darkmode-300/85;
+}
+
+.gt-engine-pv-token {
+  @apply cursor-default transition-colors hover:text-blue-400/80;
+}
+
+.gt-engine-pv-move-number {
+  @apply font-medium text-lightmode-300 dark:text-darkmode-300;
+}
+
+.gt-engine-pv-move {
+  @apply font-normal;
+}
+
+.gt-engine-stats {
+  @apply py-1 pb-1.5 px-2 mt-auto;
+  border-top: 1px solid var(--gt-sb-div);
+}
+
+.gt-engine-stats-grid {
+  @apply grid grid-cols-4 gap-1;
+}
+
+.gt-engine-stat-cell {
+  @apply text-center leading-tight;
+}
+
+.gt-engine-stat-label {
+  @apply text-[10px] text-lightmode-400/75 dark:text-darkmode-400/75;
+}
+
+.gt-engine-stat-value {
+  @apply ml-1.5 text-[12px] font-semibold text-lightmode-200 dark:text-darkmode-200 tabular-nums;
+}

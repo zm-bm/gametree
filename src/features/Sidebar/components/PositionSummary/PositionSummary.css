@@ -1,6 +1,6 @@
 /* Root */
 .gt-position-summary {
-  @apply space-y-1 text-[11px];
+  @apply space-y-1 text-[12px] p-2;
 }
 
 /* Metadata */
@@ -9,11 +9,11 @@
 }
 
 .gt-position-summary-title {
-  @apply min-w-0 truncate text-[13px] leading-snug font-semibold text-lightmode-200 dark:text-darkmode-200;
+  @apply min-w-0 truncate text-[14px] leading-snug font-semibold text-lightmode-200 dark:text-darkmode-200;
 }
 
 .gt-position-summary-eco {
-  @apply shrink-0 tabular-nums text-[11px] font-semibold text-lightmode-300 dark:text-darkmode-300;
+  @apply shrink-0 tabular-nums font-semibold text-lightmode-300 dark:text-darkmode-300;
 }
 
 .gt-position-summary-line-row {
@@ -21,7 +21,7 @@
 }
 
 .gt-position-summary-line {
-  @apply min-w-0 flex-1 text-[12px] leading-[1.35] text-lightmode-300 dark:text-darkmode-300;
+  @apply min-w-0 flex-1 leading-[1.35] text-lightmode-300 dark:text-darkmode-300;
 }
 
 .gt-position-summary-line--empty {

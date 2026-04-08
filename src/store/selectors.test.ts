@@ -11,6 +11,7 @@ vi.mock('../shared/tree', () => ({
 import {
   selectCurrentNode,
   selectCurrentVisibleId,
+  selectHoverMove,
   selectSideToMove,
   selectTree,
   selectTreeNodes,
@@ -81,5 +82,23 @@ describe('store selectors', () => {
   it('selectSideToMove maps fen turn marker to white/black', () => {
     expect(selectSideToMove.resultFunc('8/8/8/8/8/8/8/8 w - - 0 1')).toBe('white');
     expect(selectSideToMove.resultFunc('8/8/8/8/8/8/8/8 b - - 0 1')).toBe('black');
+  });
+
+  it('selectHoverMove falls back to move parsing when hovered id is not in tree nodes', () => {
+    const state = makeState({
+      ui: {
+        hoverId: 'e2e4,e7e5,g1f3',
+      },
+      tree: {
+        nodes: {},
+      },
+    });
+
+    const move = selectHoverMove(state);
+    expect(move).toMatchObject({
+      from: 'g1',
+      to: 'f3',
+      lan: 'g1f3',
+    });
   });
 });

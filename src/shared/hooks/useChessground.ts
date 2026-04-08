@@ -30,6 +30,7 @@ export function useBoardDisplay(fen: string) {
     return {
       displayFen,
       displayMove,
+      isHoveringMove: Boolean(hoverMove),
       check: new Chess(displayFen).inCheck(),
     };
   }, [fen, currentMove, hoverMove]);
@@ -60,9 +61,12 @@ export function useChessgroundConfig(): Config {
   const fen = useSelector((s: RootState) => selectBoardFen(s));
   const engineOutput = useSelector((s: RootState) => selectEngineOutput(s));
 
-  const { displayFen, displayMove, check } = useBoardDisplay(fen);
+  const { displayFen, displayMove, check, isHoveringMove } = useBoardDisplay(fen);
 
   const autoShapes = useMemo(() => {
+    if (isHoveringMove)
+      return [];
+
     const bestMove = engineOutput?.pv?.[0];
     if (!bestMove)
       return [];
@@ -72,7 +76,7 @@ export function useChessgroundConfig(): Config {
       dest: bestMove.slice(2, 4) as Square,
       brush: 'blue',
     }];
-  }, [engineOutput]);
+  }, [engineOutput, isHoveringMove]);
 
   const { turnColor, dests } = useChessState(displayFen);
 

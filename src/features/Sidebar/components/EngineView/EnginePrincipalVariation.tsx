@@ -7,12 +7,14 @@ import { ui } from "@/store/slices";
 interface EnginePrincipalVariationProps {
   fen: string;
   pvMoves: string[];
+  currentVisibleId?: string;
 }
 
 const PV_TITLE = "Principal variation";
-const NO_ANALYSIS_TEXT = "no analysis yet";
+const NO_ANALYSIS_TEXT = "";
+const MAX_PV_PLIES = 10;
 
-const EnginePrincipalVariation = ({ fen, pvMoves }: EnginePrincipalVariationProps) => {
+const EnginePrincipalVariation = ({ fen, pvMoves, currentVisibleId = "" }: EnginePrincipalVariationProps) => {
   const dispatch = useAppDispatch();
 
   const onMouseEnter = useCallback((e: React.MouseEvent<HTMLElement>) => {
@@ -28,7 +30,10 @@ const EnginePrincipalVariation = ({ fen, pvMoves }: EnginePrincipalVariationProp
     if (!pvMoves.length) return null;
 
     const chessForPv = new Chess(fen);
-    return pvMoves.map((move, moveIx) => {
+    const basePath = currentVisibleId ? currentVisibleId.split(",").filter(Boolean) : [];
+    let hoverPath = [...basePath];
+
+    return pvMoves.slice(0, MAX_PV_PLIES).map((move, moveIx) => {
       try {
         const chessMove = chessForPv.move(move);
         const isWhiteMove = chessMove.color === "w";
@@ -36,22 +41,24 @@ const EnginePrincipalVariation = ({ fen, pvMoves }: EnginePrincipalVariationProp
         const showMoveNumber = isWhiteMove || isFirstMove;
         const fullMoveToken = chessMove.before.split(" ")[5] || "1";
         const fullMoveNumber = Number.parseInt(fullMoveToken, 10);
+        hoverPath = [...hoverPath, chessMove.lan];
+        const hoverId = hoverPath.join(",");
 
         return (
           <span
             key={chessMove.lan + moveIx}
-            data-id={chessMove.lan}
-            className="cursor-default transition-colors hover:text-emerald-300"
+            data-id={hoverId}
+            className="gt-engine-pv-token"
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}
           >
             {showMoveNumber && (
-              <span className="font-bold text-slate-300/95">
+              <span className="gt-engine-pv-move-number">
                 {fullMoveNumber}
                 {isWhiteMove ? "." : "..."}
               </span>
             )}
-            <span className="font-thin">{chessMove.san}</span>
+            <span className="gt-engine-pv-move">{chessMove.san}</span>
             {" "}
             {isWhiteMove ? " " : <>&nbsp;</>}
           </span>
@@ -60,13 +67,13 @@ const EnginePrincipalVariation = ({ fen, pvMoves }: EnginePrincipalVariationProp
         return null;
       }
     });
-  }, [fen, pvMoves, onMouseEnter, onMouseLeave]);
+  }, [fen, pvMoves, currentVisibleId, onMouseEnter, onMouseLeave]);
 
   return (
-    <div className="space-y-2 py-4">
-      <div className="text-xs uppercase tracking-wide text-slate-400/85">{PV_TITLE}</div>
-      <div className="min-h-20 max-h-48 overflow-y-auto pr-1 text-base leading-7 text-slate-100/95 break-words">
-        {pvTokens ?? <span className="text-slate-400/85">{NO_ANALYSIS_TEXT}</span>}
+    <div className="gt-engine-pv">
+      <div className="gt-engine-pv-title">{PV_TITLE}</div>
+      <div className="gt-engine-pv-body">
+        {pvTokens ?? <span className="gt-engine-pv-empty">{NO_ANALYSIS_TEXT}</span>}
       </div>
     </div>
   );

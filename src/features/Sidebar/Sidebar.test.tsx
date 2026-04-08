@@ -27,26 +27,25 @@ vi.mock('./components/EngineView', () => ({
 }));
 
 describe('Sidebar', () => {
-  it('renders static chess board, fixed metadata strip, and a scroll region for theory + engine', () => {
+  it('renders static chess board and a fixed analysis stack for summary + engine + theory', () => {
     renderWithProviders(<Sidebar />);
 
     const chessBoard = screen.getByTestId('sidebar-chessboard');
     const summary = screen.getByTestId('sidebar-position-summary');
     const theory = screen.getByTestId('sidebar-position-theory');
     const engineView = screen.getByTestId('sidebar-engine-view');
-    const scrollArea = screen.getByTestId('sidebar-scroll');
-    const analysisDivider = screen.getByText('Analysis');
+    const stack = screen.getByTestId('sidebar-stack');
 
     expect(chessBoard).toBeInTheDocument();
     expect(summary).toBeInTheDocument();
     expect(theory).toBeInTheDocument();
     expect(engineView).toBeInTheDocument();
-    expect(analysisDivider).toBeInTheDocument();
 
-    expect(scrollArea).not.toContainElement(analysisDivider);
-    expect(scrollArea).toContainElement(theory);
-    expect(scrollArea).toContainElement(engineView);
-    expect(scrollArea).not.toContainElement(summary);
-    expect(scrollArea).not.toContainElement(chessBoard);
+    expect(stack).toContainElement(summary);
+    expect(stack).toContainElement(engineView);
+    expect(stack).toContainElement(theory);
+    expect(Boolean(summary.compareDocumentPosition(engineView) & Node.DOCUMENT_POSITION_FOLLOWING)).toBe(true);
+    expect(Boolean(engineView.compareDocumentPosition(theory) & Node.DOCUMENT_POSITION_FOLLOWING)).toBe(true);
+    expect(stack).not.toContainElement(chessBoard);
   });
 });

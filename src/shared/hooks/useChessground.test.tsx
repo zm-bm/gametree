@@ -53,6 +53,7 @@ describe('useChessground hooks', () => {
 
     expect(result.current.displayFen).toBe('rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1');
     expect(result.current.displayMove).toEqual(['d2', 'd4']);
+    expect(result.current.isHoveringMove).toBe(true);
   });
 
   it('builds chess state with correct turn and legal destinations', () => {
@@ -126,5 +127,45 @@ describe('useChessground hooks', () => {
     });
 
     expect(dispatchSpy).toHaveBeenCalledWith(ui.actions.setPromotionTarget(['a7', 'a8']));
+  });
+
+  it('hides engine best-move arrow while a move is hovered', () => {
+    const store = setupTestStore({
+      ui: {
+        boardFen: 'rn1qkbnr/pppbpppp/8/3p4/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+        currentId: 'a',
+        hoverId: 'b',
+      },
+      tree: {
+        nodes: {
+          a: createTestTreeStoreNode({
+            id: 'a',
+            move: createTestMove({
+              from: 'd2',
+              to: 'd4',
+              after: 'rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1',
+            }),
+          }),
+          b: createTestTreeStoreNode({
+            id: 'b',
+            move: createTestMove({
+              from: 'g1',
+              to: 'f3',
+              after: 'rnbqkbnr/pppppppp/8/8/8/5N2/PPPPPPPP/RNBQKB1R b KQkq - 1 1',
+            }),
+          }),
+        },
+      },
+      engine: {
+        output: { depth: 10, seldepth: 12, pv: ['d2d4'] },
+      },
+    });
+
+    const { result } = renderHook(
+      () => useChessgroundConfig(),
+      { wrapper: makeWrapper(store) }
+    );
+
+    expect(result.current.drawable?.autoShapes).toEqual([]);
   });
 });

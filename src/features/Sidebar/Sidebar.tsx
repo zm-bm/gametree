@@ -34,9 +34,8 @@ const Sidebar = () => {
       </div>
 
       <div className="gt-sidebar-analysis-shell">
-
-        <div className="gt-sidebar-context-strip gt-sidebar-card gt-sidebar-sections">
-          <div>
+        <div className="gt-sidebar-stack" data-testid="sidebar-stack">
+          <div className="gt-sidebar-card gt-sidebar-card--summary">
             <PositionSummary
               openingName={openingName}
               ecoCode={ecoCode}
@@ -48,28 +47,14 @@ const Sidebar = () => {
               totalGames={positionStats?.total ?? 0}
             />
           </div>
-        </div>
 
-        <div className="gt-sidebar-analysis-divider" aria-hidden="true">
-          <span className="gt-sidebar-analysis-divider-label">Analysis</span>
-          <span className="gt-sidebar-analysis-divider-line" />
-        </div>
-
-        <div className="gt-sidebar-scroll-region" data-testid="sidebar-scroll">
-          <div className="gt-sidebar-stack">
-            <div className="gt-sidebar-card gt-sidebar-sections">
-              <div>
-                <PositionTheory
-                  currentVisibleId={currentVisibleId}
-                  openingName={openingName}
-                  recentLine={recentLine}
-                  sanMoves={sanMoves}
-                />
-              </div>
-            </div>
-            <div className="gt-sidebar-card gt-sidebar-sections">
-              <EngineView />
-            </div>
+          <div className="gt-sidebar-card gt-sidebar-card--engine">
+            <EngineView />
+          </div>
+          <div className="gt-sidebar-card gt-sidebar-card--theory">
+            <PositionTheory
+              currentVisibleId={currentVisibleId}
+            />
           </div>
         </div>
       </div>

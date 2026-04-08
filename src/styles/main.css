@@ -32,6 +32,15 @@
     --gt-sb-theory-bd-expanded: rgb(148 178 211 / 0.3);
     --gt-sb-theory-fade-from: rgb(60 87 121 / 0.46);
     --gt-sb-theory-fade-via: rgb(88 120 158 / 0.22);
+    --gt-eng-rail-white: rgb(241 245 249 / 0.92);
+    --gt-eng-rail-black: rgb(15 23 42 / 0.66);
+    --gt-eng-rail-mark: rgb(82 114 152 / 0.5);
+    --gt-eng-rail-mark-center: rgb(56 84 116 / 0.76);
+    --gt-eng-switch-on-border: rgb(113 171 236 / 0.8);
+    --gt-eng-switch-on-bg: rgb(82 148 224 / 0.42);
+    --gt-eng-switch-on-track: rgb(58 111 184 / 0.34);
+    --gt-eng-switch-on-track-ring: rgb(177 214 248 / 0.28);
+    --gt-eng-switch-on-thumb: rgb(223 238 255 / 0.98);
     --gt-sb-scroll-thumb: #a8a8b0;
 }
 
@@ -57,6 +66,15 @@
         --gt-sb-theory-bd-expanded: rgb(141 207 255 / 0.18);
         --gt-sb-theory-fade-from: rgb(53 79 112 / 0.3);
         --gt-sb-theory-fade-via: rgb(72 106 145 / 0.14);
+        --gt-eng-rail-white: rgb(236 242 251 / 0.92);
+        --gt-eng-rail-black: rgb(12 17 28 / 0.84);
+        --gt-eng-rail-mark: rgb(88 128 170 / 0.5);
+        --gt-eng-rail-mark-center: rgb(58 88 122 / 0.78);
+        --gt-eng-switch-on-border: rgb(129 193 255 / 0.82);
+        --gt-eng-switch-on-bg: rgb(76 147 228 / 0.46);
+        --gt-eng-switch-on-track: rgb(47 101 179 / 0.4);
+        --gt-eng-switch-on-track-ring: rgb(164 218 255 / 0.3);
+        --gt-eng-switch-on-thumb: rgb(228 244 255 / 0.99);
         --gt-sb-scroll-thumb: #9ca9bc;
     }
 }
@@ -83,6 +101,15 @@
     --gt-sb-theory-bd-expanded: rgb(141 207 255 / 0.18);
     --gt-sb-theory-fade-from: rgb(53 79 112 / 0.3);
     --gt-sb-theory-fade-via: rgb(72 106 145 / 0.14);
+    --gt-eng-rail-white: rgb(236 242 251 / 0.92);
+    --gt-eng-rail-black: rgb(12 17 28 / 0.84);
+    --gt-eng-rail-mark: rgb(88 128 170 / 0.5);
+    --gt-eng-rail-mark-center: rgb(58 88 122 / 0.78);
+    --gt-eng-switch-on-border: rgb(129 193 255 / 0.82);
+    --gt-eng-switch-on-bg: rgb(76 147 228 / 0.46);
+    --gt-eng-switch-on-track: rgb(47 101 179 / 0.4);
+    --gt-eng-switch-on-track-ring: rgb(164 218 255 / 0.3);
+    --gt-eng-switch-on-thumb: rgb(228 244 255 / 0.99);
     --gt-sb-panel-shadow: 0 12px 24px rgba(0,0,0,0.62);
     --gt-sb-scroll-thumb: #9ca9bc;
 }

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 
-import { filterTheorySnippets } from "@/shared/theory";
 import { TheoryLookupResult, TheorySnippet } from "@/types";
 
 const EMPTY_THEORY_RESULT: TheoryLookupResult = {
@@ -14,18 +13,12 @@ type UseDisplayTheoryArgs = {
   theoryData: TheoryLookupResult | undefined;
   theoryLoading: boolean;
   theoryIsError: boolean;
-  openingName: string;
-  recentLine: string;
-  sanMoves: string[];
 };
 
 export const useDisplayTheory = ({
   theoryData,
   theoryLoading,
   theoryIsError,
-  openingName,
-  recentLine,
-  sanMoves,
 }: UseDisplayTheoryArgs) => {
   const [displayTheoryData, setDisplayTheoryData] = useState<TheoryLookupResult | null>(null);
   const [displayTheoryError, setDisplayTheoryError] = useState(false);
@@ -40,23 +33,18 @@ export const useDisplayTheory = ({
     }
 
     setDisplayTheoryError(false);
-    const filteredSnippets = theoryData?.snippets
-      ? filterTheorySnippets(theoryData.snippets, openingName, recentLine, sanMoves)
-      : [];
-
     if (!theoryData) {
       setDisplayTheoryData({
         ...EMPTY_THEORY_RESULT,
-        snippets: filteredSnippets,
+        snippets: [],
       });
       return;
     }
 
     setDisplayTheoryData({
       ...theoryData,
-      snippets: filteredSnippets,
     });
-  }, [openingName, recentLine, sanMoves, theoryData, theoryIsError, theoryLoading]);
+  }, [theoryData, theoryIsError, theoryLoading]);
 
   return {
     displayTheoryData,
