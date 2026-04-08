@@ -1,8 +1,9 @@
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
 
+import { useHoverIntent } from "@/features/Sidebar/hooks/useHoverIntent";
 import { useOpeningEntry } from "@/features/Sidebar/hooks/useOpeningEntry";
-import { formatMoveLine, getSanHistoryFromPathId } from "@/shared/chess";
+import { buildMoveLineTokens, formatMoveLine, getSanHistoryFromPathId } from "@/shared/chess";
 import { cn } from "@/shared/cn";
 import { RootState } from "@/store";
 import { selectCurrentVisibleId, selectCurrentVisibleNodeData, selectTreeSource } from "@/store/selectors";
@@ -18,12 +19,18 @@ const PositionSummary = () => {
   const currentNode = useSelector((s: RootState) => selectCurrentVisibleNodeData(s));
   const source = useSelector((s: RootState) => selectTreeSource(s));
   const ecoEntry = useOpeningEntry(currentVisibleId);
+  const { onMouseEnter, onMouseLeave } = useHoverIntent();
 
   const sanMoves = useMemo(() => {
     if (!currentVisibleId) return [];
     return getSanHistoryFromPathId(currentVisibleId);
   }, [currentVisibleId]);
+  const moveLineTokens = useMemo(() => buildMoveLineTokens(sanMoves), [sanMoves]);
   const recentLine = useMemo(() => formatMoveLine(sanMoves), [sanMoves]);
+  const currentPathSegments = useMemo(
+    () => currentVisibleId.split(",").filter(Boolean),
+    [currentVisibleId],
+  );
 
   const openingName = ecoEntry?.name || "Root position";
   const ecoCode = ecoEntry?.eco || "-";
@@ -51,7 +58,23 @@ const PositionSummary = () => {
 
       <div className="gt-position-summary-line-row">
         <div className={cn("gt-position-summary-line", !hasSanMoves && "gt-position-summary-line--empty")}>
-          {recentLine}
+          {!hasSanMoves ? recentLine : moveLineTokens.map((token, idx) => {
+            const hoverId = currentPathSegments.slice(0, token.plyIndex + 1).join(",");
+            return (
+              <span key={`${token.plyIndex}-${token.san}-${hoverId}`}>
+                {token.prefix}
+                <span
+                  data-id={hoverId}
+                  className="gt-position-summary-line-token"
+                  onMouseEnter={onMouseEnter}
+                  onMouseLeave={onMouseLeave}
+                >
+                  {token.san}
+                </span>
+                {idx < moveLineTokens.length - 1 ? " " : null}
+              </span>
+            );
+          })}
         </div>
         {gameCountLabel ? (
           <span className="gt-position-summary-games">{gameCountLabel}</span>

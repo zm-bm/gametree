@@ -24,6 +24,10 @@
   @apply min-w-0 leading-[1.35] break-words text-lightmode-300 dark:text-darkmode-300;
 }
 
+.gt-position-summary-line-token {
+  @apply cursor-default transition-colors hover:text-blue-400/80;
+}
+
 .gt-position-summary-line--empty {
   @apply italic text-lightmode-400 dark:text-darkmode-400;
 }

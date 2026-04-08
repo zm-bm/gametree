@@ -1,12 +1,13 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { fireEvent, render, screen } from "@testing-library/react";
 
-import PositionSummary from "./PositionSummary";
 import { TreeSource, TreeStoreNode } from "@/types";
 import { createTestNodeStats, createTestTreeStoreNode } from "@/test/treeFixtures";
 
-const { mockUseOpeningEntry } = vi.hoisted(() => ({
+const { mockUseOpeningEntry, mockDispatch, mockSetHover } = vi.hoisted(() => ({
   mockUseOpeningEntry: vi.fn(),
+  mockDispatch: vi.fn(),
+  mockSetHover: vi.fn((hoverId: string | null) => ({ type: "ui/setHover", payload: hoverId })),
 }));
 
 type SelectorState = {
@@ -23,6 +24,18 @@ const selectorState: SelectorState = {
   }),
   source: "otb",
 };
+
+vi.mock("@/store", () => ({
+  useAppDispatch: () => mockDispatch,
+}));
+
+vi.mock("@/store/slices", () => ({
+  ui: {
+    actions: {
+      setHover: (hoverId: string | null) => mockSetHover(hoverId),
+    },
+  },
+}));
 
 vi.mock("@/store/selectors", () => ({
   selectCurrentVisibleId: (state: { __positionSummary: SelectorState }) => state.__positionSummary.currentVisibleId,
@@ -43,8 +56,11 @@ vi.mock("@/features/Sidebar/hooks/useOpeningEntry", () => ({
   useOpeningEntry: (...args: unknown[]) => mockUseOpeningEntry(...args),
 }));
 
+import PositionSummary from "./PositionSummary";
+
 describe("PositionSummary", () => {
   beforeEach(() => {
+    vi.useFakeTimers();
     selectorState.currentVisibleId = "e2e4,c7c5,g1f3,d7d6";
     selectorState.currentNode = createTestTreeStoreNode({
       loading: false,
@@ -53,10 +69,17 @@ describe("PositionSummary", () => {
     selectorState.source = "otb";
 
     mockUseOpeningEntry.mockReset();
+    mockDispatch.mockReset();
+    mockSetHover.mockReset();
+    mockSetHover.mockImplementation((hoverId: string | null) => ({ type: "ui/setHover", payload: hoverId }));
     mockUseOpeningEntry.mockReturnValue({
       name: "Sicilian Defense: Najdorf Variation",
       eco: "B90",
     });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it("renders opening, eco, move line, and compact game count", () => {
@@ -64,7 +87,10 @@ describe("PositionSummary", () => {
 
     expect(screen.getByText("Sicilian Defense: Najdorf Variation")).toBeInTheDocument();
     expect(screen.getByText("B90")).toBeInTheDocument();
-    expect(screen.getByText("1. e4 c5 2. Nf3 d6")).toBeInTheDocument();
+    expect(screen.getByText("e4")).toBeInTheDocument();
+    expect(screen.getByText("c5")).toBeInTheDocument();
+    expect(screen.getByText("Nf3")).toBeInTheDocument();
+    expect(screen.getByText("d6")).toBeInTheDocument();
     expect(screen.getByText("715.5K games")).toBeInTheDocument();
     expect(screen.queryByText("No game count available.")).not.toBeInTheDocument();
   });
@@ -95,5 +121,63 @@ describe("PositionSummary", () => {
     selectorState.currentNode = null;
     rerender(<PositionSummary />);
     expect(screen.getByText("No opening data for this position yet.")).toBeInTheDocument();
+  });
+
+  it("dispatches delayed hover enter and leave for SAN tokens", () => {
+    render(<PositionSummary />);
+    const moveToken = screen.getByText("Nf3").closest("span") as HTMLSpanElement;
+
+    fireEvent.mouseEnter(moveToken);
+    vi.advanceTimersByTime(199);
+    expect(mockSetHover).not.toHaveBeenCalledWith("e2e4,c7c5,g1f3");
+
+    vi.advanceTimersByTime(1);
+    expect(mockSetHover).toHaveBeenCalledWith("e2e4,c7c5,g1f3");
+
+    fireEvent.mouseLeave(moveToken);
+    vi.advanceTimersByTime(199);
+    expect(mockSetHover).not.toHaveBeenCalledWith(null);
+
+    vi.advanceTimersByTime(1);
+    expect(mockSetHover).toHaveBeenCalledWith(null);
+  });
+
+  it("does not dispatch SAN hover id when mouse passes quickly over a move", () => {
+    render(<PositionSummary />);
+    const moveToken = screen.getByText("e4").closest("span") as HTMLSpanElement;
+
+    fireEvent.mouseEnter(moveToken);
+    vi.advanceTimersByTime(50);
+    fireEvent.mouseLeave(moveToken);
+    vi.runAllTimers();
+
+    expect(mockSetHover).not.toHaveBeenCalledWith("e2e4");
+    expect(mockSetHover).toHaveBeenCalledWith(null);
+    expect(mockDispatch).toHaveBeenCalledTimes(1);
+  });
+
+  it("cancels delayed hover clear on quick re-enter", () => {
+    render(<PositionSummary />);
+    const moveToken = screen.getByText("e4").closest("span") as HTMLSpanElement;
+
+    fireEvent.mouseEnter(moveToken);
+    vi.advanceTimersByTime(220);
+    fireEvent.mouseLeave(moveToken);
+    vi.advanceTimersByTime(100);
+    fireEvent.mouseEnter(moveToken);
+    vi.advanceTimersByTime(220);
+
+    expect(mockSetHover).toHaveBeenCalledWith("e2e4");
+    expect(mockSetHover).not.toHaveBeenCalledWith(null);
+  });
+
+  it("dispatches correct hover id for later SAN token", () => {
+    render(<PositionSummary />);
+    const moveToken = screen.getByText("d6").closest("span") as HTMLSpanElement;
+
+    fireEvent.mouseEnter(moveToken);
+    vi.advanceTimersByTime(220);
+
+    expect(mockSetHover).toHaveBeenCalledWith("e2e4,c7c5,g1f3,d7d6");
   });
 });
