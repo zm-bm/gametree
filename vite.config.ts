@@ -38,6 +38,15 @@ export default defineConfig({
       }
     }
   },
+  worker: {
+    rollupOptions: {
+      output: {
+        entryFileNames: "assets/[name].js",
+        chunkFileNames: "assets/[name].js",
+        assetFileNames: "assets/[name][extname]",
+      },
+    },
+  },
   test: {
     environment: 'jsdom',
     setupFiles: './src/test/vitest.setup.ts'
