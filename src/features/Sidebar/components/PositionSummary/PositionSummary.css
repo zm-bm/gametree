@@ -21,7 +21,7 @@
 }
 
 .gt-position-summary-line {
-  @apply min-w-0 flex-1 leading-[1.35] text-lightmode-300 dark:text-darkmode-300;
+  @apply min-w-0 leading-[1.35] break-words text-lightmode-300 dark:text-darkmode-300;
 }
 
 .gt-position-summary-line--empty {
@@ -29,10 +29,9 @@
 }
 
 .gt-position-summary-games {
-  @apply shrink-0 text-[10px] text-lightmode-400 dark:text-darkmode-400;
+  @apply self-start shrink-0 text-[10px] leading-none text-lightmode-400 dark:text-darkmode-400;
 }
 
 .gt-position-summary-status {
   @apply text-[10px] italic text-lightmode-400 dark:text-darkmode-400;
 }
-
