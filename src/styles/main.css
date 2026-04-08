@@ -203,7 +203,7 @@
         @apply border rounded-md transition-colors;
         @apply overflow-hidden backdrop-blur-sm;
         @apply text-lightmode-800 dark:text-darkmode-200;
-        @apply bg-lightmode-50/80 dark:bg-darkmode-900/80;
+        @apply bg-lightmode-50/90 dark:bg-darkmode-900/95;
         border-color: var(--gt-sf-bd);
     }
 

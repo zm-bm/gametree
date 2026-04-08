@@ -1,11 +1,14 @@
 import { useEffect, useRef } from "react";
+import { useSelector } from "react-redux";
 
 import { useDisplayTheory } from "@/features/Sidebar/hooks/useDisplayTheory";
+import { RootState } from "@/store";
+import { selectCurrentVisibleId } from "@/store/selectors";
 import { theoryApi } from "@/store/theoryApi";
 import "./PositionTheory.css";
 
 type PositionTheoryProps = {
-  currentVisibleId: string;
+  currentVisibleId?: string;
 };
 
 const getTheoryPlaceholderText = (hasSettledTheory: boolean, hasTheoryError: boolean) => {
@@ -15,11 +18,14 @@ const getTheoryPlaceholderText = (hasSettledTheory: boolean, hasTheoryError: boo
 };
 
 const PositionTheory = ({ currentVisibleId }: PositionTheoryProps) => {
+  const selectedCurrentVisibleId = useSelector((s: RootState) => selectCurrentVisibleId(s));
+  const resolvedCurrentVisibleId = currentVisibleId ?? selectedCurrentVisibleId;
+
   const {
     data: theoryData,
     isFetching: theoryLoading,
     isError: theoryIsError,
-  } = theoryApi.useGetTheoryByNodeQuery({ nodeId: currentVisibleId || "" });
+  } = theoryApi.useGetTheoryByNodeQuery({ nodeId: resolvedCurrentVisibleId || "" });
 
   const {
     displayTheoryData,
@@ -41,7 +47,7 @@ const PositionTheory = ({ currentVisibleId }: PositionTheoryProps) => {
   useEffect(() => {
     if (!theoryBoxRef.current) return;
     theoryBoxRef.current.scrollTop = 0;
-  }, [currentVisibleId]);
+  }, [resolvedCurrentVisibleId]);
 
   return (
     <div className="gt-position-theory">

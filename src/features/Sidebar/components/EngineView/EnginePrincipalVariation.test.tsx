@@ -1,21 +1,17 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
+import type { MouseEvent } from "react";
 
-const { mockDispatch, mockSetHover } = vi.hoisted(() => ({
-  mockDispatch: vi.fn(),
-  mockSetHover: vi.fn((hoverId: string | null) => ({ type: "ui/setHover", payload: hoverId })),
+const { mockOnHoverEnter, mockOnHoverLeave } = vi.hoisted(() => ({
+  mockOnHoverEnter: vi.fn(),
+  mockOnHoverLeave: vi.fn(),
 }));
 
-vi.mock("@/store", () => ({
-  useAppDispatch: () => mockDispatch,
-}));
-
-vi.mock("@/store/slices", () => ({
-  ui: {
-    actions: {
-      setHover: (hoverId: string | null) => mockSetHover(hoverId),
-    },
-  },
+vi.mock("@/features/Sidebar/hooks/useHoverIntent", () => ({
+  useHoverIntent: () => ({
+    onMouseEnter: (e: MouseEvent<HTMLElement>) => mockOnHoverEnter(e.currentTarget.getAttribute("data-id")),
+    onMouseLeave: () => mockOnHoverLeave(),
+  }),
 }));
 
 import EnginePrincipalVariation from "./EnginePrincipalVariation";
@@ -24,9 +20,8 @@ const START_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
 describe("EnginePrincipalVariation", () => {
   beforeEach(() => {
-    mockDispatch.mockReset();
-    mockSetHover.mockReset();
-    mockSetHover.mockImplementation((hoverId: string | null) => ({ type: "ui/setHover", payload: hoverId }));
+    mockOnHoverEnter.mockReset();
+    mockOnHoverLeave.mockReset();
   });
 
   it("renders PV moves with numbering", () => {
@@ -44,33 +39,7 @@ describe("EnginePrincipalVariation", () => {
     expect(container.querySelector(".gt-engine-pv-body")).toBeInTheDocument();
   });
 
-  it("dispatches hover actions on PV token enter/leave and shows empty state", () => {
-    const { rerender } = render(
-      <EnginePrincipalVariation
-        fen={START_FEN}
-        pvMoves={["e2e4"]}
-      />,
-    );
-
-    const token = screen.getByText("e4").closest("span") as HTMLSpanElement;
-    fireEvent.mouseEnter(token);
-    fireEvent.mouseLeave(token);
-
-    expect(mockSetHover).toHaveBeenCalledWith("e2e4");
-    expect(mockSetHover).toHaveBeenCalledWith(null);
-    expect(mockDispatch).toHaveBeenCalledTimes(2);
-
-    rerender(
-      <EnginePrincipalVariation
-        fen={START_FEN}
-        pvMoves={[]}
-      />,
-    );
-
-    expect(screen.queryByText("e2e4")).not.toBeInTheDocument();
-  });
-
-  it("dispatches full comma-joined path id for hovered PV moves", () => {
+  it("passes computed hover ids and leave events to hook handlers", () => {
     render(
       <EnginePrincipalVariation
         fen={START_FEN}
@@ -81,8 +50,10 @@ describe("EnginePrincipalVariation", () => {
 
     const secondToken = screen.getByText("e6").closest("span") as HTMLSpanElement;
     fireEvent.mouseEnter(secondToken);
+    fireEvent.mouseLeave(secondToken);
 
-    expect(mockSetHover).toHaveBeenCalledWith("d2d4,d7d5,c2c4,e7e6");
+    expect(mockOnHoverEnter).toHaveBeenCalledWith("d2d4,d7d5,c2c4,e7e6");
+    expect(mockOnHoverLeave).toHaveBeenCalledTimes(1);
   });
 
   it("caps rendered PV to 10 plies", () => {

@@ -1,7 +1,7 @@
 import { DEFAULT_POSITION } from 'chess.js';
 import { describe, expect, it, vi } from 'vitest';
 
-import { formatMoveLine, getFenFromPathId, getMoveFromPathId, getSanHistoryFromPathId } from './path';
+import { buildMoveLineTokens, formatMoveLine, getFenFromPathId, getMoveFromPathId, getSanHistoryFromPathId } from './path';
 
 describe('chess path helpers', () => {
   it('replays a path id to recover the last move and fen', () => {
@@ -35,5 +35,14 @@ describe('chess path helpers', () => {
     expect(formatMoveLine([])).toBe('Start position');
     expect(formatMoveLine(['e4'])).toBe('1. e4');
     expect(formatMoveLine(['e4', 'c5', 'Nf3'])).toBe('1. e4 c5 2. Nf3');
+  });
+
+  it('builds structured move-line tokens used by formatting/rendering', () => {
+    expect(buildMoveLineTokens([])).toEqual([]);
+    expect(buildMoveLineTokens(['e4', 'c5', 'Nf3'])).toEqual([
+      { plyIndex: 0, moveNumber: 1, prefix: '1. ', san: 'e4' },
+      { plyIndex: 1, moveNumber: 1, prefix: '', san: 'c5' },
+      { plyIndex: 2, moveNumber: 2, prefix: '2. ', san: 'Nf3' },
+    ]);
   });
 });

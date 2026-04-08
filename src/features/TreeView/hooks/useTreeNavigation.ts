@@ -18,7 +18,7 @@ export const SPRING_CONFIG = {
   clamp: true,
 } as const;
 
-export const ZOOM_BUTTON_SCALE_STEP = 1.12;
+export const ZOOM_BUTTON_SCALE_STEP = 1.3;
 export const PAN_TARGET_X_RATIO = 1 / 3;
 export const PAN_TARGET_Y_RATIO = 1 / 2;
 

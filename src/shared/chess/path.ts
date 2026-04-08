@@ -3,6 +3,13 @@ import { Chess, DEFAULT_POSITION } from "chess.js";
 import { Id } from "@/types";
 import { serializeMove } from "./move";
 
+export type MoveLineToken = {
+  plyIndex: number;
+  moveNumber: number;
+  prefix: string;
+  san: string;
+};
+
 export function getMoveFromPathId(nodeId: Id) {
   try {
     const chess = new Chess(DEFAULT_POSITION);
@@ -32,27 +39,35 @@ export function getSanHistoryFromPathId(nodeId: Id) {
   }
 }
 
+export function buildMoveLineTokens(sanMoves: string[]): MoveLineToken[] {
+  if (!sanMoves.length) return [];
+
+  const tokens: MoveLineToken[] = [];
+
+  for (let idx = 0; idx < sanMoves.length; idx += 1) {
+    const moveNumber = Math.floor(idx / 2) + 1;
+    const isWhiteMove = idx % 2 === 0;
+    const hasVisibleWhiteMove = idx > 0 && (idx - 1) % 2 === 0;
+    const prefix = isWhiteMove
+      ? `${moveNumber}. `
+      : hasVisibleWhiteMove
+        ? ""
+        : `${moveNumber}... `;
+
+    tokens.push({
+      plyIndex: idx,
+      moveNumber,
+      prefix,
+      san: sanMoves[idx],
+    });
+  }
+
+  return tokens;
+}
+
 export function formatMoveLine(sanMoves: string[]) {
   if (!sanMoves.length) return "Start position";
 
-  const chunks: string[] = [];
-
-  for (let idx = 0; idx < sanMoves.length; idx += 1) {
-    const moveNo = Math.floor(idx / 2) + 1;
-    const san = sanMoves[idx];
-
-    if (idx % 2 === 0) {
-      chunks.push(`${moveNo}. ${san}`);
-      continue;
-    }
-
-    const hasVisibleWhiteMove = idx > 0 && (idx - 1) % 2 === 0;
-    if (hasVisibleWhiteMove && chunks.length > 0) {
-      chunks[chunks.length - 1] = `${chunks[chunks.length - 1]} ${san}`;
-    } else {
-      chunks.push(`${moveNo}... ${san}`);
-    }
-  }
-
-  return chunks.join(" ");
+  const tokens = buildMoveLineTokens(sanMoves);
+  return tokens.map((token, idx) => `${idx > 0 ? " " : ""}${token.prefix}${token.san}`).join("");
 }

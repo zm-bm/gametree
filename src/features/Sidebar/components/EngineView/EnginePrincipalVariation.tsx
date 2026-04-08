@@ -1,8 +1,7 @@
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import { Chess } from "chess.js";
 
-import { useAppDispatch } from "@/store";
-import { ui } from "@/store/slices";
+import { useHoverIntent } from "@/features/Sidebar/hooks/useHoverIntent";
 
 interface EnginePrincipalVariationProps {
   fen: string;
@@ -15,16 +14,7 @@ const NO_ANALYSIS_TEXT = "";
 const MAX_PV_PLIES = 10;
 
 const EnginePrincipalVariation = ({ fen, pvMoves, currentVisibleId = "" }: EnginePrincipalVariationProps) => {
-  const dispatch = useAppDispatch();
-
-  const onMouseEnter = useCallback((e: React.MouseEvent<HTMLElement>) => {
-    const hoverId = e.currentTarget.getAttribute("data-id");
-    dispatch(ui.actions.setHover(hoverId));
-  }, [dispatch]);
-
-  const onMouseLeave = useCallback(() => {
-    dispatch(ui.actions.setHover(null));
-  }, [dispatch]);
+  const { onMouseEnter, onMouseLeave } = useHoverIntent();
 
   const pvTokens = useMemo(() => {
     if (!pvMoves.length) return null;

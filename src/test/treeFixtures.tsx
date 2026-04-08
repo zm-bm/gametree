@@ -2,7 +2,7 @@ import { TransformMatrix } from '@visx/zoom/lib/types';
 import type { HierarchyPointNode } from '@visx/hierarchy/lib/types';
 import type { ReactElement } from 'react';
 
-import { Move, TreeStoreNode, TreeViewNode, TreeZoom } from '@/types';
+import { Move, NodeStats, SourceStats, TreeSource, TreeStoreNode, TreeViewNode, TreeZoom } from '@/types';
 import { renderWithProviders } from '@/test/renderWithProviders';
 import type { RenderOptionsWithStore } from '@/test/renderWithProviders';
 import { TreeDimensionsContext, ZoomContext } from '@/features/TreeView/context';
@@ -40,20 +40,33 @@ export function createTestZoom(scale = 2, translateX = 0, translateY = 0): TreeZ
   } as unknown as TreeZoom;
 }
 
+export function createTestSourceStats(overrides: Partial<SourceStats> = {}): SourceStats {
+  return {
+    white: 0,
+    draws: 0,
+    black: 0,
+    total: 0,
+    ...overrides,
+  };
+}
+
+export function createTestNodeStats(
+  overrides: Partial<Record<TreeSource, Partial<SourceStats>>> = {}
+): NodeStats {
+  return {
+    otb: createTestSourceStats(overrides.otb),
+    online: createTestSourceStats(overrides.online),
+  };
+}
+
 export function createTestTreeViewNode(overrides: Partial<TreeViewNode> = {}): TreeViewNode {
   return {
     id: '',
     childrenLoaded: true,
     loading: false,
     move: null,
-    edgeStats: {
-      otb: { white: 0, draws: 0, black: 0, total: 0 },
-      online: { white: 0, draws: 0, black: 0, total: 0 },
-    },
-    positionStats: {
-      otb: { white: 0, draws: 0, black: 0, total: 0 },
-      online: { white: 0, draws: 0, black: 0, total: 0 },
-    },
+    edgeStats: createTestNodeStats(),
+    positionStats: createTestNodeStats(),
     white: 0,
     draws: 0,
     black: 0,
@@ -70,14 +83,8 @@ export function createTestTreeStoreNode(overrides: Partial<TreeStoreNode> = {}):
     childrenLoaded: true,
     loading: false,
     move: null,
-    edgeStats: {
-      otb: { white: 0, draws: 0, black: 0, total: 0 },
-      online: { white: 0, draws: 0, black: 0, total: 0 },
-    },
-    positionStats: {
-      otb: { white: 0, draws: 0, black: 0, total: 0 },
-      online: { white: 0, draws: 0, black: 0, total: 0 },
-    },
+    edgeStats: createTestNodeStats(),
+    positionStats: createTestNodeStats(),
     children: [],
     ...overrides,
   };
