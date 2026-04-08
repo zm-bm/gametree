@@ -19,15 +19,6 @@ Build
 npm run build
 ```
 
-## Roadmap
-
-- feat(move-sounds): better move sounds
-- chore: add code formatter + pre-commit
-- feat(tree-node): highlight best engine move on the tree
-- feat(tree-options): option for tree links colored by engine eval
-- feat(tree-options): option for tree nodes sorted by frequency, win rate, eval
-
-
 ## Acknowledgments
 
 - [chessground](https://github.com/lichess-org/chessground) - Chess board
@@ -35,3 +26,7 @@ npm run build
 - [Stockfish](https://github.com/official-stockfish/Stockfish) - Chess engine
 - [Lumbra's GigaBase](https://lumbrasgigabase.com/) - Game data
 - [visx](https://airbnb.io/visx/) - React/D3 primitives
+
+## License
+
+MIT. See [LICENSE](./LICENSE).
