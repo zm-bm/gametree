@@ -37,7 +37,7 @@ export const HelpModal = ({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[120] bg-black/45 backdrop-blur-[1px]"
+      className="fixed inset-0 z-[120] bg-black/50 backdrop-blur-[1px]"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
