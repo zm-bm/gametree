@@ -1,21 +1,7 @@
 import { renderHook, waitFor } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import type { TheoryLookupResult, TheorySnippet } from '@/types';
-
-const { mockFilterTheorySnippets } = vi.hoisted(() => ({
-  mockFilterTheorySnippets: vi.fn(),
-}));
-
-vi.mock('@/shared/theory', async () => {
-  const actual = await vi.importActual<typeof import('@/shared/theory')>('@/shared/theory');
-  return {
-    ...actual,
-    filterTheorySnippets: (
-      ...args: Parameters<typeof actual.filterTheorySnippets>
-    ) => mockFilterTheorySnippets(...args),
-  };
-});
 
 import { useDisplayTheory } from './useDisplayTheory';
 
@@ -38,30 +24,16 @@ const makeArgs = (
     theoryData: TheoryLookupResult | undefined;
     theoryLoading: boolean;
     theoryIsError: boolean;
-    openingName: string;
-    recentLine: string;
-    sanMoves: string[];
   }> = {},
 ) => ({
   theoryData: makeTheoryResult(),
   theoryLoading: false,
   theoryIsError: false,
-  openingName: "King's Pawn Game",
-  recentLine: '1. e4',
-  sanMoves: ['e4'],
   ...overrides,
 });
 
 describe('useDisplayTheory', () => {
-  beforeEach(() => {
-    mockFilterTheorySnippets.mockReset();
-    mockFilterTheorySnippets.mockImplementation((snippets) => snippets);
-  });
-
-  it('returns settled filtered theory data when lookup succeeds', async () => {
-    const filtered = [baseSnippet('Filtered theory text')];
-    mockFilterTheorySnippets.mockReturnValue(filtered);
-
+  it('returns settled theory data when lookup succeeds', async () => {
     const args = makeArgs();
     const { result } = renderHook(
       (hookArgs: ReturnType<typeof makeArgs>) => useDisplayTheory(hookArgs),
@@ -71,17 +43,10 @@ describe('useDisplayTheory', () => {
     await waitFor(() => {
       expect(result.current.hasSettledTheory).toBe(true);
       expect(result.current.displayTheoryError).toBe(false);
-      expect(result.current.theorySnippets).toEqual(filtered);
-      expect(result.current.displayTheoryData?.snippets).toEqual(filtered);
+      expect(result.current.theorySnippets).toEqual(args.theoryData?.snippets ?? []);
+      expect(result.current.displayTheoryData?.snippets).toEqual(args.theoryData?.snippets ?? []);
       expect(result.current.displayTheoryData?.sourceTitle).toBe('Chess_Opening_Theory/1._e4');
     });
-
-    expect(mockFilterTheorySnippets).toHaveBeenCalledWith(
-      args.theoryData?.snippets ?? [],
-      "King's Pawn Game",
-      '1. e4',
-      ['e4'],
-    );
   });
 
   it('settles to an empty non-error result when no data is returned', async () => {
@@ -121,8 +86,6 @@ describe('useDisplayTheory', () => {
       expect(result.current.displayTheoryData).toBeNull();
       expect(result.current.theorySnippets).toEqual([]);
     });
-
-    expect(mockFilterTheorySnippets).not.toHaveBeenCalled();
   });
 
   it('keeps previous settled display while loading next query', async () => {

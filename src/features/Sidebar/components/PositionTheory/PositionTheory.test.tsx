@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import type { ComponentProps } from "react";
 
 import type { TheoryLookupResult } from "@/types";
@@ -51,9 +51,6 @@ const renderTheory = (overrides: Partial<ComponentProps<typeof PositionTheory>> 
   render(
     <PositionTheory
       currentVisibleId="e2e4,c7c5,g1f3,d7d6"
-      openingName="Sicilian Defense"
-      recentLine="1. e4 c5 2. Nf3 d6"
-      sanMoves={["e4", "c5", "Nf3", "d6"]}
       {...overrides}
     />,
   );
@@ -84,7 +81,7 @@ describe("PositionTheory", () => {
     renderTheory();
     expect(await screen.findByText("No Wikibooks note for this position yet (possibly past available opening theory).")).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Source" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Show more theory" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Show (more|less) theory/ })).not.toBeInTheDocument();
   });
 
   it("renders settled snippet content and source link", async () => {
@@ -105,7 +102,7 @@ describe("PositionTheory", () => {
     expect(screen.getByRole("link", { name: "Source" })).toBeInTheDocument();
   });
 
-  it("shows expand/collapse control for long theory text", async () => {
+  it("does not render expand/collapse controls for long theory text", async () => {
     const longText = "Black keeps central tension and prepares kingside development. ".repeat(12).trim();
     setTheoryHookState({
       data: makeTheoryResult({
@@ -120,9 +117,8 @@ describe("PositionTheory", () => {
     });
 
     renderTheory();
-    const expandButton = await screen.findByRole("button", { name: "Show more theory" });
-    fireEvent.click(expandButton);
-    expect(screen.getByRole("button", { name: "Show less theory" })).toBeInTheDocument();
+    await screen.findByText(/Black keeps central tension and prepares kingside development\./);
+    expect(screen.queryByRole("button", { name: /Show (more|less) theory/ })).not.toBeInTheDocument();
   });
 
   it("resets theory scroll position when current position changes", async () => {
@@ -140,16 +136,13 @@ describe("PositionTheory", () => {
     });
 
     const { container, rerender } = renderTheory();
-    await screen.findByRole("button", { name: "Show more theory" });
-    const theoryBox = container.querySelector(".gt-position-theory-box") as HTMLDivElement;
+    await screen.findByText(/Black keeps central tension and prepares kingside development\./);
+    const theoryBox = container.querySelector(".gt-position-theory-scrollable") as HTMLDivElement;
     theoryBox.scrollTop = 42;
 
     rerender(
       <PositionTheory
         currentVisibleId="e2e4,c7c5,g1f3,d7d6,c2c4"
-        openingName="Sicilian Defense"
-        recentLine="1. e4 c5 2. Nf3 d6 3. c4"
-        sanMoves={["e4", "c5", "Nf3", "d6", "c4"]}
       />,
     );
 

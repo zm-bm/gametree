@@ -33,7 +33,7 @@ const theoryWithHeadingHtml = `
       and pawn structure choices can quickly shape the middlegame plans.
     </p>
     <div class="mw-heading mw-heading1">
-      <h1 id="Closed_Sicilian">Closed Sicilian</h1>
+      <h2 id="Closed_Sicilian">Closed Sicilian</h2>
       <span class="mw-editsection">
         <span class="mw-editsection-bracket">[</span>
         <a href="/w/index.php?title=Chess_Opening_Theory/1._e4/1...c5/2._Nc3/2...e6&veaction=edit&section=1">edit</a>

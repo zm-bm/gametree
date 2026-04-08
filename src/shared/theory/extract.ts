@@ -16,13 +16,13 @@ const normalizeHeadingText = (text: string) =>
 const isStopHeading = (text: string) => STOP_HEADINGS.has(normalizeHeadingText(text));
 
 const getHeadingText = (element: Element) => {
-  if (/^H[1-6]$/.test(element.tagName)) {
+  if (/^H[2-6]$/.test(element.tagName)) {
     return element.textContent || '';
   }
 
   if (element.classList.contains('mw-heading')) {
-    const heading = element.querySelector('h1, h2, h3, h4, h5, h6');
-    return heading?.textContent || element.textContent || '';
+    const heading = element.querySelector('h2, h3, h4, h5, h6');
+    return heading?.textContent || '';
   }
 
   return '';
@@ -53,6 +53,7 @@ const normalizeExtractText = (rawText: string) =>
 const stripHeadingArtifacts = (text: string) =>
   text
     .replace(/\[edit]/gi, '')
+    .replace(/\[edit \| edit source]/gi, '')
     .replace(/\s+/g, ' ')
     .trim();
 
@@ -190,4 +191,3 @@ export const extractTheorySnippets = (html: string, extraSections: number) => {
   if (paragraphCount === 0) return null;
   return snippets.length ? snippets : null;
 };
-

@@ -37,7 +37,7 @@ const PositionSummary = ({
         : null;
 
   return (
-    <>
+    <div className="gt-position-summary">
       <div className="gt-position-summary-head">
         <div className="gt-position-summary-title">{openingName}</div>
         <span className="gt-position-summary-eco">{ecoCode}</span>
@@ -55,7 +55,7 @@ const PositionSummary = ({
       {statusMessage ? (
         <div className="gt-position-summary-status">{statusMessage}</div>
       ) : null}
-    </>
+    </div>
   );
 };
 

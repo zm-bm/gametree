@@ -26,11 +26,17 @@ describe('extractTheorySnippets', () => {
     expect(snippets?.[0].text).toContain('White often fights for central squares');
   });
 
-  it('keeps headings and inline emphasis while stripping links and edit markers', () => {
+  it('ignores h1 headings and keeps h2+ headings with sanitized inline emphasis', () => {
     const html = `
       <div class="mw-parser-output">
         <div class="mw-heading mw-heading1">
           <h1 id="Closed_Sicilian">Closed Sicilian</h1>
+          <span class="mw-editsection">
+            [<a href="/edit">edit</a>]
+          </span>
+        </div>
+        <div class="mw-heading mw-heading2">
+          <h2 id="Closed_Sicilian_Plans">Closed Sicilian Plans</h2>
           <span class="mw-editsection">
             [<a href="/edit">edit</a>]
           </span>
@@ -45,7 +51,8 @@ describe('extractTheorySnippets', () => {
     const snippets = extractTheorySnippets(html, 1);
     expect(snippets).not.toBeNull();
 
-    expect(snippets?.some((snippet) => snippet.kind === 'heading' && snippet.text === 'Closed Sicilian')).toBe(true);
+    expect(snippets?.some((snippet) => snippet.kind === 'heading' && snippet.text === 'Closed Sicilian')).toBe(false);
+    expect(snippets?.some((snippet) => snippet.kind === 'heading' && snippet.text === 'Closed Sicilian Plans')).toBe(true);
     const paragraph = snippets?.find((snippet) => snippet.kind === 'paragraph');
     expect(paragraph).toBeDefined();
     expect(paragraph?.html).toContain('<strong>c4</strong>');
@@ -94,4 +101,3 @@ describe('extractTheorySnippets', () => {
     expect(extractTheorySnippets(html, 2)).toBeNull();
   });
 });
-

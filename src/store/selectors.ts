@@ -3,6 +3,7 @@ import { hierarchy } from "@visx/hierarchy";
 
 import { RootState } from "./";
 import { treeBuild } from "../shared/tree";
+import { getMoveFromPathId } from "@/shared/chess/path";
 
 // UI selectors
 export const selectUI = (s: RootState) => s.ui;
@@ -96,7 +97,14 @@ export const selectHoverNodeData = createSelector(
 );
 
 export const selectCurrentMove = (s: RootState) => selectCurrentNodeData(s)?.move || null;
-export const selectHoverMove = (s: RootState) => selectHoverNodeData(s)?.move || null;
+export const selectHoverMove = createSelector(
+  [selectHoverNodeData, selectHoverId],
+  (hoverNode, hoverId) => {
+    if (hoverNode?.move) return hoverNode.move;
+    if (!hoverId) return null;
+    return getMoveFromPathId(hoverId);
+  }
+);
 
 export const selectSideToMove = createSelector(
   [selectBoardFen],

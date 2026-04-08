@@ -3,17 +3,20 @@ import { useSelector } from "react-redux";
 
 import { RootState, useAppDispatch } from "@/store";
 import { ui } from "@/store/slices";
+import { formatEngineEval } from "@/shared/engine";
 import {
   selectBoardFen,
   selectBoardOrientation,
+  selectCurrentVisibleId,
   selectEngineOutput,
   selectEngineRunning,
   selectSideToMove,
 } from "@/store/selectors";
-import EngineControls from "./EngineControls";
-import EnginePrimaryAnalysis from "./EnginePrimaryAnalysis";
+import EngineHeadline from "./EngineHeadline";
+import EngineHeader from "./EngineHeader";
 import EnginePrincipalVariation from "./EnginePrincipalVariation";
 import EngineSecondaryStats from "./EngineSecondaryStats";
+import "./EngineView.css";
 
 function getLocale() {
   if (navigator.languages != undefined) return navigator.languages[0];
@@ -29,13 +32,14 @@ const EngineView = () => {
   const fen = useSelector((s: RootState) => selectBoardFen(s));
   const orientation = useSelector((s: RootState) => selectBoardOrientation(s));
   const sideToMove = useSelector((s: RootState) => selectSideToMove(s));
+  const currentVisibleId = useSelector((s: RootState) => selectCurrentVisibleId(s));
 
   const { speed, depth = 0 } = engineOutput || {};
   const hasOutput = Boolean(engineOutput);
-  const stateText = running ? "running" : "idle";
-  const stateClass = running
-    ? "text-emerald-300/85 dark:text-emerald-300/80"
-    : "text-teal-200/75 dark:text-teal-300/65";
+  const formattedEval = hasOutput
+    ? formatEngineEval(engineOutput, { sideToMove, orientation, convention: "white" }, locale)
+    : "";
+  const evalDisplay = formattedEval === "-" ? "" : formattedEval;
 
   const engineToggle = useCallback(() => {
     dispatch(ui.actions.toggleEngine());
@@ -43,31 +47,28 @@ const EngineView = () => {
 
   return (
     <>
-      <div className="p-3">
-        <span className="font-semibold tracking-tight">
-          <span>Engine:</span>{" "}
-          <span className={stateClass}>{stateText}</span>
-        </span>
-      </div>
-      <EngineControls
+      <EngineHeader
         running={running}
         hasOutput={hasOutput}
+        evalDisplay={evalDisplay}
         depth={depth}
         speed={speed}
         onToggle={engineToggle}
       />
 
-      <EnginePrimaryAnalysis
+      <EngineHeadline
+        evalDisplay={evalDisplay}
         engineOutput={engineOutput}
-        fen={fen}
         sideToMove={sideToMove}
         orientation={orientation}
-        locale={locale}
       />
 
-      <EnginePrincipalVariation fen={fen} pvMoves={engineOutput?.pv ?? []} />
-
-      <EngineSecondaryStats engineOutput={engineOutput} locale={locale} />
+      <EnginePrincipalVariation
+        fen={fen}
+        pvMoves={engineOutput?.pv ?? []}
+        currentVisibleId={currentVisibleId}
+      />
+      <EngineSecondaryStats engineOutput={engineOutput} />
     </>
   );
 };
