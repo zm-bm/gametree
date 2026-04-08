@@ -8,6 +8,14 @@ const { mockUseGetTheoryByNodeQuery } = vi.hoisted(() => ({
   mockUseGetTheoryByNodeQuery: vi.fn(),
 }));
 
+vi.mock("react-redux", async () => {
+  const actual = await vi.importActual<typeof import("react-redux")>("react-redux");
+  return {
+    ...actual,
+    useSelector: () => "",
+  };
+});
+
 vi.mock("@/store/theoryApi", async () => {
   const actual = await vi.importActual<typeof import("@/store/theoryApi")>("@/store/theoryApi");
   return {
