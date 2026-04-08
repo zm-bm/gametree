@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { Chess } from "chess.js";
 
 import { useAppDispatch } from "@/store";
@@ -13,18 +13,51 @@ interface EnginePrincipalVariationProps {
 const PV_TITLE = "Principal variation";
 const NO_ANALYSIS_TEXT = "";
 const MAX_PV_PLIES = 10;
+const HOVER_INTENT_DELAY_MS = 200;
+const HOVER_LEAVE_DELAY_MS = 200;
 
 const EnginePrincipalVariation = ({ fen, pvMoves, currentVisibleId = "" }: EnginePrincipalVariationProps) => {
   const dispatch = useAppDispatch();
+  const hoverEnterTimeoutRef = useRef<number | null>(null);
+  const hoverLeaveTimeoutRef = useRef<number | null>(null);
+
+  const clearHoverEnterTimeout = useCallback(() => {
+    if (hoverEnterTimeoutRef.current === null) return;
+    window.clearTimeout(hoverEnterTimeoutRef.current);
+    hoverEnterTimeoutRef.current = null;
+  }, []);
+
+  const clearHoverLeaveTimeout = useCallback(() => {
+    if (hoverLeaveTimeoutRef.current === null) return;
+    window.clearTimeout(hoverLeaveTimeoutRef.current);
+    hoverLeaveTimeoutRef.current = null;
+  }, []);
 
   const onMouseEnter = useCallback((e: React.MouseEvent<HTMLElement>) => {
+    clearHoverLeaveTimeout();
+    clearHoverEnterTimeout();
     const hoverId = e.currentTarget.getAttribute("data-id");
-    dispatch(ui.actions.setHover(hoverId));
-  }, [dispatch]);
+    hoverEnterTimeoutRef.current = window.setTimeout(() => {
+      dispatch(ui.actions.setHover(hoverId));
+      hoverEnterTimeoutRef.current = null;
+    }, HOVER_INTENT_DELAY_MS);
+  }, [clearHoverLeaveTimeout, clearHoverEnterTimeout, dispatch]);
 
   const onMouseLeave = useCallback(() => {
-    dispatch(ui.actions.setHover(null));
-  }, [dispatch]);
+    clearHoverEnterTimeout();
+    clearHoverLeaveTimeout();
+    hoverLeaveTimeoutRef.current = window.setTimeout(() => {
+      dispatch(ui.actions.setHover(null));
+      hoverLeaveTimeoutRef.current = null;
+    }, HOVER_LEAVE_DELAY_MS);
+  }, [clearHoverEnterTimeout, clearHoverLeaveTimeout, dispatch]);
+
+  useEffect(() => {
+    return () => {
+      clearHoverEnterTimeout();
+      clearHoverLeaveTimeout();
+    };
+  }, [clearHoverEnterTimeout, clearHoverLeaveTimeout]);
 
   const pvTokens = useMemo(() => {
     if (!pvMoves.length) return null;
