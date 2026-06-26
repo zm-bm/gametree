@@ -1,4 +1,18 @@
 services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: docker/Dockerfile
+    user: "${BACKEND_UID:-1000}:${BACKEND_GID:-1000}"
+    command: ["uvicorn", "gametree_api.main:app", "--host", "0.0.0.0", "--port", "8080", "--reload", "--reload-dir", "/app/src"]
+    ports:
+      - "${BACKEND_PORT:-8080}:8080"
+    volumes:
+      - ./backend/src:/app/src
+      - ./backend/data:/data
+    environment:
+      - DATABASE_URL=rocksdb:///data/gametree.rocksdb
+
   frontend:
     build:
       context: .
@@ -10,10 +24,10 @@ services:
       - ./frontend:/app/frontend
       - frontend_node_modules:/app/frontend/node_modules
     environment:
-      - VITE_DEV_API_PROXY_TARGET=${VITE_DEV_API_PROXY_TARGET:-http://host.docker.internal:8080}
+      - VITE_DEV_API_PROXY_TARGET=${VITE_DEV_API_PROXY_TARGET:-http://backend:8080}
       - CHOKIDAR_USEPOLLING=${CHOKIDAR_USEPOLLING:-true}
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    depends_on:
+      - backend
 
 volumes:
   frontend_node_modules:
