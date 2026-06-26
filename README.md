@@ -1,47 +1,52 @@
 # Gametree
 
-visualize, explore, and learn about the game tree of chess.
+Visualize, explore, and learn about the game tree of chess.
 
-<img width="640" height="356" alt="image" src="https://github.com/user-attachments/assets/5390631e-44d2-4349-8e37-4f9e9eb43652" />
+## Layout
 
-[demo](https://gametree.zmbm.dev)
+- `frontend/` is the React/Vite chess tree app.
+- `backend/` is the FastAPI/RocksDB opening-tree API service.
+- `infra/` has project infrastructure and deployment configuration.
+- `scripts/` has repo-level operator and development entrypoints.
+- `docs/` has project docs and migration notes.
 
-## Technical summary
+## Development
 
-- The app renders an interactive opening tree from the current move path, where each node represents a legal next move and its observed frequency.
-- Tree data comes from `gametree-api` (`/api/totals`) and is loaded incrementally as you explore positions.
-- A synchronized board + sidebar show the selected position, opening context, and move-level stats.
-- Optional in-browser Stockfish analysis updates evaluation and principal variation for the current position.
-- Theory snippets are fetched from Wikibooks to add human-readable opening notes alongside the tree.
+Start the frontend dev container:
 
-## Usage
+```bash
+docker compose up --build frontend
+```
 
-Run the app locally
+Run the frontend locally:
 
-```sh
+```bash
+cd frontend
 npm install
 npm run dev
 ```
 
-Build
+The frontend proxies `/api/*` to `http://localhost:8080` in local host
+development. In Docker Compose, it defaults to
+`http://host.docker.internal:8080` so it can reach a backend running on the
+host.
 
-```sh
+## Frontend Checks
+
+Run from `frontend/`:
+
+```bash
+npm test -- --run
 npm run build
 ```
 
-### Backend note
+## Docs
 
-This frontend calls [gametree-api](https://github.com/zm-bm/gametree-api/) for `/api/*`.
-For local dev, run `gametree-api` separately on `http://localhost:8080` (Vite proxies `/api` there).
-
-## Acknowledgments
-
-- [chessground](https://github.com/lichess-org/chessground) - Chess board
-- [chess.js](https://github.com/jhlywa/chess.js/tree/master) - Chess logic
-- [Stockfish](https://github.com/official-stockfish/Stockfish) - Chess engine
-- [Lumbra's GigaBase](https://lumbrasgigabase.com/) - Game data
-- [visx](https://airbnb.io/visx/) - React/D3 primitives
+- [frontend/README.md](frontend/README.md): frontend app overview and commands.
+- [MIGRATION_PLAN.md](MIGRATION_PLAN.md): temporary monorepo migration plan.
+- `backend/README.md`: backend service docs after Phase 2.
+- `infra/README.md`: infrastructure docs after Phase 3.
 
 ## License
 
-MIT. See [LICENSE](./LICENSE).
+MIT. See [LICENSE](LICENSE).

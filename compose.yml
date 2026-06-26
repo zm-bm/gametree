@@ -1,0 +1,19 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    command: ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+    ports:
+      - "${FRONTEND_PORT:-5173}:5173"
+    volumes:
+      - ./frontend:/app/frontend
+      - frontend_node_modules:/app/frontend/node_modules
+    environment:
+      - VITE_DEV_API_PROXY_TARGET=${VITE_DEV_API_PROXY_TARGET:-http://host.docker.internal:8080}
+      - CHOKIDAR_USEPOLLING=${CHOKIDAR_USEPOLLING:-true}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  frontend_node_modules:
