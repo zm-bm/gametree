@@ -1,10 +1,12 @@
-# Gametree Site Stack
+# Site Terraform
 
-Static site and CloudFront infrastructure for `gametree.zmbm.dev`.
+Terraform for `gametree.zmbm.dev`.
 
-This stack is intentionally project-specific and replaces the old multi-site
-configuration for Gametree only. It still depends on shared edge state for the
-ALB origin used by `/api/*`.
+This is the future single-site stack for Gametree. It still reads shared edge
+state for the `/api/*` ALB origin.
+
+The static-site module source points at the shared infra checkout as a sibling
+repo, so `../infra` must be present locally when running this stack.
 
 ## Validate
 
@@ -13,7 +15,7 @@ terraform init -backend=false
 terraform validate
 ```
 
-## State Note
+## State
 
 The backend key is `gametree/site.tfstate`. Do not apply this stack until the
 old `static-sites/prod.tfstate` ownership has been split or reconciled.

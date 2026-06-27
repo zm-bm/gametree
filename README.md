@@ -1,18 +1,17 @@
 # Gametree
 
-Visualize, explore, and learn about the game tree of chess.
+Explore chess openings as an interactive move tree.
 
 ## Layout
 
 - `frontend/` is the React/Vite chess tree app.
-- `backend/` is the FastAPI/RocksDB opening-tree API service.
-- `infra/` has project infrastructure and deployment configuration.
-- `scripts/` has repo-level operator and development entrypoints.
-- `docs/` has project docs and migration notes.
+- `backend/` is the FastAPI + RocksDB API.
+- `infra/` is Terraform for the AWS pieces Gametree owns.
+- `scripts/` has the repo-level commands used for setup and deploys.
 
 ## Development
 
-Start the dev stack:
+Start everything with Docker Compose:
 
 ```bash
 docker compose up --build
@@ -29,11 +28,11 @@ Services:
 - `frontend` on `http://localhost:5173`
 - `backend` on `http://localhost:8080`
 
-Run the frontend locally:
+Run just the frontend on your host:
 
 ```bash
 cd frontend
-npm install
+npm ci
 npm run dev
 ```
 
@@ -50,39 +49,46 @@ make test
 
 ## Scripts
 
-Bootstrap backend dev dependencies from the repo root:
+Bootstrap backend dev dependencies:
 
 ```bash
 ./scripts/bootstrap.sh
 ```
 
-Build and push a backend image for the manual API deploy flow:
+Deploy the backend image and API Terraform stack:
 
 ```bash
-./scripts/backend-build-image.sh
+./scripts/backend-deploy.sh
 ```
 
-Deploy the frontend manually to S3/CloudFront:
+Deploy the frontend to S3/CloudFront:
 
 ```bash
 ./scripts/deploy-frontend.sh
 ```
 
-## Frontend Checks
+## Checks
 
-Run from `frontend/`:
+Frontend:
 
 ```bash
+cd frontend
 npm test -- --run
 npm run build
+```
+
+Backend:
+
+```bash
+cd backend
+make test
 ```
 
 ## Docs
 
 - [frontend/README.md](frontend/README.md): frontend app overview and commands.
 - [backend/README.md](backend/README.md): backend service overview and commands.
-- [infra/README.md](infra/README.md): project infrastructure layout and commands.
-- [MIGRATION_PLAN.md](MIGRATION_PLAN.md): temporary monorepo migration plan.
+- [infra/README.md](infra/README.md): Terraform layout and deploy notes.
 
 ## License
 

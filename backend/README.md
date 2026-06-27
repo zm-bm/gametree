@@ -1,18 +1,20 @@
-# gametree-api
+# Gametree Backend
 
-Backend for the [gametree](https://gametree.zmbm.dev) frontend.
+FastAPI service for the [Gametree](https://gametree.zmbm.dev) frontend.
 
-It ingests PGN games and serves opening-tree move stats from a local RocksDB store. All routes are under `/api` (for example: `/api/health`, `/api/totals`).
+It ingests PGN games and serves opening-tree stats from RocksDB. Public routes
+live under `/api`, for example `/api/health` and `/api/totals`.
 
-## Technical summary
+## How It Works
 
-- RocksDB database stores aggregated move outcomes, separated by source in column families.
-- Each position maps to a compact record keyed by a deterministic position hash.
-- Each record stores per-next-move counters for white wins, draws, and black wins.
-- Query endpoints resolve a position from the input move path, load that position’s record, merge sources when needed, and return totals plus ranked next moves.
-- Ingest endpoints walk game moves and increment counters for every visited position.
+- RocksDB stores aggregated move outcomes by source.
+- Positions are keyed by a deterministic position hash.
+- Each position stores next-move counters for white wins, draws, and black wins.
+- Query endpoints resolve a move path, merge sources if needed, and return the
+  top next moves.
+- Ingest walks each game and increments every visited position.
 
-## Quick start
+## Run It
 
 ```bash
 cd backend
@@ -26,10 +28,10 @@ From the monorepo root, the frontend and backend can also be started together:
 docker compose up --build
 ```
 
-## Make targets
+## Common Commands
 
 - `make help` — print available targets
-- `make build` — build Docker images 
+- `make build` — build Docker images
 - `make run-dev` — start local dev profile
 - `make down` — stop containers from both profiles
 - `make test` — run backend tests
@@ -72,5 +74,5 @@ Example output:
 
 ## Production notes
 
-- Write/admin endpoints are blocked from public ingress in prod
-- Prod data sourced from [Lumbra's GigaBase](https://lumbrasgigabase.com/en/)
+- Write/admin endpoints are blocked from public ingress in prod.
+- Prod data comes from [Lumbra's GigaBase](https://lumbrasgigabase.com/en/).

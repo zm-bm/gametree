@@ -9,6 +9,7 @@ AWS_REGION="${AWS_REGION:-us-east-1}"
 ECR_REPOSITORY="${ECR_REPOSITORY:-gametree-api}"
 IMAGE_TAG="${IMAGE_TAG:-$(git -C "$REPO_ROOT" rev-parse --short HEAD)}"
 PUSH="${PUSH:-1}"
+PRINT_TERRAFORM_REMINDER="${PRINT_TERRAFORM_REMINDER:-1}"
 
 is_truthy() {
   case "${1,,}" in
@@ -49,8 +50,12 @@ cat <<EOF
 
 Image URI:
 $IMAGE_URI
-
-Terraform reminder:
-  Update api_image in /home/rick/code/gametree/infra/api/terraform.tfvars
-  Then run terraform plan/apply from /home/rick/code/gametree/infra/api
 EOF
+
+if is_truthy "$PRINT_TERRAFORM_REMINDER"; then
+  cat <<EOF
+Terraform reminder:
+  Update api_image in infra/api/terraform.tfvars
+  Then run terraform plan/apply from infra/api
+EOF
+fi

@@ -16,7 +16,7 @@ data "terraform_remote_state" "edge" {
 }
 
 module "static_site" {
-  source = "../modules/static-site"
+  source = "../../../infra/modules/static-site"
 
   site_name   = "gametree"
   domain      = "gametree.zmbm.dev"

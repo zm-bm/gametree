@@ -1,40 +1,36 @@
 # Gametree
 
-visualize, explore, and learn about the game tree of chess.
+Explore chess openings as an interactive move tree.
 
 <img width="640" height="356" alt="image" src="https://github.com/user-attachments/assets/5390631e-44d2-4349-8e37-4f9e9eb43652" />
 
-[demo](https://gametree.zmbm.dev)
+[Live site](https://gametree.zmbm.dev)
 
-## Technical summary
+## What It Does
 
-- The app renders an interactive opening tree from the current move path, where each node represents a legal next move and its observed frequency.
-- Tree data comes from `gametree-api` (`/api/totals`) and is loaded incrementally as you explore positions.
-- A synchronized board + sidebar show the selected position, opening context, and move-level stats.
-- Optional in-browser Stockfish analysis updates evaluation and principal variation for the current position.
-- Theory snippets are fetched from Wikibooks to add human-readable opening notes alongside the tree.
+- Renders an opening tree from the current move path.
+- Loads move stats from `/api/totals` as you explore.
+- Keeps the board, selected line, move stats, and opening notes in sync.
+- Can run Stockfish in the browser for a quick eval and principal variation.
 
-## Usage
+## Run It
 
-Run the app locally
+From `frontend/`:
 
-```sh
-cd frontend
-npm install
+```bash
+npm ci
 npm run dev
 ```
 
-Build
+The dev server proxies `/api/*` to `http://localhost:8080`, so start the
+backend too if you need live data.
 
-```sh
-cd frontend
+## Checks
+
+```bash
+npm test -- --run
 npm run build
 ```
-
-### Backend note
-
-This frontend calls [gametree-api](https://github.com/zm-bm/gametree-api/) for `/api/*`.
-For local dev, run `gametree-api` separately on `http://localhost:8080` (Vite proxies `/api` there).
 
 ## Acknowledgments
 

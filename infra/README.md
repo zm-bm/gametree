@@ -1,28 +1,29 @@
 # Gametree Infrastructure
 
-Project-specific infrastructure for Gametree.
+Terraform for the AWS bits this repo owns.
 
 ## Layout
 
-- `api`: single-instance `gametree-api` deployment behind the shared edge ALB
-  and CloudFront distribution.
-- `site`: static site and CloudFront infrastructure for `gametree.zmbm.dev`.
-- `modules/static-site`: local copy of the static-site Terraform module used by
-  the site stack.
+- `api/`: EC2/ASG stack for the backend API.
+- `site/`: static site stack for `gametree.zmbm.dev`.
 
-Shared account foundations such as DNS, certificates, network, edge ALB, and
-GitHub OIDC remain in the shared infra repo/state.
+Shared DNS, certificates, networking, edge routing, and GitHub OIDC still live
+in the sibling `../infra` repo. The stacks here read those outputs through
+remote state.
+
+The site stack expects the shared infra checkout to be available as a sibling
+repo at `../infra`.
 
 ## API
 
-Validate the API stack:
+Validate:
 
 ```bash
 terraform -chdir=infra/api init -backend=false
 terraform -chdir=infra/api validate
 ```
 
-Apply API infrastructure from this repo:
+Apply:
 
 ```bash
 cd infra/api
@@ -31,12 +32,12 @@ terraform plan
 terraform apply
 ```
 
-See [api/README.md](api/README.md) for API deploy and instance replacement
-commands.
+For app deploys, use `./scripts/backend-deploy.sh` from the repo root. See
+[api/README.md](api/README.md) for details.
 
 ## Site
 
-Validate the site stack:
+Validate:
 
 ```bash
 terraform -chdir=infra/site init -backend=false

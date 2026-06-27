@@ -1,19 +1,29 @@
 # Gametree Monorepo Migration Plan
 
 Temporary planning document for folding `gametree-api` and the standalone
-`infra` repo into `/home/rick/code/gametree`, with a repo shape closer to
-`/home/rick/code/weather-map`.
+`infra` repo into `$GAMETREE_ROOT`, with a repo shape closer to
+`$WEATHER_MAP_ROOT`.
+
+Path variables used below:
+
+```bash
+CODE_ROOT="${CODE_ROOT:-$HOME/code}"
+GAMETREE_ROOT="$CODE_ROOT/gametree"
+GAMETREE_API_ROOT="$CODE_ROOT/gametree-api"
+SHARED_INFRA_ROOT="$CODE_ROOT/infra"
+WEATHER_MAP_ROOT="$CODE_ROOT/weather-map"
+```
 
 ## Goal
 
-Make `/home/rick/code/gametree` the only active Gametree repo:
+Make `$GAMETREE_ROOT` the only active Gametree repo:
 
 ```text
 gametree/
   frontend/        # current Vite/React app from the gametree repo
   backend/         # current FastAPI/RocksDB service from gametree-api
   infra/           # current Terraform repo contents
-  scripts/         # repo-level operator/dev scripts
+  scripts/         # repo-level dev/deploy scripts
   docs/            # project docs and migration notes
   compose.yml      # repo-level local dev stack
   README.md        # monorepo overview, like weather-map
@@ -29,7 +39,7 @@ the new path.
 - Move the current root frontend into `frontend/` with `git mv`.
 - Copy `gametree-api` into `backend/` without preserving its separate Git
   history.
-- Copy `/home/rick/code/infra` into `infra/` without preserving its separate
+- Copy `$SHARED_INFRA_ROOT` into `infra/` without preserving its separate
   Git history.
 - Do not rename Terraform resources or state keys during the first pass.
 - Keep the current root `LICENSE` in place during the migration. Imported repo
@@ -42,24 +52,24 @@ the new path.
 
 Observed local repos:
 
-- `/home/rick/code/gametree`
+- `$GAMETREE_ROOT`
   - Vite/React frontend at repo root.
   - `package.json`, `vite.config.ts`, `src/`, `public/`, `.github/workflows`.
   - Vite proxies `/api` to `http://localhost:8080`.
-- `/home/rick/code/gametree-api`
+- `$GAMETREE_API_ROOT`
   - FastAPI service.
   - Python package in `src/gametree_api`.
   - Docker files under `docker/`.
   - Local compose file at `docker/docker-compose.yml`.
   - Make targets for install/test/build/run/ingest.
-- `/home/rick/code/infra`
+- `$SHARED_INFRA_ROOT`
   - Terraform modules in `modules/`.
   - Terraform stacks in `stacks/`.
   - Gametree-specific API stack at `stacks/gametree-api`.
   - Static site stack at `stacks/static-sites`.
   - Shared account stacks like `dns`, `certs`, `network`, `edge`, and
     `github-oidc`.
-- `/home/rick/code/weather-map`
+- `$WEATHER_MAP_ROOT`
   - Project code is grouped under `frontend/`, `backend/`, `infra/`, `scripts/`,
     `docs/`, plus root `compose.yml` and `README.md`.
 
@@ -68,30 +78,30 @@ Observed local repos:
 1. Confirm all three repos are clean or intentionally dirty:
 
    ```bash
-   git -C /home/rick/code/gametree status --short
-   git -C /home/rick/code/gametree-api status --short
-   git -C /home/rick/code/infra status --short
+   git -C $GAMETREE_ROOT status --short
+   git -C $GAMETREE_API_ROOT status --short
+   git -C $SHARED_INFRA_ROOT status --short
    ```
 
 2. Record current remote URLs and branches:
 
    ```bash
-   git -C /home/rick/code/gametree remote -v
-   git -C /home/rick/code/gametree-api remote -v
-   git -C /home/rick/code/infra remote -v
+   git -C $GAMETREE_ROOT remote -v
+   git -C $GAMETREE_API_ROOT remote -v
+   git -C $SHARED_INFRA_ROOT remote -v
    ```
 
 3. Run current checks before moving anything:
 
    ```bash
-   cd /home/rick/code/gametree
+   cd $GAMETREE_ROOT
    npm test -- --run
    npm run build
 
-   cd /home/rick/code/gametree-api
+   cd $GAMETREE_API_ROOT
    make test
 
-   cd /home/rick/code/infra
+   cd $SHARED_INFRA_ROOT
    terraform -chdir=stacks/gametree-api fmt -check
    terraform -chdir=stacks/static-sites fmt -check
    ```
@@ -99,7 +109,7 @@ Observed local repos:
 4. Create a branch in `gametree`:
 
    ```bash
-   cd /home/rick/code/gametree
+   cd $GAMETREE_ROOT
    git switch -c monorepo-migration
    ```
 
@@ -108,7 +118,7 @@ Observed local repos:
 Move the current frontend root files into a dedicated directory:
 
 ```bash
-cd /home/rick/code/gametree
+cd $GAMETREE_ROOT
 mkdir frontend
 git mv README.md frontend/README.md
 git mv src public index.html package.json package-lock.json \
@@ -159,7 +169,7 @@ Then update path-sensitive files:
 Validation:
 
 ```bash
-cd /home/rick/code/gametree/frontend
+cd $GAMETREE_ROOT/frontend
 npm ci
 npm test -- --run
 npm run build
@@ -170,7 +180,7 @@ npm run build
 Copy the backend source files without importing the old repository history:
 
 ```bash
-cd /home/rick/code/gametree
+cd $GAMETREE_ROOT
 mkdir backend
 rsync -a \
   --exclude='.git/' \
@@ -178,7 +188,7 @@ rsync -a \
   --exclude='.pytest_cache/' \
   --exclude='gametree_api.egg-info/' \
   --exclude='data/' \
-  /home/rick/code/gametree-api/ \
+  $GAMETREE_API_ROOT/ \
   backend/
 ```
 
@@ -243,12 +253,12 @@ change is required for the first pass because the backend remains on
 Validation:
 
 ```bash
-cd /home/rick/code/gametree/backend
+cd $GAMETREE_ROOT/backend
 make install
 make test
 make run-dev BUILD=1
 
-cd /home/rick/code/gametree
+cd $GAMETREE_ROOT
 docker compose up --build
 curl -i http://localhost:8080/api/health
 ```
@@ -264,16 +274,14 @@ infra/
   LICENSE
   api/
   site/
-  modules/static-site/
 ```
 
 Copy only:
 
-- `/home/rick/code/infra/stacks/gametree-api/` to `infra/api/`
-- `/home/rick/code/infra/modules/static-site/` to `infra/modules/static-site/`
-- `/home/rick/code/infra/templates/gametree-api-userdata.sh.tmpl` to
+- `$SHARED_INFRA_ROOT/stacks/gametree-api/` to `infra/api/`
+- `$SHARED_INFRA_ROOT/templates/gametree-api-userdata.sh.tmpl` to
   `infra/api/templates/gametree-api-userdata.sh.tmpl`
-- `/home/rick/code/infra/LICENSE` to `infra/LICENSE`
+- `$SHARED_INFRA_ROOT/LICENSE` to `infra/LICENSE`
 
 Exclude `.git`, `.terraform`, `*.tfstate*`, `*.tfvars*`, `.vscode`, and other
 local-only files. Do not copy the old shared stacks for `network`, `dns`,
@@ -285,12 +293,14 @@ Adapt `infra/api`:
 - Keep remote-state dependencies on existing shared `network`, `edge`, and
   `dns` state.
 - Update userdata lookup to `templates/gametree-api-userdata.sh.tmpl`.
-- Update README paths to `/home/rick/code/gametree/backend` and
-  `/home/rick/code/gametree/infra/api`.
+- Update README paths to `$GAMETREE_ROOT/backend` and
+  `$GAMETREE_ROOT/infra/api`.
 
 Create `infra/site`:
 
-- Use `source = "../modules/static-site"`.
+- Use `source = "../../../infra/modules/static-site"` so the stack reads the
+  shared module from the sibling infra checkout without embedding an absolute
+  local path.
 - Hard-code the existing `gametree` site config from the old
   `stacks/static-sites/terraform.tfvars`.
 - Preserve COEP/COOP response headers and `/api/*` proxy with
@@ -311,7 +321,7 @@ Terraform state notes:
 Validation:
 
 ```bash
-cd /home/rick/code/gametree
+cd $GAMETREE_ROOT
 terraform -chdir=infra/api fmt -check
 terraform -chdir=infra/site fmt -check
 
@@ -395,13 +405,13 @@ Because downtime is acceptable, use the simple order:
 3. Build and push a backend image from `backend/`:
 
    ```bash
-   cd /home/rick/code/gametree/backend
+   cd $GAMETREE_ROOT/backend
 
    export AWS_REGION=us-east-1
    export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
    export ECR_REGISTRY="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
    export ECR_REPO="${ECR_REGISTRY}/gametree-api"
-   export IMAGE_TAG=$(git -C /home/rick/code/gametree rev-parse --short HEAD)
+   export IMAGE_TAG=$(git -C $GAMETREE_ROOT rev-parse --short HEAD)
 
    aws ecr get-login-password --region "$AWS_REGION" \
      | docker login --username AWS --password-stdin "$ECR_REGISTRY"
@@ -415,7 +425,7 @@ Because downtime is acceptable, use the simple order:
 5. Apply the API stack:
 
    ```bash
-   cd /home/rick/code/gametree/infra/api
+   cd $GAMETREE_ROOT/infra/api
    terraform plan
    terraform apply
    ```

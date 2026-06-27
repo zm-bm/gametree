@@ -12,7 +12,18 @@ resource "aws_autoscaling_group" "api" {
 
   launch_template {
     id      = aws_launch_template.api.id
-    version = "$Latest"
+    version = aws_launch_template.api.latest_version
+  }
+
+  instance_refresh {
+    strategy = "Rolling"
+
+    preferences {
+      min_healthy_percentage = 0
+      max_healthy_percentage = 100
+      instance_warmup        = 1200
+      skip_matching          = true
+    }
   }
 
   tag {

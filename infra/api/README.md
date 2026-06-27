@@ -1,35 +1,27 @@
-# gametree-api stack
+# API Terraform
 
-Terraform stack for a single-instance `gametree-api` deployment behind the shared edge ALB + CloudFront.
+This stack runs the backend API on a single EC2 instance behind the shared edge
+ALB and CloudFront.
 
-## What this stack creates
+## What It Manages
 
 - EC2 launch template + ASG (`desired=1`)
 - Security group allowing ALB -> instance on port 80
-- IAM role/profile with:
-  - `s3:ListBucket` + `s3:GetObject` for RocksDB restore
-  - SSM core policy
-  - ECR read-only policy
+- IAM role/profile for S3 data restore, SSM, and ECR pulls
 - Route53 `A`/`AAAA` for `gametree-api.zmbm.dev`
 
-Bootstrapping happens in userdata:
+The instance userdata installs Docker, syncs RocksDB data from S3, and starts
+the API + nginx through Docker Compose.
 
-1. Install Docker + AWS CLI + Docker Compose plugin.
-2. `aws s3 sync` RocksDB files into `/opt/gametree-api/data`.
-3. Start `api-prod` + `nginx` via Docker Compose.
+## Before You Apply
 
-## Prerequisites
-
-- shared `network` state applied in the shared infra repo
-- shared `edge` state applied in the shared infra repo, including `gametree_api_*` outputs
-- shared `dns` state applied in the shared infra repo
+- shared `network`, `edge`, and `dns` state already exist in the shared infra repo
 - API container image pushed to `api_image`
-- RocksDB data uploaded to S3 (`rocksdb_s3_bucket` + `rocksdb_s3_prefix`)
+- RocksDB data uploaded to S3
 
 ## Usage
 
-Create an untracked local `terraform.tfvars` with the required values, or pass
-them with `-var` flags:
+Create an ignored local `terraform.tfvars`, or pass values with `-var`:
 
 ```bash
 cd infra/api
@@ -41,64 +33,32 @@ Required non-default variables are `ssh_cidr`, `rocksdb_s3_bucket`, and
 `api_image`. Set `rocksdb_s3_prefix` if the RocksDB files live under a bucket
 prefix.
 
-## Deploying gametree-api app changes
+## Deploy App Changes
 
-Use this flow when you changed code in `backend/` and want prod to run the new version.
-
-1. Build and push a new image tag from the app repo.
+From the repo root:
 
 ```bash
-cd /home/rick/code/gametree
-./scripts/backend-build-image.sh
+./scripts/backend-deploy.sh
 ```
 
-2. Update `api_image` in `infra/api/terraform.tfvars` to that immutable tag (or digest), then apply Terraform.
+That builds and pushes a backend image, updates local `terraform.tfvars`,
+applies this stack, waits for the ASG refresh, and checks health.
+
+If AWS SSO is expired, refresh it first:
 
 ```bash
-cd /home/rick/code/gametree/infra/api
-terraform plan
-terraform apply
-```
-
-3. Replace the running instance so it boots with the new launch template/userdata and pulls the new image.
-
-```bash
-cd /home/rick/code/gametree/infra/api
-
-ASG_NAME=$(terraform output -raw api_asg_name)
-INSTANCE_ID=$(aws autoscaling describe-auto-scaling-groups \
-  --auto-scaling-group-names "$ASG_NAME" \
-  --region us-east-1 \
-  --query 'AutoScalingGroups[0].Instances[0].InstanceId' \
-  --output text)
-
-aws autoscaling terminate-instance-in-auto-scaling-group \
-  --instance-id "$INSTANCE_ID" \
-  --no-should-decrement-desired-capacity \
-  --region us-east-1
-```
-
-4. Verify health.
-
-```bash
-curl -i https://gametree-api.zmbm.dev/api/health
+aws sso login --profile admin
 ```
 
 Notes:
 
-- The ASG is currently `min=max=desired=1`, so replacing the instance causes a short outage.
+- The ASG is currently `min=max=desired=1`, so instance refresh causes a short outage.
 - Avoid reusing `:latest` for deploys; use unique tags or digests so each deploy is explicit and repeatable.
 
 ## AMI refresh process
 
-If by "update the AMI" you mean OS/base-image refresh:
-
-- This stack does **not** use a custom Packer AMI for `gametree-api` today.
-- `launch-template.tf` points to `data.aws_ami.al2023` (latest Amazon Linux 2023 AMI from AWS).
-
-To roll to a newer AL2023 AMI:
+The launch template uses the latest Amazon Linux 2023 AMI from AWS. To roll to
+a newer AMI:
 
 1. Run `terraform plan` and `terraform apply` in `infra/api`.
-2. Replace the running instance using the same ASG terminate command above.
-
-That is the AMI update path for this stack right now.
+2. Let the ASG instance refresh replace the running instance.
