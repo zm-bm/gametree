@@ -28,12 +28,14 @@ From the monorepo root, the frontend and backend can also be started together:
 docker compose up --build
 ```
 
+`make run-dev` uses the root Compose file and starts only the backend service.
+
 ## Common Commands
 
 - `make help` — print available targets
 - `make build` — build Docker images
-- `make run-dev` — start local dev profile
-- `make down` — stop containers from both profiles
+- `make run-dev` — start the backend service
+- `make down` — stop the root Compose stack
 - `make test` — run backend tests
 
 ## Demo
@@ -76,3 +78,5 @@ Example output:
 
 - Write/admin endpoints are blocked from public ingress in prod.
 - Prod data comes from [Lumbra's GigaBase](https://lumbrasgigabase.com/en/).
+- Production deploys use `./scripts/backend-deploy.sh`; the EC2 instance writes
+  its own Docker Compose file from Terraform userdata.

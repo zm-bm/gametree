@@ -11,7 +11,8 @@ ALB and CloudFront.
 - Route53 `A`/`AAAA` for `gametree-api.zmbm.dev`
 
 The instance userdata installs Docker, syncs RocksDB data from S3, and starts
-the API + nginx through Docker Compose.
+the API + nginx through a Docker Compose file generated on the instance. It
+does not use a checked-in Compose file from this repo.
 
 ## Before You Apply
 

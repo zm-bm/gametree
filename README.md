@@ -45,6 +45,7 @@ Backend commands:
 cd backend
 make install
 make test
+make run-dev BUILD=1
 ```
 
 ## Scripts
