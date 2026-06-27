@@ -9,7 +9,15 @@ beforeAll(() => {
     disconnect = vi.fn();
   }
 
+  const NativeRequest = globalThis.Request;
+  class TestRequest extends NativeRequest {
+    constructor(input: RequestInfo | URL, init?: RequestInit) {
+      super(input, init ? { ...init, signal: undefined } : init);
+    }
+  }
+
   vi.stubGlobal('ResizeObserver', ResizeObserverMock);
+  vi.stubGlobal('Request', TestRequest);
 });
 
 afterEach(() => {

@@ -1,0 +1,123 @@
+#!/bin/bash
+set -euo pipefail
+
+dnf -y update
+dnf -y install docker awscli
+systemctl enable --now docker
+
+# Install Docker Compose v2 plugin
+mkdir -p /usr/local/lib/docker/cli-plugins
+curl -fsSL "https://github.com/docker/compose/releases/download/v2.27.0/docker-compose-linux-x86_64" \
+  -o /usr/local/lib/docker/cli-plugins/docker-compose
+chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
+
+usermod -aG docker ec2-user
+
+mkdir -p /opt/gametree-api/data
+mkdir -p /opt/gametree-api/nginx
+
+# Restore RocksDB from S3.
+aws s3 sync "${rocksdb_s3_uri}" /opt/gametree-api/data --delete
+
+# Support either upload layout:
+# 1) .../gametree.rocksdb/<files>
+# 2) .../<files>
+if [[ -f /opt/gametree-api/data/CURRENT && ! -d /opt/gametree-api/data/gametree.rocksdb ]]; then
+  mkdir -p /opt/gametree-api/data/gametree.rocksdb
+  shopt -s dotglob nullglob
+  for entry in /opt/gametree-api/data/*; do
+    name=$(basename "$entry")
+    if [[ "$name" != "gametree.rocksdb" ]]; then
+      mv "$entry" /opt/gametree-api/data/gametree.rocksdb/
+    fi
+  done
+  shopt -u dotglob nullglob
+fi
+
+cat <<'COMPOSE' > /opt/gametree-api/docker-compose.yml
+services:
+  api-prod:
+    image: ${api_image}
+    container_name: gametree-api-prod
+    expose:
+      - "8080"
+    environment:
+      DATABASE_URL: rocksdb:///data/gametree.rocksdb
+    volumes:
+      - /opt/gametree-api/data:/data
+    command: uvicorn gametree_api.main:app --host 0.0.0.0 --port 8080
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: gametree-nginx
+    depends_on:
+      - api-prod
+    ports:
+      - "80:80"
+    volumes:
+      - /opt/gametree-api/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    restart: unless-stopped
+COMPOSE
+
+cat <<'NGINX' > /opt/gametree-api/nginx/default.conf
+server {
+    listen 80;
+    server_name gametree-api.zmbm.dev;
+
+    client_max_body_size 16m;
+
+    location = /api/games {
+        return 404;
+    }
+
+    location = /api/games/batch {
+        return 404;
+    }
+
+    location = /api/monitor {
+        return 404;
+    }
+
+    location ^~ /api/monitor/ {
+        return 404;
+    }
+
+    location / {
+        if ($request_method = OPTIONS) {
+            add_header Access-Control-Allow-Origin "${cors_allow_origin}" always;
+            add_header Access-Control-Allow-Methods "GET, POST, OPTIONS" always;
+            add_header Access-Control-Allow-Headers "Content-Type, Authorization" always;
+            add_header Access-Control-Max-Age 86400 always;
+            add_header Vary "Origin" always;
+            add_header Content-Length 0;
+            add_header Content-Type text/plain;
+            return 204;
+        }
+
+        add_header Access-Control-Allow-Origin "${cors_allow_origin}" always;
+        add_header Access-Control-Allow-Methods "GET, POST, OPTIONS" always;
+        add_header Access-Control-Allow-Headers "Content-Type, Authorization" always;
+        add_header Vary "Origin" always;
+
+        proxy_pass http://api-prod:8080;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_connect_timeout 5s;
+        proxy_send_timeout 60s;
+        proxy_read_timeout 60s;
+    }
+}
+NGINX
+
+ECR_REGISTRY=$(echo "${api_image}" | cut -d/ -f1)
+if [[ "$ECR_REGISTRY" == *.dkr.ecr.*.amazonaws.com ]]; then
+  ECR_REGION=$(echo "$ECR_REGISTRY" | cut -d. -f4)
+  aws ecr get-login-password --region "$ECR_REGION" | docker login --username AWS --password-stdin "$ECR_REGISTRY"
+fi
+
+docker compose -f /opt/gametree-api/docker-compose.yml pull
+docker compose -f /opt/gametree-api/docker-compose.yml up -d --remove-orphans
