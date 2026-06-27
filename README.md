@@ -48,6 +48,26 @@ make install
 make test
 ```
 
+## Scripts
+
+Bootstrap backend dev dependencies from the repo root:
+
+```bash
+./scripts/bootstrap.sh
+```
+
+Build and push a backend image for the manual API deploy flow:
+
+```bash
+./scripts/backend-build-image.sh
+```
+
+Deploy the frontend manually to S3/CloudFront:
+
+```bash
+./scripts/deploy-frontend.sh
+```
+
 ## Frontend Checks
 
 Run from `frontend/`:
@@ -61,8 +81,8 @@ npm run build
 
 - [frontend/README.md](frontend/README.md): frontend app overview and commands.
 - [backend/README.md](backend/README.md): backend service overview and commands.
+- [infra/README.md](infra/README.md): project infrastructure layout and commands.
 - [MIGRATION_PLAN.md](MIGRATION_PLAN.md): temporary monorepo migration plan.
-- `infra/README.md`: infrastructure docs after Phase 3.
 
 ## License
 

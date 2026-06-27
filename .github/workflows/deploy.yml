@@ -27,14 +27,14 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: frontend/package-lock.json
+          cache-dependency-path: ./frontend/package-lock.json
 
       - name: Install dependencies
-        working-directory: frontend
+        working-directory: ./frontend
         run: npm ci
 
       - name: Build
-        working-directory: frontend
+        working-directory: ./frontend
         run: npm run build
 
       - name: Configure AWS credentials
@@ -44,8 +44,11 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Sync to S3
+        working-directory: ./frontend
         run: |
-          aws s3 sync frontend/dist/ "s3://${S3_BUCKET}" --delete
+          aws s3 sync dist/ "s3://${S3_BUCKET}" --delete \
+            --exclude ".gitignore" \
+            --exclude "*/.gitignore"
 
       - name: Invalidate CloudFront
         if: success() && env.CLOUDFRONT_DISTRIBUTION_ID != ''

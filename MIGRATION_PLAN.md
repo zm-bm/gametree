@@ -253,90 +253,76 @@ docker compose up --build
 curl -i http://localhost:8080/api/health
 ```
 
-## Phase 3: Copy Infra Into `infra/`
+## Phase 3: Copy Project Infra Into `infra/`
 
-Copy the infra files without importing the old repository history:
-
-```bash
-cd /home/rick/code/gametree
-mkdir infra
-rsync -a \
-  --exclude='.git/' \
-  --exclude='.terraform/' \
-  --exclude='*.tfstate' \
-  --exclude='*.tfstate.*' \
-  --exclude='*.tfvars' \
-  --exclude='*.tfvars.json' \
-  --exclude='.vscode/' \
-  /home/rick/code/infra/ \
-  infra/
-```
-
-Then review and stage the copied files:
-
-```bash
-git status --short
-git add infra
-```
-
-Keep the initial copied layout intact:
+Move only the Gametree-specific infra pieces into a project-local layout that is
+closer to `weather-map/infra`:
 
 ```text
 infra/
-  modules/
-  stacks/
-  templates/
   README.md
+  LICENSE
+  api/
+  site/
+  modules/static-site/
 ```
 
-This keeps existing Terraform relative paths valid, for example:
+Copy only:
 
-- `infra/stacks/static-sites` can still use
-  `source = "../../modules/static-site"`.
-- `infra/stacks/gametree-api` can still use
-  `../../templates/gametree-api-userdata.sh.tmpl`.
+- `/home/rick/code/infra/stacks/gametree-api/` to `infra/api/`
+- `/home/rick/code/infra/modules/static-site/` to `infra/modules/static-site/`
+- `/home/rick/code/infra/templates/gametree-api-userdata.sh.tmpl` to
+  `infra/api/templates/gametree-api-userdata.sh.tmpl`
+- `/home/rick/code/infra/LICENSE` to `infra/LICENSE`
 
-Update docs and commands that point at old absolute paths:
+Exclude `.git`, `.terraform`, `*.tfstate*`, `*.tfvars*`, `.vscode`, and other
+local-only files. Do not copy the old shared stacks for `network`, `dns`,
+`certs`, `edge`, `github-oidc`, `tankdle`, or `zmbm_site`.
 
-- Replace `/home/rick/code/infra/stacks/gametree-api` with
-  `/home/rick/code/gametree/infra/stacks/gametree-api`.
-- Replace old app repo paths in deploy instructions with:
-  - frontend: `/home/rick/code/gametree/frontend`
-  - backend: `/home/rick/code/gametree/backend`
-  - infra: `/home/rick/code/gametree/infra`
-- Update backend image build instructions:
+Adapt `infra/api`:
 
-  ```bash
-  cd /home/rick/code/gametree/backend
-  docker build -f docker/Dockerfile -t "${ECR_REPO}:${IMAGE_TAG}" .
-  ```
+- Keep backend key `gametree-api/prod.tfstate`.
+- Keep remote-state dependencies on existing shared `network`, `edge`, and
+  `dns` state.
+- Update userdata lookup to `templates/gametree-api-userdata.sh.tmpl`.
+- Update README paths to `/home/rick/code/gametree/backend` and
+  `/home/rick/code/gametree/infra/api`.
+
+Create `infra/site`:
+
+- Use `source = "../modules/static-site"`.
+- Hard-code the existing `gametree` site config from the old
+  `stacks/static-sites/terraform.tfvars`.
+- Preserve COEP/COOP response headers and `/api/*` proxy with
+  `app_header_value = "gametree-api"`.
+- Read the shared edge ALB DNS name from existing `edge.tfstate`.
+- Use backend key `gametree/site.tfstate`.
 
 Terraform state notes:
 
-- Keep existing S3 backend keys such as `gametree-api/prod.tfstate`,
-  `static-sites/prod.tfstate`, `edge.tfstate`, and `network.tfstate`.
-- Moving the working directory does not require `terraform state mv`.
-- Avoid resource renames in the first pass so plans should be path-only/doc-only
-  unless input variables change.
+- `infra/api` keeps the existing API state key and can be applied later without
+  a state move.
+- `infra/site` uses a new state key and must not be applied until the old
+  multi-site `static-sites/prod.tfstate` ownership has been split or
+  reconciled.
+- The old shared infra repo/state must remain active because Gametree still
+  depends on shared `network`, `dns`, and `edge` state.
 
 Validation:
 
 ```bash
 cd /home/rick/code/gametree
-terraform -chdir=infra/stacks/gametree-api fmt -check
-terraform -chdir=infra/stacks/static-sites fmt -check
-terraform -chdir=infra/stacks/edge fmt -check
+terraform -chdir=infra/api fmt -check
+terraform -chdir=infra/site fmt -check
 
-terraform -chdir=infra/stacks/gametree-api init
-terraform -chdir=infra/stacks/gametree-api validate
+terraform -chdir=infra/api init -backend=false
+terraform -chdir=infra/api validate
 
-terraform -chdir=infra/stacks/static-sites init
-terraform -chdir=infra/stacks/static-sites validate
+terraform -chdir=infra/site init -backend=false
+terraform -chdir=infra/site validate
 ```
 
-Use `terraform plan` only after confirming the real `terraform.tfvars` files are
-available locally. Do not commit `.tfvars` unless they are intentionally already
-tracked and non-sensitive.
+Do not commit `.tfvars`, local `.terraform/` directories, or state files.
 
 ## Phase 4: Root Docs And Scripts
 
@@ -373,7 +359,7 @@ cd backend && make test
 
 ## Phase 5: GitHub Actions
 
-Update existing workflows for the new paths:
+Update existing workflows for the new monorepo layout:
 
 - Frontend CI:
   - `working-directory: frontend`
@@ -381,6 +367,8 @@ Update existing workflows for the new paths:
   - `npm ci`
   - `npm test -- --run`
   - `npm run build`
+  - Include the Vitest Request compatibility shim needed for RTK Query tests in
+    the jsdom environment.
 
 - Frontend deploy:
   - Build from `frontend/`.
@@ -389,15 +377,14 @@ Update existing workflows for the new paths:
     remain if the static-site deployment role still trusts `zm-bm/gametree`.
 
 - Backend CI:
-  - Add Python setup.
+  - Python 3.12 setup.
   - Install `backend[dev]`.
-  - Run `pytest` against `backend/tests`.
+  - Run `python -m pytest -q backend/tests`.
 
 - Backend deploy:
-  - Keep manual local backend deploy for the first migration unless you want to
-    add ECR push permissions now.
-  - If moving backend image publishing into GitHub Actions, add/update the
-    required OIDC trust and ECR permissions in Terraform first.
+  - Keep manual local backend deploy for the first migration.
+  - Do not add ECR push permissions or backend image publishing to GitHub
+    Actions in this phase.
 
 ## Phase 6: Production Cutover
 
@@ -424,11 +411,11 @@ Because downtime is acceptable, use the simple order:
    ```
 
 4. Update `api_image` in the real, uncommitted
-   `infra/stacks/gametree-api/terraform.tfvars`.
+   `infra/api/terraform.tfvars`.
 5. Apply the API stack:
 
    ```bash
-   cd /home/rick/code/gametree/infra/stacks/gametree-api
+   cd /home/rick/code/gametree/infra/api
    terraform plan
    terraform apply
    ```
@@ -524,8 +511,7 @@ Later options:
 - `backend` tests pass from the new path.
 - Root `docker compose up --build` starts frontend and backend together.
 - Frontend deploy workflow builds from `frontend/` and syncs `frontend/dist/`.
-- Terraform validates from `infra/stacks/gametree-api` and
-  `infra/stacks/static-sites`.
+- Terraform validates from `infra/api` and `infra/site`.
 - A backend image can be built from `backend/` and deployed through the moved
   Terraform stack.
 - `https://gametree.zmbm.dev` and
