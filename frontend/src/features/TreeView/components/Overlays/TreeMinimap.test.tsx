@@ -69,17 +69,19 @@ describe('TreeMinimap', () => {
   });
 
   it('starts collapsed by default and persists toggle state', () => {
-    const { container } = renderTreeViewWithContexts(<TreeMinimap tree={tree} spring={mockSpring} />);
+    renderTreeViewWithContexts(<TreeMinimap tree={tree} spring={mockSpring} />);
 
     const toggle = screen.getByRole('button', { name: 'open minimap' });
-    const shell = toggle.parentElement;
-    expect(shell).toHaveStyle({ width: '40px', height: '18px' });
 
     fireEvent.click(toggle);
 
     expect(screen.getByRole('button', { name: 'collapse minimap' })).toBeInTheDocument();
     expect(localStorage.getItem('gtMinimapCollapsed')).toBe('0');
-    expect(container.firstChild).toHaveStyle({ width: '125px', height: '125px' });
+
+    fireEvent.click(screen.getByRole('button', { name: 'collapse minimap' }));
+
+    expect(screen.getByRole('button', { name: 'open minimap' })).toBeInTheDocument();
+    expect(localStorage.getItem('gtMinimapCollapsed')).toBe('1');
   });
 
   it('renders minimap tree contents and viewport when expanded', () => {

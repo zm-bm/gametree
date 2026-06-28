@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, screen } from '@testing-library/react';
+import { fireEvent, screen, within } from '@testing-library/react';
 
 import type { TreeStore } from '@/types';
 import { createTestTreeStoreNode, createTestZoom, renderTreeViewWithContexts } from '@/test/treeFixtures';
@@ -163,9 +163,15 @@ describe('Tree', () => {
 
     expect(screen.getByTestId('svg-defs')).toBeInTheDocument();
     expect(screen.getByTestId('tree-grid')).toBeInTheDocument();
-    expect(screen.getByTestId('tree-settings')).toBeInTheDocument();
     expect(screen.getByTestId('tree-help')).toBeInTheDocument();
-    expect(screen.getByTestId('tree-dpad')).toBeInTheDocument();
+
+    const bottomLeftControls = screen.getByTestId('tree-bottom-left-controls');
+    expect(within(bottomLeftControls).getByTestId('tree-dpad')).toBeInTheDocument();
+    expect(within(bottomLeftControls).getByTestId('tree-settings')).toBeInTheDocument();
+
+    const bottomRightControls = screen.getByTestId('tree-bottom-right-controls');
+    expect(within(bottomRightControls).getByTestId('tree-zoom-controls')).toBeInTheDocument();
+    expect(within(bottomRightControls).getByTestId('tree-minimap')).toBeInTheDocument();
   });
 
   it('calls updateSpring handlers and retry callback', () => {

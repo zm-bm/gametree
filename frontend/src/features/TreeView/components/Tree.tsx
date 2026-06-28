@@ -59,24 +59,28 @@ export const Tree = () => {
         onRetry={() => void refetch()}
       />
 
-      {/* top left overlays */}
-      <div className="absolute top-2 left-2">
-        <TreeSettings />
-      </div>
-
       {/* top right overlays */}
       <div className="absolute top-2 right-2">
         <TreeHelp />
       </div>
 
       {/* bottom left overlays */}
-      <div className="absolute bottom-2 left-2">
-        <TreeZoomControls handleZoom={handleZoom} />
+      <div
+        className="absolute bottom-2 left-2 z-40 flex flex-col items-start gap-2 pointer-events-none"
+        data-testid="tree-bottom-left-controls"
+      >
+        <TreeDPad />
+        <TreeSettings />
       </div>
 
       {/* bottom right overlays */}
-      <div className="absolute bottom-0 right-0 space-y-2 flex flex-col items-end pointer-events-none">
-        <TreeDPad />
+      <div
+        className="absolute bottom-0 right-0 z-40 flex flex-col items-end gap-2 pointer-events-none"
+        data-testid="tree-bottom-right-controls"
+      >
+        <div className="pointer-events-auto mx-2">
+          <TreeZoomControls handleZoom={handleZoom} />
+        </div>
         <TreeMinimap tree={tree} spring={spring} />
       </div>
     </div>

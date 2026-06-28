@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { FaMinus, FaPlus } from 'react-icons/fa';
 
 const buttonClass = 'focus:outline-none gt-treeview-hoverable';
-const iconClass = 'h-5 w-5 m-2';
+const iconClass = 'h-4 w-4 m-2';
 
 export interface TreeZoomControlsProps {
   handleZoom: (direction: 'in' | 'out') => void;

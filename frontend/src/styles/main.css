@@ -207,5 +207,5 @@
         border-color: var(--gt-sf-bd);
     }
 
-    .gt-treeview-hoverable { @apply hover:bg-lightmode-900/10 dark:hover:bg-darkmode-100/10; }
+    .gt-treeview-hoverable { @apply hover:bg-lightmode-200/100 dark:hover:bg-darkmode-800/100; }
 }

@@ -7,8 +7,10 @@ describe('TreeZoomControls', () => {
   it('renders zoom control buttons', () => {
     render(<TreeZoomControls handleZoom={vi.fn()} />);
 
-    expect(screen.getByRole('button', { name: 'Zoom in' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Zoom out' })).toBeInTheDocument();
+    const zoomIn = screen.getByRole('button', { name: 'Zoom in' });
+    const zoomOut = screen.getByRole('button', { name: 'Zoom out' });
+    expect(zoomIn).toBeInTheDocument();
+    expect(zoomOut).toBeInTheDocument();
   });
 
   it('calls handleZoom with in and out directions', () => {
