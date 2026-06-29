@@ -8,15 +8,25 @@ import { useAnimatedTreeLayout } from "../hooks";
 
 export interface TreeContentsProps {
   tree: HierarchyPointNode<TreeViewNode>;
+  layoutKey: string;
   minimap?: boolean;
 }
 
 const TreeContentsBase = ({
   tree,
+  layoutKey,
   minimap = false,
 }: TreeContentsProps) => {
-  const links = useMemo(() => tree.links(), [tree]);
-  const nodes = useMemo(() => tree.descendants(), [tree]);
+  const links = useMemo(() => {
+    // Visx mutates the hierarchy object in place when nodeSize changes.
+    void layoutKey;
+    return tree.links();
+  }, [tree, layoutKey]);
+  const nodes = useMemo(() => {
+    // Visx mutates the hierarchy object in place when nodeSize changes.
+    void layoutKey;
+    return tree.descendants();
+  }, [tree, layoutKey]);
   const { ax, ay } = useAnimatedTreeLayout(nodes);
 
   return (

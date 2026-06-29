@@ -42,10 +42,15 @@ const getIsCollapsed = () => {
 export const TreeMinimap = ({ tree, spring }: TreeMinimapProps) => {
   const { treeNodeSpacing, width, height } = useContext(TreeDimensionsContext);
   const { zoom: { transformMatrix, isDragging, setTransformMatrix, dragStart, dragEnd }} = useContext(ZoomContext);
+  const layoutKey = treeNodeSpacing.join("|");
   const [isCollapsed, setIsCollapsed] = useState(getIsCollapsed);
 
   const minimapSize = useMemo(() => getMinimapSize(width, height), [width, height]);
-  const nodes = useMemo(() => tree ? tree.descendants() as HierarchyPointNode<TreeViewNode>[] : [], [tree]);
+  const nodes = useMemo(() => {
+    // Visx mutates the hierarchy object in place when nodeSize changes.
+    void layoutKey;
+    return tree ? tree.descendants() as HierarchyPointNode<TreeViewNode>[] : [];
+  }, [tree, layoutKey]);
 
   const toggleCollapsed = useCallback(() => {
     setIsCollapsed((prev) => {
@@ -149,7 +154,7 @@ export const TreeMinimap = ({ tree, spring }: TreeMinimapProps) => {
               >
                 {(tree) => (
                   <Group transform={transform.matrix}>
-                    <TreeContents tree={tree} minimap={true} />
+                    <TreeContents tree={tree} layoutKey={layoutKey} minimap={true} />
                   </Group>
                 )}
               </Tree>

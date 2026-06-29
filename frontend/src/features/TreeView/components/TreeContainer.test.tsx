@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { HierarchyNode } from '@visx/hierarchy/lib/types';
 
 import { TreeViewNode } from '@/types';
@@ -7,6 +7,7 @@ import { renderTreeViewWithContexts } from '@/test/treeFixtures';
 import { treeSeparation } from '../lib/treeSeparation';
 import { TreeContainer } from './TreeContainer';
 import type { TreeContentsProps } from './TreeContents';
+import { TreeDimensionsContext } from '../context';
 
 const visxTreeMock = vi.fn(
   ({ children }: { children: (tree: unknown) => React.ReactNode }) => (
@@ -56,7 +57,56 @@ describe('TreeContainer', () => {
       })
     );
     expect(treeContentsMock).toHaveBeenCalledWith(
-      expect.objectContaining({ tree: { id: 'rendered-tree' } })
+      expect.objectContaining({
+        tree: { id: 'rendered-tree' },
+        layoutKey: '40|120',
+      })
+    );
+  });
+
+  it('updates TreeContents layout key when spacing changes', () => {
+    const root = { data: { id: '' } } as HierarchyNode<TreeViewNode>;
+    const renderWithSpacing = (treeNodeSpacing: [number, number]) => (
+      <TreeDimensionsContext.Provider
+        value={{
+          width: 800,
+          height: 600,
+          nodeRadius: 12,
+          nodeRectSize: 24,
+          treeRowSpacing: treeNodeSpacing[0],
+          treeColumnSpacing: treeNodeSpacing[1],
+          treeNodeSpacing,
+          fontSize: 10,
+        }}
+      >
+        <TreeContainer root={root} />
+      </TreeDimensionsContext.Provider>
+    );
+
+    const { rerender } = render(renderWithSpacing([40, 120]));
+
+    expect(visxTreeMock).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        nodeSize: [40, 120],
+      })
+    );
+    expect(treeContentsMock).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        layoutKey: '40|120',
+      })
+    );
+
+    rerender(renderWithSpacing([60, 180]));
+
+    expect(visxTreeMock).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        nodeSize: [60, 180],
+      })
+    );
+    expect(treeContentsMock).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        layoutKey: '60|180',
+      })
     );
   });
 });

@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { render } from '@testing-library/react';
 import { HierarchyPointNode } from 'd3-hierarchy';
 
 import { TreeViewNode } from '@/types';
@@ -37,13 +38,17 @@ const tree = {
 
 describe('TreeContents', () => {
   beforeEach(() => {
+    rootNode.x = 11;
+    rootNode.y = 22;
+    childNode.x = 33;
+    childNode.y = 44;
     treeLinkMock.mockClear();
     treeNodeMock.mockClear();
     useAnimatedTreeLayoutMock.mockClear();
   });
 
   it('renders links/nodes with animated coordinates by default', () => {
-    renderTreeViewWithContexts(<svg><TreeContents tree={tree} /></svg>);
+    renderTreeViewWithContexts(<svg><TreeContents tree={tree} layoutKey="40|120" /></svg>);
 
     expect(useAnimatedTreeLayoutMock).toHaveBeenCalledWith([rootNode, childNode]);
     expect(treeLinkMock).toHaveBeenCalledWith(
@@ -69,7 +74,7 @@ describe('TreeContents', () => {
   });
 
   it('uses raw node coordinates in minimap mode', () => {
-    renderTreeViewWithContexts(<svg><TreeContents tree={tree} minimap={true} /></svg>);
+    renderTreeViewWithContexts(<svg><TreeContents tree={tree} layoutKey="40|120" minimap={true} /></svg>);
 
     expect(treeLinkMock).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -89,5 +94,53 @@ describe('TreeContents', () => {
         minimap: true,
       })
     );
+  });
+
+  it('refreshes layout nodes when the same tree object receives a new layout key', () => {
+    const descendantsMock = vi.fn(() => [rootNode, childNode]);
+    const linksMock = vi.fn(() => [{ source: rootNode, target: childNode }]);
+    const stableTree = {
+      links: linksMock,
+      descendants: descendantsMock,
+    } as unknown as HierarchyPointNode<TreeViewNode>;
+
+    const { rerender } = render(
+      <svg><TreeContents tree={stableTree} layoutKey="40|120" /></svg>,
+    );
+
+    childNode.x = 99;
+    childNode.y = 199;
+
+    rerender(
+      <svg><TreeContents tree={stableTree} layoutKey="60|180" /></svg>,
+    );
+
+    expect(descendantsMock).toHaveBeenCalledTimes(2);
+    expect(linksMock).toHaveBeenCalledTimes(2);
+    expect(useAnimatedTreeLayoutMock).toHaveBeenLastCalledWith([
+      expect.objectContaining({ data: expect.objectContaining({ id: '' }), x: 11, y: 22 }),
+      expect.objectContaining({ data: expect.objectContaining({ id: 'e2e4' }), x: 99, y: 199 }),
+    ]);
+  });
+
+  it('does not recompute layout arrays for the same tree object and layout key', () => {
+    const descendantsMock = vi.fn(() => [rootNode, childNode]);
+    const linksMock = vi.fn(() => [{ source: rootNode, target: childNode }]);
+    const stableTree = {
+      links: linksMock,
+      descendants: descendantsMock,
+    } as unknown as HierarchyPointNode<TreeViewNode>;
+
+    const { rerender } = render(
+      <svg><TreeContents tree={stableTree} layoutKey="40|120" /></svg>,
+    );
+
+    rerender(
+      <svg><TreeContents tree={stableTree} layoutKey="40|120" /></svg>,
+    );
+
+    expect(descendantsMock).toHaveBeenCalledTimes(1);
+    expect(linksMock).toHaveBeenCalledTimes(1);
+    expect(useAnimatedTreeLayoutMock).toHaveBeenCalledTimes(1);
   });
 });

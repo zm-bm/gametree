@@ -15,6 +15,7 @@ const TreeContainerBase = ({
   root,
 }: TreeContainerProps)  => {
   const { treeNodeSpacing } = useContext(TreeDimensionsContext);
+  const layoutKey = treeNodeSpacing.join("|");
 
   if (!root) return null;
   return (
@@ -24,7 +25,7 @@ const TreeContainerBase = ({
       separation={treeSeparation}
     >
       {(tree) =>
-        <TreeContents tree={tree} />
+        <TreeContents tree={tree} layoutKey={layoutKey} />
       }
     </VisxTree>
   );
