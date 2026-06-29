@@ -74,17 +74,17 @@ describe('TreeSettings', () => {
 
     expect(screen.getByRole('radio', { name: 'Online games' })).toBeChecked();
     expect(screen.getByRole('radio', { name: 'OTB (over the board)' })).not.toBeChecked();
-    expect(screen.getByRole('radio', { name: 'Compare to 50/50' })).toBeChecked();
+    expect(screen.getByRole('radio', { name: 'Score vs 50/50' })).toBeChecked();
     expect(screen.getByRole('spinbutton', { name: 'Minimum play rate percentage' })).toHaveValue(5.5);
     expect(screen.getByRole('spinbutton', { name: 'Maximum moves per position' })).toHaveValue(12);
   });
 
-  it('updates data source and result coloring from radio controls', () => {
+  it('updates data source and line color mode from radio controls', () => {
     const { store } = renderWithProviders(<TreeSettings />);
     expandSettings();
 
     fireEvent.click(screen.getByRole('radio', { name: 'Online games' }));
-    fireEvent.click(screen.getByRole('radio', { name: 'Compare to 50/50' }));
+    fireEvent.click(screen.getByRole('radio', { name: 'Score vs 50/50' }));
 
     expect(store.getState().ui.treeSource).toBe('online');
     expect(store.getState().ui.treeWinRateComparison).toBe('absolute');
@@ -146,23 +146,23 @@ describe('TreeSettings', () => {
     expect(screen.getByRole('button', { name: /Tree Settings/i })).toHaveAttribute('aria-expanded', 'true');
     expect(screen.queryByText('OTB | Parent | >= 2% | 8 moves')).not.toBeInTheDocument();
     expect(screen.getByText('Game source')).toBeInTheDocument();
-    expect(screen.getByText('Result colors')).toBeInTheDocument();
+    expect(screen.getByText('Line color')).toBeInTheDocument();
     expect(screen.getByText('Minimum play rate (%)')).toBeInTheDocument();
-    expect(screen.getByText('Moves shown')).toBeInTheDocument();
+    expect(screen.getByText('Maximum moves shown')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Game source help' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Result colors help' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Line color help' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Minimum play rate help' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Moves shown help' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Maximum moves shown help' })).toBeInTheDocument();
   });
 
-  it('shows concise result colors tooltip copy', () => {
+  it('shows concise line color tooltip copy', () => {
     renderWithProviders(<TreeSettings />);
     expandSettings();
 
-    fireEvent.click(screen.getByRole('button', { name: 'Result colors help' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Line color help' }));
 
     expect(screen.getByRole('tooltip')).toHaveTextContent(
-      'Choose whether colors compare moves to the parent position or a 50/50 baseline.',
+      'Line color shows how each move scores, either against its parent position or against 50/50.',
     );
   });
 

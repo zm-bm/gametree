@@ -202,10 +202,10 @@ export const TreeSettings = () => {
 
             <div className={sectionClassName}>
               <div className={cn(sectionLabel, "pb-1 flex items-center gap-1")}>
-                <span>Result colors</span>
+                <span>Line color</span>
                 <InfoTooltip
-                  ariaLabel="Result colors help"
-                  text="Choose whether colors compare moves to the parent position or a 50/50 baseline."
+                  ariaLabel="Line color help"
+                  text="Line color shows how each move scores, either against its parent position or against 50/50."
                 />
               </div>
               <label className={cn(dataSourceLabel, winRateComparison === "relative" && dataSourceActive)}>
@@ -216,7 +216,7 @@ export const TreeSettings = () => {
                   checked={winRateComparison === "relative"}
                   onChange={setWinRateComparisonRelative}
                 />
-                <span>Compare to parent position</span>
+                <span>Score vs parent position</span>
               </label>
               <label className={cn(dataSourceLabel, winRateComparison === "absolute" && dataSourceActive)}>
                 <input
@@ -226,7 +226,7 @@ export const TreeSettings = () => {
                   checked={winRateComparison === "absolute"}
                   onChange={setWinRateComparisonAbsolute}
                 />
-                <span>Compare to 50/50</span>
+                <span>Score vs 50/50</span>
               </label>
             </div>
 
@@ -269,9 +269,9 @@ export const TreeSettings = () => {
             <div className={sectionClassName}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1">
-                  <div className={sectionLabel}>Moves shown</div>
+                  <div className={sectionLabel}>Maximum moves shown</div>
                   <InfoTooltip
-                    ariaLabel="Moves shown help"
+                    ariaLabel="Maximum moves shown help"
                     text="Maximum visible moves per position. 0 shows all."
                   />
                 </div>

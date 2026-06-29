@@ -40,29 +40,65 @@ vi.mock('./HelpModal', () => ({
 describe('TreeHelp', () => {
   beforeEach(() => {
     localStorage.removeItem('gtTreeHelpSeen');
+    localStorage.removeItem('gtTreeHintDismissed');
   });
 
-  it('auto-opens help when not previously seen', async () => {
+  it('shows the first-run hint without auto-opening help', () => {
     render(<TreeHelp />);
 
-    expect(await screen.findByTestId('help-modal-mock')).toBeInTheDocument();
-    expect(screen.getByText('Tree Help')).toBeInTheDocument();
-  });
-
-  it('does not auto-open when help was already seen', () => {
-    localStorage.setItem('gtTreeHelpSeen', '1');
-
-    render(<TreeHelp />);
-
+    expect(screen.getByRole('note', { name: 'Tree explorer hint' })).toBeInTheDocument();
+    expect(screen.getByText('Explore the tree')).toBeInTheDocument();
+    expect(screen.getByText(
+      'Click a move to follow it. Thicker lines are played more often; line color shows how that move scores.'
+    )).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Got it' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Learn' })).toBeInTheDocument();
     expect(screen.queryByTestId('help-modal-mock')).not.toBeInTheDocument();
   });
 
-  it('opens from help button and marks help as seen when closed', () => {
+  it('dismisses and persists the first-run hint', () => {
+    render(<TreeHelp />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Got it' }));
+
+    expect(localStorage.getItem('gtTreeHintDismissed')).toBe('1');
+    expect(screen.queryByRole('note', { name: 'Tree explorer hint' })).not.toBeInTheDocument();
+  });
+
+  it('does not show the hint when it was already dismissed', () => {
+    localStorage.setItem('gtTreeHintDismissed', '1');
+
+    render(<TreeHelp />);
+
+    expect(screen.queryByRole('note', { name: 'Tree explorer hint' })).not.toBeInTheDocument();
+    expect(screen.queryByTestId('help-modal-mock')).not.toBeInTheDocument();
+  });
+
+  it('does not show the hint when help was already seen', () => {
     localStorage.setItem('gtTreeHelpSeen', '1');
 
     render(<TreeHelp />);
 
+    expect(screen.queryByRole('note', { name: 'Tree explorer hint' })).not.toBeInTheDocument();
+    expect(screen.queryByTestId('help-modal-mock')).not.toBeInTheDocument();
+  });
+
+  it('opens help from the hint learn action and dismisses the hint', () => {
+    render(<TreeHelp />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Learn' }));
+
+    expect(localStorage.getItem('gtTreeHintDismissed')).toBe('1');
+    expect(screen.queryByRole('note', { name: 'Tree explorer hint' })).not.toBeInTheDocument();
+    expect(screen.getByTestId('help-modal-mock')).toBeInTheDocument();
+  });
+
+  it('opens from help button, dismisses the hint, and marks help as seen when closed', () => {
+    render(<TreeHelp />);
+
     fireEvent.click(screen.getByRole('button', { name: 'Open help' }));
+    expect(localStorage.getItem('gtTreeHintDismissed')).toBe('1');
+    expect(screen.queryByRole('note', { name: 'Tree explorer hint' })).not.toBeInTheDocument();
     expect(screen.getByTestId('help-modal-mock')).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: 'Close mock modal' }));
