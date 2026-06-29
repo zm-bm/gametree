@@ -1,0 +1,78 @@
+.gt-tree-workspace {
+    @apply relative h-full w-full overflow-hidden;
+}
+
+.gt-board-dock {
+    @apply absolute left-2 top-2 z-30 flex flex-col gap-1.5 rounded-lg border p-1.5 shadow-xl sm:hidden;
+    width: clamp(164px, 42vw, 188px);
+    background-color: var(--gt-inspector-surface);
+    border-color: var(--gt-inspector-border);
+    box-shadow:
+        0 16px 36px rgb(0 0 0 / 0.34),
+        inset 0 1px 0 rgb(255 255 255 / 0.04);
+}
+
+.gt-board-dock-inspect-layer {
+    @apply fixed inset-0 z-50 grid place-items-center p-3 sm:hidden;
+}
+
+.gt-board-dock-inspect-backdrop {
+    @apply absolute inset-0 bg-black/60 backdrop-blur-[1px];
+}
+
+.gt-board-dock-panel {
+    @apply relative z-10 flex flex-col gap-2 overflow-y-auto rounded-lg border p-2 shadow-2xl;
+    width: min(calc(100vw - 1.5rem), 380px);
+    max-height: calc(100dvh - 1.5rem);
+    background-color: var(--gt-inspector-surface);
+    border-color: var(--gt-inspector-border);
+}
+
+.gt-board-dock-panel-header {
+    @apply flex min-h-8 shrink-0 items-center justify-between gap-2 border-b px-1 pb-1;
+    border-color: var(--gt-inspector-divider);
+}
+
+.gt-board-dock-panel-title {
+    @apply min-w-0 truncate text-xs font-semibold uppercase;
+    color: var(--gt-text-muted);
+}
+
+.gt-board-dock-panel-actions {
+    @apply flex shrink-0 items-center gap-1;
+}
+
+.gt-board-dock .gt-position-inspector {
+    @apply flex-none;
+}
+
+.gt-board-dock-expanded-board {
+    @apply relative aspect-square w-full shrink-0;
+}
+
+.gt-board-dock-summary {
+    @apply shrink-0;
+}
+
+.gt-board-dock-header-action {
+    @apply inline-flex h-8 shrink-0 items-center gap-1.5 rounded-sm border border-transparent bg-transparent px-1.5 text-xs font-medium transition-colors;
+    color: var(--gt-text-muted);
+}
+
+.gt-board-dock-header-action:hover {
+    color: var(--gt-accent);
+    background-color: transparent;
+    box-shadow: inset 0 -1px 0 var(--gt-accent-border);
+}
+
+.gt-board-dock-header-action:focus-visible {
+    @apply outline-none;
+    color: var(--gt-accent);
+    background-color: transparent;
+    border-color: transparent;
+    box-shadow: none;
+    text-decoration-line: underline;
+    text-decoration-color: var(--gt-accent-border);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+}

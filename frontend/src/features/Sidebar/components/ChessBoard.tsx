@@ -1,8 +1,6 @@
 import { useChessgroundConfig } from "@/shared/hooks";
 import Board from "@/shared/ui/Board";
 
-import ToggleOrientationButton from './ToggleOrientationButton';
-
 export interface ChessBoardProps {
   className?: string;
 }
@@ -17,7 +15,6 @@ const ChessBoard = ({ className }: ChessBoardProps) => {
         config={config}
         promotionOverlay={true}
       />
-      <ToggleOrientationButton />
     </div>
   );
 };

@@ -38,6 +38,10 @@ describe('useBoardSize', () => {
   beforeEach(() => {
     MockResizeObserver.instances = [];
     vi.stubGlobal('ResizeObserver', MockResizeObserver);
+    Object.defineProperty(window, 'devicePixelRatio', {
+      value: 1,
+      configurable: true,
+    });
 
     offsetWidthSpy = vi
       .spyOn(HTMLElement.prototype, 'offsetWidth', 'get')
@@ -55,11 +59,6 @@ describe('useBoardSize', () => {
   });
 
   it('computes initial board size from the mounted element width', () => {
-    Object.defineProperty(window, 'devicePixelRatio', {
-      value: 1,
-      configurable: true,
-    });
-
     render(<TestBoardSize />);
 
     const board = screen.getByTestId('board');
@@ -70,7 +69,7 @@ describe('useBoardSize', () => {
       MockResizeObserver.instances[0].trigger();
     });
 
-    expect(screen.getByTestId('size').textContent).toBe('96.1');
+    expect(screen.getByTestId('size').textContent).toBe('96');
   });
 
   it('updates board size when resize observer fires', () => {
@@ -82,14 +81,55 @@ describe('useBoardSize', () => {
     act(() => {
       MockResizeObserver.instances[0].trigger();
     });
-    expect(screen.getByTestId('size').textContent).toBe('80.1');
+    expect(screen.getByTestId('size').textContent).toBe('80');
 
     board.setAttribute('data-width', '95');
 
     act(() => {
       MockResizeObserver.instances[0].trigger();
     });
-    expect(screen.getByTestId('size').textContent).toBe('88.1');
+    expect(screen.getByTestId('size').textContent).toBe('88');
+  });
+
+  it('steps down to keep CSS and device-pixel square alignment when possible', () => {
+    Object.defineProperty(window, 'devicePixelRatio', {
+      value: 2.5,
+      configurable: true,
+    });
+
+    render(<TestBoardSize />);
+
+    const board = screen.getByTestId('board');
+    board.setAttribute('data-width', '95');
+
+    act(() => {
+      MockResizeObserver.instances[0].trigger();
+    });
+
+    const size = Number(screen.getByTestId('size').textContent);
+    expect(size).toBe(80);
+    expect(size % 8).toBe(0);
+    expect(((size / 8) * window.devicePixelRatio) % 1).toBe(0);
+  });
+
+  it('falls back to CSS grid alignment when DPR alignment would shrink too far', () => {
+    Object.defineProperty(window, 'devicePixelRatio', {
+      value: 1.1,
+      configurable: true,
+    });
+
+    render(<TestBoardSize />);
+
+    const board = screen.getByTestId('board');
+    board.setAttribute('data-width', '151');
+
+    act(() => {
+      MockResizeObserver.instances[0].trigger();
+    });
+
+    const size = Number(screen.getByTestId('size').textContent);
+    expect(size).toBe(144);
+    expect(size % 8).toBe(0);
   });
 
   it('unobserves the element on unmount', () => {

@@ -26,10 +26,6 @@ vi.mock('@/shared/ui/Board', () => ({
   default: (props: BoardProps) => boardMock(props),
 }));
 
-vi.mock('./ToggleOrientationButton', () => ({
-  default: () => <div data-testid="toggle-orientation-button" />,
-}));
-
 describe('ChessBoard', () => {
   beforeEach(() => {
     useChessgroundConfigMock.mockReset();
@@ -37,12 +33,12 @@ describe('ChessBoard', () => {
     boardMock.mockClear();
   });
 
-  it('renders board and orientation toggle control', () => {
+  it('renders the board without owning orientation chrome', () => {
     renderWithProviders(<ChessBoard />);
 
     expect(useChessgroundConfigMock).toHaveBeenCalledTimes(1);
     expect(screen.getByTestId('board-mock')).toBeInTheDocument();
-    expect(screen.getByTestId('toggle-orientation-button')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Flip board' })).not.toBeInTheDocument();
   });
 
   it('passes board config and presentation props', () => {

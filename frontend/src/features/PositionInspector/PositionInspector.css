@@ -1,0 +1,86 @@
+.gt-position-inspector {
+    @apply flex h-full min-h-0 flex-1 flex-col gap-3;
+}
+
+.gt-position-inspector-board-slot {
+    @apply flex shrink-0 flex-col gap-2 px-5;
+}
+
+.gt-position-inspector-board-actions {
+    @apply flex h-8 shrink-0 items-center justify-between gap-2 rounded-md px-1.5;
+    color: var(--gt-text-muted);
+    background:
+        linear-gradient(180deg, rgb(255 255 255 / 0.06), rgb(255 255 255 / 0) 72%),
+        rgb(255 255 255 / 0.025);
+    box-shadow:
+        inset 0 1px 0 rgb(255 255 255 / 0.04),
+        inset 0 -1px 0 var(--gt-inspector-divider);
+}
+
+.gt-position-inspector-board-actions:hover,
+.gt-position-inspector-board-actions:focus-within {
+    box-shadow:
+        inset 0 1px 0 rgb(255 255 255 / 0.05),
+        inset 0 -1px 0 var(--gt-accent-border);
+}
+
+.gt-position-inspector-board-context {
+    @apply min-w-0 truncate px-0.5 text-[0.64rem] uppercase;
+    color: var(--gt-text-data);
+    font-family: var(--gt-font-data);
+}
+
+.gt-position-inspector-board-action-group {
+    @apply flex shrink-0 items-center gap-0.5 rounded-sm px-0.5;
+    background-color: rgb(255 255 255 / 0.035);
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.04);
+}
+
+.gt-position-inspector-board-action {
+    @apply inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-sm border border-transparent bg-transparent p-0 text-base transition-colors;
+    color: var(--gt-text-muted);
+}
+
+.gt-position-inspector-board-action:hover {
+    color: var(--gt-accent);
+}
+
+.gt-position-inspector-board-action:focus-visible {
+    @apply outline-none;
+    color: var(--gt-accent);
+    box-shadow: 0 0 0 1px var(--gt-accent-border);
+}
+
+.gt-position-inspector-analysis-shell {
+    @apply min-h-0 flex-1 px-4 pb-2;
+}
+
+.gt-position-inspector-stack {
+    @apply flex h-full min-h-0 flex-col gap-3;
+}
+
+.gt-position-inspector-card {
+    @apply border rounded-lg transition-colors;
+    background-color: var(--gt-inspector-panel);
+    border-color: var(--gt-inspector-panel-border-strong);
+}
+
+.gt-position-inspector-card--summary {
+    @apply shrink-0;
+}
+
+.gt-position-inspector-card--engine {
+    @apply shrink-0;
+}
+
+.gt-position-inspector-card--theory {
+    @apply min-h-0 flex-1;
+}
+
+.gt-position-inspector--compact {
+    @apply gap-0;
+}
+
+.gt-position-inspector--compact .gt-position-inspector-board-slot {
+    @apply px-0;
+}

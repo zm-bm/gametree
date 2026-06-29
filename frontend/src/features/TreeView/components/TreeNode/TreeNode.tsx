@@ -106,7 +106,7 @@ export const TreeNode = ({
               rx={Math.max(3, Math.round(nodeRectSize * 0.05))}
               ry={Math.max(3, Math.round(nodeRectSize * 0.05))}
               fill={currentNodeId === id ? "url(#currentNodeGradient)" : "url(#moveGradient)"}
-              stroke={currentNodeId === id ? "rgba(245,158,11,0.95)" : isDarkMode ? "rgba(255,255,255,0.22)" : "rgba(71,85,105,0.28)"}
+              stroke={currentNodeId === id ? "var(--gt-current-node-border)" : isDarkMode ? "rgba(255,255,255,0.22)" : "rgba(71,85,105,0.28)"}
               strokeWidth={currentNodeId === id ? 1.2 : 0.8}
               style={{ pointerEvents: "none" }}
             />
@@ -152,7 +152,7 @@ export const TreeNode = ({
               width={nodeRectSize}
               height={nodeRectSize}
               fill={currentNodeId === id ? "url(#currentNodeGradient)" : "url(#moveGradient)"}
-              stroke={currentNodeId === id ? "rgba(245,158,11,0.95)" : isDarkMode ? "rgba(255,255,255,0.3)" : "rgba(15,23,42,0.25)"}
+              stroke={currentNodeId === id ? "var(--gt-current-node-border)" : isDarkMode ? "rgba(255,255,255,0.3)" : "rgba(15,23,42,0.25)"}
               strokeWidth={currentNodeId === id ? 1.4 : 0.8}
               style={{ pointerEvents: "none" }}
             />

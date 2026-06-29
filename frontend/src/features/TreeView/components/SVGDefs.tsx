@@ -3,8 +3,8 @@ export const SVGDefs = () => {
     <defs>
       {/* Default node gradient/filter */}
       <linearGradient id="moveGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" className="stop-zinc-500 dark:stop-zinc-600" stopOpacity="1" />
-        <stop offset="100%" className="stop-slate-600 dark:stop-slate-700" stopOpacity="1" />
+        <stop offset="0%" className="stop-gt-tree-node-start" stopOpacity="1" />
+        <stop offset="100%" className="stop-gt-tree-node-end" stopOpacity="1" />
       </linearGradient>
       <filter id="nodeFilter">
         <feDropShadow dx="0" dy="0" stdDeviation="2" floodColor="#000" floodOpacity="0.3"/>
@@ -12,8 +12,8 @@ export const SVGDefs = () => {
       
       {/* Current node gradient/filter */}
       <linearGradient id="currentNodeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" className="stop-amber-400 dark:stop-amber-500" stopOpacity="1" />
-        <stop offset="100%" className="stop-amber-600 dark:stop-amber-700" stopOpacity="1" />
+        <stop offset="0%" className="stop-gt-current-node-start" stopOpacity="1" />
+        <stop offset="100%" className="stop-gt-current-node-end" stopOpacity="1" />
       </linearGradient>
       <filter id="currentNodeFilter" x="-40%" y="-40%" width="180%" height="180%">
         <feDropShadow dx="0" dy="0" stdDeviation="2" floodColor="#000" floodOpacity="0.6"/>

@@ -8,13 +8,15 @@ import ToggleOrientationButton from './ToggleOrientationButton';
 describe('ToggleOrientationButton', () => {
   it('toggles board orientation when clicked', () => {
     const { store } = renderWithProviders(<ToggleOrientationButton />);
+    const button = screen.getByRole('button', { name: 'Flip board' });
 
     expect(store.getState().ui.boardOrientation).toBe('white');
+    expect(button).toHaveAttribute('title', 'Flip board');
 
-    fireEvent.click(screen.getByTitle('Flip board'));
+    fireEvent.click(button);
     expect(store.getState().ui.boardOrientation).toBe('black');
 
-    fireEvent.click(screen.getByTitle('Flip board'));
+    fireEvent.click(button);
     expect(store.getState().ui.boardOrientation).toBe('white');
   });
 });
