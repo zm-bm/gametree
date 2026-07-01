@@ -1,0 +1,159 @@
+import { act, renderHook } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import type { TransformMatrix } from '@visx/zoom/lib/types';
+
+let mockCurrentId = '';
+let mockCurrentNode: unknown = null;
+
+const springApi = {
+  stop: vi.fn(),
+  set: vi.fn(),
+  start: vi.fn(),
+};
+
+vi.mock('@react-spring/web', () => ({
+  useSpring: vi.fn(() => [{}, springApi]),
+}));
+
+vi.mock('@/store/selectors', () => ({
+  selectCurrentId: vi.fn(() => mockCurrentId),
+  selectCurrentNode: vi.fn(() => mockCurrentNode),
+}));
+
+vi.mock('react-redux', () => ({
+  useSelector: vi.fn((selector: (state: unknown) => unknown) => selector({})),
+}));
+
+import { anchorTreePoint } from '@/features/Tree/lib/svgMath';
+import {
+  PAN_TARGET_X_RATIO,
+  PAN_TARGET_Y_RATIO,
+  useTreeNavigation,
+} from './useTreeNavigation';
+
+const makeMatrix = (): TransformMatrix => ({
+  translateX: 10,
+  translateY: 20,
+  scaleX: 2,
+  scaleY: 2,
+  skewX: 0,
+  skewY: 0,
+});
+
+describe('useTreeNavigation integration scenarios', () => {
+  beforeEach(() => {
+    mockCurrentId = '';
+    mockCurrentNode = null;
+    springApi.stop.mockClear();
+    springApi.set.mockClear();
+    springApi.start.mockClear();
+  });
+
+  it('re-enables follow on id change after manual exploration disabled it', () => {
+    const transformRef = { current: makeMatrix() };
+    const zoom = {
+      initialTransformMatrix: makeMatrix(),
+      setTransformMatrix: vi.fn(),
+    };
+
+    mockCurrentId = 'a';
+    mockCurrentNode = {
+      data: { id: 'a' },
+      x: 40,
+      y: 100,
+    };
+
+    const { result, rerender } = renderHook(() =>
+      useTreeNavigation({
+        zoom: zoom as never,
+        transformRef,
+        width: 300,
+        height: 200,
+      }),
+    );
+
+    expect(springApi.start).toHaveBeenCalledTimes(1);
+    springApi.start.mockClear();
+
+    act(() => {
+      result.current.updateSpring();
+    });
+
+    mockCurrentNode = {
+      data: { id: 'a' },
+      x: 45,
+      y: 100,
+    };
+    rerender();
+
+    expect(springApi.start).toHaveBeenCalledTimes(0);
+
+    mockCurrentId = 'b';
+    mockCurrentNode = {
+      data: { id: 'b' },
+      x: 45,
+      y: 130,
+    };
+    rerender();
+
+    const expected = anchorTreePoint(
+      transformRef.current,
+      { width: 300, height: 200 },
+      { x: 130, y: 45 },
+      { xRatio: PAN_TARGET_X_RATIO, yRatio: PAN_TARGET_Y_RATIO },
+    );
+
+    expect(springApi.start).toHaveBeenCalledTimes(1);
+    expect(springApi.start).toHaveBeenCalledWith(
+      expect.objectContaining({
+        from: transformRef.current,
+        to: expected,
+      }),
+    );
+  });
+
+  it('pans using latest transformRef scale after external zoom changes', () => {
+    const transformRef = {
+      current: {
+        ...makeMatrix(),
+        scaleX: 3,
+        scaleY: 3,
+      },
+    };
+    const zoom = {
+      initialTransformMatrix: makeMatrix(),
+      setTransformMatrix: vi.fn(),
+    };
+
+    mockCurrentId = 'a';
+    mockCurrentNode = {
+      data: { id: 'a' },
+      x: 50,
+      y: 100,
+    };
+
+    renderHook(() =>
+      useTreeNavigation({
+        zoom: zoom as never,
+        transformRef,
+        width: 300,
+        height: 200,
+      }),
+    );
+
+    const expected = anchorTreePoint(
+      transformRef.current,
+      { width: 300, height: 200 },
+      { x: 100, y: 50 },
+      { xRatio: PAN_TARGET_X_RATIO, yRatio: PAN_TARGET_Y_RATIO },
+    );
+
+    expect(springApi.start).toHaveBeenCalledWith(
+      expect.objectContaining({
+        from: transformRef.current,
+        to: expected,
+      }),
+    );
+  });
+});

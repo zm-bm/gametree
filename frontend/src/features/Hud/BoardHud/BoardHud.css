@@ -1,0 +1,217 @@
+.gt-board-hud-region {
+    @apply absolute left-2 top-2 z-30 flex flex-col items-start gap-1.5;
+    --gt-board-hud-board-size: 152px;
+    width: min(calc(100vw - 1rem), 22rem);
+    max-width: calc(100vw - 1rem);
+}
+
+.gt-board-hud {
+    @apply flex flex-col gap-1 rounded-md border p-1.5 shadow-xl;
+    width: calc(var(--gt-board-hud-board-size) + 0.75rem);
+    color: var(--gt-inspector-label);
+    background-color: var(--gt-inspector-surface);
+    border-color: var(--gt-inspector-border);
+    box-shadow:
+        0 14px 30px rgb(0 0 0 / 0.36),
+        inset 0 1px 0 rgb(255 255 255 / 0.04);
+}
+
+@media (min-width: 640px) {
+    .gt-board-hud-region {
+        --gt-board-hud-board-size: 176px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .gt-board-hud-region {
+        --gt-board-hud-board-size: 208px;
+    }
+}
+
+.gt-board-hud-board {
+    @apply relative shrink-0 overflow-hidden rounded-md;
+    width: var(--gt-board-hud-board-size);
+    height: var(--gt-board-hud-board-size);
+    background-color: var(--gt-inspector-panel);
+    box-shadow:
+        inset 0 0 0 1px var(--gt-inspector-panel-border-strong),
+        0 8px 18px rgb(0 0 0 / 0.22);
+}
+
+.gt-board-hud-board > div {
+    width: 100%;
+    height: 100%;
+}
+
+.gt-board-hud-board .gt-board-hud-board-surface {
+    display: block;
+    box-shadow: none;
+}
+
+.gt-board-hud-toolbar {
+    @apply flex h-7 shrink-0 items-center justify-between gap-1 border-t pt-1;
+    border-color: var(--gt-inspector-divider);
+}
+
+.gt-board-hud-detail-rail {
+    @apply flex h-7 shrink-0 items-center justify-between gap-1 border-t pt-1;
+    border-color: var(--gt-inspector-divider);
+}
+
+.gt-board-hud-action {
+    @apply inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-sm border border-transparent bg-transparent p-0 text-base transition-colors;
+    color: var(--gt-inspector-label);
+}
+
+.gt-board-hud-action:hover {
+    color: var(--gt-accent);
+}
+
+.gt-board-hud-action:focus-visible {
+    @apply outline-none;
+    color: var(--gt-accent);
+    background-color: var(--gt-accent-soft);
+    box-shadow:
+        0 0 0 1px var(--gt-accent-border),
+        0 0 0 4px var(--gt-accent-soft);
+}
+
+.gt-board-hud-detail-toggle[aria-pressed="true"] {
+    color: var(--gt-accent);
+    background-color: var(--gt-accent-soft);
+    box-shadow: inset 0 -1px 0 var(--gt-accent-border);
+}
+
+.gt-board-hud-expand-action {
+    @apply sm:hidden;
+}
+
+.gt-board-hud-detail-stack {
+    @apply flex w-full flex-col gap-1.5 overflow-y-auto pr-1;
+    max-height: max(0px, calc(100dvh - var(--gt-board-hud-board-size) - 17.5rem));
+    scrollbar-gutter: stable;
+    scrollbar-color: var(--gt-sb-scroll-thumb) transparent;
+    overscroll-behavior: contain;
+}
+
+.gt-board-hud-detail-loading {
+    @apply px-2 py-3 text-xs;
+    color: var(--gt-inspector-label);
+}
+
+.gt-board-hud-detail-panel {
+    @apply min-h-0 shrink-0 overflow-hidden rounded-md border shadow-xl;
+    color: var(--gt-inspector-label);
+    background-color: var(--gt-inspector-surface);
+    border-color: var(--gt-inspector-border);
+    box-shadow:
+        0 14px 30px rgb(0 0 0 / 0.3),
+        inset 0 1px 0 rgb(255 255 255 / 0.04);
+}
+
+.gt-board-hud-detail-header {
+    @apply flex min-h-7 items-center justify-between gap-2 border-b px-2;
+    border-color: var(--gt-inspector-divider);
+}
+
+.gt-board-hud-detail-title {
+    @apply min-w-0 truncate text-[11px] font-semibold uppercase;
+    color: var(--gt-inspector-label);
+    letter-spacing: 0.08em;
+}
+
+.gt-board-hud-detail-close {
+    @apply inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-sm border border-transparent bg-transparent p-0 text-xs transition-colors;
+    color: var(--gt-inspector-label);
+}
+
+.gt-board-hud-detail-close:hover {
+    color: var(--gt-accent);
+}
+
+.gt-board-hud-detail-close:focus-visible {
+    @apply outline-none;
+    color: var(--gt-accent);
+    background-color: var(--gt-accent-soft);
+    box-shadow:
+        0 0 0 1px var(--gt-accent-border),
+        0 0 0 4px var(--gt-accent-soft);
+}
+
+.gt-board-hud-detail-body {
+    @apply min-h-0 overflow-y-auto;
+    max-height: 18rem;
+    background-color: var(--gt-inspector-panel);
+    scrollbar-gutter: stable;
+    scrollbar-color: var(--gt-sb-scroll-thumb) transparent;
+    overscroll-behavior: contain;
+}
+
+.gt-board-hud-inspect-layer {
+    @apply fixed inset-0 z-50 grid place-items-center p-3 sm:hidden;
+}
+
+.gt-board-hud-backdrop {
+    @apply absolute inset-0 bg-black/60 backdrop-blur-[1px];
+}
+
+.gt-board-hud-panel {
+    @apply relative z-10 flex flex-col gap-2 overflow-y-auto rounded-lg border p-2 shadow-2xl;
+    width: min(calc(100vw - 1.5rem), 380px);
+    max-height: calc(100dvh - 1.5rem);
+    color: var(--gt-inspector-label);
+    background-color: var(--gt-inspector-surface);
+    border-color: var(--gt-inspector-border);
+}
+
+.gt-board-hud-panel-header {
+    @apply flex min-h-8 shrink-0 items-center justify-between gap-2 border-b px-1 pb-1;
+    border-color: var(--gt-inspector-divider);
+}
+
+.gt-board-hud-panel-title {
+    @apply min-w-0 truncate text-xs font-semibold uppercase;
+    color: var(--gt-inspector-label);
+}
+
+.gt-board-hud-panel-actions {
+    @apply flex shrink-0 items-center gap-1;
+}
+
+.gt-board-hud-expanded-board {
+    @apply relative aspect-square w-full shrink-0 overflow-hidden rounded-md;
+    background-color: var(--gt-inspector-panel);
+}
+
+.gt-board-hud-card {
+    @apply rounded-lg border transition-colors;
+    background-color: var(--gt-inspector-panel);
+    border-color: var(--gt-inspector-panel-border-strong);
+}
+
+.gt-board-hud-summary {
+    @apply shrink-0;
+}
+
+.gt-board-hud-header-action {
+    @apply inline-flex h-8 shrink-0 items-center gap-1.5 rounded-sm border border-transparent bg-transparent px-1.5 text-xs font-medium transition-colors;
+    color: var(--gt-inspector-label);
+}
+
+.gt-board-hud-header-action:hover {
+    color: var(--gt-accent);
+    background-color: transparent;
+    box-shadow: inset 0 -1px 0 var(--gt-accent-border);
+}
+
+.gt-board-hud-header-action:focus-visible {
+    @apply outline-none;
+    color: var(--gt-accent);
+    background-color: transparent;
+    border-color: transparent;
+    box-shadow: none;
+    text-decoration-line: underline;
+    text-decoration-color: var(--gt-accent-border);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+}

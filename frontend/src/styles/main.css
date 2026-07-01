@@ -200,7 +200,6 @@
     --gt-tree-node-end: #334155;
     --gt-current-node-start: #f59e0b;
     --gt-current-node-end: #b45309;
-    --gt-sb-panel-shadow: 0 12px 24px rgba(0,0,0,0.62);
 }
 
 @layer utilities {
@@ -277,15 +276,17 @@
     }
 
     .gt-app-shell {
-        @apply flex flex-col sm:flex-row w-full h-full;
+        @apply w-full h-full;
+    }
+
+    .gt-app-workspace {
+        @apply relative h-full w-full overflow-hidden;
     }
 
     /* tree shell */
 
     .gt-treeview {
-        @apply w-full sm:w-1/2 md:w-3/5 lg:w-2/3 2xl:w-3/4;
-        @apply h-screen;
-        @apply overflow-hidden;
+        @apply h-screen w-full overflow-hidden;
         background-color: var(--gt-tree-canvas);
         background-image: radial-gradient(72% 55% at 72% 18%, var(--gt-tree-canvas-accent));
     }

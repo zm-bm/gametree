@@ -25,7 +25,7 @@ Existing component variables remain as aliases for compatibility:
 - Tailwind default palettes used directly in components: slate, zinc, amber, sky, blue, and black/white opacity utilities.
 - CSS variables in `main.css`: shared surface, sidebar/inspector, engine, and now Analysis Desk semantic tokens.
 - Board CSS in `shared/ui/Board/chessground.board.css`: `--cg-board-image`, `--cg-last-move-highlight`, move destination, premove, selected square, and check overlays.
-- Tree result scale in `features/TreeView/lib/colors.ts`: the red-to-draw-to-blue range owned by `colorScale` and `COLORS`.
+- Tree result scale in `features/Tree/lib/colors.ts`: the red-to-draw-to-blue range owned by `colorScale` and `COLORS`.
 - SVG tree definitions in `SVGDefs.tsx`: move-node and current-node gradients now read semantic tokens.
 
 ## Reserved Result Semantics
@@ -47,7 +47,7 @@ Use `gt-data-text` or `--gt-font-data` for restrained data accents only:
 - Move labels and compact move-line metadata.
 - Tree stats, percentages, W/D/L labels, and numeric settings.
 - Engine score, depth, NPS, and principal-variation metadata.
-- Board coordinates, ECO codes, compact inspector metadata, and control readouts.
+- Board coordinates, ECO codes, compact HUD metadata, and control readouts.
 
 Do not apply data mono to long theory prose, modal body copy, general button labels, or explanatory help text.
 
@@ -55,5 +55,5 @@ Do not apply data mono to long theory prose, modal body copy, general button lab
 
 - New components should prefer semantic tokens over raw palette names.
 - Existing `lightmode`/`darkmode` utility classes can remain until touched by later scoped units.
-- Board styling is intentionally separate from the app chrome. The board dock/inspector can use Analysis Desk surface tokens around the board, but chessground square highlights should stay governed by board CSS.
+- Board styling is intentionally separate from the app chrome. Board HUD and HUD panel surfaces can use Analysis Desk surface tokens around the board, but chessground square highlights should stay governed by board CSS.
 - Light mode remains supported. Dark mode carries the primary graphite/amber Analysis Desk identity.
