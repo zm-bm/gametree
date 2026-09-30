@@ -67,6 +67,7 @@ describe('BoardHud', () => {
     const theoryToggle = within(detailRail).getByRole('button', { name: 'Show theory' });
 
     expect(hud).toHaveAttribute('aria-label', 'Current position board');
+    expect(hud).toHaveAttribute('data-tree-safe-area', 'board-hud');
     expect(hud).toContainElement(board);
     expect(hud).toContainElement(toolbar);
     expect(hud).toContainElement(detailRail);

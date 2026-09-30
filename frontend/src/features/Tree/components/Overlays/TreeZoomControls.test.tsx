@@ -11,6 +11,7 @@ describe('TreeZoomControls', () => {
     const zoomOut = screen.getByRole('button', { name: 'Zoom out' });
     expect(zoomIn).toBeInTheDocument();
     expect(zoomOut).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Center current' })).not.toBeInTheDocument();
   });
 
   it('calls handleZoom with in and out directions', () => {
@@ -24,5 +25,15 @@ describe('TreeZoomControls', () => {
     expect(handleZoom).toHaveBeenCalledTimes(2);
     expect(handleZoom).toHaveBeenNthCalledWith(1, 'in');
     expect(handleZoom).toHaveBeenNthCalledWith(2, 'out');
+  });
+
+  it('renders and calls Center current when provided', () => {
+    const onCenterCurrent = vi.fn();
+
+    render(<TreeZoomControls handleZoom={vi.fn()} onCenterCurrent={onCenterCurrent} />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Center current' }));
+
+    expect(onCenterCurrent).toHaveBeenCalledTimes(1);
   });
 });

@@ -25,7 +25,7 @@ vi.mock('react-redux', () => ({
   useSelector: vi.fn((selector: (state: unknown) => unknown) => selector({})),
 }));
 
-import { anchorTreePoint } from '@/features/Tree/lib/svgMath';
+import { frameTreePointInSafeArea } from '@/features/Tree/lib/safeAreaCamera';
 import {
   PAN_TARGET_X_RATIO,
   PAN_TARGET_Y_RATIO,
@@ -97,10 +97,11 @@ describe('useTreeNavigation integration scenarios', () => {
     };
     rerender();
 
-    const expected = anchorTreePoint(
+    const expected = frameTreePointInSafeArea(
       transformRef.current,
       { width: 300, height: 200 },
       { x: 130, y: 45 },
+      [],
       { xRatio: PAN_TARGET_X_RATIO, yRatio: PAN_TARGET_Y_RATIO },
     );
 
@@ -142,10 +143,11 @@ describe('useTreeNavigation integration scenarios', () => {
       }),
     );
 
-    const expected = anchorTreePoint(
+    const expected = frameTreePointInSafeArea(
       transformRef.current,
       { width: 300, height: 200 },
       { x: 100, y: 50 },
+      [],
       { xRatio: PAN_TARGET_X_RATIO, yRatio: PAN_TARGET_Y_RATIO },
     );
 

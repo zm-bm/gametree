@@ -9,10 +9,12 @@ import type { TreeContainerProps } from './TreeContainer';
 
 const updateSpringMock = vi.fn();
 const handleZoomMock = vi.fn();
+const centerCurrentMock = vi.fn();
 const useTreeNavigationMock = vi.fn((_: unknown) => ({
   spring: { x: 1 },
   updateSpring: updateSpringMock,
   handleZoom: handleZoomMock,
+  centerCurrent: centerCurrentMock,
 }));
 
 const refetchMock = vi.fn();
@@ -117,12 +119,25 @@ const getTreeErrorOverlaysProps = (): TreeOverlayProps => {
   return firstCall[0] as TreeOverlayProps;
 };
 
+const makeRect = (left: number, top: number, right: number, bottom: number) => ({
+  bottom,
+  height: bottom - top,
+  left,
+  right,
+  top,
+  width: right - left,
+  x: left,
+  y: top,
+  toJSON: () => ({}),
+} as DOMRect);
+
 describe('TreeScene', () => {
   beforeEach(() => {
     useTreeNavigationMock.mockClear();
     useGetNodesQueryMock.mockClear();
     updateSpringMock.mockClear();
     handleZoomMock.mockClear();
+    centerCurrentMock.mockClear();
     refetchMock.mockClear();
     treeContainerMock.mockClear();
     treeErrorOverlaysMock.mockClear();
@@ -135,7 +150,7 @@ describe('TreeScene', () => {
 
     expect(useGetNodesQueryMock).toHaveBeenCalledWith({ nodeId: 'e2e4' });
     expect(useTreeNavigationMock).toHaveBeenCalledWith(
-      expect.objectContaining({ width: 900, height: 500 })
+      expect.objectContaining({ width: 900, height: 500, safeAreaRects: [] })
     );
 
     expect(treeContainerMock).toHaveBeenCalledWith(
@@ -152,7 +167,10 @@ describe('TreeScene', () => {
       })
     );
     expect(treeZoomControlsMock).toHaveBeenCalledWith(
-      expect.objectContaining({ handleZoom: handleZoomMock })
+      expect.objectContaining({
+        handleZoom: handleZoomMock,
+        onCenterCurrent: centerCurrentMock,
+      })
     );
     expect(treeMinimapMock).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -172,6 +190,73 @@ describe('TreeScene', () => {
     const bottomRightControls = screen.getByTestId('tree-bottom-right-controls');
     expect(within(bottomRightControls).getByTestId('tree-zoom-controls')).toBeInTheDocument();
     expect(within(bottomRightControls).getByTestId('tree-minimap')).toBeInTheDocument();
+  });
+
+  it('passes measured persistent safe-area rectangles into tree navigation', () => {
+    const boardHud = document.createElement('section');
+    boardHud.setAttribute('data-tree-safe-area', 'board-hud');
+    document.body.appendChild(boardHud);
+    const requestAnimationFrameSpy = vi
+      .spyOn(window, 'requestAnimationFrame')
+      .mockImplementation((callback) => {
+        callback(0);
+        return 1;
+      });
+    const cancelAnimationFrameSpy = vi.spyOn(window, 'cancelAnimationFrame').mockImplementation(() => undefined);
+    const getBoundingClientRectSpy = vi
+      .spyOn(HTMLElement.prototype, 'getBoundingClientRect')
+      .mockImplementation(function getBoundingClientRect(this: HTMLElement) {
+        const testId = this.getAttribute('data-testid');
+
+        if (this.classList.contains('relative') && this.classList.contains('h-full')) {
+          return makeRect(0, 0, 900, 500);
+        }
+
+        if (this.getAttribute('data-tree-safe-area') === 'board-hud') {
+          return makeRect(8, 8, 188, 252);
+        }
+
+        if (this.querySelector('[data-testid="tree-help"]')) {
+          return makeRect(836, 8, 892, 42);
+        }
+
+        if (testId === 'tree-bottom-left-controls') {
+          return makeRect(8, 430, 260, 492);
+        }
+
+        if (testId === 'tree-bottom-right-controls') {
+          return makeRect(680, 360, 900, 500);
+        }
+
+        return makeRect(0, 0, 0, 0);
+      });
+
+    renderTree();
+
+    const lastCall = useTreeNavigationMock.mock.calls.at(-1);
+    expect(lastCall).toBeDefined();
+    expect(lastCall?.[0]).toEqual(
+      expect.objectContaining({
+        safeAreaRects: [
+          { id: 'board-hud', left: 8, top: 8, right: 188, bottom: 252, edges: ['left'] },
+          { id: 'help', left: 836, top: 8, right: 892, bottom: 42, edges: ['top', 'right'] },
+          { id: 'bottom-left-controls', left: 8, top: 430, right: 260, bottom: 492, edges: ['bottom'] },
+          {
+            id: 'bottom-right-controls',
+            left: 680,
+            top: 360,
+            right: 900,
+            bottom: 500,
+            edges: ['bottom', 'right'],
+          },
+        ],
+      }),
+    );
+
+    getBoundingClientRectSpy.mockRestore();
+    requestAnimationFrameSpy.mockRestore();
+    cancelAnimationFrameSpy.mockRestore();
+    boardHud.remove();
   });
 
   it('calls updateSpring handlers and retry callback', () => {

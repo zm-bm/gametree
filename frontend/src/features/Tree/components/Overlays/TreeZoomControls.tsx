@@ -1,14 +1,15 @@
 import { useCallback } from 'react';
-import { FaMinus, FaPlus } from 'react-icons/fa';
+import { FaCrosshairs, FaMinus, FaPlus } from 'react-icons/fa';
 
 const buttonClass = 'focus:outline-none gt-treeview-hoverable';
 const iconClass = 'h-4 w-4 m-2';
 
 export interface TreeZoomControlsProps {
   handleZoom: (direction: 'in' | 'out') => void;
+  onCenterCurrent?: () => void;
 }
 
-export const TreeZoomControls = ({ handleZoom }: TreeZoomControlsProps) => {
+export const TreeZoomControls = ({ handleZoom, onCenterCurrent }: TreeZoomControlsProps) => {
   const zoomIn = useCallback(() => handleZoom('in'), [handleZoom]);
   const zoomOut = useCallback(() => handleZoom('out'), [handleZoom]);
 
@@ -20,6 +21,11 @@ export const TreeZoomControls = ({ handleZoom }: TreeZoomControlsProps) => {
       <button className={buttonClass} onClick={zoomOut} aria-label="Zoom out">
         <FaMinus className={iconClass} />
       </button>
+      {onCenterCurrent ? (
+        <button className={buttonClass} onClick={onCenterCurrent} aria-label="Center current">
+          <FaCrosshairs className={iconClass} />
+        </button>
+      ) : null}
     </div>
   );
 };

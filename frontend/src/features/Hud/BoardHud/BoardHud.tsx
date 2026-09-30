@@ -156,6 +156,7 @@ const BoardHud = () => {
         <section
           className="gt-board-hud"
           data-testid="board-hud"
+          data-tree-safe-area="board-hud"
           aria-label="Current position board"
         >
           <div className="gt-board-hud-board" data-testid="board-hud-board">

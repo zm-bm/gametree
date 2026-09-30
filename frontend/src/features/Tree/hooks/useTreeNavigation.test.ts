@@ -25,7 +25,12 @@ vi.mock('react-redux', () => ({
   useSelector: vi.fn((selector: (state: unknown) => unknown) => selector({})),
 }));
 
-import { anchorTreePoint, zoomAtPoint } from '@/features/Tree/lib/svgMath';
+import { zoomAtPoint } from '@/features/Tree/lib/svgMath';
+import {
+  frameTreePointInSafeArea,
+  projectTreePoint,
+  type SafeAreaReservedRect,
+} from '@/features/Tree/lib/safeAreaCamera';
 import {
   PAN_TARGET_X_RATIO,
   PAN_TARGET_Y_RATIO,
@@ -133,10 +138,11 @@ describe('useTreeNavigation', () => {
       }),
     );
 
-    const expected = anchorTreePoint(
+    const expected = frameTreePointInSafeArea(
       transformRef.current,
       { width: 300, height: 200 },
       { x: 120, y: 50 },
+      [],
       { xRatio: PAN_TARGET_X_RATIO, yRatio: PAN_TARGET_Y_RATIO },
     );
 
@@ -181,10 +187,11 @@ describe('useTreeNavigation', () => {
 
     rerender();
 
-    const expected = anchorTreePoint(
+    const expected = frameTreePointInSafeArea(
       transformRef.current,
       { width: 300, height: 200 },
       { x: 120, y: 60 },
+      [],
       { xRatio: PAN_TARGET_X_RATIO, yRatio: PAN_TARGET_Y_RATIO },
     );
 
@@ -235,5 +242,224 @@ describe('useTreeNavigation', () => {
     rerender();
 
     expect(springApi.start).not.toHaveBeenCalled();
+  });
+
+  it('frames current node changes inside persistent safe-area rectangles', () => {
+    const transformRef = { current: makeMatrix() };
+    const zoom = {
+      initialTransformMatrix: makeMatrix(),
+      setTransformMatrix: vi.fn(),
+    };
+    const safeAreaRects: SafeAreaReservedRect[] = [
+      {
+        id: 'board-hud',
+        left: 8,
+        top: 8,
+        right: 180,
+        bottom: 250,
+        edges: ['left'],
+      },
+    ];
+
+    mockCurrentId = 'a';
+    mockCurrentNode = {
+      data: { id: 'a' },
+      x: 50,
+      y: 120,
+    };
+
+    renderHook(() =>
+      useTreeNavigation({
+        zoom: zoom as never,
+        transformRef,
+        width: 300,
+        height: 200,
+        safeAreaRects,
+      }),
+    );
+
+    const expected = frameTreePointInSafeArea(
+      transformRef.current,
+      { width: 300, height: 200 },
+      { x: 120, y: 50 },
+      safeAreaRects,
+      { xRatio: PAN_TARGET_X_RATIO, yRatio: PAN_TARGET_Y_RATIO },
+    );
+
+    expect(springApi.start).toHaveBeenCalledWith(
+      expect.objectContaining({
+        from: transformRef.current,
+        to: expected,
+      }),
+    );
+  });
+
+  it('forces a reframe on viewport resize even after manual pan', () => {
+    const transformRef = { current: makeMatrix() };
+    const zoom = {
+      initialTransformMatrix: makeMatrix(),
+      setTransformMatrix: vi.fn(),
+    };
+
+    mockCurrentId = 'a';
+    mockCurrentNode = {
+      data: { id: 'a' },
+      x: 50,
+      y: 120,
+    };
+
+    const { result, rerender } = renderHook(
+      ({ width, height }) =>
+        useTreeNavigation({
+          zoom: zoom as never,
+          transformRef,
+          width,
+          height,
+        }),
+      {
+        initialProps: { width: 300, height: 200 },
+      },
+    );
+
+    springApi.start.mockClear();
+
+    act(() => {
+      result.current.updateSpring();
+    });
+
+    rerender({ width: 420, height: 260 });
+
+    const expected = frameTreePointInSafeArea(
+      transformRef.current,
+      { width: 420, height: 260 },
+      { x: 120, y: 50 },
+      [],
+      { xRatio: PAN_TARGET_X_RATIO, yRatio: PAN_TARGET_Y_RATIO },
+    );
+
+    expect(springApi.start).toHaveBeenCalledWith(
+      expect.objectContaining({
+        from: transformRef.current,
+        to: expected,
+      }),
+    );
+  });
+
+  it('zooms around the current node and reframes inside the safe area', () => {
+    const transformRef = { current: makeMatrix() };
+    const zoom = {
+      initialTransformMatrix: makeMatrix(),
+      setTransformMatrix: vi.fn(),
+    };
+    const safeAreaRects: SafeAreaReservedRect[] = [
+      {
+        id: 'board-hud',
+        left: 8,
+        top: 8,
+        right: 180,
+        bottom: 250,
+        edges: ['left'],
+      },
+    ];
+
+    mockCurrentId = 'a';
+    mockCurrentNode = {
+      data: { id: 'a' },
+      x: 50,
+      y: 120,
+    };
+
+    const { result } = renderHook(() =>
+      useTreeNavigation({
+        zoom: zoom as never,
+        transformRef,
+        width: 300,
+        height: 200,
+        safeAreaRects,
+      }),
+    );
+
+    springApi.start.mockClear();
+
+    act(() => {
+      result.current.handleZoom('in');
+    });
+
+    const currentPoint = { x: 120, y: 50 };
+    const zoomed = zoomAtPoint(
+      transformRef.current,
+      projectTreePoint(transformRef.current, currentPoint),
+      ZOOM_BUTTON_SCALE_STEP,
+    );
+    const expected = frameTreePointInSafeArea(
+      zoomed,
+      { width: 300, height: 200 },
+      currentPoint,
+      safeAreaRects,
+      { xRatio: PAN_TARGET_X_RATIO, yRatio: PAN_TARGET_Y_RATIO },
+    );
+
+    expect(springApi.start).toHaveBeenCalledWith(
+      expect.objectContaining({
+        from: transformRef.current,
+        to: expected,
+      }),
+    );
+  });
+
+  it('centerCurrent re-enables follow and frames the current node', () => {
+    const transformRef = { current: makeMatrix() };
+    const zoom = {
+      initialTransformMatrix: makeMatrix(),
+      setTransformMatrix: vi.fn(),
+    };
+
+    mockCurrentId = 'a';
+    mockCurrentNode = {
+      data: { id: 'a' },
+      x: 50,
+      y: 120,
+    };
+
+    const { result, rerender } = renderHook(() =>
+      useTreeNavigation({
+        zoom: zoom as never,
+        transformRef,
+        width: 300,
+        height: 200,
+      }),
+    );
+
+    springApi.start.mockClear();
+
+    act(() => {
+      result.current.updateSpring();
+      result.current.centerCurrent();
+    });
+
+    const expected = frameTreePointInSafeArea(
+      transformRef.current,
+      { width: 300, height: 200 },
+      { x: 120, y: 50 },
+      [],
+      { xRatio: PAN_TARGET_X_RATIO, yRatio: PAN_TARGET_Y_RATIO },
+    );
+
+    expect(springApi.start).toHaveBeenCalledWith(
+      expect.objectContaining({
+        from: transformRef.current,
+        to: expected,
+      }),
+    );
+
+    springApi.start.mockClear();
+    mockCurrentNode = {
+      data: { id: 'a' },
+      x: 60,
+      y: 120,
+    };
+    rerender();
+
+    expect(springApi.start).toHaveBeenCalledTimes(1);
   });
 });
